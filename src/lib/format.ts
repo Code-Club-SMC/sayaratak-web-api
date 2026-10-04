@@ -1,4 +1,4 @@
-import type { Locale } from "@/schemas/fields"
+import type { Locale } from "@/schemas/locale"
 
 // Every number and date in the product goes through here: Latin digits, Gregorian calendar, Khartoum time.
 const base = { numberingSystem: "latn" } as const

@@ -1,0 +1,33 @@
+import { z } from "zod"
+
+import { emailSchema, idSchema, phoneSchema, roleSchema } from "./fields"
+
+// What a person chose to follow during onboarding (A9 step 5.x).
+export const interestSchema = z.enum([
+  "cars",
+  "trucks",
+  "motorcycles",
+  "tuk_tuks",
+  "parts",
+  "workshops",
+  "mechanics",
+])
+export type Interest = z.infer<typeof interestSchema>
+
+export const userSchema = z.object({
+  id: idSchema,
+  role: roleSchema,
+  fullName: z.string(),
+  email: emailSchema.optional(),
+  phone: phoneSchema.optional(),
+  avatarUrl: z.string().optional(),
+  cityId: z.string().optional(),
+  verifiedPhone: z.boolean(),
+  verifiedEmail: z.boolean(),
+  banned: z.boolean(),
+  bannedReason: z.string().optional(),
+  createdAt: z.string(),
+  onboardingDone: z.boolean(),
+  interests: z.array(interestSchema),
+})
+export type User = z.infer<typeof userSchema>

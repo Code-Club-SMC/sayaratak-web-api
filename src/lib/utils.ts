@@ -1,4 +1,4 @@
-import type { Locale } from "@/schemas/fields"
+import type { Locale } from "@/schemas/locale"
 
 export { cn } from "cn"
 

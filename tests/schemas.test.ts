@@ -1,0 +1,443 @@
+import { expect, it } from "vitest"
+import type { z } from "zod"
+
+import { searchParamsSchema } from "@/features/search/schemas"
+import {
+  backupSchema,
+  bannerSchema,
+  reportSchema,
+  settingsSchema,
+  sitePageSchema,
+  verificationRequestSchema,
+} from "@/schemas/admin"
+import {
+  paymentSchema,
+  planSchema,
+  promotionPriceSchema,
+  promotionSchema,
+  subscriptionSchema,
+} from "@/schemas/billing"
+import {
+  identifierSchema,
+  passwordSchema,
+  phoneSchema,
+  priceSchema,
+  weeklyHoursSchema,
+} from "@/schemas/fields"
+import { listingPageSchema, listingSchema } from "@/schemas/listing"
+import {
+  messageSchema,
+  notificationSchema,
+  threadSchema,
+} from "@/schemas/messaging"
+import {
+  dealershipSchema,
+  mechanicSchema,
+  workshopSchema,
+} from "@/schemas/profile"
+import { reviewSchema } from "@/schemas/review"
+import { savedSearchSchema } from "@/schemas/saved-search"
+import { taxonomySchema } from "@/schemas/taxonomy"
+import { userSchema } from "@/schemas/user"
+
+const t = "2026-10-04T10:00:00.000Z"
+const bi = { ar: "ب", en: "b" }
+const geo = { lat: 15.5, lng: 32.5 }
+const phone = "+249912345678"
+const hours = Array.from({ length: 7 }, (_, day) => ({
+  day,
+  closed: false,
+  open: "08:00",
+  close: "18:00",
+}))
+const rating = { avg: 4.5, count: 10 }
+const media = {
+  id: "m1",
+  type: "image",
+  url: "/mock/cars/car-01-{w}.webp",
+  width: 1280,
+  height: 960,
+  placeholderColor: "#8a9a90",
+}
+
+const listing = {
+  id: "k3f9a2",
+  slug: "toyota-hilux-2019-khartoum-k3f9a2",
+  kind: "vehicle",
+  intent: "sale",
+  vehicleType: "truck",
+  title: "Toyota Hilux 2019",
+  description: "Clean",
+  price: 4500000,
+  negotiable: true,
+  rentPeriod: null,
+  condition: "used",
+  makeId: "toyota",
+  modelId: "hilux",
+  makeOther: null,
+  modelOther: null,
+  year: 2019,
+  mileageKm: 120000,
+  fuel: "diesel",
+  transmission: "manual",
+  color: null,
+  engineCc: null,
+  payloadTons: null,
+  partCategoryId: null,
+  compatibleTypes: [],
+  media: [media],
+  cityId: "khartoum",
+  districtId: null,
+  location: geo,
+  status: "available",
+  moderation: "approved",
+  rejectionReason: null,
+  promotions: [{ type: "pin", startsAt: t, endsAt: t }],
+  owner: {
+    id: "u1",
+    type: "user",
+    name: "A",
+    avatarUrl: null,
+    verified: false,
+    memberSince: t,
+    profileSlug: null,
+  },
+  contact: { phone, whatsapp: null, showPhone: true, methods: ["call"] },
+  stats: { views: 1, favorites: 0, phoneClicks: 0, whatsappClicks: 0 },
+  createdAt: t,
+  updatedAt: t,
+  expiresAt: t,
+}
+const facets = { type: [], make: [], fuel: [], transmission: [], city: [] }
+const business = {
+  id: "d1",
+  slug: "d",
+  ownerId: "u1",
+  name: "N",
+  logoUrl: "/l.webp",
+  description: "D",
+  cityId: "khartoum",
+  districtId: "x",
+  address: "A",
+  location: null,
+  whatsapp: null,
+  hours,
+  rating,
+  verified: true,
+  status: "active",
+  createdAt: t,
+}
+
+const cases: [string, z.ZodType, unknown][] = [
+  ["listing", listingSchema, listing],
+  [
+    "listing page",
+    listingPageSchema,
+    { items: [listing], total: 1, page: 1, pageSize: 24, facets },
+  ],
+  [
+    "taxonomy",
+    taxonomySchema,
+    {
+      cities: [{ id: "c", slug: "c", name: bi, center: geo }],
+      districts: [{ id: "d", cityId: "c", name: bi }],
+      makes: [{ id: "m", slug: "m", name: bi, vehicleTypes: ["car"] }],
+      models: [{ id: "x", makeId: "m", name: bi }],
+      vehicleTypes: [{ id: "car", name: bi, enabled: true }],
+      partCategories: [{ id: "p", slug: "p", name: bi }],
+      specializations: [{ id: "s", name: bi }],
+      serviceTemplates: [{ id: "t", name: bi }],
+    },
+  ],
+  [
+    "user",
+    userSchema,
+    {
+      id: "u1",
+      role: "user",
+      fullName: "A",
+      verifiedPhone: false,
+      verifiedEmail: false,
+      banned: false,
+      createdAt: t,
+      onboardingDone: false,
+      interests: ["cars"],
+    },
+  ],
+  [
+    "dealership",
+    dealershipSchema,
+    { ...business, coverUrl: "/c.webp", phones: [phone], inventoryCount: 3 },
+  ],
+  [
+    "workshop",
+    workshopSchema,
+    {
+      ...business,
+      phone,
+      images: [media],
+      services: [{ id: "s", name: "Oil", description: "D" }],
+    },
+  ],
+  [
+    "mechanic",
+    mechanicSchema,
+    {
+      id: "m1",
+      slug: "m",
+      ownerId: "u1",
+      name: "M",
+      photoUrl: "/p.webp",
+      bio: "B",
+      cityId: "c",
+      servedCityIds: ["c"],
+      yearsOfExperience: 5,
+      specializationIds: ["s"],
+      phone,
+      whatsapp: null,
+      portfolio: [
+        {
+          id: "p",
+          url: "/p.webp",
+          caption: "C",
+          width: 1,
+          height: 1,
+          placeholderColor: "#fff",
+        },
+      ],
+      available: true,
+      rating,
+      verified: false,
+      status: "active",
+      createdAt: t,
+    },
+  ],
+  [
+    "review",
+    reviewSchema,
+    {
+      id: "r1",
+      targetType: "workshop",
+      targetId: "w1",
+      authorId: "u1",
+      authorName: "A",
+      rating: 5,
+      createdAt: t,
+      status: "visible",
+    },
+  ],
+  [
+    "thread",
+    threadSchema,
+    {
+      id: "th1",
+      subjectType: "listing",
+      subjectId: "k3f9a2",
+      subjectTitle: "T",
+      participants: [{ id: "u1", name: "A", avatarUrl: null }],
+      lastMessage: { body: "Hi", createdAt: t, senderId: "u1" },
+      unreadCount: 0,
+    },
+  ],
+  [
+    "message",
+    messageSchema,
+    { id: "ms1", threadId: "th1", senderId: "u1", body: "Hi", createdAt: t },
+  ],
+  [
+    "notification",
+    notificationSchema,
+    { id: "n1", type: "broadcast", title: "T", body: "B", createdAt: t },
+  ],
+  [
+    "saved search",
+    savedSearchSchema,
+    {
+      id: "s1",
+      name: "Hilux",
+      params: { kind: "vehicle", includeSold: false, sort: "newest", page: 1 },
+      alerts: true,
+      newCount: 2,
+      createdAt: t,
+    },
+  ],
+  [
+    "plan",
+    planSchema,
+    {
+      id: "p1",
+      audience: "dealership",
+      name: bi,
+      price: 50000,
+      durationDays: 30,
+      features: [bi],
+      enabled: true,
+      sortOrder: 1,
+    },
+  ],
+  [
+    "subscription",
+    subscriptionSchema,
+    {
+      id: "sub1",
+      userId: "u1",
+      planId: "p1",
+      status: "active",
+      startsAt: t,
+      endsAt: t,
+      usage: { used: 1, limit: null },
+    },
+  ],
+  [
+    "payment",
+    paymentSchema,
+    {
+      id: "pay1",
+      userId: "u1",
+      itemType: "plan",
+      itemId: "p1",
+      itemLabel: "Plan",
+      amount: 50000,
+      method: "bankak_transfer",
+      reference: "R",
+      transactionRef: "T123",
+      receiptUrl: "/r.webp",
+      status: "pending_review",
+      createdAt: t,
+    },
+  ],
+  [
+    "promotion",
+    promotionSchema,
+    {
+      id: "pr1",
+      listingId: "k3f9a2",
+      type: "boost",
+      startsAt: t,
+      endsAt: t,
+      source: "paid",
+    },
+  ],
+  [
+    "promotion price",
+    promotionPriceSchema,
+    { type: "pin", durationDays: 7, price: 5000 },
+  ],
+  [
+    "banner",
+    bannerSchema,
+    {
+      id: "b1",
+      title: "T",
+      imageUrl: bi,
+      href: "/ar",
+      placement: "home_top",
+      startsAt: t,
+      endsAt: t,
+      active: true,
+      sortOrder: 1,
+      impressions: 0,
+      clicks: 0,
+    },
+  ],
+  [
+    "report",
+    reportSchema,
+    {
+      id: "rp1",
+      listingId: "k3f9a2",
+      reporterId: "u1",
+      reason: "scam",
+      status: "open",
+      createdAt: t,
+    },
+  ],
+  [
+    "verification request",
+    verificationRequestSchema,
+    {
+      id: "v1",
+      targetType: "dealership",
+      targetId: "d1",
+      ownerId: "u1",
+      documents: [{ id: "d", label: "L", url: "/d.pdf" }],
+      status: "pending",
+      createdAt: t,
+    },
+  ],
+  [
+    "site page",
+    sitePageSchema,
+    { slug: "about", title: bi, body: bi, updatedAt: t },
+  ],
+  [
+    "settings",
+    settingsSchema,
+    {
+      autoApproveVerifiedDealers: false,
+      listingExpiryDays: 60,
+      individualSubscriptionsEnabled: false,
+      freeListingLimit: 3,
+      bankakAccount: { name: "N", number: "123456" },
+      contact: { phone, whatsapp: phone, email: "a@b.co", address: "A" },
+      locales: ["ar", "en"],
+    },
+  ],
+  [
+    "backup",
+    backupSchema,
+    { id: "bk1", createdAt: t, sizeMb: 12.5, type: "auto", status: "ready" },
+  ],
+]
+
+it.each(cases)("parses a minimal valid %s", (_name, schema, value) => {
+  expect(schema.safeParse(value).error?.issues).toBeUndefined()
+})
+
+it("rejects a listing with no contact method", () => {
+  const bad = { ...listing, contact: { ...listing.contact, methods: [] } }
+  expect(listingSchema.safeParse(bad).success).toBe(false)
+})
+
+it("search params fill defaults and drop bad values", () => {
+  expect(searchParamsSchema.parse({})).toEqual({
+    kind: "vehicle",
+    includeSold: false,
+    sort: "relevance",
+    page: 1,
+  })
+  const parsed = searchParamsSchema.parse({
+    type: "boat",
+    radius: "7",
+    page: "0",
+    minPrice: "100",
+    sort: "x",
+  })
+  expect(parsed).toMatchObject({
+    type: undefined,
+    radius: undefined,
+    page: 1,
+    minPrice: 100,
+    sort: "relevance",
+  })
+})
+
+it("field schemas return i18n keys as messages", () => {
+  const msg = (s: z.ZodType, v: unknown) =>
+    s.safeParse(v).error?.issues[0]?.message
+  expect(phoneSchema.safeParse(phone).success).toBe(true)
+  expect(msg(phoneSchema, "0912345678")).toBe("validation.phone")
+  expect(identifierSchema.safeParse("٠٩١٢٣٤٥٦٧٨").success).toBe(true)
+  expect(identifierSchema.safeParse("A@B.com").success).toBe(true)
+  expect(msg(identifierSchema, "abc")).toBe("validation.identifier")
+  expect(msg(passwordSchema, "abc")).toBe("validation.password_min")
+  expect(msg(passwordSchema, "12345678")).toBe("validation.password_letter")
+  expect(msg(priceSchema, "abc")).toBe("validation.number")
+  expect(msg(priceSchema, 0)).toBe("validation.price_min")
+  expect(msg(priceSchema, 1.5)).toBe("validation.integer")
+  const reversed = [
+    { day: 0, closed: false, open: "18:00", close: "08:00" },
+    ...hours.slice(1),
+  ]
+  expect(msg(weeklyHoursSchema, reversed)).toBe("validation.hours_order")
+})

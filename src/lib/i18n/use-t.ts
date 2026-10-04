@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next"
 
-import { localeSchema } from "@/schemas/fields"
+import { localeSchema } from "@/schemas/locale"
 
 // Thin wrapper so components get `t` and the active locale from one place.
 export function useT() {

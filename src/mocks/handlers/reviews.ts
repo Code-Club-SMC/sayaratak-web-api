@@ -1,0 +1,120 @@
+import { pageOf } from "@/schemas/fields"
+import { okSchema } from "@/schemas/api"
+import {
+  replyInputSchema,
+  reviewInputSchema,
+  reviewPatchSchema,
+} from "@/schemas/inputs"
+import { reviewSchema, targetTypeSchema, type Review } from "@/schemas/review"
+
+import { db, find, insert, newId, paginate } from "../db"
+import { fail, needUser, pageParams, route } from "../http"
+import { byNewest, findBusiness, nowIso, notify } from "../lib"
+
+export function recomputeRating(targetId: string) {
+  const target = findBusiness(targetId)
+  if (!target) return
+  const visible = db.reviews.filter(
+    (r) => r.targetId === targetId && r.status === "visible"
+  )
+  target.rating = {
+    count: visible.length,
+    avg: visible.length
+      ? Math.round(
+          (visible.reduce((s, r) => s + r.rating, 0) / visible.length) * 10
+        ) / 10
+      : 0,
+  }
+}
+
+const reviewOf = (id: string) => {
+  const row = find(db.reviews, id)
+  if (!row) throw fail(404, "not_found")
+  return row
+}
+
+route("GET", "/reviews", (c) => {
+  const type = targetTypeSchema.safeParse(c.query.get("targetType"))
+  const targetId = c.query.get("targetId")
+  if (!type.success || !targetId)
+    throw fail(422, "validation", { targetId: "validation.required" })
+  const rows = db.reviews
+    .filter(
+      (r) =>
+        r.targetType === type.data &&
+        r.targetId === targetId &&
+        r.status === "visible"
+    )
+    .sort(byNewest)
+  const { page, pageSize } = pageParams(c.query, 10)
+  return pageOf(reviewSchema).parse(paginate(rows, page, pageSize))
+})
+
+route("POST", "/reviews", async (c) => {
+  const user = needUser(c)
+  const input = await c.body(reviewInputSchema)
+  const target = findBusiness(input.targetId)
+  if (!target) throw fail(404, "not_found")
+  if (target.ownerId === user.id) throw fail(403, "forbidden")
+  if (
+    db.reviews.some(
+      (r) => r.authorId === user.id && r.targetId === input.targetId
+    )
+  )
+    throw fail(409, "already_reviewed")
+  const row: Review = {
+    id: newId("r"),
+    targetType: input.targetType,
+    targetId: input.targetId,
+    authorId: user.id,
+    authorName: user.fullName,
+    rating: input.rating,
+    body: input.body,
+    createdAt: nowIso(),
+    status: "visible",
+  }
+  insert(db.reviews, row)
+  recomputeRating(input.targetId)
+  notify(
+    target.ownerId,
+    "review_new",
+    { ar: "تقييم جديد", en: "New review" },
+    {
+      ar: `حصلت على ${input.rating} نجوم.`,
+      en: `You received ${input.rating} stars.`,
+    },
+    "/reviews"
+  )
+  return reviewSchema.parse(row)
+})
+
+route("PATCH", "/reviews/:id", async (c) => {
+  const user = needUser(c)
+  const row = reviewOf(c.params.id ?? "")
+  if (row.authorId !== user.id) throw fail(403, "forbidden")
+  Object.assign(row, await c.body(reviewPatchSchema))
+  recomputeRating(row.targetId)
+  return reviewSchema.parse(row)
+})
+
+route("DELETE", "/reviews/:id", (c) => {
+  const user = needUser(c)
+  const row = reviewOf(c.params.id ?? "")
+  if (row.authorId !== user.id && user.role !== "admin")
+    throw fail(403, "forbidden")
+  db.reviews = db.reviews.filter((r) => r.id !== row.id)
+  recomputeRating(row.targetId)
+  return okSchema.parse({ ok: true })
+})
+
+route("POST", "/reviews/:id/reply", async (c) => {
+  const user = needUser(c)
+  const row = reviewOf(c.params.id ?? "")
+  if (findBusiness(row.targetId)?.ownerId !== user.id)
+    throw fail(403, "forbidden")
+  row.reply = {
+    body: (await c.body(replyInputSchema)).body,
+    createdAt: nowIso(),
+  }
+  return reviewSchema.parse(row)
+})

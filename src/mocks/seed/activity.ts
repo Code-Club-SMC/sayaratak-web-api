@@ -22,6 +22,9 @@ import {
   sellerLines,
 } from "./words"
 
+// Seeded individuals only: the demo accounts and new@demo.sy keep their own scripted content.
+const isPlain = (u: UserRow) => /^u-\d+$/.test(u.id)
+
 type Business = {
   id: string
   ownerId: string
@@ -31,9 +34,7 @@ type Business = {
 }
 
 export function seedReviews(users: UserRow[], businesses: Business[]) {
-  const authors = users.filter(
-    (u) => u.role === "user" && !u.banned && u.id !== "u-omar"
-  )
+  const authors = users.filter((u) => isPlain(u) && !u.banned)
   const reviews: Review[] = []
   const seen = new Set<string>()
   while (reviews.length < 120) {
@@ -111,9 +112,7 @@ export function seedThreads(
     "u-workshop",
     "u-mechanic",
   ]
-  const people = users.filter(
-    (u) => u.role === "user" && u.id !== "u-omar" && !u.banned
-  )
+  const people = users.filter((u) => isPlain(u) && !u.banned)
   for (let i = 0; i < 25; i++) {
     const meId = pick(demo)
     const me = users.find((u) => u.id === meId)
@@ -263,10 +262,7 @@ export function seedSaved(users: UserRow[], listings: ListingRow[]) {
     }
   }
   add("u-omar", 7)
-  for (const u of users
-    .filter((x) => x.id.startsWith("u-") && x.role === "user")
-    .slice(1, 41))
-    add(u.id, int(1, 3))
+  for (const u of users.filter(isPlain).slice(1, 41)) add(u.id, int(1, 3))
   const savedSearches: SavedSearchRow[] = [
     {
       id: "ss-1",

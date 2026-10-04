@@ -1,0 +1,246 @@
+import {
+  backupSchema,
+  bannerSchema,
+  reportSchema,
+  settingsSchema,
+  sitePageSchema,
+} from "@/schemas/admin"
+import { okSchema, taxonomyTypeSchema } from "@/schemas/api"
+import { bilingualSchema, geoSchema, pageOf } from "@/schemas/fields"
+import {
+  bannerInputSchema,
+  noteInputSchema,
+  pagePatchSchema,
+} from "@/schemas/inputs"
+import { vehicleTypeSchema } from "@/schemas/listing"
+import { reviewSchema } from "@/schemas/review"
+import { z } from "zod"
+
+import { db, find, insert, newId, remove } from "../db"
+import { fail, needRole, route, type Ctx } from "../http"
+import { byNewest, listPage, nowIso, notify } from "../lib"
+import { recomputeRating } from "./reviews"
+
+const admin = (c: Ctx) => needRole(c, "admin")
+const ack = () => okSchema.parse({ ok: true })
+
+route("GET", "/admin/reviews", (c) => {
+  admin(c)
+  const rows = db.reviews
+    .filter((r) => !c.query.get("status") || r.status === c.query.get("status"))
+    .sort(byNewest)
+  return pageOf(reviewSchema).parse(
+    listPage(c, rows, (r) => `${r.authorName} ${r.body ?? ""}`)
+  )
+})
+for (const [action, status] of [
+  ["hide", "hidden"],
+  ["show", "visible"],
+] as const) {
+  route("POST", `/admin/reviews/:id/${action}`, (c) => {
+    admin(c)
+    const row = find(db.reviews, c.params.id ?? "")
+    if (!row) throw fail(404, "not_found")
+    row.status = status
+    recomputeRating(row.targetId)
+    return reviewSchema.parse(row)
+  })
+}
+
+route("GET", "/admin/reports", (c) => {
+  admin(c)
+  const rows = db.reports
+    .filter((r) => !c.query.get("status") || r.status === c.query.get("status"))
+    .sort(byNewest)
+  return pageOf(reportSchema).parse(listPage(c, rows))
+})
+// Action removes the reported listing and tells its owner; dismiss only closes the report.
+for (const action of ["dismiss", "action"] as const) {
+  route("POST", `/admin/reports/:id/${action}`, async (c) => {
+    admin(c)
+    const row = find(db.reports, c.params.id ?? "")
+    if (!row) throw fail(404, "not_found")
+    row.status = action === "dismiss" ? "dismissed" : "actioned"
+    row.resolutionNote = (await c.body(noteInputSchema)).note
+    const listing = find(db.listings, row.listingId)
+    if (action === "action" && listing) {
+      listing.moderation = "removed"
+      notify(
+        listing.ownerUserId,
+        "listing_rejected",
+        { ar: "تمت إزالة إعلانك", en: "Your listing was removed" },
+        { ar: listing.title, en: listing.title }
+      )
+    }
+    return reportSchema.parse(row)
+  })
+}
+
+// Taxonomy: one generic CRUD over the seven admin-managed lists.
+type Loose = { id: string; [key: string]: unknown }
+const name = bilingualSchema
+const taxonomy: Record<
+  z.infer<typeof taxonomyTypeSchema>,
+  { rows: () => Loose[]; shape: z.ZodObject; useOf: (id: string) => boolean }
+> = {
+  cities: {
+    rows: () => db.taxonomy.cities,
+    shape: z.object({
+      slug: z.string().min(1, "validation.required"),
+      name,
+      center: geoSchema,
+    }),
+    useOf: (id) => db.listings.some((l) => l.cityId === id),
+  },
+  districts: {
+    rows: () => db.taxonomy.districts,
+    shape: z.object({ cityId: z.string().min(1), name }),
+    useOf: (id) => db.listings.some((l) => l.districtId === id),
+  },
+  makes: {
+    rows: () => db.taxonomy.makes,
+    shape: z.object({
+      slug: z.string().min(1, "validation.required"),
+      name,
+      vehicleTypes: z.array(vehicleTypeSchema),
+    }),
+    useOf: (id) =>
+      db.listings.some((l) => l.makeId === id) ||
+      db.taxonomy.models.some((m) => m.makeId === id),
+  },
+  models: {
+    rows: () => db.taxonomy.models,
+    shape: z.object({ makeId: z.string().min(1), name }),
+    useOf: (id) => db.listings.some((l) => l.modelId === id),
+  },
+  "vehicle-types": {
+    rows: () => db.taxonomy.vehicleTypes,
+    shape: z.object({ name, enabled: z.boolean() }),
+    useOf: () => true,
+  },
+  "part-categories": {
+    rows: () => db.taxonomy.partCategories,
+    shape: z.object({ slug: z.string().min(1, "validation.required"), name }),
+    useOf: (id) => db.listings.some((l) => l.partCategoryId === id),
+  },
+  countries: {
+    rows: () => db.countries,
+    shape: z.object({
+      name,
+      dialCode: z.string().regex(/^\+\d{1,4}$/, "validation.dial_code"),
+    }),
+    useOf: () => false,
+  },
+}
+const kind = (c: Ctx) => {
+  admin(c)
+  const type = taxonomyTypeSchema.safeParse(c.params.type)
+  if (!type.success) throw fail(404, "not_found")
+  return { type: type.data, ...taxonomy[type.data] }
+}
+route("GET", "/admin/taxonomy/:type", (c) => kind(c).rows())
+route("POST", "/admin/taxonomy/:type", async (c) => {
+  const { type, rows, shape } = kind(c)
+  if (type === "vehicle-types") throw fail(403, "forbidden")
+  const input = await c.body(shape)
+  const id =
+    typeof input.slug === "string" ? input.slug : newId(type.slice(0, 3))
+  if (rows().some((r) => r.id === id)) throw fail(409, "exists")
+  return insert(rows(), { id, ...input })
+})
+route("DELETE", "/admin/taxonomy/:type/:id", (c) => {
+  const { type, rows, useOf } = kind(c)
+  if (type === "vehicle-types") throw fail(403, "forbidden")
+  if (useOf(c.params.id ?? "")) throw fail(409, "in_use")
+  if (!remove(rows(), c.params.id ?? "")) throw fail(404, "not_found")
+  return ack()
+})
+route("PATCH", "/admin/taxonomy/:type/:id", async (c) => {
+  const { rows, shape } = kind(c)
+  const row = find(rows(), c.params.id ?? "")
+  if (!row) throw fail(404, "not_found")
+  return Object.assign(row, await c.body(shape.partial()))
+})
+
+route(
+  "GET",
+  "/admin/banners",
+  (c) => (
+    admin(c),
+    z
+      .array(bannerSchema)
+      .parse([...db.banners].sort((a, b) => a.sortOrder - b.sortOrder))
+  )
+)
+route("POST", "/admin/banners", async (c) => {
+  admin(c)
+  return bannerSchema.parse(
+    insert(db.banners, {
+      id: newId("bn"),
+      ...(await c.body(bannerInputSchema)),
+      impressions: 0,
+      clicks: 0,
+    })
+  )
+})
+route("PATCH", "/admin/banners/:id", async (c) => {
+  admin(c)
+  const row = find(db.banners, c.params.id ?? "")
+  if (!row) throw fail(404, "not_found")
+  Object.assign(row, await c.body(bannerInputSchema.partial()))
+  return bannerSchema.parse(row)
+})
+route("DELETE", "/admin/banners/:id", (c) => {
+  admin(c)
+  if (!remove(db.banners, c.params.id ?? "")) throw fail(404, "not_found")
+  return ack()
+})
+
+route("GET", "/admin/pages/:slug", (c) => {
+  admin(c)
+  const row = db.pages.find((p) => p.slug === c.params.slug)
+  if (!row) throw fail(404, "not_found")
+  return sitePageSchema.parse(row)
+})
+route("PATCH", "/admin/pages/:slug", async (c) => {
+  admin(c)
+  const row = db.pages.find((p) => p.slug === c.params.slug)
+  if (!row) throw fail(404, "not_found")
+  Object.assign(row, await c.body(pagePatchSchema), { updatedAt: nowIso() })
+  return sitePageSchema.parse(row)
+})
+
+route(
+  "GET",
+  "/admin/settings",
+  (c) => (admin(c), settingsSchema.parse(db.settings))
+)
+route("PATCH", "/admin/settings", async (c) => {
+  admin(c)
+  Object.assign(db.settings, await c.body(settingsSchema.partial()))
+  return settingsSchema.parse(db.settings)
+})
+
+route(
+  "GET",
+  "/admin/backups",
+  (c) => (admin(c), z.array(backupSchema).parse([...db.backups].sort(byNewest)))
+)
+route("POST", "/admin/backups", (c) => {
+  admin(c)
+  return backupSchema.parse(
+    insert(db.backups, {
+      id: newId("bk"),
+      createdAt: nowIso(),
+      sizeMb: 40 + db.backups.length,
+      type: "manual",
+      status: "ready",
+    })
+  )
+})
+// The mock keeps one live data set, so a restore only confirms the backup exists.
+route("POST", "/admin/backups/:id/restore", (c) => {
+  admin(c)
+  if (!find(db.backups, c.params.id ?? "")) throw fail(404, "not_found")
+  return ack()
+})

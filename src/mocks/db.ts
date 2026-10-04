@@ -1,4 +1,4 @@
-import { nanoid } from "nanoid"
+import { customAlphabet, nanoid } from "nanoid"
 
 import { buildSeed } from "./seed"
 import type { Db } from "./types"
@@ -16,6 +16,9 @@ export const db: Db = (globalThis.__sayaratakDb ??= buildSeed({
 export const resetDb = () => Object.assign(db, buildSeed({ empty: empty() }))
 
 type Row = { id: string }
+// Six characters, like the seeded ids, so slugs keep the same shape.
+export const newListingId = () =>
+  `l${customAlphabet("0123456789abcdefghijklmnopqrstuvwxyz", 5)()}`
 export const newId = (prefix: string) => `${prefix}-${nanoid(8)}`
 export const find = <T extends Row>(table: T[], id: string) =>
   table.find((r) => r.id === id)

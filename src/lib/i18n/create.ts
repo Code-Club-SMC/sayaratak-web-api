@@ -14,6 +14,7 @@ export const namespaces = [
   "dashboard",
   "admin",
   "billing",
+  "status",
   "validation",
   "toast",
   "error",

@@ -1,0 +1,10 @@
+{
+  "search.no_results": "لا توجد إعلانات مطابقة لهذه الخيارات",
+  "search.empty_hint": "أزل أحد الخيارات أو وسّع نطاق البحث",
+  "search.results_count_zero": "لا توجد إعلانات",
+  "search.results_count_one": "إعلان واحد",
+  "search.results_count_two": "إعلانان",
+  "search.results_count_few": "{{count}} إعلانات",
+  "search.results_count_many": "{{count}} إعلانًا",
+  "search.results_count_other": "{{count}} إعلان"
+}

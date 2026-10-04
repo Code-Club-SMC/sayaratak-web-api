@@ -15,7 +15,7 @@
     "test": "vitest run",
     "test:e2e": "echo \"test:e2e: not built yet\"",
     "size": "bun scripts/check-size.ts",
-    "i18n:check": "echo \"i18n:check: not built yet\"",
+    "i18n:check": "bun scripts/check-i18n.ts",
     "i18n:literals": "echo \"i18n:literals: not built yet\"",
     "seo:check": "echo \"seo:check: not built yet\"",
     "audit:design": "echo \"audit:design: not built yet\"",

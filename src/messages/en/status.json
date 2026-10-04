@@ -1,0 +1,9 @@
+{
+  "status.available": "Available",
+  "status.reserved": "Reserved",
+  "status.sold": "Sold",
+  "status.rented": "Rented",
+  "status.pending": "Pending review",
+  "status.rejected": "Rejected",
+  "status.removed": "Removed"
+}

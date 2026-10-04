@@ -1,0 +1,6 @@
+{
+  "search.no_results": "No listings match these filters",
+  "search.empty_hint": "Remove a filter or widen the area",
+  "search.results_count_one": "{{count}} listing",
+  "search.results_count_other": "{{count}} listings"
+}

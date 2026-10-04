@@ -1,0 +1,8 @@
+{
+  "toast.listing_submitted": "Listing sent for review",
+  "toast.listing_published": "Listing published",
+  "toast.saved": "Changes saved",
+  "toast.favorite_removed": "Removed from favorites",
+  "toast.link_copied": "Link copied",
+  "toast.error_save": "Could not save. Try again."
+}

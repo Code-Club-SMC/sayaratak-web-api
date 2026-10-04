@@ -1,0 +1,8 @@
+{
+  "toast.listing_submitted": "تم إرسال الإعلان للمراجعة",
+  "toast.listing_published": "تم نشر الإعلان",
+  "toast.saved": "تم حفظ التغييرات",
+  "toast.favorite_removed": "تمت الإزالة من المفضلة",
+  "toast.link_copied": "تم نسخ الرابط",
+  "toast.error_save": "تعذّر الحفظ. حاول مرة أخرى."
+}

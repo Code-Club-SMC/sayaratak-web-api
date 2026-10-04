@@ -1,0 +1,391 @@
+import { keepPreviousData, queryOptions } from "@tanstack/react-query"
+import { z } from "zod"
+
+import { apiFetch } from "@/lib/api/client"
+import { useApiMutation } from "@/lib/api/mutation"
+import { keys } from "@/lib/api/query-keys"
+import {
+  backupSchema,
+  bannerSchema,
+  reportSchema,
+  settingsSchema,
+  sitePageSchema,
+  verificationRequestSchema,
+  type Settings,
+} from "@/schemas/admin"
+import {
+  activitySchema,
+  adminBusinessSchema,
+  adminSearchSchema,
+  adminSeriesSchema,
+  adminStatsSchema,
+  broadcastSchema,
+  okSchema,
+  taxonomyRowSchema,
+  type Range,
+  type taxonomyTypeSchema,
+} from "@/schemas/api"
+import {
+  paymentSchema,
+  planSchema,
+  promotionPriceSchema,
+  promotionSchema,
+  subscriptionSchema,
+} from "@/schemas/billing"
+import { pageOf } from "@/schemas/fields"
+import type {
+  bannerInputSchema,
+  broadcastInputSchema,
+  grantInputSchema,
+  adminListingPatchSchema,
+  pagePatchSchema,
+} from "@/schemas/inputs"
+import { listingSchema, type PromotionType } from "@/schemas/listing"
+import { reviewSchema } from "@/schemas/review"
+import { userSchema } from "@/schemas/user"
+
+type Params = Record<string, unknown>
+const adminList = <TSchema extends z.ZodType>(
+  name: string,
+  path: string,
+  schema: TSchema,
+  params: Params = {}
+) =>
+  queryOptions({
+    queryKey: keys.admin.list(name, params),
+    queryFn: ({ signal }) =>
+      apiFetch(path, { query: params, schema: pageOf(schema), signal }),
+    placeholderData: keepPreviousData,
+  })
+const adminPlain = <TSchema extends z.ZodType>(
+  name: string,
+  path: string,
+  schema: TSchema,
+  params?: Params
+) =>
+  queryOptions({
+    queryKey: keys.admin.list(name, params),
+    queryFn: ({ signal }) => apiFetch(path, { query: params, schema, signal }),
+  })
+
+export const adminQueries = {
+  stats: adminPlain("stats", "/admin/stats", adminStatsSchema),
+  series: (range: Range = "30d") =>
+    adminPlain("series", "/admin/series", adminSeriesSchema, { range }),
+  activity: adminPlain("activity", "/admin/activity", activitySchema),
+  search: (q: string) =>
+    adminPlain("search", "/admin/search", adminSearchSchema, { q }),
+  moderation: (p?: Params) =>
+    adminList("moderation", "/admin/moderation", listingSchema, p),
+  listings: (p?: Params) =>
+    adminList("listings", "/admin/listings", listingSchema, p),
+  users: (p?: Params) => adminList("users", "/admin/users", userSchema, p),
+  businesses: (p?: Params) =>
+    adminList("businesses", "/admin/businesses", adminBusinessSchema, p),
+  verifications: (p?: Params) =>
+    adminList(
+      "verifications",
+      "/admin/verifications",
+      verificationRequestSchema,
+      p
+    ),
+  payments: (p?: Params) =>
+    adminList("payments", "/admin/payments", paymentSchema, p),
+  plans: adminPlain("plans", "/admin/plans", z.array(planSchema)),
+  subscriptions: (p?: Params) =>
+    adminList("subscriptions", "/admin/subscriptions", subscriptionSchema, p),
+  promotionPrices: adminPlain(
+    "promotion-prices",
+    "/admin/promotion-prices",
+    z.array(promotionPriceSchema)
+  ),
+  promotions: (p?: Params) =>
+    adminList("promotions", "/admin/promotions", promotionSchema, p),
+  reviews: (p?: Params) =>
+    adminList("reviews", "/admin/reviews", reviewSchema, p),
+  reports: (p?: Params) =>
+    adminList("reports", "/admin/reports", reportSchema, p),
+  taxonomy: (type: z.infer<typeof taxonomyTypeSchema>) =>
+    adminPlain(
+      `taxonomy-${type}`,
+      `/admin/taxonomy/${type}`,
+      z.array(taxonomyRowSchema)
+    ),
+  broadcasts: (p?: Params) =>
+    adminList("broadcasts", "/admin/broadcasts", broadcastSchema, p),
+  broadcastEstimate: (audience: string) =>
+    adminPlain(
+      "broadcast-estimate",
+      "/admin/broadcasts/estimate",
+      z.object({ recipients: z.number() }),
+      { audience }
+    ),
+  banners: adminPlain("banners", "/admin/banners", z.array(bannerSchema)),
+  page: (slug: string) =>
+    adminPlain(`page-${slug}`, `/admin/pages/${slug}`, sitePageSchema),
+  settings: adminPlain("settings", "/admin/settings", settingsSchema),
+  backups: adminPlain("backups", "/admin/backups", z.array(backupSchema)),
+}
+
+// Admin writes refresh every admin table, the counts in the sidebar and (for listings and payments) the public side.
+const touched = [keys.admin.all, keys.counts] as const
+const withListings = [...touched, keys.listings.all] as const
+const send =
+  <TSchema extends z.ZodType>(
+    method: "POST" | "PATCH" | "PUT" | "DELETE",
+    schema: TSchema
+  ) =>
+  (path: string, body?: unknown) =>
+    apiFetch(path, { method, body, schema })
+const post = <TSchema extends z.ZodType>(schema: TSchema) =>
+  send("POST", schema)
+const patch = <TSchema extends z.ZodType>(schema: TSchema) =>
+  send("PATCH", schema)
+const del = send("DELETE", okSchema)
+type Row = Record<string, unknown>
+
+// Moderation
+export const useApproveListing = () =>
+  useApiMutation(
+    (id: string) => post(listingSchema)(`/admin/listings/${id}/approve`),
+    withListings
+  )
+export const useRejectListing = () =>
+  useApiMutation(
+    ({ id, reason }: { id: string; reason: string }) =>
+      post(listingSchema)(`/admin/listings/${id}/reject`, { reason }),
+    withListings
+  )
+export const useRemoveListing = () =>
+  useApiMutation(
+    (id: string) => post(listingSchema)(`/admin/listings/${id}/remove`),
+    withListings
+  )
+export const useRestoreListing = () =>
+  useApiMutation(
+    (id: string) => post(listingSchema)(`/admin/listings/${id}/restore`),
+    withListings
+  )
+export const useBulkListings = () =>
+  useApiMutation(
+    (body: {
+      ids: string[]
+      action: "approve" | "reject" | "remove" | "restore"
+      reason?: string
+    }) => post(okSchema)("/admin/listings/bulk", body),
+    withListings
+  )
+export const useAdminUpdateListing = () =>
+  useApiMutation(
+    ({
+      id,
+      ...body
+    }: { id: string } & z.input<typeof adminListingPatchSchema>) =>
+      patch(listingSchema)(`/admin/listings/${id}`, body),
+    withListings
+  )
+
+// People and businesses
+export const useBanUser = () =>
+  useApiMutation(
+    ({ id, reason }: { id: string; reason?: string }) =>
+      post(userSchema)(`/admin/users/${id}/ban`, { reason }),
+    touched
+  )
+export const useUnbanUser = () =>
+  useApiMutation(
+    (id: string) => post(userSchema)(`/admin/users/${id}/unban`, {}),
+    touched
+  )
+export const useUpdateBusinessAdmin = () =>
+  useApiMutation(
+    ({
+      id,
+      ...body
+    }: {
+      id: string
+      status?: "active" | "suspended"
+      verified?: boolean
+    }) => patch(adminBusinessSchema)(`/admin/businesses/${id}`, body),
+    [
+      ...touched,
+      keys.directory.all("dealerships"),
+      keys.directory.all("workshops"),
+      keys.directory.all("mechanics"),
+    ]
+  )
+export const useAssignPlan = () =>
+  useApiMutation(
+    ({ id, planId }: { id: string; planId: string }) =>
+      post(okSchema)(`/admin/businesses/${id}/assign-plan`, { planId }),
+    touched
+  )
+export const useApproveVerification = () =>
+  useApiMutation(
+    (id: string) =>
+      post(verificationRequestSchema)(`/admin/verifications/${id}/approve`),
+    [
+      ...touched,
+      keys.directory.all("dealerships"),
+      keys.directory.all("workshops"),
+      keys.directory.all("mechanics"),
+    ]
+  )
+export const useRejectVerification = () =>
+  useApiMutation(
+    ({ id, reason }: { id: string; reason: string }) =>
+      post(verificationRequestSchema)(`/admin/verifications/${id}/reject`, {
+        reason,
+      }),
+    touched
+  )
+
+// Billing
+export const useApprovePayment = () =>
+  useApiMutation(
+    (id: string) => post(paymentSchema)(`/admin/payments/${id}/approve`),
+    [...touched, keys.billing.all, keys.listings.all]
+  )
+export const useRejectPayment = () =>
+  useApiMutation(
+    ({ id, reason }: { id: string; reason: string }) =>
+      post(paymentSchema)(`/admin/payments/${id}/reject`, { reason }),
+    [...touched, keys.billing.all]
+  )
+export const useCreatePlan = () =>
+  useApiMutation(
+    (body: Omit<z.input<typeof planSchema>, "id">) =>
+      post(planSchema)("/admin/plans", body),
+    [...touched, keys.billing.all]
+  )
+export const useUpdatePlan = () =>
+  useApiMutation(
+    ({
+      id,
+      ...body
+    }: { id: string } & Partial<Omit<z.input<typeof planSchema>, "id">>) =>
+      patch(planSchema)(`/admin/plans/${id}`, body),
+    [...touched, keys.billing.all]
+  )
+export const useDeletePlan = () =>
+  useApiMutation(
+    (id: string) => del(`/admin/plans/${id}`),
+    [...touched, keys.billing.all]
+  )
+export const useCreatePromotionPrice = () =>
+  useApiMutation(
+    (body: z.input<typeof promotionPriceSchema>) =>
+      post(promotionPriceSchema)("/admin/promotion-prices", body),
+    [...touched, keys.billing.promotionPrices]
+  )
+export const useUpdatePromotionPrice = () =>
+  useApiMutation(
+    ({
+      type,
+      ...body
+    }: { type: PromotionType } & Partial<
+      z.input<typeof promotionPriceSchema>
+    >) => patch(promotionPriceSchema)(`/admin/promotion-prices/${type}`, body),
+    [...touched, keys.billing.promotionPrices]
+  )
+export const useDeletePromotionPrice = () =>
+  useApiMutation(
+    (type: PromotionType) => del(`/admin/promotion-prices/${type}`),
+    [...touched, keys.billing.promotionPrices]
+  )
+export const useGrantPromotion = () =>
+  useApiMutation(
+    (body: z.input<typeof grantInputSchema>) =>
+      post(promotionSchema)("/admin/promotions/grant", body),
+    withListings
+  )
+export const useSendBroadcast = () =>
+  useApiMutation(
+    (body: z.input<typeof broadcastInputSchema>) =>
+      post(broadcastSchema)("/admin/broadcasts", body),
+    touched
+  )
+
+// Reviews and reports
+export const useHideReview = () =>
+  useApiMutation(
+    (id: string) => post(reviewSchema)(`/admin/reviews/${id}/hide`),
+    [...touched, keys.reviews.all]
+  )
+export const useShowReview = () =>
+  useApiMutation(
+    (id: string) => post(reviewSchema)(`/admin/reviews/${id}/show`),
+    [...touched, keys.reviews.all]
+  )
+export const useDismissReport = () =>
+  useApiMutation(
+    ({ id, note }: { id: string; note?: string }) =>
+      post(reportSchema)(`/admin/reports/${id}/dismiss`, { note }),
+    touched
+  )
+export const useActionReport = () =>
+  useApiMutation(
+    ({ id, note }: { id: string; note?: string }) =>
+      post(reportSchema)(`/admin/reports/${id}/action`, { note }),
+    withListings
+  )
+
+// Taxonomy, banners, pages, settings, backups
+type TaxonomyType = z.infer<typeof taxonomyTypeSchema>
+export const useCreateTaxonomyRow = (type: TaxonomyType) =>
+  useApiMutation(
+    (body: Row) => post(taxonomyRowSchema)(`/admin/taxonomy/${type}`, body),
+    [...touched, keys.taxonomy]
+  )
+export const useUpdateTaxonomyRow = (type: TaxonomyType) =>
+  useApiMutation(
+    ({ id, ...body }: { id: string } & Row) =>
+      patch(taxonomyRowSchema)(`/admin/taxonomy/${type}/${id}`, body),
+    [...touched, keys.taxonomy]
+  )
+export const useDeleteTaxonomyRow = (type: TaxonomyType) =>
+  useApiMutation(
+    (id: string) => del(`/admin/taxonomy/${type}/${id}`),
+    [...touched, keys.taxonomy]
+  )
+export const useCreateBanner = () =>
+  useApiMutation(
+    (body: z.input<typeof bannerInputSchema>) =>
+      post(bannerSchema)("/admin/banners", body),
+    [...touched, keys.content.banners()]
+  )
+export const useUpdateBanner = () =>
+  useApiMutation(
+    ({
+      id,
+      ...body
+    }: { id: string } & Partial<z.input<typeof bannerInputSchema>>) =>
+      patch(bannerSchema)(`/admin/banners/${id}`, body),
+    [...touched, ["content"]]
+  )
+export const useDeleteBanner = () =>
+  useApiMutation(
+    (id: string) => del(`/admin/banners/${id}`),
+    [...touched, ["content"]]
+  )
+export const useUpdatePage = () =>
+  useApiMutation(
+    ({ slug, ...body }: { slug: string } & z.input<typeof pagePatchSchema>) =>
+      patch(sitePageSchema)(`/admin/pages/${slug}`, body),
+    [...touched, ["content"]]
+  )
+export const useUpdateSettings = () =>
+  useApiMutation(
+    (body: Partial<Settings>) => patch(settingsSchema)("/admin/settings", body),
+    touched
+  )
+export const useCreateBackup = () =>
+  useApiMutation(() => post(backupSchema)("/admin/backups"), touched)
+export const useRestoreBackup = () =>
+  useApiMutation(
+    (id: string) => post(okSchema)(`/admin/backups/${id}/restore`),
+    touched
+  )
+// Reseeds the demo data and signs everyone out.
+export const useResetDemoData = () =>
+  useApiMutation(() => post(okSchema)("/mock/reset"), [["me"]])

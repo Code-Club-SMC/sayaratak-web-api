@@ -7,7 +7,7 @@ import { userSchema } from "@/schemas/user"
 import { meQuery } from "@/features/auth/queries"
 import { useMockFetch } from "./mock-fetch"
 
-beforeAll(useMockFetch)
+beforeAll(() => useMockFetch())
 
 describe("mock router", () => {
   it("serves the taxonomy and a null session", async () => {

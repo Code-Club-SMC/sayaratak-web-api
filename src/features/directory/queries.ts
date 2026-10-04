@@ -1,0 +1,179 @@
+import { keepPreviousData, queryOptions } from "@tanstack/react-query"
+import { z } from "zod"
+
+import { apiFetch } from "@/lib/api/client"
+import { useApiMutation } from "@/lib/api/mutation"
+import { keys } from "@/lib/api/query-keys"
+import { okSchema } from "@/schemas/api"
+import { pageOf } from "@/schemas/fields"
+import type { portfolioInputSchema, serviceInputSchema } from "@/schemas/inputs"
+import {
+  dealershipSchema,
+  mechanicSchema,
+  workshopSchema,
+} from "@/schemas/profile"
+
+type Query = Record<string, unknown>
+const schemas = {
+  dealerships: dealershipSchema,
+  workshops: workshopSchema,
+  mechanics: mechanicSchema,
+} as const
+export type DirectoryType = keyof typeof schemas
+
+// Filters: dealerships q, city, verified, sort; workshops add service, openNow, lat and lng; mechanics add specialization, minYears, available.
+export const directoryQueries = {
+  list: <T extends DirectoryType>(type: T, filters: Query = {}) =>
+    queryOptions({
+      queryKey: keys.directory.list(type, filters),
+      queryFn: ({ signal }) =>
+        apiFetch(`/${type}`, {
+          query: filters,
+          schema: pageOf(schemas[type]),
+          signal,
+        }),
+      staleTime: 30_000,
+      placeholderData: keepPreviousData,
+    }),
+  detail: <T extends DirectoryType>(type: T, slug: string) =>
+    queryOptions({
+      queryKey: keys.directory.detail(type, slug),
+      queryFn: ({ signal }) =>
+        apiFetch(`/${type}/${slug}`, { schema: schemas[type], signal }),
+      staleTime: 5 * 60_000,
+    }),
+}
+
+const mineSchema = z.union([dealershipSchema, workshopSchema, mechanicSchema])
+export const businessQueries = {
+  mine: queryOptions({
+    queryKey: keys.business.mine,
+    queryFn: ({ signal }) =>
+      apiFetch("/me/business", { schema: mineSchema, signal }),
+  }),
+  services: queryOptions({
+    queryKey: keys.business.services,
+    queryFn: ({ signal }) =>
+      apiFetch("/me/services", {
+        schema: workshopSchema.shape.services,
+        signal,
+      }),
+  }),
+  portfolio: queryOptions({
+    queryKey: keys.business.portfolio,
+    queryFn: ({ signal }) =>
+      apiFetch("/me/portfolio", {
+        schema: mechanicSchema.shape.portfolio,
+        signal,
+      }),
+  }),
+}
+
+const touched = [
+  keys.business.all,
+  keys.directory.all("dealerships"),
+  keys.directory.all("workshops"),
+  keys.directory.all("mechanics"),
+] as const
+const serviceRow = workshopSchema.shape.services.element
+const portfolioRow = mechanicSchema.shape.portfolio.element
+type Input<T extends z.ZodType> = z.input<T>
+
+export const useUpdateBusiness = () =>
+  useApiMutation(
+    (body: Record<string, unknown>) =>
+      apiFetch("/me/business", { method: "PATCH", body, schema: mineSchema }),
+    touched
+  )
+export const useAddBusinessImage = () =>
+  useApiMutation(
+    (url: string) =>
+      apiFetch("/me/business/images", {
+        method: "POST",
+        body: { url },
+        schema: workshopSchema,
+      }),
+    touched
+  )
+export const useReorderBusinessImages = () =>
+  useApiMutation(
+    (ids: string[]) =>
+      apiFetch("/me/business/images", {
+        method: "PUT",
+        body: { ids },
+        schema: workshopSchema,
+      }),
+    touched
+  )
+
+export const useAddService = () =>
+  useApiMutation(
+    (body: Input<typeof serviceInputSchema>) =>
+      apiFetch("/me/services", { method: "POST", body, schema: serviceRow }),
+    touched
+  )
+export const useUpdateService = () =>
+  useApiMutation(
+    ({
+      id,
+      ...body
+    }: { id: string } & Partial<Input<typeof serviceInputSchema>>) =>
+      apiFetch(`/me/services/${id}`, {
+        method: "PATCH",
+        body,
+        schema: serviceRow,
+      }),
+    touched
+  )
+export const useDeleteService = () =>
+  useApiMutation(
+    (id: string) =>
+      apiFetch(`/me/services/${id}`, { method: "DELETE", schema: okSchema }),
+    touched
+  )
+export const useReorderServices = () =>
+  useApiMutation(
+    (ids: string[]) =>
+      apiFetch("/me/services/reorder", {
+        method: "POST",
+        body: { ids },
+        schema: workshopSchema.shape.services,
+      }),
+    touched
+  )
+
+export const useAddPortfolioItem = () =>
+  useApiMutation(
+    (body: Input<typeof portfolioInputSchema>) =>
+      apiFetch("/me/portfolio", { method: "POST", body, schema: portfolioRow }),
+    touched
+  )
+export const useUpdatePortfolioItem = () =>
+  useApiMutation(
+    ({
+      id,
+      ...body
+    }: { id: string } & Partial<Input<typeof portfolioInputSchema>>) =>
+      apiFetch(`/me/portfolio/${id}`, {
+        method: "PATCH",
+        body,
+        schema: portfolioRow,
+      }),
+    touched
+  )
+export const useDeletePortfolioItem = () =>
+  useApiMutation(
+    (id: string) =>
+      apiFetch(`/me/portfolio/${id}`, { method: "DELETE", schema: okSchema }),
+    touched
+  )
+export const useReorderPortfolio = () =>
+  useApiMutation(
+    (ids: string[]) =>
+      apiFetch("/me/portfolio/reorder", {
+        method: "POST",
+        body: { ids },
+        schema: mechanicSchema.shape.portfolio,
+      }),
+    touched
+  )

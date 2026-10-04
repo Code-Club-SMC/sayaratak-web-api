@@ -11,7 +11,7 @@ import { TanStackDevtools } from "@tanstack/react-devtools"
 import { I18nextProvider } from "react-i18next"
 
 import { NotFound } from "@/components/app/not-found"
-import { meQuery } from "@/features/auth/queries"
+import { meQuery } from "@/features/auth/me-query"
 import { DirectionProvider } from "@/components/ui/direction"
 import { Toaster } from "@/components/ui/toast"
 import { createI18n } from "@/lib/i18n/create"

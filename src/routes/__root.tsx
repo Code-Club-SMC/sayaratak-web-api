@@ -10,6 +10,7 @@ import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools"
 import { TanStackDevtools } from "@tanstack/react-devtools"
 import { I18nextProvider } from "react-i18next"
 
+import { DevPanelHost } from "@/components/app/dev-panel-host"
 import { NotFound } from "@/components/app/not-found"
 import { meQuery } from "@/features/auth/me-query"
 import { DirectionProvider } from "@/components/ui/direction"
@@ -41,8 +42,9 @@ const fontPreloads = (locale: Locale) =>
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   {
     // The signed-in user (or null) is in route context before anything renders, on the server too.
+    // A failing session call degrades to signed out, so the shell (and the dev panel) still render; pages show their own errors.
     beforeLoad: async ({ context }) => ({
-      me: await context.queryClient.ensureQueryData(meQuery),
+      me: await context.queryClient.ensureQueryData(meQuery).catch(() => null),
     }),
     // Locale is fixed for the life of a document (the language switch reloads the page), so load once.
     staleTime: Infinity,
@@ -84,6 +86,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       </head>
       <body>
         {children}
+        {import.meta.env.DEV && <DevPanelHost />}
         {import.meta.env.DEV && (
           <TanStackDevtools
             config={{

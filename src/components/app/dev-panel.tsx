@@ -1,0 +1,128 @@
+import { useQuery } from "@tanstack/react-query"
+import { useRouter } from "@tanstack/react-router"
+import { useState } from "react"
+
+import { meQuery } from "@/features/auth/me-query"
+import { useLogin, useLogout } from "@/features/auth/queries"
+import { useResetDemoData } from "@/features/admin/queries"
+import {
+  failModes,
+  getFailMode,
+  getLatency,
+  setFailMode,
+  setLatency,
+  type FailMode,
+} from "@/lib/api/dev-flags"
+
+const accounts = [
+  { label: "User (Omar)", identifier: "+249912345601" },
+  { label: "Dealership", identifier: "dealer@demo.sy" },
+  { label: "Workshop", identifier: "workshop@demo.sy" },
+  { label: "Mechanic", identifier: "mechanic@demo.sy" },
+  { label: "Admin", identifier: "admin@demo.sy" },
+  { label: "New user (no role)", identifier: "new@demo.sy" },
+]
+
+// Dev only, so the labels are plain English. Each change re-runs the loaders to show the matching state.
+export function DevPanel({ onClose }: { onClose: () => void }) {
+  const router = useRouter()
+  const me = useQuery(meQuery)
+  const login = useLogin()
+  const logout = useLogout()
+  const reset = useResetDemoData()
+  const [fail, setFail] = useState<FailMode>(getFailMode)
+  const [latency, setLatencyState] = useState(getLatency)
+  const refresh = () => router.invalidate()
+
+  return (
+    <aside
+      aria-label="Dev panel"
+      className="fixed start-4 bottom-4 z-50 flex w-72 flex-col gap-3 rounded-lg bg-card p-4 text-ui shadow-floating"
+    >
+      <div className="flex items-center justify-between">
+        <strong>Dev panel</strong>
+        <button type="button" onClick={onClose} aria-label="Close">
+          ×
+        </button>
+      </div>
+      <label className="flex flex-col gap-1">
+        Failure
+        <select
+          value={fail}
+          onChange={(e) => {
+            const mode = failModes.find((m) => m === e.target.value) ?? "none"
+            setFailMode(mode)
+            setFail(mode)
+            void refresh()
+          }}
+        >
+          {failModes.map((m) => (
+            <option key={m} value={m}>
+              {m}
+            </option>
+          ))}
+        </select>
+      </label>
+      <label className="flex flex-col gap-1">
+        Latency:{" "}
+        {latency === null ? "default (150 to 450 ms)" : `${latency} ms`}
+        <input
+          type="range"
+          min={0}
+          max={3000}
+          step={50}
+          value={latency ?? 300}
+          onChange={(e) => {
+            setLatency(Number(e.target.value))
+            setLatencyState(Number(e.target.value))
+          }}
+        />
+        <button
+          type="button"
+          onClick={() => {
+            setLatency(null)
+            setLatencyState(null)
+          }}
+        >
+          Use default
+        </button>
+      </label>
+      <label className="flex flex-col gap-1">
+        Signed in as:{" "}
+        {me.data ? `${me.data.fullName} (${me.data.role})` : "nobody"}
+        <select
+          value=""
+          onChange={async (e) => {
+            if (e.target.value === "out") await logout.mutateAsync()
+            else
+              await login.mutateAsync({
+                identifier: e.target.value,
+                password: "Demo1234",
+              })
+            void refresh()
+          }}
+        >
+          <option value="" disabled>
+            Switch account
+          </option>
+          {accounts.map((a) => (
+            <option key={a.identifier} value={a.identifier}>
+              {a.label}
+            </option>
+          ))}
+          <option value="out">Sign out</option>
+        </select>
+      </label>
+      <button
+        type="button"
+        disabled={reset.isPending}
+        onClick={async () => {
+          await reset.mutateAsync()
+          window.location.reload()
+        }}
+      >
+        Reset data
+      </button>
+    </aside>
+  )
+}

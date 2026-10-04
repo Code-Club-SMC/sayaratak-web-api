@@ -17,14 +17,31 @@ import { getRootData } from "@/lib/i18n/server"
 import { NowProvider } from "@/lib/now"
 import { PrefsProvider } from "@/lib/prefs"
 import { isRtl } from "@/lib/utils"
+import type { Locale } from "@/schemas/fields"
 import appCss from "../styles.css?url"
+import latin400 from "@fontsource/ibm-plex-sans/files/ibm-plex-sans-latin-400-normal.woff2?url"
+import latin600 from "@fontsource/ibm-plex-sans/files/ibm-plex-sans-latin-600-normal.woff2?url"
+import arabic400 from "@fontsource/ibm-plex-sans-arabic/files/ibm-plex-sans-arabic-arabic-400-normal.woff2?url"
+import arabic600 from "@fontsource/ibm-plex-sans-arabic/files/ibm-plex-sans-arabic-arabic-600-normal.woff2?url"
+
+// Preload only the active script's regular and semibold files.
+const fontPreloads = (locale: Locale) =>
+  (isRtl(locale) ? [arabic400, arabic600] : [latin400, latin600]).map(
+    (href) => ({
+      rel: "preload",
+      href,
+      as: "font",
+      type: "font/woff2",
+      crossOrigin: "anonymous" as const,
+    })
+  )
 
 export const Route = createRootRoute({
   // Locale is fixed for the life of a document (the language switch reloads the page), so load once.
   staleTime: Infinity,
   loader: ({ location }) =>
     getRootData({ data: { pathname: location.pathname } }),
-  head: () => ({
+  head: ({ loaderData }) => ({
     meta: [
       {
         charSet: "utf-8",
@@ -42,6 +59,7 @@ export const Route = createRootRoute({
         rel: "stylesheet",
         href: appCss,
       },
+      ...(loaderData ? fontPreloads(loaderData.locale) : []),
     ],
   }),
   shellComponent: RootDocument,

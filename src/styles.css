@@ -1,13 +1,18 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
-@import "@fontsource-variable/inter";
+@import "@fontsource/ibm-plex-sans/latin-400.css";
+@import "@fontsource/ibm-plex-sans/latin-500.css";
+@import "@fontsource/ibm-plex-sans/latin-600.css";
+@import "@fontsource/ibm-plex-sans-arabic/400.css";
+@import "@fontsource/ibm-plex-sans-arabic/500.css";
+@import "@fontsource/ibm-plex-sans-arabic/600.css";
 
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
     --font-heading: var(--font-sans);
-    --font-sans: 'Inter Variable', sans-serif;
+    --font-sans: var(--font-family);
     --color-sidebar-ring: var(--sidebar-ring);
     --color-sidebar-border: var(--sidebar-border);
     --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -61,6 +66,8 @@
 }
 
 :root {
+    /* Per-language family (A5). The Arabic family carries its own Latin glyphs, so mixed text keeps one set of proportions. */
+    --font-family: "IBM Plex Sans", sans-serif;
     --background: oklch(0.966 0.004 150);
     --foreground: oklch(0.2 0.012 160);
     --card: oklch(1 0 0);
@@ -126,6 +133,7 @@
 
 /* Arabic reads smaller at equal pixels, so it gets larger sizes and taller lines. */
 [lang="ar"] {
+    --font-family: "IBM Plex Sans Arabic", sans-serif;
     --text-caption: 0.8125rem;
     --leading-caption: 1.25rem;
     --text-ui: 0.9375rem;
@@ -174,6 +182,10 @@
     font-size: var(--text-hero);
     line-height: var(--leading-hero);
     text-wrap: balance;
+}
+
+@utility num {
+    font-variant-numeric: tabular-nums;
 }
 
 @layer base {

@@ -1,15 +1,17 @@
 import { useState } from "react"
+import type { QueryClient } from "@tanstack/react-query"
 import {
   HeadContent,
   Outlet,
   Scripts,
-  createRootRoute,
+  createRootRouteWithContext,
 } from "@tanstack/react-router"
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools"
 import { TanStackDevtools } from "@tanstack/react-devtools"
 import { I18nextProvider } from "react-i18next"
 
 import { NotFound } from "@/components/app/not-found"
+import { meQuery } from "@/features/auth/queries"
 import { DirectionProvider } from "@/components/ui/direction"
 import { Toaster } from "@/components/ui/toast"
 import { createI18n } from "@/lib/i18n/create"
@@ -36,36 +38,42 @@ const fontPreloads = (locale: Locale) =>
     })
   )
 
-export const Route = createRootRoute({
-  // Locale is fixed for the life of a document (the language switch reloads the page), so load once.
-  staleTime: Infinity,
-  loader: ({ location }) =>
-    getRootData({ data: { pathname: location.pathname } }),
-  head: ({ loaderData }) => ({
-    meta: [
-      {
-        charSet: "utf-8",
-      },
-      {
-        name: "viewport",
-        content: "width=device-width, initial-scale=1",
-      },
-      {
-        title: "Sayaratak",
-      },
-    ],
-    links: [
-      {
-        rel: "stylesheet",
-        href: appCss,
-      },
-      ...(loaderData ? fontPreloads(loaderData.locale) : []),
-    ],
-  }),
-  shellComponent: RootDocument,
-  component: RootComponent,
-  notFoundComponent: NotFound,
-})
+export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
+  {
+    // The signed-in user (or null) is in route context before anything renders, on the server too.
+    beforeLoad: async ({ context }) => ({
+      me: await context.queryClient.ensureQueryData(meQuery),
+    }),
+    // Locale is fixed for the life of a document (the language switch reloads the page), so load once.
+    staleTime: Infinity,
+    loader: ({ location }) =>
+      getRootData({ data: { pathname: location.pathname } }),
+    head: ({ loaderData }) => ({
+      meta: [
+        {
+          charSet: "utf-8",
+        },
+        {
+          name: "viewport",
+          content: "width=device-width, initial-scale=1",
+        },
+        {
+          title: "Sayaratak",
+        },
+      ],
+      links: [
+        {
+          rel: "stylesheet",
+          href: appCss,
+        },
+        ...(loaderData ? fontPreloads(loaderData.locale) : []),
+      ],
+    }),
+    shellComponent: RootDocument,
+    component: RootComponent,
+    notFoundComponent: NotFound,
+  }
+)
 
 function RootDocument({ children }: { children: React.ReactNode }) {
   const { locale } = Route.useLoaderData()

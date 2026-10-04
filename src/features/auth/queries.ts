@@ -1,0 +1,12 @@
+import { queryOptions } from "@tanstack/react-query"
+
+import { apiFetch } from "@/lib/api/client"
+import { keys } from "@/lib/api/query-keys"
+import { userSchema } from "@/schemas/user"
+
+export const meQuery = queryOptions({
+  queryKey: keys.me,
+  queryFn: ({ signal }) =>
+    apiFetch("/me", { schema: userSchema.nullable(), signal }),
+  staleTime: 5 * 60_000,
+})

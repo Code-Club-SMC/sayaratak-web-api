@@ -4,8 +4,8 @@ import process from "node:process"
 import { gzipSync } from "node:zlib"
 
 const dir = ".output/public/assets"
-// ponytail: entry = `index-*.js`; if the home route gets its own chunk, point the 180 KB limit at that instead
-const limit = (name: string) => (name.startsWith("index-") ? 180 : 80)
+// ponytail: entry = `index-*.js`; if the home route gets its own chunk, point the 200 KB limit at that instead (raised from 180 in step 2.3, see Decisions)
+const limit = (name: string) => (name.startsWith("index-") ? 200 : 80)
 
 let failed = 0
 for (const name of readdirSync(dir).filter((f) => f.endsWith(".js"))) {

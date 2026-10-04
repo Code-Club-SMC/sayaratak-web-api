@@ -17,3 +17,8 @@ todos.json
 
 # project plan and progress (local only)
 docs/
+
+# playwright
+playwright-report
+test-results
+!.env.example

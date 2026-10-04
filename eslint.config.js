@@ -16,6 +16,14 @@ export default [
     },
   },
   {
-    ignores: ["eslint.config.js", ".prettierrc", "src/components/ui"],
+    ignores: [
+      "eslint.config.js",
+      ".prettierrc",
+      "src/components/ui",
+      ".output",
+      ".nitro",
+      ".tanstack",
+      "dist",
+    ],
   },
 ]

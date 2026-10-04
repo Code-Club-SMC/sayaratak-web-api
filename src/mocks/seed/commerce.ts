@@ -1,0 +1,202 @@
+import type {
+  Payment,
+  Plan,
+  PromotionPrice,
+  Subscription,
+} from "@/schemas/billing"
+import type { PromotionPriceRow, UserRow } from "../types"
+import { DAY, ago, ahead, int, pick } from "./util"
+
+type PlanRow = [
+  string,
+  Plan["audience"],
+  string,
+  string,
+  number,
+  number,
+  number | undefined,
+  string[],
+]
+// id, audience, English, Arabic, price (SDG), days, limit, features (English|Arabic).
+const planRows: PlanRow[] = [
+  [
+    "plan-user-free",
+    "user",
+    "Free",
+    "مجانية",
+    0,
+    30,
+    3,
+    [
+      "3 active listings|3 إعلانات نشطة",
+      "Listing lasts 30 days|مدة الإعلان 30 يوماً",
+    ],
+  ],
+  [
+    "plan-user-plus",
+    "user",
+    "Plus",
+    "بلس",
+    50_000,
+    30,
+    15,
+    ["15 active listings|15 إعلاناً نشطاً", "Priority support|دعم أولوية"],
+  ],
+  [
+    "plan-dealer-starter",
+    "dealership",
+    "Starter",
+    "المبتدئ",
+    150_000,
+    30,
+    25,
+    ["Up to 25 vehicles|حتى 25 مركبة", "Dealer page|صفحة المعرض"],
+  ],
+  [
+    "plan-dealer-growth",
+    "dealership",
+    "Growth",
+    "النمو",
+    350_000,
+    30,
+    80,
+    [
+      "Up to 80 vehicles|حتى 80 مركبة",
+      "Verified badge review|مراجعة شارة التوثيق",
+    ],
+  ],
+  [
+    "plan-dealer-pro",
+    "dealership",
+    "Pro",
+    "المحترف",
+    700_000,
+    30,
+    300,
+    ["Up to 300 vehicles|حتى 300 مركبة", "Featured placement|ظهور مميز"],
+  ],
+  [
+    "plan-workshop-basic",
+    "workshop",
+    "Basic",
+    "أساسية",
+    50_000,
+    30,
+    undefined,
+    ["Workshop page|صفحة الورشة", "Up to 10 services|حتى 10 خدمات"],
+  ],
+  [
+    "plan-workshop-plus",
+    "workshop",
+    "Plus",
+    "بلس",
+    120_000,
+    30,
+    undefined,
+    ["Unlimited services|خدمات غير محدودة", "Photo gallery|معرض صور"],
+  ],
+  [
+    "plan-mechanic-basic",
+    "mechanic",
+    "Basic",
+    "أساسية",
+    20_000,
+    30,
+    undefined,
+    ["Mechanic page|صفحة الميكانيكي", "Portfolio of 5 photos|معرض 5 صور"],
+  ],
+  [
+    "plan-mechanic-plus",
+    "mechanic",
+    "Plus",
+    "بلس",
+    60_000,
+    30,
+    undefined,
+    ["Unlimited portfolio|معرض غير محدود", "Top of search|ظهور متقدم"],
+  ],
+]
+export const plans: Plan[] = planRows.map(
+  ([id, audience, en, ar, price, durationDays, limit, features], i) => ({
+    id,
+    audience,
+    name: { en, ar },
+    price,
+    durationDays,
+    ...(audience === "dealership"
+      ? { vehicleLimit: limit }
+      : { listingLimit: limit }),
+    features: features.map((f) => {
+      const [fen = "", far = ""] = f.split("|")
+      return { en: fen, ar: far }
+    }),
+    enabled: true,
+    sortOrder: i,
+  })
+)
+
+export const promotionPrices: PromotionPriceRow[] = (
+  [
+    { type: "pin", durationDays: 7, price: 50_000 },
+    { type: "boost", durationDays: 3, price: 20_000 },
+    { type: "homepage", durationDays: 7, price: 120_000 },
+    { type: "sponsored", durationDays: 14, price: 200_000 },
+  ] satisfies PromotionPrice[]
+).map((p) => ({ ...p, id: p.type }))
+
+const demoPlan: Record<string, string> = {
+  "u-omar": "plan-user-plus",
+  "u-dealer": "plan-dealer-growth",
+  "u-workshop": "plan-workshop-plus",
+  "u-mechanic": "plan-mechanic-basic",
+}
+export function seedSubscriptions() {
+  return Object.entries(demoPlan).map<Subscription>(([userId, planId], i) => {
+    const plan = plans.find((p) => p.id === planId)
+    return {
+      id: `sub-${i + 1}`,
+      userId,
+      planId,
+      status: "active",
+      startsAt: ago(10 * DAY),
+      endsAt: ahead(20 * DAY),
+      usage: {
+        used: 0,
+        limit: plan?.listingLimit ?? plan?.vehicleLimit ?? null,
+      },
+    }
+  })
+}
+
+// Five waiting for review, eight already reviewed (six approved, two rejected).
+export function seedPayments(users: UserRow[]) {
+  const payers = users.filter((u) =>
+    ["u-omar", "u-dealer", "u-workshop", "u-mechanic"].includes(u.id)
+  )
+  const out: Payment[] = []
+  for (let i = 0; i < 13; i++) {
+    const user = payers[i % payers.length]
+    if (!user) continue
+    const pending = i < 5
+    const plan = plans.find((p) => p.id === demoPlan[user.id])
+    const isPlan = i % 3 !== 2 && plan
+    const rejected = !pending && i >= 11
+    out.push({
+      id: `pay-${i + 1}`,
+      userId: user.id,
+      itemType: isPlan ? "plan" : "promotion",
+      itemId: isPlan ? plan.id : "boost",
+      itemLabel: isPlan ? plan.name.ar : "تثبيت إعلان",
+      amount: isPlan ? plan.price : pick([20_000, 50_000, 120_000]),
+      method: "bankak_transfer",
+      reference: `SY-${String(100_000 + i * 137).slice(0, 6)}`,
+      transactionRef: String(int(10_000_000, 99_999_999)),
+      receiptUrl: `/mock/receipt-0${(i % 3) + 1}.webp`,
+      status: pending ? "pending_review" : rejected ? "rejected" : "approved",
+      rejectionReason: rejected ? "رقم العملية غير مطابق" : undefined,
+      createdAt: ago((i + 1) * int(4, 30) * 3_600_000),
+      reviewedAt: pending ? undefined : ago(i * 3_600_000),
+    })
+  }
+  return out
+}

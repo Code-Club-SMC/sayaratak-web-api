@@ -1,0 +1,19 @@
+// Prints gzip size of every JS chunk in the production build; fails over budget (A1 rule 10).
+import { readFileSync, readdirSync } from "node:fs"
+import process from "node:process"
+import { gzipSync } from "node:zlib"
+
+const dir = ".output/public/assets"
+// ponytail: entry = `index-*.js`; if the home route gets its own chunk, point the 180 KB limit at that instead
+const limit = (name: string) => (name.startsWith("index-") ? 180 : 80)
+
+let failed = 0
+for (const name of readdirSync(dir).filter((f) => f.endsWith(".js"))) {
+  const kb = gzipSync(readFileSync(`${dir}/${name}`)).length / 1024
+  const over = kb > limit(name)
+  console.log(
+    `${over ? "FAIL" : "ok  "} ${kb.toFixed(1)} KB  ${name} (max ${limit(name)})`
+  )
+  if (over) failed++
+}
+if (failed) process.exit(1)

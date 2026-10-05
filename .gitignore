@@ -1,24 +1,2 @@
-node_modules
+graphify-out/
 .DS_Store
-dist
-dist-ssr
-*.local
-.env*
-.nitro
-.tanstack
-.wrangler
-.output
-.vinxi
-__unconfig*
-todos.json
-
-# typescript
-*.tsbuildinfo
-
-# project plan and progress (local only)
-docs/
-
-# playwright
-playwright-report
-test-results
-!.env.example

@@ -6,13 +6,11 @@ import { PhoneInput } from "@/components/app/phone-input"
 import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
 import { useT } from "@/lib/i18n/use-t"
-import type { DealerLocation } from "../schemas"
 
-// An optional WhatsApp number. "Same as first phone" mirrors the first phone until it is unticked.
-export function WhatsappField() {
+// An optional WhatsApp number. "Same as first phone" mirrors `first` until it is unticked.
+export function WhatsappField({ first }: { first: string }) {
   const { t } = useT()
-  const { control, setValue } = useFormContext<DealerLocation>()
-  const first = useWatch({ control, name: "phones" })[0]?.value ?? ""
+  const { control, setValue } = useFormContext<{ whatsapp: string }>()
   const whatsapp = useWatch({ control, name: "whatsapp" })
   // Until the box is touched, a number equal to the first phone counts as "same".
   const [choice, setChoice] = useState<boolean>()

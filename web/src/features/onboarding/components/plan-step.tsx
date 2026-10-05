@@ -9,15 +9,19 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { billingQueries } from "@/features/billing/queries"
 import { useT } from "@/lib/i18n/use-t"
 import { useDelayed } from "@/lib/use-delayed"
-import type { PlanStep } from "../schemas"
+import type { PlanStep as PlanValues } from "../schemas"
 
-export function DealerPlanStep() {
+// The audience's plans; its free plan is preselected so finishing needs no choice.
+export function PlanStep({
+  audience,
+}: {
+  audience: "dealership" | "workshop"
+}) {
   const { t } = useT()
-  const { control, getValues, setValue } = useFormContext<PlanStep>()
-  const plans = useQuery(billingQueries.plans("dealership"))
+  const { control, getValues, setValue } = useFormContext<PlanValues>()
+  const plans = useQuery(billingQueries.plans(audience))
   const waiting = useDelayed(plans.isPending)
   const free = plans.data?.find((p) => p.price === 0)
-  // The free plan is the default, so finishing takes no choice.
   useEffect(() => {
     if (free && !getValues("planId")) setValue("planId", free.id)
   }, [free, getValues, setValue])

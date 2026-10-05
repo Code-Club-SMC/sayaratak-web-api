@@ -9,13 +9,19 @@ import { mediaFromId } from "../media"
 import type { DealerBusiness } from "../schemas"
 import { DescriptionField } from "./description-field"
 
-export function DealerBusinessStep() {
+// The name, description, logo and cover of a dealership or a workshop.
+export function BusinessStep({ kind }: { kind: "dealership" | "workshop" }) {
   const { t } = useT()
   const { control, register, formState } = useFormContext<DealerBusiness>()
+  const workshop = kind === "workshop"
   return (
     <>
       <FormField
-        label={t("onboarding.dealer_name_label")}
+        label={
+          workshop
+            ? t("onboarding.workshop_name_label")
+            : t("onboarding.dealer_name_label")
+        }
         error={formState.errors.name?.message}
       >
         {(c) => (
@@ -27,7 +33,13 @@ export function DealerBusinessStep() {
           />
         )}
       </FormField>
-      <DescriptionField label={t("onboarding.dealer_about_label")} />
+      <DescriptionField
+        label={
+          workshop
+            ? t("onboarding.workshop_about_label")
+            : t("onboarding.dealer_about_label")
+        }
+      />
       <Controller
         control={control}
         name="logoId"
@@ -50,6 +62,11 @@ export function DealerBusinessStep() {
           />
         )}
       />
+      {workshop && (
+        <p className="text-caption text-muted-foreground">
+          {t("onboarding.gallery_hint")}
+        </p>
+      )}
     </>
   )
 }

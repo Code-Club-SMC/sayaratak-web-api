@@ -397,13 +397,14 @@ const specializations: [string, string, string][] = [
 ]
 export const serviceTemplateRows: [string, string, string][] = [
   ["oil-change", "Oil change", "تغيير زيت"],
-  ["brake-service", "Brake service", "صيانة الفرامل"],
-  ["ac-recharge", "AC recharge", "تعبئة تكييف"],
-  ["full-inspection", "Full inspection", "فحص شامل"],
-  ["tire-balancing", "Tire change and balancing", "تغيير وترصيص إطارات"],
+  ["brakes", "Brakes", "الفرامل"],
   ["engine-diagnostics", "Engine diagnostics", "فحص المحرك"],
-  ["battery-replacement", "Battery replacement", "تغيير بطارية"],
-  ["suspension-repair", "Suspension repair", "إصلاح التعليق"],
+  ["air-conditioning", "Air conditioning", "التكييف"],
+  ["electrical", "Electrical", "الكهرباء"],
+  ["tires-alignment", "Tires and alignment", "الإطارات والميزان"],
+  ["body-paint", "Body and paint", "السمكرة والدهان"],
+  ["transmission", "Transmission", "ناقل الحركة"],
+  ["suspension", "Suspension", "التعليق"],
 ]
 const bi = (en: string, ar: string) => ({ en, ar })
 

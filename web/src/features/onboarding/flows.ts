@@ -1,4 +1,4 @@
-import type { ComponentType } from "react"
+import { createElement, type ComponentType } from "react"
 import type { FieldValues } from "react-hook-form"
 import { z } from "zod"
 
@@ -10,13 +10,18 @@ import {
   hoursStepSchema,
   planStepSchema,
   userOnboardingSchema,
+  workshopBusinessSchema,
+  workshopHoursServicesSchema,
+  workshopLocationSchema,
   type OnboardingRole,
 } from "./schemas"
-import { DealerBusinessStep } from "./components/dealer-business-step"
+import { BusinessStep } from "./components/business-step"
 import { DealerLocationStep } from "./components/dealer-location-step"
-import { DealerPlanStep } from "./components/dealer-plan-step"
 import { HoursStep } from "./components/hours-step"
+import { PlanStep } from "./components/plan-step"
 import { UserDetailsStep } from "./components/user-details-step"
+import { WorkshopHoursServicesStep } from "./components/workshop-hours-services-step"
+import { WorkshopLocationStep } from "./components/workshop-location-step"
 
 export type FlowStep = {
   id: string
@@ -28,6 +33,12 @@ export type FlowStep = {
   defaults?: (me: User) => FieldValues
   Component: ComponentType
 }
+
+// Steps shared by the dealership and workshop flows take their audience as a prop.
+const businessStep = (kind: "dealership" | "workshop") => () =>
+  createElement(BusinessStep, { kind })
+const planStep = (audience: "dealership" | "workshop") => () =>
+  createElement(PlanStep, { audience })
 
 // Steps 5.10 to 5.13 replace `schema` and `Component` of each step with its real fields.
 const noFields = () => null
@@ -60,7 +71,7 @@ export const flows = {
       ...step("dealership", "business"),
       schema: dealerBusinessSchema,
       defaults: () => ({ name: "", description: "" }),
-      Component: DealerBusinessStep,
+      Component: businessStep("dealership"),
     },
     {
       ...step("dealership", "location"),
@@ -85,12 +96,42 @@ export const flows = {
       ...step("dealership", "plan"),
       schema: planStepSchema,
       defaults: () => ({ planId: "" }),
-      Component: DealerPlanStep,
+      Component: planStep("dealership"),
     },
   ],
-  workshop: ["business", "location", "hours-services", "plan"].map((id) =>
-    step("workshop", id)
-  ),
+  workshop: [
+    {
+      ...step("workshop", "business"),
+      schema: workshopBusinessSchema,
+      defaults: () => ({ name: "", description: "" }),
+      Component: businessStep("workshop"),
+    },
+    {
+      ...step("workshop", "location"),
+      schema: workshopLocationSchema,
+      defaults: (me) => ({
+        cityId: me.cityId ?? "",
+        districtId: "",
+        address: "",
+        location: null,
+        phone: me.phone ?? "",
+        whatsapp: "",
+      }),
+      Component: WorkshopLocationStep,
+    },
+    {
+      ...step("workshop", "hours-services"),
+      schema: workshopHoursServicesSchema,
+      defaults: () => ({ hours: defaultWeeklyHours, services: [] }),
+      Component: WorkshopHoursServicesStep,
+    },
+    {
+      ...step("workshop", "plan"),
+      schema: planStepSchema,
+      defaults: () => ({ planId: "" }),
+      Component: planStep("workshop"),
+    },
+  ],
   mechanic: ["about", "expertise", "contact-plan"].map((id) =>
     step("mechanic", id)
   ),

@@ -86,6 +86,16 @@ const planRows: PlanRow[] = [
     ["Up to 300 vehicles|حتى 300 مركبة", "Featured placement|ظهور مميز"],
   ],
   [
+    "plan-workshop-free",
+    "workshop",
+    "Free",
+    "مجانية",
+    0,
+    30,
+    undefined,
+    ["Workshop page|صفحة الورشة", "Listed in the directory|ظهور في الدليل"],
+  ],
+  [
     "plan-workshop-basic",
     "workshop",
     "Basic",

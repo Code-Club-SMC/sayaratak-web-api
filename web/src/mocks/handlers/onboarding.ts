@@ -12,6 +12,9 @@ import { nowIso } from "../lib"
 import { template } from "./uploads"
 
 const phoneRows = z.array(z.object({ value: phoneSchema }))
+const serviceRows = z.array(
+  z.object({ name: z.string(), priceFrom: z.number().int().nullable() })
+)
 
 // Creates the business record for the chosen role and ends onboarding. The forms validate before they post, so a missing or malformed field falls back to a default here.
 route("POST", "/onboarding/complete", async (c) => {
@@ -57,31 +60,27 @@ route("POST", "/onboarding/complete", async (c) => {
       inventoryCount: 0,
       ...place,
     })
-    // Every dealership starts on the free plan; a paid choice is paid for afterwards.
-    const free = db.plans.find((p) => p.audience === role && p.price === 0)
-    if (free)
-      db.subscriptions.push({
-        id: newId("sub"),
-        userId: user.id,
-        planId: free.id,
-        status: "active",
-        startsAt: nowIso(),
-        endsAt: new Date(Date.now() + free.durationDays * DAY).toISOString(),
-        usage: { used: 0, limit: free.vehicleLimit ?? null },
-      })
   }
-  if (role === "workshop")
+  if (role === "workshop") {
+    const services = get(serviceRows, "services") ?? []
     db.workshops.push({
       ...base,
       id: newId("w"),
-      logoUrl: "",
+      logoUrl: image("logoId"),
+      coverUrl: image("coverId"),
       description: text("description"),
       phone,
       whatsapp,
       images: [],
-      services: [],
+      services: services.map((s) => ({
+        id: newId("svc"),
+        name: s.name,
+        description: "",
+        ...(s.priceFrom ? { priceFrom: s.priceFrom } : {}),
+      })),
       ...place,
     })
+  }
   if (role === "mechanic")
     db.mechanics.push({
       ...base,
@@ -101,6 +100,21 @@ route("POST", "/onboarding/complete", async (c) => {
     if (text("avatarId")) user.avatarUrl = template(text("avatarId"))
     user.interests = interestSchema.array().catch([]).parse(payload.interests)
   }
+  // A business starts on the free plan of its audience; a paid choice is paid for afterwards.
+  const free =
+    role === "user"
+      ? undefined
+      : db.plans.find((p) => p.audience === role && p.price === 0)
+  if (free)
+    db.subscriptions.push({
+      id: newId("sub"),
+      userId: user.id,
+      planId: free.id,
+      status: "active",
+      startsAt: nowIso(),
+      endsAt: new Date(Date.now() + free.durationDays * DAY).toISOString(),
+      usage: { used: 0, limit: free.vehicleLimit ?? free.listingLimit ?? null },
+    })
   user.role = role
   user.cityId = city
   user.onboardingDone = true

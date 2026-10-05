@@ -3,6 +3,7 @@ import { z } from "zod"
 import {
   geoSchema,
   nameSchema,
+  optionalInt,
   phoneSchema,
   requiredText,
   weeklyHoursSchema,
@@ -54,6 +55,23 @@ export type DealerLocation = z.infer<typeof dealerLocationSchema>
 
 export const hoursStepSchema = z.object({ hours: weeklyHoursSchema })
 export type HoursStep = z.infer<typeof hoursStepSchema>
+
+export const workshopBusinessSchema = dealerBusinessSchema
+
+export const workshopLocationSchema = dealerLocationSchema
+  .omit({ phones: true })
+  .extend({ phone: phoneSchema })
+export type WorkshopLocation = z.infer<typeof workshopLocationSchema>
+
+export const serviceRowSchema = z.object({
+  name: requiredText(60),
+  priceFrom: optionalInt(1, 9_999_999_999, "validation.price_min"),
+})
+
+export const workshopHoursServicesSchema = hoursStepSchema.extend({
+  services: z.array(serviceRowSchema).min(1, "validation.select_min").max(10),
+})
+export type WorkshopHoursServices = z.infer<typeof workshopHoursServicesSchema>
 
 export const planStepSchema = z.object({
   planId: z.string().min(1, "validation.required"),

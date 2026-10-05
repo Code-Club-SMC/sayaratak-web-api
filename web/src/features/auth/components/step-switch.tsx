@@ -1,10 +1,9 @@
 import type { Dispatch, ReactNode } from "react"
 
-import { useT } from "@/lib/i18n/use-t"
 import type { AuthAction, AuthState, AuthStep } from "../auth-flow-state"
-import { stepCopy } from "./auth-header"
 import { CreateAccountStep } from "./create-account-step"
 import { IdentifierStep } from "./identifier-step"
+import { OtpStep } from "./otp-step"
 import { PasswordStep } from "./password-step"
 
 export type StepProps = {
@@ -15,21 +14,11 @@ export type StepProps = {
   mode: "dialog" | "page"
 }
 
-// Stands in until step 5.5 builds the real step.
-function StepPlaceholder({ state }: StepProps) {
-  const { t } = useT()
-  return (
-    <p className="text-ui text-muted-foreground">
-      {t("auth.step_placeholder", { step: t(stepCopy[state.step].title) })}
-    </p>
-  )
-}
-
 const steps = {
   identifier: IdentifierStep,
   password: PasswordStep,
   create: CreateAccountStep,
-  otp: StepPlaceholder,
+  otp: OtpStep,
 } satisfies Record<AuthStep, (props: StepProps) => ReactNode>
 
 export function StepSwitch(props: StepProps) {

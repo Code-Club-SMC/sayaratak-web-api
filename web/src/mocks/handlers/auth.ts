@@ -150,11 +150,14 @@ route("POST", "/auth/otp/verify", async (c) => {
   const { code, identifier } = await c.body(otpVerifyInputSchema)
   if (code !== "123456")
     throw fail(422, "otp_invalid", { code: "auth.otp_invalid" })
-  if (c.user) {
-    if (identifier ? isEmail(identifier) : !c.user.phone)
-      c.user.verifiedEmail = true
-    else c.user.verifiedPhone = true
-    return publicUser(c.user)
+  // Signed out (code instead of a password): the code signs in the matching account.
+  const user = c.user ?? (identifier ? findByIdentifier(identifier) : undefined)
+  if (user) {
+    if (user.banned) throw fail(403, "banned")
+    if (identifier ? isEmail(identifier) : !user.phone)
+      user.verifiedEmail = true
+    else user.verifiedPhone = true
+    return c.user ? publicUser(user) : withSession(user.id, publicUser(user))
   }
   return okSchema.parse({ ok: true })
 })

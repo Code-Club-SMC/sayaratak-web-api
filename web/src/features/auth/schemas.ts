@@ -13,3 +13,6 @@ export const createAccountSchema = z.object({
 export type CreateAccountForm = z.infer<typeof createAccountSchema>
 export type PasswordForm = z.infer<typeof passwordFormSchema>
 export type IdentifierForm = z.infer<typeof identifierFormSchema>
+export const otpFormSchema = z.object({
+  code: z.string().regex(/^\d{6}$/, "validation.otp"),
+})

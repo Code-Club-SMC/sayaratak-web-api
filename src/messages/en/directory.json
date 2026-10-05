@@ -1,1 +1,9 @@
-{}
+{
+  "directory.stars_of_five": "{{rating}} out of 5 stars",
+  "directory.reviews_count_one": "{{count}} review",
+  "directory.reviews_count_other": "{{count}} reviews",
+  "directory.no_reviews": "No reviews yet",
+  "directory.unavailable": "Unavailable",
+  "directory.histogram_row_one": "{{count}} star: {{reviews}}",
+  "directory.histogram_row_other": "{{count}} stars: {{reviews}}"
+}

@@ -21,5 +21,8 @@
   "fuel.electric": "Electric",
   "fuel.lpg": "Gas",
   "transmission.automatic": "Automatic",
-  "transmission.manual": "Manual"
+  "transmission.manual": "Manual",
+  "listing.per_day": "per day",
+  "listing.per_week": "per week",
+  "listing.per_month": "per month"
 }

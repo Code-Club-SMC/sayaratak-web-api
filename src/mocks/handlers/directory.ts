@@ -1,3 +1,4 @@
+import { isOpenNow } from "@/lib/hours"
 import {
   dealershipSchema,
   mechanicSchema,
@@ -20,14 +21,6 @@ import { fail, needRole, pageParams, route } from "../http"
 import { byNewest, businessOf } from "../lib"
 import { haversineKm } from "../search"
 
-const KHARTOUM_OFFSET_MS = 2 * 3_600_000
-// Open now from weekly hours, on the Khartoum clock (UTC+2, no daylight saving).
-const isOpenNow = (hours: Workshop["hours"]) => {
-  const t = new Date(Date.now() + KHARTOUM_OFFSET_MS)
-  const today = hours.find((h) => h.day === t.getUTCDay())
-  const hm = `${String(t.getUTCHours()).padStart(2, "0")}:${String(t.getUTCMinutes()).padStart(2, "0")}`
-  return Boolean(today && !today.closed && today.open <= hm && hm < today.close)
-}
 const inventory = (ownerId: string, dealerId: string) =>
   db.listings.filter(
     (l) =>
@@ -94,7 +87,9 @@ route("GET", "/workshops", (c) => {
       (w) => !service || w.services.some((s) => s.id.startsWith(`${service}-`))
     )
     .filter((w) => c.query.get("verified") !== "true" || w.verified)
-    .filter((w) => c.query.get("openNow") !== "true" || isOpenNow(w.hours))
+    .filter(
+      (w) => c.query.get("openNow") !== "true" || isOpenNow(w.hours, Date.now())
+    )
     .sort(sorts[c.query.get("sort") ?? "rating"] ?? rating)
   const { page, pageSize } = pageParams(c.query, 12)
   return pageOf(workshopSchema).parse(paginate(rows, page, pageSize))

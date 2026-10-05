@@ -1,1 +1,17 @@
-{}
+{
+  "directory.stars_of_five": "{{rating}} من 5 نجوم",
+  "directory.reviews_count_zero": "لا توجد مراجعات",
+  "directory.reviews_count_one": "مراجعة واحدة",
+  "directory.reviews_count_two": "مراجعتان",
+  "directory.reviews_count_few": "{{count}} مراجعات",
+  "directory.reviews_count_many": "{{count}} مراجعة",
+  "directory.reviews_count_other": "{{count}} مراجعة",
+  "directory.no_reviews": "لا توجد مراجعات بعد",
+  "directory.unavailable": "غير متاح",
+  "directory.histogram_row_zero": "{{count}} نجمة: {{reviews}}",
+  "directory.histogram_row_one": "نجمة واحدة: {{reviews}}",
+  "directory.histogram_row_two": "نجمتان: {{reviews}}",
+  "directory.histogram_row_few": "{{count}} نجوم: {{reviews}}",
+  "directory.histogram_row_many": "{{count}} نجمة: {{reviews}}",
+  "directory.histogram_row_other": "{{count}} نجمة: {{reviews}}"
+}

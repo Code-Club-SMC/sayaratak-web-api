@@ -14,34 +14,37 @@ import {
 } from "@/schemas/profile"
 
 type Query = Record<string, unknown>
-const schemas = {
-  dealerships: dealershipSchema,
-  workshops: workshopSchema,
-  mechanics: mechanicSchema,
-} as const
-export type DirectoryType = keyof typeof schemas
+export type DirectoryType = "dealerships" | "workshops" | "mechanics"
 
+// One typed pair per directory: a generic `type` argument loses the row type at the call site.
 // Filters: dealerships q, city, verified, sort; workshops add service, openNow, lat and lng; mechanics add specialization, minYears, available.
-export const directoryQueries = {
-  list: <T extends DirectoryType>(type: T, filters: Query = {}) =>
+const directory = <TSchema extends z.ZodType>(
+  type: DirectoryType,
+  schema: TSchema
+) => ({
+  list: (filters: Query = {}) =>
     queryOptions({
       queryKey: keys.directory.list(type, filters),
       queryFn: ({ signal }) =>
         apiFetch(`/${type}`, {
           query: filters,
-          schema: pageOf(schemas[type]),
+          schema: pageOf(schema),
           signal,
         }),
       staleTime: 30_000,
       placeholderData: keepPreviousData,
     }),
-  detail: <T extends DirectoryType>(type: T, slug: string) =>
+  detail: (slug: string) =>
     queryOptions({
       queryKey: keys.directory.detail(type, slug),
-      queryFn: ({ signal }) =>
-        apiFetch(`/${type}/${slug}`, { schema: schemas[type], signal }),
+      queryFn: ({ signal }) => apiFetch(`/${type}/${slug}`, { schema, signal }),
       staleTime: 5 * 60_000,
     }),
+})
+export const directoryQueries = {
+  dealerships: directory("dealerships", dealershipSchema),
+  workshops: directory("workshops", workshopSchema),
+  mechanics: directory("mechanics", mechanicSchema),
 }
 
 const mineSchema = z.union([dealershipSchema, workshopSchema, mechanicSchema])

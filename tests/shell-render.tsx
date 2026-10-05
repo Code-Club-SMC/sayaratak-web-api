@@ -25,6 +25,14 @@ import arError from "@/messages/ar/error.json"
 import enError from "@/messages/en/error.json"
 import arValidation from "@/messages/ar/validation.json"
 import enValidation from "@/messages/en/validation.json"
+import arListing from "@/messages/ar/listing.json"
+import enListing from "@/messages/en/listing.json"
+import arDirectory from "@/messages/ar/directory.json"
+import enDirectory from "@/messages/en/directory.json"
+import arStatus from "@/messages/ar/status.json"
+import enStatus from "@/messages/en/status.json"
+import arToast from "@/messages/ar/toast.json"
+import enToast from "@/messages/en/toast.json"
 import { useMockFetch } from "./mock-fetch"
 
 export async function renderShell(
@@ -57,6 +65,10 @@ export async function renderShell(
     auth: locale === "ar" ? arAuth : enAuth,
     error: locale === "ar" ? arError : enError,
     validation: locale === "ar" ? arValidation : enValidation,
+    listing: locale === "ar" ? arListing : enListing,
+    directory: locale === "ar" ? arDirectory : enDirectory,
+    status: locale === "ar" ? arStatus : enStatus,
+    toast: locale === "ar" ? arToast : enToast,
   })
   const root = createRootRoute({
     component: () => (

@@ -21,5 +21,8 @@
   "fuel.electric": "كهربائي",
   "fuel.lpg": "غاز",
   "transmission.automatic": "أوتوماتيك",
-  "transmission.manual": "يدوي"
+  "transmission.manual": "يدوي",
+  "listing.per_day": "في اليوم",
+  "listing.per_week": "في الأسبوع",
+  "listing.per_month": "في الشهر"
 }

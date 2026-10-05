@@ -35,11 +35,13 @@ function Demo() {
 
 beforeEach(() => {
   resetDb()
+  vi.stubEnv("VITE_DEMO", "true")
   stubViewport(false)
 })
 afterEach(() => {
   closeAuthGate()
   vi.unstubAllGlobals()
+  vi.unstubAllEnvs()
 })
 
 describe("auth dialog", () => {

@@ -24,7 +24,12 @@ export function AuthFlow({
         reason={mode === "dialog" ? reason : undefined}
         dispatch={dispatch}
       />
-      <StepSwitch state={state} dispatch={dispatch} onDone={onDone} />
+      <StepSwitch
+        state={state}
+        dispatch={dispatch}
+        onDone={onDone}
+        mode={mode}
+      />
       <AuthFooter />
     </div>
   )

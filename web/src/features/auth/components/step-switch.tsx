@@ -1,45 +1,30 @@
 import type { Dispatch, ReactNode } from "react"
 
-import { Button } from "@/components/ui/button"
 import { useT } from "@/lib/i18n/use-t"
-import { useLogin } from "../queries"
 import type { AuthAction, AuthState, AuthStep } from "../auth-flow-state"
 import { stepCopy } from "./auth-header"
+import { IdentifierStep } from "./identifier-step"
 
 export type StepProps = {
   state: AuthState
   dispatch: Dispatch<AuthAction>
   onDone: () => void
+  // The dialog focuses its first field itself; autoFocus there would steal the focus-return target.
+  mode: "dialog" | "page"
 }
 
-// Stands in until steps 5.2 to 5.5 build the real step. The identifier one keeps a demo sign in so gated buttons stay usable.
-function StepPlaceholder({ state, onDone }: StepProps) {
+// Stands in until steps 5.3 to 5.5 build the real step.
+function StepPlaceholder({ state }: StepProps) {
   const { t } = useT()
-  const login = useLogin()
   return (
-    <div className="flex flex-col gap-3">
-      <p className="text-ui text-muted-foreground">
-        {t("auth.step_placeholder", { step: t(stepCopy[state.step].title) })}
-      </p>
-      {state.step === "identifier" && (
-        <Button
-          disabled={login.isPending}
-          onClick={() =>
-            login.mutate(
-              { identifier: "+249912345601", password: "Demo1234" },
-              { onSuccess: onDone }
-            )
-          }
-        >
-          {t("auth.demo_user")}
-        </Button>
-      )}
-    </div>
+    <p className="text-ui text-muted-foreground">
+      {t("auth.step_placeholder", { step: t(stepCopy[state.step].title) })}
+    </p>
   )
 }
 
 const steps = {
-  identifier: StepPlaceholder,
+  identifier: IdentifierStep,
   password: StepPlaceholder,
   create: StepPlaceholder,
   otp: StepPlaceholder,

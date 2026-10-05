@@ -62,6 +62,11 @@ describe("signInDestination", () => {
     ),
     onboardingDone,
   })
+  it("a new account does role selection first and keeps the redirect for the end", () => {
+    expect(signInDestination(user(false), "/en/post", "en")).toBe(
+      "/en/onboarding/role?redirect=%2Fen%2Fpost"
+    )
+  })
   it("prefers redirect, then the dashboard, then role selection", () => {
     expect(signInDestination(user(true), "/ar/post", "en")).toBe("/en/post")
     expect(signInDestination(user(true), undefined, "en")).toBe("/en/dealer")

@@ -1,5 +1,6 @@
 import { createFileRoute, notFound, redirect } from "@tanstack/react-router"
 
+import { redirectSearch, withRedirect } from "@/features/auth/destination"
 import { draftQuery } from "@/features/auth/queries"
 import { OnboardingStepPage } from "@/features/onboarding/components/onboarding-step-page"
 import { stepHref } from "@/features/onboarding/draft"
@@ -12,16 +13,20 @@ import { localeHref } from "@/lib/navigation"
 import { buildHead } from "@/lib/seo"
 
 export const Route = createFileRoute("/$locale/onboarding/$role/$step")({
+  validateSearch: redirectSearch,
   // A step opens only for the chosen role and once every earlier required step is saved; otherwise the person goes back to where they left off.
   beforeLoad: async (ctx) => {
     if (!isRole(ctx.params.role)) throw notFound()
-    const { role, steps, reach, resume } = await loadOnboarding(ctx)
+    const { role, steps, reach, resume, target } = await loadOnboarding(ctx)
     const { locale } = ctx.context
     if (role !== ctx.params.role)
-      throw redirect({ href: localeHref("/onboarding/role", locale) })
+      throw redirect({
+        href: localeHref(withRedirect("/onboarding/role", target), locale),
+      })
     const index = steps.findIndex((s) => s.id === ctx.params.step)
     if (index < 0) throw notFound()
-    if (index > reach) throw redirect({ href: stepHref(role, resume, locale) })
+    if (index > reach)
+      throw redirect({ href: stepHref(role, resume, locale, target) })
   },
   loader: async ({ context, params }) => {
     const step = isRole(params.role)
@@ -52,8 +57,13 @@ export const Route = createFileRoute("/$locale/onboarding/$role/$step")({
       : {},
   component: function OnboardingStep() {
     const { role, step } = Route.useParams()
+    const search = Route.useSearch()
     return isRole(role) ? (
-      <OnboardingStepPage role={role} stepId={step} />
+      <OnboardingStepPage
+        role={role}
+        stepId={step}
+        redirect={search.redirect}
+      />
     ) : null
   },
 })

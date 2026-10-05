@@ -40,30 +40,47 @@ const dummy = (extra: Partial<FlowStep> = {}): FlowStep[] => [
 ]
 
 // The page follows the last path segment, as the real route does.
-function Harness({ steps }: { steps: FlowStep[] }) {
+function Harness({
+  steps,
+  redirect,
+}: {
+  steps: FlowStep[]
+  redirect?: string
+}) {
   const stepId = useRouterState({
     select: (s) => s.location.pathname.split("/").pop() ?? "",
   })
-  return <OnboardingStepPage role="dealership" stepId={stepId} steps={steps} />
+  return (
+    <OnboardingStepPage
+      role="dealership"
+      stepId={stepId}
+      steps={steps}
+      redirect={redirect}
+    />
+  )
 }
 
 const user = () => db.users.find((u) => u.role === "user" && u.onboardingDone)!
 const draft = () =>
   db.drafts.find((d) => d.id === `${user().id}:onboarding:dealership`)?.data
-const open = (steps = dummy(), step = "a") =>
-  renderShell(<Harness steps={steps} />, {
+const open = (steps = dummy(), step = "a", redirect?: string) =>
+  renderShell(<Harness steps={steps} redirect={redirect} />, {
     role: "user",
     path: `/en/onboarding/dealership/${step}`,
   })
 // The route loader has the draft ready before the page renders; tests wait for it.
-const openWithDraft = async (steps: FlowStep[], data: object) => {
+const openWithDraft = async (
+  steps: FlowStep[],
+  data: object,
+  redirect?: string
+) => {
   db.drafts.push({
     id: `${user().id}:onboarding:dealership`,
     userId: user().id,
     key: "onboarding:dealership",
     data: { ...data },
   })
-  const shell = await open(steps, "b")
+  const shell = await open(steps, "b", redirect)
   await waitFor(() =>
     expect(
       shell.client.getQueryData(draftQuery("onboarding:dealership").queryKey)
@@ -165,6 +182,49 @@ describe("OnboardingStepPage", () => {
     await waitFor(() =>
       expect(router.state.location.pathname).toBe("/en/dealer")
     )
+    expect(db.dealerships.some((d) => d.name === "Finish Co")).toBe(true)
+  })
+})
+
+describe("redirect target", () => {
+  const via = "?redirect=%2Fen%2Fpost"
+  it("travels with Next and Back, and Save and exit drops it", async () => {
+    const { router } = await open(dummy(), "a", "/en/post")
+    type("Abc")
+    fireEvent.click(screen.getByRole("button", { name: "Next" }))
+    await waitFor(() =>
+      expect(router.state.location.href).toBe(
+        `/en/onboarding/dealership/b${via}`
+      )
+    )
+    fireEvent.click(screen.getByRole("button", { name: "Back" }))
+    await waitFor(() =>
+      expect(router.state.location.href).toBe(
+        `/en/onboarding/dealership/a${via}`
+      )
+    )
+    fireEvent.click(screen.getByRole("button", { name: "Save and exit" }))
+    await waitFor(() => expect(router.state.location.href).toBe("/en"))
+  })
+
+  it("Back from the first step keeps it for role selection", async () => {
+    const { router } = await open(dummy(), "a", "/en/post")
+    fireEvent.click(screen.getByRole("button", { name: "Back" }))
+    await waitFor(() =>
+      expect(router.state.location.href).toBe(`/en/onboarding/role${via}`)
+    )
+  })
+
+  it("finishing lands on the target instead of the dashboard", async () => {
+    const { router } = await openWithDraft(
+      dummy({ optional: false }),
+      { a: { name: "Finish Co" } },
+      "/en/post"
+    )
+    fireEvent.click(
+      screen.getByRole("button", { name: "Create my dealership" })
+    )
+    await waitFor(() => expect(router.state.location.href).toBe("/en/post"))
     expect(db.dealerships.some((d) => d.name === "Finish Co")).toBe(true)
   })
 })

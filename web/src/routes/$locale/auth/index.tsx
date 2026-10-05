@@ -1,20 +1,14 @@
 import { createFileRoute, redirect } from "@tanstack/react-router"
-import { z } from "zod"
 
 import { AuthCardLayout } from "@/components/app/auth-card-layout"
 import { AuthFlow } from "@/features/auth/components/auth-flow"
-import { signInDestination } from "@/features/auth/destination"
+import { redirectSearch, signInDestination } from "@/features/auth/destination"
 import { useAuthDone } from "@/features/auth/use-auth-done"
 import { getCopy } from "@/lib/i18n/server"
-import { safeRedirect } from "@/lib/navigation"
 import { buildHead } from "@/lib/seo"
 
-const searchSchema = z.object({
-  redirect: z.string().optional().transform(safeRedirect).catch(undefined),
-})
-
 export const Route = createFileRoute("/$locale/auth/")({
-  validateSearch: searchSchema,
+  validateSearch: redirectSearch,
   // A signed-in visitor has nothing to do here.
   beforeLoad: ({ context, search }) => {
     if (context.me)

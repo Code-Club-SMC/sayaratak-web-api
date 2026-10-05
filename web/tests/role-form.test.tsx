@@ -26,6 +26,18 @@ describe("RoleForm", () => {
     expect(saved("onboarding:role")).toEqual({ role: "user" })
   })
 
+  it("carries the redirect into the flow", async () => {
+    const { router } = await renderShell(<RoleForm redirect="/en/post" />, {
+      role: "user",
+    })
+    fireEvent.click(screen.getByRole("button", { name: "Continue" }))
+    await waitFor(() =>
+      expect(router.state.location.href).toBe(
+        "/en/onboarding/user/details?redirect=%2Fen%2Fpost"
+      )
+    )
+  })
+
   it("sends each role to its own flow and keeps another role's draft", async () => {
     db.drafts.push({
       id: `${user().id}:onboarding:dealership`,

@@ -27,7 +27,7 @@ const options: { role: RoleChoice["role"]; icon: LucideIcon }[] = [
   { role: "mechanic", icon: UserRoundIcon },
 ]
 
-export function RoleForm() {
+export function RoleForm({ redirect }: { redirect?: string }) {
   const { t, locale } = useT()
   const router = useRouter()
   const draft = useQuery(draftQuery(roleDraftKey))
@@ -47,7 +47,9 @@ export function RoleForm() {
           { role },
           {
             onSuccess: () =>
-              router.history.push(stepHref(role, firstStepId(role), locale)),
+              router.history.push(
+                stepHref(role, firstStepId(role), locale, redirect)
+              ),
           }
         )
       )}

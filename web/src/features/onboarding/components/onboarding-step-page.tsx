@@ -9,6 +9,7 @@ import { StepHeader } from "@/components/app/step-header"
 import { StickyFooter } from "@/components/app/sticky-footer"
 import { SubmitButton } from "@/components/app/submit-button"
 import { Button } from "@/components/ui/button"
+import { withRedirect } from "@/features/auth/destination"
 import { draftQuery, useSaveDraft } from "@/features/auth/queries"
 import { meQuery } from "@/features/auth/me-query"
 import { useT } from "@/lib/i18n/use-t"
@@ -28,10 +29,13 @@ export function OnboardingStepPage({
   role,
   stepId,
   steps = flows[role],
+  redirect,
 }: {
   role: OnboardingRole
   stepId: string
   steps?: FlowStep[]
+  // Where to land after the last step instead of the dashboard (set when sign in sent a new account here).
+  redirect?: string
 }) {
   const { t, locale } = useT()
   const router = useRouter()
@@ -55,18 +59,19 @@ export function OnboardingStepPage({
   const next = steps[index + 1]
   const prev = steps[index - 1]
   const go = (path: string) => router.history.push(localeHref(path, locale))
+  const goStep = (path: string) => go(withRedirect(path, redirect))
   const finish = (all: DraftData) =>
     complete.mutate(
       { role, payload: flatValues(steps, all) },
-      { onSuccess: () => go(`${dashboardPath(role)}?welcome=1`) }
+      { onSuccess: () => go(redirect ?? `${dashboardPath(role)}?welcome=1`) }
     )
   const advance = (all: DraftData) =>
-    next ? go(`/onboarding/${role}/${next.id}`) : finish(all)
+    next ? goStep(`/onboarding/${role}/${next.id}`) : finish(all)
   const draftWith = (values: FieldValues) => ({ ...data, [step.id]: values })
   // Back and Save and exit leave at once; the save carries on in the background.
   const back = () => {
     save.mutate(draftWith(form.getValues()))
-    go(prev ? `/onboarding/${role}/${prev.id}` : "/onboarding/role")
+    goStep(prev ? `/onboarding/${role}/${prev.id}` : "/onboarding/role")
   }
   const exit = () => {
     if (step.schema.safeParse(form.getValues()).success)

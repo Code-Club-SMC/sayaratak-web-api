@@ -1,5 +1,6 @@
 import { createFileRoute, redirect } from "@tanstack/react-router"
 
+import { redirectSearch } from "@/features/auth/destination"
 import { requireUser } from "@/features/auth/guards"
 import { draftQuery } from "@/features/auth/queries"
 import { OnboardingLayout } from "@/features/onboarding/components/onboarding-layout"
@@ -10,12 +11,16 @@ import { dashboardPath, localeHref } from "@/lib/navigation"
 import { buildHead } from "@/lib/seo"
 
 export const Route = createFileRoute("/$locale/onboarding/role")({
-  // Signed in, onboarding not finished. A finished account goes to its dashboard.
+  validateSearch: redirectSearch,
+  // Signed in, onboarding not finished. A finished account goes to the `redirect` target, else its dashboard.
   beforeLoad: (ctx) => {
     const me = requireUser(ctx)
     if (me.onboardingDone)
       throw redirect({
-        href: localeHref(dashboardPath(me.role), ctx.context.locale),
+        href: localeHref(
+          ctx.search.redirect ?? dashboardPath(me.role),
+          ctx.context.locale
+        ),
       })
   },
   loader: async ({ context }) => {
@@ -34,9 +39,11 @@ export const Route = createFileRoute("/$locale/onboarding/role")({
     loaderData
       ? buildHead({ ...loaderData, path: "/onboarding/role", noindex: true })
       : {},
-  component: () => (
-    <OnboardingLayout>
-      <RoleForm />
-    </OnboardingLayout>
-  ),
+  component: function Role() {
+    return (
+      <OnboardingLayout>
+        <RoleForm redirect={Route.useSearch().redirect} />
+      </OnboardingLayout>
+    )
+  },
 })

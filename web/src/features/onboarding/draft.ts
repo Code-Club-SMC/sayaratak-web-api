@@ -1,5 +1,6 @@
 import { z } from "zod"
 
+import { withRedirect } from "@/features/auth/destination"
 import { localeHref } from "@/lib/navigation"
 import type { Locale } from "@/schemas/locale"
 import type { FlowStep } from "./flows"
@@ -31,5 +32,9 @@ export const flatValues = (steps: FlowStep[], data: DraftData) =>
     {}
   )
 
-export const stepHref = (role: string, step: string, locale: Locale) =>
-  localeHref(`/onboarding/${role}/${step}`, locale)
+export const stepHref = (
+  role: string,
+  step: string,
+  locale: Locale,
+  redirect?: string
+) => localeHref(withRedirect(`/onboarding/${role}/${step}`, redirect), locale)

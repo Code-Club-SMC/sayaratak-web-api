@@ -157,6 +157,15 @@ export function useUpdateNotificationPrefs() {
     })
   )
 }
+// For a page that is closing or reloading: keepalive lets the request outlive it, and nobody is left to read a failure.
+export const saveDraftOnExit = (key: string, data: Record<string, unknown>) =>
+  void apiFetch(`/drafts/${key}`, {
+    method: "PATCH",
+    body: { data },
+    schema: draftSchema,
+    keepalive: true,
+  }).catch(() => undefined)
+
 export const useSaveDraft = (key: string) =>
   useApiMutation(
     (data: Record<string, unknown>) =>

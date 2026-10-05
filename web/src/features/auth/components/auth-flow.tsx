@@ -1,4 +1,6 @@
-import { useReducer } from "react"
+import { useReducer, useRef } from "react"
+
+import { useEnterKeyHints } from "@/hooks/use-enter-key-hints"
 
 import { authReducer, initialAuthState } from "../auth-flow-state"
 import { useAuthGate } from "../auth-gate"
@@ -16,8 +18,10 @@ export function AuthFlow({
 }) {
   const [state, dispatch] = useReducer(authReducer, initialAuthState)
   const { reason } = useAuthGate()
+  const root = useRef<HTMLDivElement>(null)
+  useEnterKeyHints(root, state.step === "identifier" ? "next" : "done")
   return (
-    <div className="flex flex-col gap-6">
+    <div ref={root} data-reserve-errors className="flex flex-col gap-6">
       <AuthHeader
         mode={mode}
         step={state.step}

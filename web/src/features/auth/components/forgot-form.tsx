@@ -1,3 +1,4 @@
+import { useRef } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 
@@ -5,6 +6,7 @@ import { FormField } from "@/components/app/form-field"
 import { ShellLink } from "@/components/app/shell-link"
 import { SubmitButton } from "@/components/app/submit-button"
 import { Input } from "@/components/ui/input"
+import { useEnterKeyHints } from "@/hooks/use-enter-key-hints"
 import { useT } from "@/lib/i18n/use-t"
 import { useForgotPassword } from "../queries"
 import { forgotFormSchema, type IdentifierForm } from "../schemas"
@@ -15,6 +17,8 @@ const linkClass =
 export function ForgotForm() {
   const { t } = useT()
   const forgot = useForgotPassword()
+  const root = useRef<HTMLFormElement>(null)
+  useEnterKeyHints(root, "done")
   const form = useForm<IdentifierForm>({
     resolver: zodResolver(forgotFormSchema),
     mode: "onTouched",
@@ -38,7 +42,9 @@ export function ForgotForm() {
     )
   return (
     <form
+      ref={root}
       noValidate
+      data-reserve-errors
       className="flex flex-col gap-4"
       onSubmit={form.handleSubmit((body) => forgot.mutate(body))}
     >

@@ -32,31 +32,36 @@ export function AuthHeader({
   const copy = stepCopy[step]
   const title = t(copy.title)
   const helper = step === "identifier" && reason ? t(reason) : t(copy.helper)
+  // Icon only and inside the title row, so the title stays put when Back appears.
+  const back = step !== "identifier" && (
+    <Button
+      type="button"
+      variant="ghost"
+      size="icon"
+      aria-label={t("common.back")}
+      className="-my-1 -ms-2 shrink-0"
+      onClick={() => dispatch({ type: "back" })}
+    >
+      <ChevronLeftIcon className="rtl:-scale-x-100" />
+    </Button>
+  )
   return (
     <div className="flex flex-col gap-3">
-      {step !== "identifier" && (
-        <Button
-          type="button"
-          variant="ghost"
-          className="-ms-2 self-start"
-          onClick={() => dispatch({ type: "back" })}
-        >
-          <ChevronLeftIcon className="rtl:-scale-x-100" />
-          {t("common.back")}
-        </Button>
-      )}
       {mode === "page" ? (
-        <StepHeader title={title} helper={helper} step={step} />
+        <StepHeader title={title} helper={helper} step={step} leading={back} />
       ) : (
         <div className="flex flex-col gap-1">
-          <DialogTitle
-            ref={heading}
-            tabIndex={-1}
-            // Token values, not the text-title role: DialogTitle sets text-base, which would win over a role class.
-            className="text-[length:var(--text-title)] leading-[var(--leading-title)] font-semibold focus-visible:outline-none"
-          >
-            {title}
-          </DialogTitle>
+          <div className="flex items-start gap-1">
+            {back}
+            <DialogTitle
+              ref={heading}
+              tabIndex={-1}
+              // Token values, not the text-title role: DialogTitle sets text-base, which would win over a role class.
+              className="text-[length:var(--text-title)] leading-[var(--leading-title)] font-semibold focus-visible:outline-none"
+            >
+              {title}
+            </DialogTitle>
+          </div>
           <DialogDescription className="text-[length:var(--text-ui)] leading-[var(--leading-ui)]">
             {helper}
           </DialogDescription>

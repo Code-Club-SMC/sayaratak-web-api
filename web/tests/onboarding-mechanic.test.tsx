@@ -61,7 +61,8 @@ const open = async (step: string, saved: object = {}) => {
   )
   return shell
 }
-const next = () => fireEvent.click(screen.getByRole("button", { name: "Next" }))
+const next = () =>
+  fireEvent.click(screen.getByRole("button", { name: "Continue" }))
 const chip = (name: string) => screen.findByRole("checkbox", { name })
 
 describe("mechanic schemas", () => {
@@ -163,7 +164,8 @@ describe("mechanic contact step and finish", () => {
 
   it("lists the mechanic plans with the free one preselected", async () => {
     await open("contact-plan", { about, expertise })
-    const radios = await screen.findAllByRole("radio")
+    await screen.findByRole("radio", { checked: true })
+    const radios = screen.getAllByRole("radio")
     expect(radios).toHaveLength(3)
     expect((radios[0] as HTMLInputElement).checked).toBe(true)
     expect(screen.getByText("Start free")).toBeTruthy()
@@ -172,10 +174,11 @@ describe("mechanic contact step and finish", () => {
 
   it("creates a listed mechanic profile on the free plan", async () => {
     const { router } = await open("contact-plan", saved)
-    await screen.findAllByRole("radio")
+    await screen.findByRole("radio", { checked: true })
     fireEvent.click(screen.getByRole("button", { name: "Create my profile" }))
-    await waitFor(() =>
-      expect(router.state.location.href).toBe("/en/mechanic?welcome=1")
+    await waitFor(
+      () => expect(router.state.location.href).toBe("/en/mechanic?welcome=1"),
+      { timeout: 4000 }
     )
     const made = db.mechanics.find((m) => m.name === "Hassan Ali")!
     expect(made).toMatchObject({

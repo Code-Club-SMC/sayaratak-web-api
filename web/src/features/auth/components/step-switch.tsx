@@ -23,5 +23,9 @@ const steps = {
 
 export function StepSwitch(props: StepProps) {
   const Step = steps[props.state.step]
-  return <Step {...props} />
+  return (
+    <div key={props.state.step} className="animate-in duration-120 fade-in">
+      <Step {...props} />
+    </div>
+  )
 }

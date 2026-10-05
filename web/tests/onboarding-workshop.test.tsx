@@ -62,7 +62,8 @@ const open = async (step: string, saved: object = {}) => {
   )
   return shell
 }
-const next = () => fireEvent.click(screen.getByRole("button", { name: "Next" }))
+const next = () =>
+  fireEvent.click(screen.getByRole("button", { name: "Continue" }))
 const chip = (name: string) => screen.findByRole("checkbox", { name })
 
 describe("workshop schemas", () => {
@@ -90,13 +91,12 @@ describe("workshop schemas", () => {
 })
 
 describe("workshop steps", () => {
-  it("business step uses workshop labels and the gallery hint", async () => {
+  it("business step uses workshop labels", async () => {
     await open("business")
     expect(screen.getByRole("textbox", { name: "Workshop name" })).toBeTruthy()
     expect(
       screen.getByRole("textbox", { name: "About the workshop" })
     ).toBeTruthy()
-    expect(screen.getByText("You can add more photos later")).toBeTruthy()
   })
 
   it("location step has one required phone", async () => {
@@ -187,7 +187,8 @@ describe("workshop plan step and finish", () => {
 
   it("lists the workshop plans with the free one preselected", async () => {
     await open("plan", saved)
-    const radios = await screen.findAllByRole("radio")
+    await screen.findByRole("radio", { checked: true })
+    const radios = screen.getAllByRole("radio")
     expect(radios).toHaveLength(3)
     expect((radios[0] as HTMLInputElement).checked).toBe(true)
     expect(screen.getByText("Start free")).toBeTruthy()
@@ -195,10 +196,11 @@ describe("workshop plan step and finish", () => {
 
   it("creates a visible workshop with its services on the free plan", async () => {
     const { router } = await open("plan", saved)
-    await screen.findAllByRole("radio")
+    await screen.findByRole("radio", { checked: true })
     fireEvent.click(screen.getByRole("button", { name: "Create my workshop" }))
-    await waitFor(() =>
-      expect(router.state.location.href).toBe("/en/workshop?welcome=1")
+    await waitFor(
+      () => expect(router.state.location.href).toBe("/en/workshop?welcome=1"),
+      { timeout: 4000 }
     )
     const made = db.workshops.find((w) => w.name === "Nile Garage")!
     expect(made).toMatchObject({

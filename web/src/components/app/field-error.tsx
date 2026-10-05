@@ -12,10 +12,14 @@ export function FieldError({
   className?: string
 }) {
   const { t } = useT()
-  if (!message) return null
+  // Flows mark themselves with data-reserve-errors: the line stays reserved, so an error never shifts the layout.
   return (
-    <BaseFieldError id={id} className={className}>
-      {t(message)}
-    </BaseFieldError>
+    <div className="contents [[data-reserve-errors]_&]:block [[data-reserve-errors]_&]:min-h-5">
+      {message && (
+        <BaseFieldError id={id} className={className}>
+          {t(message)}
+        </BaseFieldError>
+      )}
+    </div>
   )
 }

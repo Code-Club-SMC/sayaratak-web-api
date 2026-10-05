@@ -5,18 +5,11 @@ import { useT } from "@/lib/i18n/use-t"
 import { cn } from "@/lib/utils"
 import type { Media } from "@/schemas/listing"
 import { Button } from "@/components/ui/button"
-import type { ImageUploaderProps } from "./image-uploader"
+import { uploadBoxes, type ImageUploaderProps } from "./image-uploader"
 import { MediaImage } from "./media-image"
 import { MediaTile } from "./media-tile"
 import { PendingUploadTile } from "./pending-upload-tile"
 import { UploadDropzone } from "./upload-dropzone"
-
-// `shape` only crops the single-mode preview; multi mode always shows 4:3 photos.
-const boxes = {
-  wide: "aspect-[2/1] w-full rounded-lg md:aspect-[3/1]",
-  square: "size-32 rounded-lg",
-  round: "size-32 rounded-full",
-}
 
 export function ImageUploaderImpl({
   mode,
@@ -70,7 +63,12 @@ export function ImageUploaderImpl({
         )}
       >
         {label && <span className="text-ui font-medium">{label}</span>}
-        <div className={cn("relative overflow-hidden bg-muted", boxes[shape])}>
+        <div
+          className={cn(
+            "relative overflow-hidden bg-muted",
+            uploadBoxes[shape]
+          )}
+        >
           {pending ? (
             <PendingUploadTile
               item={pending}

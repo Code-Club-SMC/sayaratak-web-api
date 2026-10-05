@@ -1,7 +1,6 @@
 import { errorText } from "@/lib/api/error-text"
 import { useT } from "@/lib/i18n/use-t"
 import { Button } from "@/components/ui/button"
-import { toast } from "@/components/ui/toast"
 import { useLogin } from "../queries"
 
 // Seed accounts, all with the demo password. Shown only when VITE_DEMO is "true".
@@ -28,16 +27,18 @@ export function DemoAccounts({ onDone }: { onDone: () => void }) {
           onClick={() =>
             login.mutate(
               { identifier, password: "Demo1234" },
-              {
-                onSuccess: onDone,
-                onError: (e) => toast.add({ title: errorText(t, e) }),
-              }
+              { onSuccess: onDone }
             )
           }
         >
           {t(label)}
         </Button>
       ))}
+      {login.isError && (
+        <p role="alert" className="text-ui text-destructive">
+          {errorText(t, login.error)}
+        </p>
+      )}
     </div>
   )
 }

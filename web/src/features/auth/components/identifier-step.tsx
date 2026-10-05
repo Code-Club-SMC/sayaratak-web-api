@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Separator } from "@/components/ui/separator"
 import { useT } from "@/lib/i18n/use-t"
+import { normalizePhone } from "@/lib/phone"
 import {
   identifierKind,
   looksLikePhone,
@@ -31,6 +32,7 @@ export function IdentifierStep({ state, dispatch, onDone, mode }: StepProps) {
   })
   const value = form.watch("identifier")
   const phone = value !== "" && looksLikePhone(value)
+  const { onBlur, ...identifierField } = form.register("identifier")
   const submit = form.handleSubmit(({ identifier }) =>
     identify.mutate(
       { identifier },
@@ -62,11 +64,23 @@ export function IdentifierStep({ state, dispatch, onDone, mode }: StepProps) {
               )}
               <Input
                 {...control}
-                {...form.register("identifier")}
+                {...identifierField}
                 size="lg"
                 autoFocus={mode === "page"}
                 autoComplete="username"
-                inputMode={phone ? "tel" : value ? "email" : "text"}
+                inputMode={
+                  value.includes("@") ? "email" : phone ? "tel" : "text"
+                }
+                onPaste={(e) => {
+                  const text = e.clipboardData.getData("text")
+                  if (!looksLikePhone(text)) return
+                  e.preventDefault()
+                  form.setValue("identifier", normalizePhone(text))
+                }}
+                onBlur={(e) => {
+                  if (phone) form.setValue("identifier", normalizePhone(value))
+                  void onBlur(e)
+                }}
               />
             </div>
           )}

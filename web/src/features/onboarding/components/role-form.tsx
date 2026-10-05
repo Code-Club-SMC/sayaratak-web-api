@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useQuery } from "@tanstack/react-query"
-import { useRouter } from "@tanstack/react-router"
+import { useRouter, useRouterState } from "@tanstack/react-router"
 import {
   CarIcon,
   StoreIcon,
@@ -12,6 +12,7 @@ import { Controller, useForm } from "react-hook-form"
 
 import { StepHeader } from "@/components/app/step-header"
 import { SubmitButton } from "@/components/app/submit-button"
+import { Button } from "@/components/ui/button"
 import { RadioGroup } from "@/components/ui/radio-group"
 import { draftQuery, useSaveDraft } from "@/features/auth/queries"
 import { useT } from "@/lib/i18n/use-t"
@@ -38,22 +39,21 @@ export function RoleForm({ redirect }: { redirect?: string }) {
     resolver: zodResolver(roleChoiceSchema),
     values: { role: saved.success ? saved.data.role : "user" },
   })
+  // The button stays pending until the first step has loaded.
+  const navigating = useRouterState({ select: (s) => s.status === "pending" })
+  const submit = form.handleSubmit(({ role }) =>
+    save.mutate(
+      { role },
+      {
+        onSuccess: () =>
+          router.history.push(
+            stepHref(role, firstStepId(role), locale, redirect)
+          ),
+      }
+    )
+  )
   return (
-    <form
-      noValidate
-      className="flex flex-col gap-8"
-      onSubmit={form.handleSubmit(({ role }) =>
-        save.mutate(
-          { role },
-          {
-            onSuccess: () =>
-              router.history.push(
-                stepHref(role, firstStepId(role), locale, redirect)
-              ),
-          }
-        )
-      )}
-    >
+    <form noValidate className="flex flex-col gap-8" onSubmit={submit}>
       <StepHeader title={t("onboarding.role_title")} step="role" />
       <Controller
         control={form.control}
@@ -77,11 +77,16 @@ export function RoleForm({ redirect }: { redirect?: string }) {
         )}
       />
       {save.isError && (
-        <p role="alert" className="text-ui text-destructive">
-          {t("onboarding.role_error")}
-        </p>
+        <div className="flex flex-wrap items-center gap-x-3">
+          <p role="alert" className="text-ui text-destructive">
+            {t("onboarding.role_error")}
+          </p>
+          <Button type="button" variant="link" onClick={submit}>
+            {t("common.retry")}
+          </Button>
+        </div>
       )}
-      <SubmitButton size="lg" pending={save.isPending}>
+      <SubmitButton size="lg" pending={save.isPending || navigating}>
         {t("common.continue")}
       </SubmitButton>
     </form>

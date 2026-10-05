@@ -104,11 +104,11 @@ describe("OnboardingStepPage", () => {
 
   it("blocks Next on invalid input, then saves, moves on and focuses the heading", async () => {
     const { router } = await open()
-    fireEvent.click(screen.getByRole("button", { name: "Next" }))
+    fireEvent.click(screen.getByRole("button", { name: "Continue" }))
     await waitFor(() => expect(screen.getByRole("textbox")).toBeTruthy())
     expect(draft()).toBeUndefined()
     type("Abc")
-    fireEvent.click(screen.getByRole("button", { name: "Next" }))
+    fireEvent.click(screen.getByRole("button", { name: "Continue" }))
     await waitFor(() =>
       expect(router.state.location.pathname).toBe("/en/onboarding/dealership/b")
     )
@@ -122,7 +122,7 @@ describe("OnboardingStepPage", () => {
   it("keeps typed values when going Back", async () => {
     const { router } = await open()
     type("Kept")
-    fireEvent.click(screen.getByRole("button", { name: "Next" }))
+    fireEvent.click(screen.getByRole("button", { name: "Continue" }))
     await waitFor(() => expect(router.state.location.pathname).toMatch(/\/b$/))
     fireEvent.click(screen.getByRole("button", { name: "Back" }))
     await waitFor(() => expect(router.state.location.pathname).toMatch(/\/a$/))
@@ -191,7 +191,7 @@ describe("redirect target", () => {
   it("travels with Next and Back, and Save and exit drops it", async () => {
     const { router } = await open(dummy(), "a", "/en/post")
     type("Abc")
-    fireEvent.click(screen.getByRole("button", { name: "Next" }))
+    fireEvent.click(screen.getByRole("button", { name: "Continue" }))
     await waitFor(() =>
       expect(router.state.location.href).toBe(
         `/en/onboarding/dealership/b${via}`

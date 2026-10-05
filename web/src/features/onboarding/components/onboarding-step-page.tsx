@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useQuery } from "@tanstack/react-query"
-import { useRouter } from "@tanstack/react-router"
+import { useRouter, useRouterState } from "@tanstack/react-router"
 import { FormProvider, useForm, type FieldValues } from "react-hook-form"
 import { z } from "zod"
 
@@ -10,8 +10,14 @@ import { StickyFooter } from "@/components/app/sticky-footer"
 import { SubmitButton } from "@/components/app/submit-button"
 import { Button } from "@/components/ui/button"
 import { withRedirect } from "@/features/auth/destination"
-import { draftQuery, useSaveDraft } from "@/features/auth/queries"
+import {
+  draftQuery,
+  saveDraftOnExit,
+  useSaveDraft,
+} from "@/features/auth/queries"
 import { meQuery } from "@/features/auth/me-query"
+import { useEnterKeyHints } from "@/hooks/use-enter-key-hints"
+import { MOBILE_BREAKPOINT } from "@/hooks/use-mobile"
 import { useT } from "@/lib/i18n/use-t"
 import { dashboardPath, localeHref } from "@/lib/navigation"
 import { useCompleteOnboarding } from "../queries"
@@ -46,10 +52,43 @@ export function OnboardingStepPage({
   const complete = useCompleteOnboarding()
   const index = steps.findIndex((s) => s.id === stepId)
   const step = steps[index]
+  const next = steps[index + 1]
   const form = useForm<FieldValues>({
     resolver: zodResolver(step?.schema ?? noSchema),
     values: { ...(me && step?.defaults?.(me)), ...stepValues(data, stepId) },
   })
+  const formRef = useRef<HTMLFormElement>(null)
+  useEnterKeyHints(formRef, next ? "next" : "done")
+  // The save lasts until the next step has loaded, so the button does not look idle in between.
+  const navigating = useRouterState({ select: (s) => s.status === "pending" })
+  // Desktop only, and only when the step opens fresh; a step change moves focus to the heading instead (StepHeader).
+  useEffect(() => {
+    if (window.innerWidth < MOBILE_BREAKPOINT) return
+    formRef.current
+      ?.querySelector<HTMLElement>("input:not([type=hidden]), textarea, select")
+      ?.focus()
+  }, [])
+  // Refresh, closing the tab or switching language reloads the page; what was typed since the last save goes to the draft first.
+  // `touched` is a DOM flag, not form state: subscribing to isDirty made RHF drop the preselected plan.
+  useEffect(() => {
+    const el = formRef.current
+    if (!el || !step) return
+    let touched = false
+    const touch = () => (touched = true)
+    const flush = () =>
+      touched && saveDraftOnExit(key, { ...data, [step.id]: form.getValues() })
+    const onHide = () => document.visibilityState === "hidden" && flush()
+    el.addEventListener("input", touch)
+    el.addEventListener("click", touch)
+    document.addEventListener("visibilitychange", onHide)
+    window.addEventListener("pagehide", flush)
+    return () => {
+      el.removeEventListener("input", touch)
+      el.removeEventListener("click", touch)
+      document.removeEventListener("visibilitychange", onHide)
+      window.removeEventListener("pagehide", flush)
+    }
+  }, [key, data, step, form])
   // The router keeps the page mounted between steps, so it does not scroll by itself.
   useEffect(() => {
     window.scrollTo({ top: 0 })
@@ -59,7 +98,6 @@ export function OnboardingStepPage({
   useEffect(() => setLoaded(stepId), [stepId])
   if (!step) return null
 
-  const next = steps[index + 1]
   const prev = steps[index - 1]
   const go = (path: string) => router.history.push(localeHref(path, locale))
   const goStep = (path: string) => go(withRedirect(path, redirect))
@@ -81,6 +119,24 @@ export function OnboardingStepPage({
       save.mutate(draftWith(form.getValues()))
     go("/")
   }
+  // A field whose ref RHF cannot reach (a custom control) still gets the focus. The errors render a frame or two later, so look again for a few frames.
+  const focusInvalid = (frames = 10) =>
+    requestAnimationFrame(() => {
+      const invalid = [
+        ...(formRef.current?.querySelectorAll<HTMLElement>(
+          "[aria-invalid=true]"
+        ) ?? []),
+      ].find((el) => el.tabIndex >= 0)
+      if (invalid) invalid.focus()
+      else if (frames > 0) focusInvalid(frames - 1)
+    })
+  const submit = form.handleSubmit(
+    (values) =>
+      save.mutate(draftWith(values), {
+        onSuccess: (saved) => advance(saved.data),
+      }),
+    () => focusInvalid()
+  )
   const preview =
     role === "user" ? null : (
       <StepPreview role={role} steps={steps} stepId={step.id} data={data} />
@@ -99,19 +155,27 @@ export function OnboardingStepPage({
           step={step.id}
         />
         <form
+          ref={formRef}
           noValidate
+          data-reserve-errors
           className="flex flex-col gap-4"
-          onSubmit={form.handleSubmit((values) =>
-            save.mutate(draftWith(values), {
-              onSuccess: (saved) => advance(saved.data),
-            })
-          )}
+          onSubmit={submit}
         >
-          {loaded === step.id && <step.Component key={step.id} />}
+          <div
+            key={step.id}
+            className="flex min-h-80 animate-in flex-col gap-4 duration-120 fade-in"
+          >
+            {loaded === step.id && <step.Component />}
+          </div>
           {(save.isError || complete.isError) && (
-            <p role="alert" className="text-ui text-destructive">
-              {t("onboarding.save_error")}
-            </p>
+            <div className="flex flex-wrap items-center gap-x-3">
+              <p role="alert" className="text-ui text-destructive">
+                {t("onboarding.save_error")}
+              </p>
+              <Button type="button" variant="link" onClick={submit}>
+                {t("common.retry")}
+              </Button>
+            </div>
           )}
           <StickyFooter
             onBack={back}
@@ -132,9 +196,9 @@ export function OnboardingStepPage({
           >
             <SubmitButton
               size="lg"
-              pending={save.isPending || complete.isPending}
+              pending={save.isPending || complete.isPending || navigating}
             >
-              {next ? t("common.next") : t(`onboarding.finish_${role}`)}
+              {next ? t("common.continue") : t(`onboarding.finish_${role}`)}
             </SubmitButton>
           </StickyFooter>
         </form>

@@ -37,7 +37,6 @@ export function WeeklyHoursEditor({
         <Button
           type="button"
           variant="secondary"
-          size="sm"
           onClick={() => onChange(preset("08:00", "17:00", 5))}
         >
           {t("form.preset_business")}
@@ -45,7 +44,6 @@ export function WeeklyHoursEditor({
         <Button
           type="button"
           variant="secondary"
-          size="sm"
           onClick={() => onChange(preset("08:00", "22:00"))}
         >
           {t("form.preset_daily")}
@@ -94,7 +92,6 @@ export function WeeklyHoursEditor({
             <Button
               type="button"
               variant="ghost"
-              size="sm"
               aria-label={`${t("form.copy_to_all")}, ${name}`}
               onClick={() =>
                 onChange(value.map((r) => ({ ...row, day: r.day })))

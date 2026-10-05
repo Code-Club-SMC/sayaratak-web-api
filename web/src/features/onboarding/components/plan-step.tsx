@@ -44,26 +44,21 @@ export function PlanStep({
   if (!plans.data)
     return waiting ? <Skeleton className="h-64 w-full rounded-xl" /> : null
   return (
-    <>
-      <Controller
-        control={control}
-        name="planId"
-        render={({ field, fieldState }) => (
-          <>
-            <PlansGrid
-              mode="select"
-              plans={plans.data}
-              label={t("onboarding.plans_label")}
-              value={field.value}
-              onChange={field.onChange}
-            />
-            <FieldError message={fieldState.error?.message} />
-          </>
-        )}
-      />
-      <p className="text-caption text-muted-foreground">
-        {t("onboarding.plan_note")}
-      </p>
-    </>
+    <Controller
+      control={control}
+      name="planId"
+      render={({ field, fieldState }) => (
+        <>
+          <PlansGrid
+            mode="select"
+            plans={plans.data}
+            label={t("onboarding.plans_label")}
+            value={field.value}
+            onChange={field.onChange}
+          />
+          <FieldError message={fieldState.error?.message} />
+        </>
+      )}
+    />
   )
 }

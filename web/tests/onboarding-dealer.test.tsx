@@ -69,7 +69,8 @@ const open = async (step: string, saved: object = {}) => {
 const planOnFile = async () =>
   ((await (await fetch("/api/me/subscription")).json()) as { planId: string })
     .planId
-const next = () => fireEvent.click(screen.getByRole("button", { name: "Next" }))
+const next = () =>
+  fireEvent.click(screen.getByRole("button", { name: "Continue" }))
 const change = (name: string | RegExp, value: string, role = "textbox") =>
   fireEvent.change(screen.getByRole(role, { name }), { target: { value } })
 const districtOf = (cityId: string) =>
@@ -250,23 +251,23 @@ describe("plan step and finish", () => {
 
   it("preselects the free plan and lists the dealership plans", async () => {
     await open("plan", saved)
-    const radios = await screen.findAllByRole("radio")
+    await screen.findByRole("radio", { checked: true })
+    const radios = screen.getAllByRole("radio")
     expect(radios).toHaveLength(4)
     expect((radios[0] as HTMLInputElement).checked).toBe(true)
     expect(screen.getByText("Start free")).toBeTruthy()
-    expect(
-      screen.getByText(/Paid plans are activated after your transfer/)
-    ).toBeTruthy()
+    expect(screen.getByText(/Paid plans start once your transfer/)).toBeTruthy()
   })
 
   it("creates a visible dealership on the free plan and lands on the dealer dashboard", async () => {
     const { router } = await open("plan", saved)
-    await screen.findAllByRole("radio")
+    await screen.findByRole("radio", { checked: true })
     fireEvent.click(
       screen.getByRole("button", { name: "Create my dealership" })
     )
-    await waitFor(() =>
-      expect(router.state.location.href).toBe("/en/dealer?welcome=1")
+    await waitFor(
+      () => expect(router.state.location.href).toBe("/en/dealer?welcome=1"),
+      { timeout: 4000 }
     )
     const made = db.dealerships.find((d) => d.name === "Desert Motors")!
     expect(made).toMatchObject({

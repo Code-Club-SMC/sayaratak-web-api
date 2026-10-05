@@ -1,4 +1,4 @@
-import { useId } from "react"
+import { useId, useRef } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useRouter } from "@tanstack/react-router"
 import { useForm } from "react-hook-form"
@@ -9,6 +9,7 @@ import { PasswordInput } from "@/components/app/password-input"
 import { ShellLink } from "@/components/app/shell-link"
 import { SubmitButton } from "@/components/app/submit-button"
 import { toast } from "@/components/ui/toast"
+import { useEnterKeyHints } from "@/hooks/use-enter-key-hints"
 import { useT } from "@/lib/i18n/use-t"
 import { localeHref } from "@/lib/navigation"
 import { useResetPassword } from "../queries"
@@ -22,6 +23,8 @@ export function ResetForm({ token }: { token?: string }) {
   const router = useRouter()
   const reset = useResetPassword()
   const hintId = useId()
+  const root = useRef<HTMLFormElement>(null)
+  useEnterKeyHints(root, "done")
   const form = useForm<ResetForm>({
     resolver: zodResolver(resetFormSchema),
     mode: "onTouched",
@@ -40,7 +43,9 @@ export function ResetForm({ token }: { token?: string }) {
     )
   return (
     <form
+      ref={root}
       noValidate
+      data-reserve-errors
       className="flex flex-col gap-4"
       onSubmit={form.handleSubmit(({ password }) =>
         reset.mutate(

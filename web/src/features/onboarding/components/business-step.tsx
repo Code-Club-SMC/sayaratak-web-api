@@ -62,11 +62,6 @@ export function BusinessStep({ kind }: { kind: "dealership" | "workshop" }) {
           />
         )}
       />
-      {workshop && (
-        <p className="text-caption text-muted-foreground">
-          {t("onboarding.gallery_hint")}
-        </p>
-      )}
     </>
   )
 }

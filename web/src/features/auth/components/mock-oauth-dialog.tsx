@@ -1,7 +1,6 @@
 import { ResponsiveDialog } from "@/components/app/responsive-dialog"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
-import { toast } from "@/components/ui/toast"
 import { errorText } from "@/lib/api/error-text"
 import { useT } from "@/lib/i18n/use-t"
 import { useOauthLogin } from "../queries"
@@ -54,7 +53,6 @@ export function MockOAuthDialog({
                       onClose()
                       onDone()
                     },
-                    onError: (e) => toast.add({ title: errorText(t, e) }),
                   }
                 )
               }
@@ -72,6 +70,11 @@ export function MockOAuthDialog({
           </li>
         ))}
       </ul>
+      {oauth.isError && (
+        <p role="alert" className="text-ui text-destructive">
+          {errorText(t, oauth.error)}
+        </p>
+      )}
       {import.meta.env.VITE_DEMO === "true" && (
         <p className="text-caption text-muted-foreground">
           {t("auth.oauth_demo_note")}

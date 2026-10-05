@@ -73,7 +73,6 @@ export function PasswordStep({ state, dispatch, onDone, mode }: StepProps) {
               {...control}
               {...form.register("password")}
               size="lg"
-              autoFocus={mode === "page"}
               autoComplete="current-password"
               disabled={locked}
             />

@@ -17,12 +17,7 @@ import type { StepProps } from "./step-switch"
 const linkClass =
   "inline-flex min-h-11 items-center text-ui font-medium text-primary underline md:min-h-10"
 
-export function CreateAccountStep({
-  state,
-  dispatch,
-  onDone,
-  mode,
-}: StepProps) {
+export function CreateAccountStep({ state, dispatch, onDone }: StepProps) {
   const { t } = useT()
   const register = useRegister()
   const hintId = useId()
@@ -71,7 +66,6 @@ export function CreateAccountStep({
               {...control}
               {...form.register("fullName")}
               size="lg"
-              autoFocus={mode === "page"}
               autoComplete="name"
             />
           )}

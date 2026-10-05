@@ -32,6 +32,10 @@ export function PhoneInput({ value, onChange, onBlur, ...props }: Props) {
           const next = normalizeDigits(e.target.value).replace(/[^\d+]/g, "")
           onChange(prefixed && next ? PREFIX + next : next)
         }}
+        onPaste={(e) => {
+          e.preventDefault()
+          onChange(normalizePhone(e.clipboardData.getData("text")))
+        }}
         onBlur={(e) => {
           if (value) onChange(normalizePhone(value))
           onBlur?.(e)

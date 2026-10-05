@@ -244,6 +244,7 @@ export function seedListings(ctx: Ctx) {
         width: 1280,
         height: 720,
         placeholderColor: "#b8c4c0",
+        posterUrl: `/mock/video-0${(n % 3) + 1}-{w}.webp`,
       })
     }
     const ownerPhone = dealer

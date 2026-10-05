@@ -23,6 +23,8 @@ import arAuth from "@/messages/ar/auth.json"
 import enAuth from "@/messages/en/auth.json"
 import arError from "@/messages/ar/error.json"
 import enError from "@/messages/en/error.json"
+import arValidation from "@/messages/ar/validation.json"
+import enValidation from "@/messages/en/validation.json"
 import { useMockFetch } from "./mock-fetch"
 
 export async function renderShell(
@@ -54,6 +56,7 @@ export async function renderShell(
     common: locale === "ar" ? ar : en,
     auth: locale === "ar" ? arAuth : enAuth,
     error: locale === "ar" ? arError : enError,
+    validation: locale === "ar" ? arValidation : enValidation,
   })
   const root = createRootRoute({
     component: () => (

@@ -1,14 +1,20 @@
 import { uploadSchema } from "@/schemas/api"
+import { mediaSchema } from "@/schemas/listing"
 
 import { db, newId } from "../db"
 import { fail, route } from "../http"
 
-const MAX_BYTES = 5 * 1024 * 1024
+const MB = 1024 * 1024
+const VIDEO_BYTES = 30 * MB
+const POSTER_BYTES = MB
 
 // Files live in a server-side Map; the url is served by GET /uploads/:id.
-export async function storeUpload(file: File) {
-  if (file.size > MAX_BYTES)
-    throw fail(422, "validation", { file: "validation.file_size_5mb" })
+export async function storeUpload(
+  file: File,
+  limit = 5 * MB,
+  tooLarge = "validation.file_size_5mb"
+) {
+  if (file.size > limit) throw fail(422, "validation", { file: tooLarge })
   const id = newId("up")
   db.uploads.set(id, {
     id,
@@ -30,11 +36,38 @@ export async function storeUpload(file: File) {
   })
 }
 
+const template = (id: string) => `/api/uploads/${id}?w={w}`
+
+// Returns a Media. A real backend reads width, height and the dominant color from the file;
+// the mock takes them from the client, which already decoded the image, and serves the original for every `{w}`.
 route("POST", "/uploads", async (c) => {
-  const file = (await c.form()).get("file")
+  const form = await c.form()
+  const file = form.get("file")
   if (!(file instanceof File))
     throw fail(422, "validation", { file: "validation.required" })
-  return Response.json(await storeUpload(file), { status: 201 })
+  const video = file.type.startsWith("video/")
+  if (!video && !file.type.startsWith("image/"))
+    throw fail(422, "validation", { file: "validation.image_type" })
+  const stored = video
+    ? await storeUpload(file, VIDEO_BYTES, "validation.video_size")
+    : await storeUpload(file)
+  const poster = form.get("poster")
+  const posterRow =
+    video && poster instanceof File
+      ? await storeUpload(poster, POSTER_BYTES)
+      : null
+  return Response.json(
+    mediaSchema.parse({
+      id: stored.id,
+      type: video ? "video" : "image",
+      url: template(stored.id),
+      width: Number(form.get("width")) || 0,
+      height: Number(form.get("height")) || 0,
+      placeholderColor: String(form.get("placeholderColor") ?? "#c9d3cf"),
+      posterUrl: posterRow ? template(posterRow.id) : null,
+    }),
+    { status: 201 }
+  )
 })
 
 route("GET", "/uploads/:id", (c) => {

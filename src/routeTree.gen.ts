@@ -17,6 +17,7 @@ import { Route as LocalePublicIndexRouteImport } from './routes/$locale/_public/
 import { Route as LocalePublicSplatRouteImport } from './routes/$locale/_public/$'
 import { Route as LocalePublicDevAuthGateRouteImport } from './routes/$locale/_public/dev.auth-gate'
 import { Route as LocalePublicDevGuardedRouteImport } from './routes/$locale/_public/dev.guarded'
+import { Route as LocalePublicDevMediaRouteImport } from './routes/$locale/_public/dev.media'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -57,6 +58,11 @@ const LocalePublicDevGuardedRoute = LocalePublicDevGuardedRouteImport.update({
   path: '/dev/guarded',
   getParentRoute: () => LocalePublicRouteRoute,
 } as any)
+const LocalePublicDevMediaRoute = LocalePublicDevMediaRouteImport.update({
+  id: '/dev/media',
+  path: '/dev/media',
+  getParentRoute: () => LocalePublicRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -66,6 +72,7 @@ export interface FileRoutesByFullPath {
   '/$locale/': typeof LocalePublicIndexRoute
   '/$locale/dev/auth-gate': typeof LocalePublicDevAuthGateRoute
   '/$locale/dev/guarded': typeof LocalePublicDevGuardedRoute
+  '/$locale/dev/media': typeof LocalePublicDevMediaRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -74,6 +81,7 @@ export interface FileRoutesByTo {
   '/$locale/$': typeof LocalePublicSplatRoute
   '/$locale/dev/auth-gate': typeof LocalePublicDevAuthGateRoute
   '/$locale/dev/guarded': typeof LocalePublicDevGuardedRoute
+  '/$locale/dev/media': typeof LocalePublicDevMediaRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -85,6 +93,7 @@ export interface FileRoutesById {
   '/$locale/_public/': typeof LocalePublicIndexRoute
   '/$locale/_public/dev/auth-gate': typeof LocalePublicDevAuthGateRoute
   '/$locale/_public/dev/guarded': typeof LocalePublicDevGuardedRoute
+  '/$locale/_public/dev/media': typeof LocalePublicDevMediaRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -96,6 +105,7 @@ export interface FileRouteTypes {
     | '/$locale/'
     | '/$locale/dev/auth-gate'
     | '/$locale/dev/guarded'
+    | '/$locale/dev/media'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -104,6 +114,7 @@ export interface FileRouteTypes {
     | '/$locale/$'
     | '/$locale/dev/auth-gate'
     | '/$locale/dev/guarded'
+    | '/$locale/dev/media'
   id:
     | '__root__'
     | '/'
@@ -114,6 +125,7 @@ export interface FileRouteTypes {
     | '/$locale/_public/'
     | '/$locale/_public/dev/auth-gate'
     | '/$locale/_public/dev/guarded'
+    | '/$locale/_public/dev/media'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -180,6 +192,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LocalePublicDevGuardedRouteImport
       parentRoute: typeof LocalePublicRouteRoute
     }
+    '/$locale/_public/dev/media': {
+      id: '/$locale/_public/dev/media'
+      path: '/dev/media'
+      fullPath: '/$locale/dev/media'
+      preLoaderRoute: typeof LocalePublicDevMediaRouteImport
+      parentRoute: typeof LocalePublicRouteRoute
+    }
   }
 }
 
@@ -188,6 +207,7 @@ interface LocalePublicRouteRouteChildren {
   LocalePublicIndexRoute: typeof LocalePublicIndexRoute
   LocalePublicDevAuthGateRoute: typeof LocalePublicDevAuthGateRoute
   LocalePublicDevGuardedRoute: typeof LocalePublicDevGuardedRoute
+  LocalePublicDevMediaRoute: typeof LocalePublicDevMediaRoute
 }
 
 const LocalePublicRouteRouteChildren: LocalePublicRouteRouteChildren = {
@@ -195,6 +215,7 @@ const LocalePublicRouteRouteChildren: LocalePublicRouteRouteChildren = {
   LocalePublicIndexRoute: LocalePublicIndexRoute,
   LocalePublicDevAuthGateRoute: LocalePublicDevAuthGateRoute,
   LocalePublicDevGuardedRoute: LocalePublicDevGuardedRoute,
+  LocalePublicDevMediaRoute: LocalePublicDevMediaRoute,
 }
 
 const LocalePublicRouteRouteWithChildren =

@@ -53,6 +53,8 @@ export const mediaSchema = z.object({
   width: z.number(),
   height: z.number(),
   placeholderColor: z.string(),
+  // Videos only: template of the first-frame image, shown before play.
+  posterUrl: z.string().nullable(),
 })
 export type Media = z.infer<typeof mediaSchema>
 

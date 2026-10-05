@@ -35,5 +35,11 @@
   "validation.url": "Enter a path starting with / or a full link",
   "validation.date_order": "The end date must be after the start date",
   "validation.account_number": "Enter 6 to 20 digits",
-  "validation.phrase": "Type the confirmation word exactly"
+  "validation.phrase": "Type the confirmation word exactly",
+  "validation.file_size_25mb": "The file is larger than 25 MB",
+  "validation.media_max": "You can add up to 20 photos",
+  "validation.video_max": "Add only one video",
+  "validation.video_size": "The video is larger than 30 MB",
+  "validation.video_length": "The video is longer than 60 seconds",
+  "validation.video_type": "Choose a video file"
 }

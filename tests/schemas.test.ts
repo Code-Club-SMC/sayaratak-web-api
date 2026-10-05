@@ -58,6 +58,7 @@ const media = {
   width: 1280,
   height: 960,
   placeholderColor: "#8a9a90",
+  posterUrl: null,
 }
 
 const listing = {

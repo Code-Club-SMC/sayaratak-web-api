@@ -408,18 +408,55 @@ describe("trust, content, map, uploads, analytics", () => {
     const none = await call("GET", "/map?layers=vehicles&bbox=0,0,1,1")
     expect(none.body).toEqual([])
   })
-  it("uploads store and serve a file and refuse files over 5 MB", async () => {
+  it("uploads return a Media, serve the file and refuse files over the limits", async () => {
     const form = new FormData()
     form.set("file", file("a.png", 20))
+    form.set("width", "100")
+    form.set("height", "80")
+    form.set("placeholderColor", "#112233")
     const up = await call("POST", "/uploads", { form })
     expect(up.status).toBe(201)
-    const got = await call("GET", up.body.url.replace("/api", ""))
+    expect(up.body).toMatchObject({
+      type: "image",
+      width: 100,
+      height: 80,
+      placeholderColor: "#112233",
+      posterUrl: null,
+    })
+    expect(up.body.url).toContain("{w}")
+    const got = await call(
+      "GET",
+      up.body.url.replace("/api", "").replace("{w}", "640")
+    )
     expect(got.raw.byteLength).toBe(20)
     const big = new FormData()
     big.set("file", file("b.png", 5 * 1024 * 1024 + 1))
     expect(
       (await call("POST", "/uploads", { form: big })).body.fields.file
     ).toBe("validation.file_size_5mb")
+    const pdf = new FormData()
+    pdf.set("file", file("c.pdf", 10, "application/pdf"))
+    expect(
+      (await call("POST", "/uploads", { form: pdf })).body.fields.file
+    ).toBe("validation.image_type")
+  })
+  it("a video upload stores its poster and allows 30 MB", async () => {
+    const form = new FormData()
+    form.set("file", file("v.mp4", 6 * 1024 * 1024, "video/mp4"))
+    form.set("poster", file("p.webp", 10, "image/webp"))
+    const up = await call("POST", "/uploads", { form })
+    expect(up.body.type).toBe("video")
+    expect(up.body.posterUrl).toContain("{w}")
+    const poster = await call(
+      "GET",
+      up.body.posterUrl.replace("/api", "").replace("{w}", "640")
+    )
+    expect(poster.raw.byteLength).toBe(10)
+    const big = new FormData()
+    big.set("file", file("w.mp4", 30 * 1024 * 1024 + 1, "video/mp4"))
+    expect(
+      (await call("POST", "/uploads", { form: big })).body.fields.file
+    ).toBe("validation.video_size")
   })
   it("events raise listing stats and the daily series", async () => {
     const listing = db.listings.find(

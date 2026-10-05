@@ -15,17 +15,13 @@ import {
   useApiMutation,
 } from "@/lib/api/mutation"
 import { keys } from "@/lib/api/query-keys"
-import {
-  analyticsSchema,
-  okSchema,
-  uploadSchema,
-  type Range,
-} from "@/schemas/api"
+import { analyticsSchema, okSchema, type Range } from "@/schemas/api"
 import { pageOf } from "@/schemas/fields"
 import type { listingCreateSchema, listingPatchSchema } from "@/schemas/inputs"
 import {
   listingPageSchema,
   listingSchema,
+  mediaSchema,
   type ListingStatus,
 } from "@/schemas/listing"
 import { taxonomySchema } from "@/schemas/taxonomy"
@@ -166,12 +162,12 @@ export function useSetListingStatus() {
 
 export { useTrackEvent } from "./events"
 
-// Receipts, photos and documents. The mock accepts uploads before sign in so the post wizard works first.
+// Images and videos, as a Media. The mock accepts uploads before sign in so the post wizard works first.
 export const useUpload = () =>
   useApiMutation((file: File) => {
     const form = new FormData()
     form.set("file", file)
-    return apiFetch("/uploads", { method: "POST", form, schema: uploadSchema })
+    return apiFetch("/uploads", { method: "POST", form, schema: mediaSchema })
   })
 
 export const favoriteQueries = {

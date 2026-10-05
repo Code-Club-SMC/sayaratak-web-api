@@ -35,5 +35,11 @@
   "validation.url": "أدخل مسارًا يبدأ بالرمز / أو رابطًا كاملًا",
   "validation.date_order": "يجب أن يكون تاريخ النهاية بعد تاريخ البداية",
   "validation.account_number": "أدخل من 6 إلى 20 رقمًا",
-  "validation.phrase": "اكتب كلمة التأكيد كما هي"
+  "validation.phrase": "اكتب كلمة التأكيد كما هي",
+  "validation.file_size_25mb": "حجم الملف أكبر من 25 ميغابايت",
+  "validation.media_max": "يمكنك إضافة 20 صورة كحد أقصى",
+  "validation.video_max": "أضف فيديو واحدًا فقط",
+  "validation.video_size": "حجم الفيديو أكبر من 30 ميغابايت",
+  "validation.video_length": "مدة الفيديو أطول من 60 ثانية",
+  "validation.video_type": "اختر ملف فيديو"
 }

@@ -1,4 +1,4 @@
-import type { z } from "zod"
+import { z } from "zod"
 
 import { getForwardedCookie } from "./forwarded-cookie"
 
@@ -32,19 +32,22 @@ export function buildUrl(path: string, query?: Query) {
   return `${base}/api${path}${qs ? `?${qs}` : ""}`
 }
 
-async function toApiError(res: Response) {
-  const body: {
-    code?: string
-    fields?: Record<string, string>
-    retryAfter?: number
-  } = await res.json().catch(() => ({}))
+const errorBody = z.object({
+  code: z.string().optional(),
+  fields: z.record(z.string(), z.string()).optional(),
+  retryAfter: z.number().optional(),
+})
+export function errorFrom(status: number, raw: unknown) {
+  const body = errorBody.safeParse(raw).data
   return new ApiError(
-    res.status,
-    body.code ?? "server_error",
-    body.fields,
-    body.retryAfter
+    status,
+    body?.code ?? "server_error",
+    body?.fields,
+    body?.retryAfter
   )
 }
+const toApiError = async (res: Response) =>
+  errorFrom(res.status, await res.json().catch(() => ({})))
 
 type Options<TSchema extends z.ZodType> = {
   schema: TSchema

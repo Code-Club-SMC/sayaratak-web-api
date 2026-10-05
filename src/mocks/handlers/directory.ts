@@ -212,6 +212,7 @@ route("POST", "/me/business/images", async (c) => {
     width: 1280,
     height: 853,
     placeholderColor: "#c9d3cf",
+    posterUrl: null,
   })
   return workshopSchema.parse(w)
 })

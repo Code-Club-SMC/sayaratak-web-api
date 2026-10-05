@@ -30,6 +30,7 @@ export function pickMockPhoto(type: PhotoType, seed: number): Media {
     width: 1280,
     height: 853,
     placeholderColor: colors[n % colors.length] ?? "#c9d3cf",
+    posterUrl: null,
   }
 }
 
@@ -42,4 +43,5 @@ export const businessMedia = (seed: number): Media => ({
   width: 1280,
   height: 853,
   placeholderColor: colors[Math.abs(seed) % colors.length] ?? "#c9d3cf",
+  posterUrl: null,
 })

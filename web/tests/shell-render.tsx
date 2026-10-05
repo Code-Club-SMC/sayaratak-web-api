@@ -37,6 +37,8 @@ import arDashboard from "@/messages/ar/dashboard.json"
 import enDashboard from "@/messages/en/dashboard.json"
 import arBilling from "@/messages/ar/billing.json"
 import enBilling from "@/messages/en/billing.json"
+import arOnboarding from "@/messages/ar/onboarding.json"
+import enOnboarding from "@/messages/en/onboarding.json"
 import arToast from "@/messages/ar/toast.json"
 import enToast from "@/messages/en/toast.json"
 import { useMockFetch } from "./mock-fetch"
@@ -78,6 +80,7 @@ export async function renderShell(
     dashboard: locale === "ar" ? arDashboard : enDashboard,
     billing: locale === "ar" ? arBilling : enBilling,
     toast: locale === "ar" ? arToast : enToast,
+    onboarding: locale === "ar" ? arOnboarding : enOnboarding,
   })
   const root = createRootRoute({
     component: () => (

@@ -1,1 +1,13 @@
-{}
+{
+  "onboarding.role_title": "How will you use Sayaratak?",
+  "onboarding.role_description": "Choose the kind of account you want to set up.",
+  "onboarding.role_user_title": "Buy, sell or rent vehicles",
+  "onboarding.role_user_desc": "Post listings and contact sellers",
+  "onboarding.role_dealership_title": "Dealership",
+  "onboarding.role_dealership_desc": "Show your inventory under a business profile",
+  "onboarding.role_workshop_title": "Workshop",
+  "onboarding.role_workshop_desc": "Get found by drivers who need repairs",
+  "onboarding.role_mechanic_title": "Mechanic",
+  "onboarding.role_mechanic_desc": "Show your work and receive inquiries",
+  "onboarding.role_error": "We could not save your choice. Try again."
+}

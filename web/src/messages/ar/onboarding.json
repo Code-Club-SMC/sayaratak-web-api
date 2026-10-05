@@ -1,1 +1,13 @@
-{}
+{
+  "onboarding.role_title": "كيف ستستخدم سيارتك؟",
+  "onboarding.role_description": "اختر نوع الحساب الذي تريد إعداده.",
+  "onboarding.role_user_title": "شراء المركبات أو بيعها أو تأجيرها",
+  "onboarding.role_user_desc": "انشر إعلانات وتواصل مع البائعين",
+  "onboarding.role_dealership_title": "معرض",
+  "onboarding.role_dealership_desc": "اعرض مخزونك في ملف تجاري",
+  "onboarding.role_workshop_title": "ورشة",
+  "onboarding.role_workshop_desc": "يصلك السائقون الذين يحتاجون إلى إصلاح",
+  "onboarding.role_mechanic_title": "ميكانيكي",
+  "onboarding.role_mechanic_desc": "اعرض أعمالك واستقبل الاستفسارات",
+  "onboarding.role_error": "تعذر حفظ اختيارك. حاول مرة أخرى."
+}

@@ -4,14 +4,19 @@ import { useT } from "@/lib/i18n/use-t"
 export function StepIndicator({
   current,
   total,
+  labelFromMd = false,
 }: {
   current: number
   total: number
+  // Onboarding shows only the bar on phones; the text stays for screen readers.
+  labelFromMd?: boolean
 }) {
   const { t } = useT()
   return (
     <div className="flex flex-col gap-2">
-      <p className="text-caption text-muted-foreground">
+      <p
+        className={`text-caption text-muted-foreground ${labelFromMd ? "max-md:sr-only" : ""}`}
+      >
         {t("form.step_of", { current, total })}
       </p>
       <ol className="flex gap-1">

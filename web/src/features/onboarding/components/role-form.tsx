@@ -15,13 +15,9 @@ import { SubmitButton } from "@/components/app/submit-button"
 import { RadioGroup } from "@/components/ui/radio-group"
 import { draftQuery, useSaveDraft } from "@/features/auth/queries"
 import { useT } from "@/lib/i18n/use-t"
-import { localeHref } from "@/lib/navigation"
-import {
-  firstStep,
-  roleChoiceSchema,
-  roleDraftKey,
-  type RoleChoice,
-} from "../schemas"
+import { stepHref } from "../draft"
+import { firstStepId } from "../flows"
+import { roleChoiceSchema, roleDraftKey, type RoleChoice } from "../schemas"
 import { RoleOption } from "./role-option"
 
 const options: { role: RoleChoice["role"]; icon: LucideIcon }[] = [
@@ -51,9 +47,7 @@ export function RoleForm() {
           { role },
           {
             onSuccess: () =>
-              router.history.push(
-                localeHref(`/onboarding/${role}/${firstStep[role]}`, locale)
-              ),
+              router.history.push(stepHref(role, firstStepId(role), locale)),
           }
         )
       )}

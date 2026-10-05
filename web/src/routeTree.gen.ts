@@ -18,9 +18,11 @@ import { Route as LocalePublicSplatRouteImport } from './routes/$locale/_public/
 import { Route as LocaleAuthIndexRouteImport } from './routes/$locale/auth/index'
 import { Route as LocaleAuthForgotRouteImport } from './routes/$locale/auth/forgot'
 import { Route as LocaleAuthResetRouteImport } from './routes/$locale/auth/reset'
+import { Route as LocaleOnboardingIndexRouteImport } from './routes/$locale/onboarding/index'
 import { Route as LocaleOnboardingRoleRouteImport } from './routes/$locale/onboarding/role'
 import { Route as LocalePublicDevGuardedRouteImport } from './routes/$locale/_public/dev.guarded'
 import { Route as LocalePublicDevSharedRouteImport } from './routes/$locale/_public/dev.shared'
+import { Route as LocaleOnboardingRoleStepRouteImport } from './routes/$locale/onboarding/$role/$step'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -66,6 +68,11 @@ const LocaleAuthResetRoute = LocaleAuthResetRouteImport.update({
   path: '/auth/reset',
   getParentRoute: () => LocaleRouteRoute,
 } as any)
+const LocaleOnboardingIndexRoute = LocaleOnboardingIndexRouteImport.update({
+  id: '/onboarding/',
+  path: '/onboarding/',
+  getParentRoute: () => LocaleRouteRoute,
+} as any)
 const LocaleOnboardingRoleRoute = LocaleOnboardingRoleRouteImport.update({
   id: '/onboarding/role',
   path: '/onboarding/role',
@@ -81,6 +88,12 @@ const LocalePublicDevSharedRoute = LocalePublicDevSharedRouteImport.update({
   path: '/dev/shared',
   getParentRoute: () => LocalePublicRouteRoute,
 } as any)
+const LocaleOnboardingRoleStepRoute =
+  LocaleOnboardingRoleStepRouteImport.update({
+    id: '/onboarding/$role/$step',
+    path: '/onboarding/$role/$step',
+    getParentRoute: () => LocaleRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -92,8 +105,10 @@ export interface FileRoutesByFullPath {
   '/$locale/onboarding/role': typeof LocaleOnboardingRoleRoute
   '/$locale/': typeof LocalePublicIndexRoute
   '/$locale/auth/': typeof LocaleAuthIndexRoute
+  '/$locale/onboarding/': typeof LocaleOnboardingIndexRoute
   '/$locale/dev/guarded': typeof LocalePublicDevGuardedRoute
   '/$locale/dev/shared': typeof LocalePublicDevSharedRoute
+  '/$locale/onboarding/$role/$step': typeof LocaleOnboardingRoleStepRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -104,8 +119,10 @@ export interface FileRoutesByTo {
   '/$locale/auth/reset': typeof LocaleAuthResetRoute
   '/$locale/onboarding/role': typeof LocaleOnboardingRoleRoute
   '/$locale/auth': typeof LocaleAuthIndexRoute
+  '/$locale/onboarding': typeof LocaleOnboardingIndexRoute
   '/$locale/dev/guarded': typeof LocalePublicDevGuardedRoute
   '/$locale/dev/shared': typeof LocalePublicDevSharedRoute
+  '/$locale/onboarding/$role/$step': typeof LocaleOnboardingRoleStepRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -119,8 +136,10 @@ export interface FileRoutesById {
   '/$locale/onboarding/role': typeof LocaleOnboardingRoleRoute
   '/$locale/_public/': typeof LocalePublicIndexRoute
   '/$locale/auth/': typeof LocaleAuthIndexRoute
+  '/$locale/onboarding/': typeof LocaleOnboardingIndexRoute
   '/$locale/_public/dev/guarded': typeof LocalePublicDevGuardedRoute
   '/$locale/_public/dev/shared': typeof LocalePublicDevSharedRoute
+  '/$locale/onboarding/$role/$step': typeof LocaleOnboardingRoleStepRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -134,8 +153,10 @@ export interface FileRouteTypes {
     | '/$locale/onboarding/role'
     | '/$locale/'
     | '/$locale/auth/'
+    | '/$locale/onboarding/'
     | '/$locale/dev/guarded'
     | '/$locale/dev/shared'
+    | '/$locale/onboarding/$role/$step'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -146,8 +167,10 @@ export interface FileRouteTypes {
     | '/$locale/auth/reset'
     | '/$locale/onboarding/role'
     | '/$locale/auth'
+    | '/$locale/onboarding'
     | '/$locale/dev/guarded'
     | '/$locale/dev/shared'
+    | '/$locale/onboarding/$role/$step'
   id:
     | '__root__'
     | '/'
@@ -160,8 +183,10 @@ export interface FileRouteTypes {
     | '/$locale/onboarding/role'
     | '/$locale/_public/'
     | '/$locale/auth/'
+    | '/$locale/onboarding/'
     | '/$locale/_public/dev/guarded'
     | '/$locale/_public/dev/shared'
+    | '/$locale/onboarding/$role/$step'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -235,6 +260,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LocaleAuthResetRouteImport
       parentRoute: typeof LocaleRouteRoute
     }
+    '/$locale/onboarding/': {
+      id: '/$locale/onboarding/'
+      path: '/onboarding'
+      fullPath: '/$locale/onboarding/'
+      preLoaderRoute: typeof LocaleOnboardingIndexRouteImport
+      parentRoute: typeof LocaleRouteRoute
+    }
     '/$locale/onboarding/role': {
       id: '/$locale/onboarding/role'
       path: '/onboarding/role'
@@ -255,6 +287,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/$locale/dev/shared'
       preLoaderRoute: typeof LocalePublicDevSharedRouteImport
       parentRoute: typeof LocalePublicRouteRoute
+    }
+    '/$locale/onboarding/$role/$step': {
+      id: '/$locale/onboarding/$role/$step'
+      path: '/onboarding/$role/$step'
+      fullPath: '/$locale/onboarding/$role/$step'
+      preLoaderRoute: typeof LocaleOnboardingRoleStepRouteImport
+      parentRoute: typeof LocaleRouteRoute
     }
   }
 }
@@ -282,6 +321,8 @@ interface LocaleRouteRouteChildren {
   LocaleAuthResetRoute: typeof LocaleAuthResetRoute
   LocaleOnboardingRoleRoute: typeof LocaleOnboardingRoleRoute
   LocaleAuthIndexRoute: typeof LocaleAuthIndexRoute
+  LocaleOnboardingIndexRoute: typeof LocaleOnboardingIndexRoute
+  LocaleOnboardingRoleStepRoute: typeof LocaleOnboardingRoleStepRoute
 }
 
 const LocaleRouteRouteChildren: LocaleRouteRouteChildren = {
@@ -290,6 +331,8 @@ const LocaleRouteRouteChildren: LocaleRouteRouteChildren = {
   LocaleAuthResetRoute: LocaleAuthResetRoute,
   LocaleOnboardingRoleRoute: LocaleOnboardingRoleRoute,
   LocaleAuthIndexRoute: LocaleAuthIndexRoute,
+  LocaleOnboardingIndexRoute: LocaleOnboardingIndexRoute,
+  LocaleOnboardingRoleStepRoute: LocaleOnboardingRoleStepRoute,
 }
 
 const LocaleRouteRouteWithChildren = LocaleRouteRoute._addFileChildren(

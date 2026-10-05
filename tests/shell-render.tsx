@@ -19,6 +19,8 @@ import { DirectionProvider } from "@/components/ui/direction"
 import { db } from "@/mocks/db"
 import ar from "@/messages/ar/common.json"
 import en from "@/messages/en/common.json"
+import arAuth from "@/messages/ar/auth.json"
+import enAuth from "@/messages/en/auth.json"
 import arError from "@/messages/ar/error.json"
 import enError from "@/messages/en/error.json"
 import { useMockFetch } from "./mock-fetch"
@@ -50,6 +52,7 @@ export async function renderShell(
   client.setQueryData(keys.me, me)
   const i18n = createI18n(locale, {
     common: locale === "ar" ? ar : en,
+    auth: locale === "ar" ? arAuth : enAuth,
     error: locale === "ar" ? arError : enError,
   })
   const root = createRootRoute({

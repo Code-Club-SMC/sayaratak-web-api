@@ -11,6 +11,7 @@ import { TanStackDevtools } from "@tanstack/react-devtools"
 import { I18nextProvider } from "react-i18next"
 
 import { DevPanelHost } from "@/components/app/dev-panel-host"
+import { AuthDialogHost } from "@/features/auth/components/auth-dialog-host"
 import { OfflineBanner } from "@/components/app/offline-banner"
 import { meQuery } from "@/features/auth/me-query"
 import { DirectionProvider } from "@/components/ui/direction"
@@ -116,6 +117,7 @@ function RootComponent() {
             <Toaster>
               <OfflineBanner />
               <Outlet />
+              <AuthDialogHost />
             </Toaster>
           </NowProvider>
         </PrefsProvider>

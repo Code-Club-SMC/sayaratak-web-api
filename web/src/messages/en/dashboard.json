@@ -5,5 +5,21 @@
   "dashboard.range_30d": "Last 30 days",
   "dashboard.range_90d": "Last 90 days",
   "dashboard.chart_error": "Could not load the chart. Try again.",
-  "dashboard.chart_empty": "No data for this period yet."
+  "dashboard.chart_empty": "No data for this period yet.",
+  "dashboard.setup_title": "Finish setting up your profile",
+  "dashboard.setup_progress": "Setup progress",
+  "dashboard.setup_dismiss": "Hide for now",
+  "dashboard.setup_done": "Done",
+  "dashboard.setup_logo": "Add a logo",
+  "dashboard.setup_cover": "Add a cover photo",
+  "dashboard.setup_description": "Add a description",
+  "dashboard.setup_hours": "Set opening hours",
+  "dashboard.setup_first_vehicle": "Add your first vehicle",
+  "dashboard.setup_services": "Add three services",
+  "dashboard.setup_photos": "Add three photos",
+  "dashboard.setup_photo": "Add a photo",
+  "dashboard.setup_bio": "Write a short bio",
+  "dashboard.setup_specializations": "Choose your specializations",
+  "dashboard.setup_portfolio": "Add portfolio photos",
+  "dashboard.setup_verification": "Request verification"
 }

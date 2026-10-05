@@ -10,6 +10,7 @@ import {
   postPath,
 } from "@/lib/navigation"
 import { meQuery } from "@/features/auth/me-query"
+import { FinishSetupNotice } from "@/features/onboarding/components/finish-setup-notice"
 import { AccountMenu } from "./account-menu"
 import { BrandLogo } from "./brand-logo"
 import { DataSaverToggle } from "./data-saver-toggle"
@@ -37,6 +38,7 @@ export function Header() {
     <header
       className={`sticky top-0 z-(--z-sticky) bg-card ${scrolled ? "after:absolute after:inset-x-0 after:bottom-0 after:h-px after:bg-border" : ""}`}
     >
+      <FinishSetupNotice />
       <div className="mx-auto flex h-14 items-center gap-2 px-4 md:px-6 lg:h-16 lg:gap-4">
         <MobileMenu />
         <BrandLogo />

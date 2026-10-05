@@ -5,5 +5,21 @@
   "dashboard.range_30d": "آخر 30 يومًا",
   "dashboard.range_90d": "آخر 90 يومًا",
   "dashboard.chart_error": "تعذّر تحميل الرسم البياني. حاول مرة أخرى.",
-  "dashboard.chart_empty": "لا توجد بيانات لهذه الفترة بعد."
+  "dashboard.chart_empty": "لا توجد بيانات لهذه الفترة بعد.",
+  "dashboard.setup_title": "أكمل إعداد ملفك",
+  "dashboard.setup_progress": "تقدم الإعداد",
+  "dashboard.setup_dismiss": "إخفاء مؤقتًا",
+  "dashboard.setup_done": "تم",
+  "dashboard.setup_logo": "أضف شعارًا",
+  "dashboard.setup_cover": "أضف صورة غلاف",
+  "dashboard.setup_description": "أضف وصفًا",
+  "dashboard.setup_hours": "حدد ساعات العمل",
+  "dashboard.setup_first_vehicle": "أضف أول مركبة لك",
+  "dashboard.setup_services": "أضف ثلاث خدمات",
+  "dashboard.setup_photos": "أضف ثلاث صور",
+  "dashboard.setup_photo": "أضف صورة شخصية",
+  "dashboard.setup_bio": "اكتب نبذة قصيرة",
+  "dashboard.setup_specializations": "اختر تخصصاتك",
+  "dashboard.setup_portfolio": "أضف صور أعمالك",
+  "dashboard.setup_verification": "اطلب التوثيق"
 }

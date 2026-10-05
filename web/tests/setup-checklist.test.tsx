@@ -1,0 +1,150 @@
+import { act, fireEvent, screen, waitFor } from "@testing-library/react"
+import { beforeEach, describe, expect, it } from "vitest"
+
+import { keys } from "@/lib/api/query-keys"
+import { FinishSetupNotice } from "@/features/onboarding/components/finish-setup-notice"
+import {
+  SetupChecklist,
+  setupDismissed,
+} from "@/features/onboarding/components/setup-checklist"
+import { setupItems } from "@/features/onboarding/setup-items"
+import { db, resetDb } from "@/mocks/db"
+import { renderShell } from "./shell-render"
+
+beforeEach(() => {
+  resetDb()
+  setupDismissed.setState(() => false)
+})
+
+const ownerOf = (role: "dealership" | "workshop" | "mechanic") =>
+  db.users.find((u) => u.role === role && u.onboardingDone)!.id
+const dealer = () =>
+  db.dealerships.find((b) => b.ownerId === ownerOf("dealership"))!
+const workshop = () =>
+  db.workshops.find((b) => b.ownerId === ownerOf("workshop"))!
+const mechanic = () =>
+  db.mechanics.find((b) => b.ownerId === ownerOf("mechanic"))!
+const todo = (b: Parameters<typeof setupItems>[0], asked = false) =>
+  setupItems(b, asked)
+    .filter((i) => !i.done)
+    .map((i) => i.key)
+
+describe("setupItems", () => {
+  it("asks each role for its own items and links them into its dashboard", () => {
+    const rows = [
+      [dealer(), "/dealer/"],
+      [workshop(), "/workshop/"],
+      [mechanic(), "/mechanic/"],
+    ] as const
+    for (const [row, prefix] of rows) {
+      const items = setupItems(row, false)
+      expect(items.at(-1)?.key).toBe("dashboard.setup_verification")
+      expect(items.every((i) => i.href.startsWith(prefix))).toBe(true)
+    }
+  })
+
+  it("counts an item only once the profile has it", () => {
+    const shop = { ...workshop() }
+    expect(todo({ ...shop, logoUrl: "", services: [], images: [] })).toEqual(
+      expect.arrayContaining([
+        "dashboard.setup_logo",
+        "dashboard.setup_services",
+        "dashboard.setup_photos",
+        "dashboard.setup_verification",
+      ])
+    )
+    const done = {
+      ...shop,
+      logoUrl: "x",
+      description: "x",
+      hours: shop.hours.map((h) => ({ ...h, closed: false })),
+      services: Array.from({ length: 3 }, (_, i) => ({
+        id: `s${i}`,
+        name: "x",
+        description: "",
+      })),
+      images: Array.from({ length: 3 }, () => shop.images[0]!),
+    }
+    expect(todo(done)).toEqual(["dashboard.setup_verification"])
+    expect(todo(done, true)).toEqual([])
+  })
+})
+
+describe("SetupChecklist", () => {
+  it("links open items, follows the profile on the next visit and hides at 100 percent", async () => {
+    const shop = workshop()
+    Object.assign(shop, {
+      logoUrl: "",
+      description: "x",
+      services: [],
+      images: [],
+    })
+    const { client } = await renderShell(<SetupChecklist />, {
+      role: "workshop",
+    })
+    const logo = await screen.findByRole("link", { name: /Add a logo/ })
+    expect(logo.getAttribute("href")).toBe("/en/workshop/profile")
+    const done = () => screen.getByRole("meter").getAttribute("aria-valuenow")
+    const before = done()
+    shop.logoUrl = "x"
+    await act(() => client.invalidateQueries())
+    await waitFor(() => expect(Number(done())).toBe(Number(before) + 1))
+    expect(screen.queryByRole("link", { name: /Add a logo/ })).toBeNull()
+    Object.assign(shop, {
+      services: Array.from({ length: 3 }, (_, i) => ({
+        id: `s${i}`,
+        name: "x",
+        description: "",
+      })),
+      images: Array.from({ length: 3 }, (_, i) => ({
+        ...db.workshops.find((w) => w.images.length)!.images[0]!,
+        id: `i${i}`,
+      })),
+    })
+    db.verifications.push({
+      id: "vr-test",
+      targetType: "workshop",
+      targetId: shop.id,
+      ownerId: shop.ownerId,
+      documents: [],
+      status: "pending",
+      createdAt: new Date().toISOString(),
+    })
+    await act(() => client.invalidateQueries())
+    await waitFor(() => expect(screen.queryByRole("heading")).toBeNull())
+  })
+
+  it("stays hidden for the session once dismissed", async () => {
+    await renderShell(<SetupChecklist />, { role: "workshop" })
+    await screen.findByRole("heading", {
+      name: "Finish setting up your profile",
+    })
+    fireEvent.click(screen.getByRole("button", { name: "Hide for now" }))
+    expect(screen.queryByRole("heading")).toBeNull()
+    expect(setupDismissed.state).toBe(true)
+  })
+})
+
+describe("FinishSetupNotice", () => {
+  it("shows only while onboarding is open and resumes it", async () => {
+    const { client } = await renderShell(<FinishSetupNotice />, {
+      role: "user",
+    })
+    expect(screen.queryByText("Finish setting up your account")).toBeNull()
+    const me = client.getQueryData<{ onboardingDone: boolean }>(keys.me)!
+    await act(async () => {
+      client.setQueryData(keys.me, { ...me, onboardingDone: false })
+    })
+    expect(
+      (await screen.findByRole("link", { name: "Continue" })).getAttribute(
+        "href"
+      )
+    ).toBe("/en/onboarding")
+    await act(async () => {
+      client.setQueryData(keys.me, null)
+    })
+    await waitFor(() =>
+      expect(screen.queryByText("Finish setting up your account")).toBeNull()
+    )
+  })
+})

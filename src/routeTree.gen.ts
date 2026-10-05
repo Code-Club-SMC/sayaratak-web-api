@@ -20,6 +20,7 @@ import { Route as LocalePublicDevCardsRouteImport } from './routes/$locale/_publ
 import { Route as LocalePublicDevFormsRouteImport } from './routes/$locale/_public/dev.forms'
 import { Route as LocalePublicDevGuardedRouteImport } from './routes/$locale/_public/dev.guarded'
 import { Route as LocalePublicDevMediaRouteImport } from './routes/$locale/_public/dev.media'
+import { Route as LocalePublicDevSearchRouteImport } from './routes/$locale/_public/dev.search'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -75,6 +76,11 @@ const LocalePublicDevMediaRoute = LocalePublicDevMediaRouteImport.update({
   path: '/dev/media',
   getParentRoute: () => LocalePublicRouteRoute,
 } as any)
+const LocalePublicDevSearchRoute = LocalePublicDevSearchRouteImport.update({
+  id: '/dev/search',
+  path: '/dev/search',
+  getParentRoute: () => LocalePublicRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -87,6 +93,7 @@ export interface FileRoutesByFullPath {
   '/$locale/dev/forms': typeof LocalePublicDevFormsRoute
   '/$locale/dev/guarded': typeof LocalePublicDevGuardedRoute
   '/$locale/dev/media': typeof LocalePublicDevMediaRoute
+  '/$locale/dev/search': typeof LocalePublicDevSearchRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -98,6 +105,7 @@ export interface FileRoutesByTo {
   '/$locale/dev/forms': typeof LocalePublicDevFormsRoute
   '/$locale/dev/guarded': typeof LocalePublicDevGuardedRoute
   '/$locale/dev/media': typeof LocalePublicDevMediaRoute
+  '/$locale/dev/search': typeof LocalePublicDevSearchRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -112,6 +120,7 @@ export interface FileRoutesById {
   '/$locale/_public/dev/forms': typeof LocalePublicDevFormsRoute
   '/$locale/_public/dev/guarded': typeof LocalePublicDevGuardedRoute
   '/$locale/_public/dev/media': typeof LocalePublicDevMediaRoute
+  '/$locale/_public/dev/search': typeof LocalePublicDevSearchRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -126,6 +135,7 @@ export interface FileRouteTypes {
     | '/$locale/dev/forms'
     | '/$locale/dev/guarded'
     | '/$locale/dev/media'
+    | '/$locale/dev/search'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -137,6 +147,7 @@ export interface FileRouteTypes {
     | '/$locale/dev/forms'
     | '/$locale/dev/guarded'
     | '/$locale/dev/media'
+    | '/$locale/dev/search'
   id:
     | '__root__'
     | '/'
@@ -150,6 +161,7 @@ export interface FileRouteTypes {
     | '/$locale/_public/dev/forms'
     | '/$locale/_public/dev/guarded'
     | '/$locale/_public/dev/media'
+    | '/$locale/_public/dev/search'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -237,6 +249,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LocalePublicDevMediaRouteImport
       parentRoute: typeof LocalePublicRouteRoute
     }
+    '/$locale/_public/dev/search': {
+      id: '/$locale/_public/dev/search'
+      path: '/dev/search'
+      fullPath: '/$locale/dev/search'
+      preLoaderRoute: typeof LocalePublicDevSearchRouteImport
+      parentRoute: typeof LocalePublicRouteRoute
+    }
   }
 }
 
@@ -248,6 +267,7 @@ interface LocalePublicRouteRouteChildren {
   LocalePublicDevFormsRoute: typeof LocalePublicDevFormsRoute
   LocalePublicDevGuardedRoute: typeof LocalePublicDevGuardedRoute
   LocalePublicDevMediaRoute: typeof LocalePublicDevMediaRoute
+  LocalePublicDevSearchRoute: typeof LocalePublicDevSearchRoute
 }
 
 const LocalePublicRouteRouteChildren: LocalePublicRouteRouteChildren = {
@@ -258,6 +278,7 @@ const LocalePublicRouteRouteChildren: LocalePublicRouteRouteChildren = {
   LocalePublicDevFormsRoute: LocalePublicDevFormsRoute,
   LocalePublicDevGuardedRoute: LocalePublicDevGuardedRoute,
   LocalePublicDevMediaRoute: LocalePublicDevMediaRoute,
+  LocalePublicDevSearchRoute: LocalePublicDevSearchRoute,
 }
 
 const LocalePublicRouteRouteWithChildren =

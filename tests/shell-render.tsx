@@ -27,6 +27,8 @@ import arValidation from "@/messages/ar/validation.json"
 import enValidation from "@/messages/en/validation.json"
 import arListing from "@/messages/ar/listing.json"
 import enListing from "@/messages/en/listing.json"
+import arSearch from "@/messages/ar/search.json"
+import enSearch from "@/messages/en/search.json"
 import arDirectory from "@/messages/ar/directory.json"
 import enDirectory from "@/messages/en/directory.json"
 import arStatus from "@/messages/ar/status.json"
@@ -66,6 +68,7 @@ export async function renderShell(
     error: locale === "ar" ? arError : enError,
     validation: locale === "ar" ? arValidation : enValidation,
     listing: locale === "ar" ? arListing : enListing,
+    search: locale === "ar" ? arSearch : enSearch,
     directory: locale === "ar" ? arDirectory : enDirectory,
     status: locale === "ar" ? arStatus : enStatus,
     toast: locale === "ar" ? arToast : enToast,

@@ -7,6 +7,7 @@ import {
   localeSchema,
   nameSchema,
   optionalText,
+  optionalInt,
   passwordSchema,
   phoneSchema,
   priceSchema,
@@ -102,7 +103,7 @@ const listingFields = z.object({
   makeOther: z.string().nullable(),
   modelOther: z.string().nullable(),
   year: yearSchema.nullable(),
-  mileageKm: z.coerce.number().int().min(0).nullable(),
+  mileageKm: optionalInt(0, 5_000_000),
   fuel: fuelSchema.nullable(),
   transmission: transmissionSchema.nullable(),
   color: z.string().nullable(),
@@ -237,7 +238,7 @@ export const businessPatchSchema = z.record(z.string(), z.unknown())
 export const serviceInputSchema = z.object({
   name: requiredText(80),
   description: optionalText(300),
-  priceFrom: priceSchema.optional(),
+  priceFrom: optionalInt(1, 9_999_999_999, "validation.price_min"),
 })
 export const portfolioInputSchema = z.object({
   url: z.string().min(1, "validation.required"),

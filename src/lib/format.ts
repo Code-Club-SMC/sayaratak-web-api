@@ -47,3 +47,9 @@ export function formatRelative(iso: string, now: number, locale: Locale) {
 // Odometer reading with its unit.
 export const formatMileage = (km: number, locale: Locale) =>
   `${formatNumber(km, locale)} ${units[locale].mileage}`
+
+// Day name for a weekday number (0 = Sunday). 2023-01-01 was a Sunday.
+export const formatWeekday = (day: number, locale: Locale) =>
+  new Intl.DateTimeFormat(locale, { weekday: "long", timeZone: "UTC" }).format(
+    Date.UTC(2023, 0, 1 + day)
+  )

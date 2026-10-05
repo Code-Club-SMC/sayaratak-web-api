@@ -226,7 +226,7 @@ route("POST", "/me/services", async (c) => {
     id: newId("svc"),
     name: input.name,
     description: input.description ?? "",
-    priceFrom: input.priceFrom,
+    priceFrom: input.priceFrom ?? undefined,
   }
   w.services.push(row)
   return row

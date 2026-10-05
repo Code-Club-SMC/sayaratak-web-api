@@ -17,6 +17,7 @@ import { Route as LocalePublicIndexRouteImport } from './routes/$locale/_public/
 import { Route as LocalePublicSplatRouteImport } from './routes/$locale/_public/$'
 import { Route as LocalePublicDevAuthGateRouteImport } from './routes/$locale/_public/dev.auth-gate'
 import { Route as LocalePublicDevCardsRouteImport } from './routes/$locale/_public/dev.cards'
+import { Route as LocalePublicDevFormsRouteImport } from './routes/$locale/_public/dev.forms'
 import { Route as LocalePublicDevGuardedRouteImport } from './routes/$locale/_public/dev.guarded'
 import { Route as LocalePublicDevMediaRouteImport } from './routes/$locale/_public/dev.media'
 
@@ -59,6 +60,11 @@ const LocalePublicDevCardsRoute = LocalePublicDevCardsRouteImport.update({
   path: '/dev/cards',
   getParentRoute: () => LocalePublicRouteRoute,
 } as any)
+const LocalePublicDevFormsRoute = LocalePublicDevFormsRouteImport.update({
+  id: '/dev/forms',
+  path: '/dev/forms',
+  getParentRoute: () => LocalePublicRouteRoute,
+} as any)
 const LocalePublicDevGuardedRoute = LocalePublicDevGuardedRouteImport.update({
   id: '/dev/guarded',
   path: '/dev/guarded',
@@ -78,6 +84,7 @@ export interface FileRoutesByFullPath {
   '/$locale/': typeof LocalePublicIndexRoute
   '/$locale/dev/auth-gate': typeof LocalePublicDevAuthGateRoute
   '/$locale/dev/cards': typeof LocalePublicDevCardsRoute
+  '/$locale/dev/forms': typeof LocalePublicDevFormsRoute
   '/$locale/dev/guarded': typeof LocalePublicDevGuardedRoute
   '/$locale/dev/media': typeof LocalePublicDevMediaRoute
 }
@@ -88,6 +95,7 @@ export interface FileRoutesByTo {
   '/$locale/$': typeof LocalePublicSplatRoute
   '/$locale/dev/auth-gate': typeof LocalePublicDevAuthGateRoute
   '/$locale/dev/cards': typeof LocalePublicDevCardsRoute
+  '/$locale/dev/forms': typeof LocalePublicDevFormsRoute
   '/$locale/dev/guarded': typeof LocalePublicDevGuardedRoute
   '/$locale/dev/media': typeof LocalePublicDevMediaRoute
 }
@@ -101,6 +109,7 @@ export interface FileRoutesById {
   '/$locale/_public/': typeof LocalePublicIndexRoute
   '/$locale/_public/dev/auth-gate': typeof LocalePublicDevAuthGateRoute
   '/$locale/_public/dev/cards': typeof LocalePublicDevCardsRoute
+  '/$locale/_public/dev/forms': typeof LocalePublicDevFormsRoute
   '/$locale/_public/dev/guarded': typeof LocalePublicDevGuardedRoute
   '/$locale/_public/dev/media': typeof LocalePublicDevMediaRoute
 }
@@ -114,6 +123,7 @@ export interface FileRouteTypes {
     | '/$locale/'
     | '/$locale/dev/auth-gate'
     | '/$locale/dev/cards'
+    | '/$locale/dev/forms'
     | '/$locale/dev/guarded'
     | '/$locale/dev/media'
   fileRoutesByTo: FileRoutesByTo
@@ -124,6 +134,7 @@ export interface FileRouteTypes {
     | '/$locale/$'
     | '/$locale/dev/auth-gate'
     | '/$locale/dev/cards'
+    | '/$locale/dev/forms'
     | '/$locale/dev/guarded'
     | '/$locale/dev/media'
   id:
@@ -136,6 +147,7 @@ export interface FileRouteTypes {
     | '/$locale/_public/'
     | '/$locale/_public/dev/auth-gate'
     | '/$locale/_public/dev/cards'
+    | '/$locale/_public/dev/forms'
     | '/$locale/_public/dev/guarded'
     | '/$locale/_public/dev/media'
   fileRoutesById: FileRoutesById
@@ -204,6 +216,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LocalePublicDevCardsRouteImport
       parentRoute: typeof LocalePublicRouteRoute
     }
+    '/$locale/_public/dev/forms': {
+      id: '/$locale/_public/dev/forms'
+      path: '/dev/forms'
+      fullPath: '/$locale/dev/forms'
+      preLoaderRoute: typeof LocalePublicDevFormsRouteImport
+      parentRoute: typeof LocalePublicRouteRoute
+    }
     '/$locale/_public/dev/guarded': {
       id: '/$locale/_public/dev/guarded'
       path: '/dev/guarded'
@@ -226,6 +245,7 @@ interface LocalePublicRouteRouteChildren {
   LocalePublicIndexRoute: typeof LocalePublicIndexRoute
   LocalePublicDevAuthGateRoute: typeof LocalePublicDevAuthGateRoute
   LocalePublicDevCardsRoute: typeof LocalePublicDevCardsRoute
+  LocalePublicDevFormsRoute: typeof LocalePublicDevFormsRoute
   LocalePublicDevGuardedRoute: typeof LocalePublicDevGuardedRoute
   LocalePublicDevMediaRoute: typeof LocalePublicDevMediaRoute
 }
@@ -235,6 +255,7 @@ const LocalePublicRouteRouteChildren: LocalePublicRouteRouteChildren = {
   LocalePublicIndexRoute: LocalePublicIndexRoute,
   LocalePublicDevAuthGateRoute: LocalePublicDevAuthGateRoute,
   LocalePublicDevCardsRoute: LocalePublicDevCardsRoute,
+  LocalePublicDevFormsRoute: LocalePublicDevFormsRoute,
   LocalePublicDevGuardedRoute: LocalePublicDevGuardedRoute,
   LocalePublicDevMediaRoute: LocalePublicDevMediaRoute,
 }

@@ -433,7 +433,7 @@ it("field schemas return i18n keys as messages", () => {
   expect(msg(identifierSchema, "abc")).toBe("validation.identifier")
   expect(msg(passwordSchema, "abc")).toBe("validation.password_min")
   expect(msg(passwordSchema, "12345678")).toBe("validation.password_letter")
-  expect(msg(priceSchema, "abc")).toBe("validation.number")
+  expect(msg(priceSchema, null)).toBe("validation.required")
   expect(msg(priceSchema, 0)).toBe("validation.price_min")
   expect(msg(priceSchema, 1.5)).toBe("validation.integer")
   const reversed = [

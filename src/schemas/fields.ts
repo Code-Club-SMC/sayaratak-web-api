@@ -56,20 +56,37 @@ export const identifierSchema = z
     "validation.identifier"
   )
 
-export const priceSchema = z.coerce
-  .number({ message: "validation.number" })
+// NumberField stores number | null. An empty field is null, never 0 and never ''. Numeric form schemas use these helpers.
+export const requiredInt = (
+  min: number,
+  max: number,
+  minKey = "validation.number"
+) =>
+  z
+    .number({ message: "validation.required" })
+    .int("validation.integer")
+    .min(min, minKey)
+    .max(max, "validation.too_large")
+export const optionalInt = (
+  min: number,
+  max: number,
+  minKey = "validation.number"
+) => requiredInt(min, max, minKey).nullable()
+export const priceSchema = requiredInt(1, 9_999_999_999, "validation.price_min")
+export const yearSchema = z
+  .number({ message: "validation.required" })
   .int("validation.integer")
-  .min(1, "validation.price_min")
-  .max(9_999_999_999, "validation.too_large")
-export const yearSchema = z.coerce
-  .number({ message: "validation.number" })
-  .int()
   .min(1970, "validation.year_range")
   .max(new Date().getFullYear() + 1, "validation.year_range")
-export const geoSchema = z.object({
-  lat: z.number().min(-90).max(90),
-  lng: z.number().min(-180).max(180),
-})
+export const latSchema = z
+  .number({ message: "validation.required" })
+  .min(-90, "validation.number")
+  .max(90, "validation.number")
+export const lngSchema = z
+  .number({ message: "validation.required" })
+  .min(-180, "validation.number")
+  .max(180, "validation.number")
+export const geoSchema = z.object({ lat: latSchema, lng: lngSchema })
 export type Geo = z.infer<typeof geoSchema>
 export const imageFileSchema = z
   .instanceof(File, { message: "validation.required" })

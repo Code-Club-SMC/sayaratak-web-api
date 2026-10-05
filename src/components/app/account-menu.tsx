@@ -1,0 +1,85 @@
+import { useQuery } from "@tanstack/react-query"
+import { useRouter } from "@tanstack/react-router"
+import { UserRound } from "lucide-react"
+
+import { useT } from "@/lib/i18n/use-t"
+import { dashboardPath, localeHref } from "@/lib/navigation"
+import { meQuery } from "@/features/auth/me-query"
+import { useLogout } from "@/features/auth/queries"
+import { Button } from "@/components/ui/button"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+
+export function AccountMenu() {
+  const { t, locale } = useT()
+  const { data: me } = useQuery(meQuery)
+  const logout = useLogout()
+  const router = useRouter()
+  if (!me)
+    return (
+      <a
+        href={localeHref("/auth", locale)}
+        aria-label={t("common.sign_in")}
+        className="inline-flex h-11 min-w-11 shrink-0 items-center justify-center rounded-lg px-2 text-ui font-medium hover:bg-muted md:h-10"
+      >
+        <UserRound
+          className="size-5 xl:hidden"
+          strokeWidth={1.5}
+          aria-hidden="true"
+        />
+        <span className="hidden xl:inline">{t("common.sign_in")}</span>
+      </a>
+    )
+  const base = dashboardPath(me.role)
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger
+        render={
+          <Button variant="ghost" size="icon" aria-label={t("nav.account")} />
+        }
+      >
+        <UserRound className="size-5" strokeWidth={1.5} aria-hidden="true" />
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-60">
+        <p className="truncate px-3 py-2 text-ui font-semibold" dir="auto">
+          {me.fullName}
+        </p>
+        {[
+          { key: "nav.dashboard", path: base },
+          { key: "nav.settings", path: `${base}/settings` },
+        ].map((item) => (
+          <DropdownMenuItem
+            key={item.key}
+            className="min-h-11 md:min-h-10"
+            render={<a href={localeHref(item.path, locale)} />}
+          >
+            {t(item.key)}
+          </DropdownMenuItem>
+        ))}
+        <DropdownMenuItem
+          closeOnClick={false}
+          disabled={logout.isPending}
+          className="min-h-11 md:min-h-10"
+          onClick={() =>
+            logout.mutate(undefined, {
+              onSuccess: () => {
+                void router.invalidate()
+              },
+            })
+          }
+        >
+          {t("common.sign_out")}
+        </DropdownMenuItem>
+        {logout.isError && (
+          <p role="alert" className="px-3 py-2 text-ui text-destructive">
+            {t("nav.sign_out_error")}
+          </p>
+        )}
+      </DropdownMenuContent>
+    </DropdownMenu>
+  )
+}

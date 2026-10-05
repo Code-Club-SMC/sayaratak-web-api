@@ -11,8 +11,9 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as LocaleRouteRouteImport } from './routes/$locale/route'
-import { Route as LocaleIndexRouteImport } from './routes/$locale/index'
+import { Route as LocalePublicRouteRouteImport } from './routes/$locale/_public/route'
 import { Route as ApiSplatRouteImport } from './routes/api/$'
+import { Route as LocalePublicIndexRouteImport } from './routes/$locale/_public/index'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -24,9 +25,8 @@ const LocaleRouteRoute = LocaleRouteRouteImport.update({
   path: '/$locale',
   getParentRoute: () => rootRouteImport,
 } as any)
-const LocaleIndexRoute = LocaleIndexRouteImport.update({
-  id: '/',
-  path: '/',
+const LocalePublicRouteRoute = LocalePublicRouteRouteImport.update({
+  id: '/_public',
   getParentRoute: () => LocaleRouteRoute,
 } as any)
 const ApiSplatRoute = ApiSplatRouteImport.update({
@@ -34,31 +34,43 @@ const ApiSplatRoute = ApiSplatRouteImport.update({
   path: '/api/$',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LocalePublicIndexRoute = LocalePublicIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => LocalePublicRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/$locale': typeof LocaleRouteRouteWithChildren
   '/api/$': typeof ApiSplatRoute
-  '/$locale/': typeof LocaleIndexRoute
+  '/$locale/': typeof LocalePublicIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/$locale': typeof LocalePublicIndexRoute
   '/api/$': typeof ApiSplatRoute
-  '/$locale': typeof LocaleIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/$locale': typeof LocaleRouteRouteWithChildren
+  '/$locale/_public': typeof LocalePublicRouteRouteWithChildren
   '/api/$': typeof ApiSplatRoute
-  '/$locale/': typeof LocaleIndexRoute
+  '/$locale/_public/': typeof LocalePublicIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths: '/' | '/$locale' | '/api/$' | '/$locale/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/api/$' | '/$locale'
-  id: '__root__' | '/' | '/$locale' | '/api/$' | '/$locale/'
+  to: '/' | '/$locale' | '/api/$'
+  id:
+    | '__root__'
+    | '/'
+    | '/$locale'
+    | '/$locale/_public'
+    | '/api/$'
+    | '/$locale/_public/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -83,11 +95,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LocaleRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/$locale/': {
-      id: '/$locale/'
-      path: '/'
-      fullPath: '/$locale/'
-      preLoaderRoute: typeof LocaleIndexRouteImport
+    '/$locale/_public': {
+      id: '/$locale/_public'
+      path: ''
+      fullPath: '/$locale'
+      preLoaderRoute: typeof LocalePublicRouteRouteImport
       parentRoute: typeof LocaleRouteRoute
     }
     '/api/$': {
@@ -97,15 +109,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/$locale/_public/': {
+      id: '/$locale/_public/'
+      path: '/'
+      fullPath: '/$locale/'
+      preLoaderRoute: typeof LocalePublicIndexRouteImport
+      parentRoute: typeof LocalePublicRouteRoute
+    }
   }
 }
 
+interface LocalePublicRouteRouteChildren {
+  LocalePublicIndexRoute: typeof LocalePublicIndexRoute
+}
+
+const LocalePublicRouteRouteChildren: LocalePublicRouteRouteChildren = {
+  LocalePublicIndexRoute: LocalePublicIndexRoute,
+}
+
+const LocalePublicRouteRouteWithChildren =
+  LocalePublicRouteRoute._addFileChildren(LocalePublicRouteRouteChildren)
+
 interface LocaleRouteRouteChildren {
-  LocaleIndexRoute: typeof LocaleIndexRoute
+  LocalePublicRouteRoute: typeof LocalePublicRouteRouteWithChildren
 }
 
 const LocaleRouteRouteChildren: LocaleRouteRouteChildren = {
-  LocaleIndexRoute: LocaleIndexRoute,
+  LocalePublicRouteRoute: LocalePublicRouteRouteWithChildren,
 }
 
 const LocaleRouteRouteWithChildren = LocaleRouteRoute._addFileChildren(

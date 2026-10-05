@@ -39,7 +39,10 @@ beforeEach(() => {
 describe("dev panel", () => {
   it("opens with Ctrl+Shift+D and closes with it again", async () => {
     open()
-    expect(await screen.findByLabelText("Dev panel")).toBeTruthy()
+    // The first open compiles the lazy module while other test files run.
+    expect(
+      await screen.findByLabelText("Dev panel", undefined, { timeout: 5000 })
+    ).toBeTruthy()
     fireEvent.keyDown(window, { key: "D", ctrlKey: true, shiftKey: true })
     expect(screen.queryByLabelText("Dev panel")).toBeNull()
   })

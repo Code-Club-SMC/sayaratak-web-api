@@ -53,6 +53,7 @@ type Options<TSchema extends z.ZodType> = {
   body?: unknown
   form?: FormData
   signal?: AbortSignal
+  keepalive?: boolean
 }
 
 export async function apiFetch<TSchema extends z.ZodType>(
@@ -75,6 +76,7 @@ export async function apiFetch<TSchema extends z.ZodType>(
       body:
         o.form ?? (o.body !== undefined ? JSON.stringify(o.body) : undefined),
       signal: o.signal,
+      keepalive: o.keepalive,
     })
   } catch (error) {
     if (error instanceof DOMException && error.name === "AbortError")

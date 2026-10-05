@@ -377,7 +377,7 @@ export const useUpdatePage = () =>
 export const useUpdateSettings = () =>
   useApiMutation(
     (body: Partial<Settings>) => patch(settingsSchema)("/admin/settings", body),
-    touched
+    [...touched, keys.content.settings]
   )
 export const useCreateBackup = () =>
   useApiMutation(() => post(backupSchema)("/admin/backups"), touched)

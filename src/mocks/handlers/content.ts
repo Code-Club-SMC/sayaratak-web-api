@@ -1,11 +1,17 @@
 import { okSchema } from "@/schemas/api"
-import { bannerSchema, sitePageSchema } from "@/schemas/admin"
+import {
+  bannerSchema,
+  publicSettingsSchema,
+  sitePageSchema,
+} from "@/schemas/admin"
 import { contactInputSchema } from "@/schemas/inputs"
 import { z } from "zod"
 
 import { db, insert, newId, resetDb } from "../db"
 import { fail, route, withSession } from "../http"
 import { nowIso } from "../lib"
+
+route("GET", "/settings", () => publicSettingsSchema.parse(db.settings))
 
 route("GET", "/pages/:slug", (c) => {
   const row = db.pages.find((p) => p.slug === c.params.slug)

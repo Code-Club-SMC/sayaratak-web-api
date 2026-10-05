@@ -4,9 +4,20 @@ import { z } from "zod"
 import { apiFetch } from "@/lib/api/client"
 import { useApiMutation } from "@/lib/api/mutation"
 import { keys } from "@/lib/api/query-keys"
-import { bannerSchema, sitePageSchema } from "@/schemas/admin"
+import {
+  bannerSchema,
+  publicSettingsSchema,
+  sitePageSchema,
+} from "@/schemas/admin"
 import { okSchema } from "@/schemas/api"
 import type { contactInputSchema } from "@/schemas/inputs"
+
+export const publicSettingsQuery = queryOptions({
+  queryKey: keys.content.settings,
+  queryFn: ({ signal }) =>
+    apiFetch("/settings", { schema: publicSettingsSchema, signal }),
+  staleTime: 5 * 60_000,
+})
 
 export const pageQuery = (slug: string) =>
   queryOptions({

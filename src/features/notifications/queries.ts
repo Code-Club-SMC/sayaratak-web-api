@@ -9,9 +9,10 @@ import type { ApiError } from "@/lib/api/client"
 import { apiFetch } from "@/lib/api/client"
 import { patchRows, restore, snapshot } from "@/lib/api/mutation"
 import { keys } from "@/lib/api/query-keys"
-import { countsSchema, okSchema, type Counts } from "@/schemas/api"
+import { okSchema, type Counts } from "@/schemas/api"
 import { pageOf } from "@/schemas/fields"
 import { notificationSchema } from "@/schemas/messaging"
+import { countsQuery } from "./counts-query"
 
 export const notificationQueries = {
   list: (filters: Record<string, unknown> = {}) =>
@@ -27,13 +28,7 @@ export const notificationQueries = {
       refetchOnWindowFocus: true,
       placeholderData: keepPreviousData,
     }),
-  counts: queryOptions({
-    queryKey: keys.counts,
-    queryFn: ({ signal }) =>
-      apiFetch("/me/counts", { schema: countsSchema, signal }),
-    staleTime: 10_000,
-    refetchOnWindowFocus: true,
-  }),
+  counts: countsQuery,
 }
 
 // Optimistic: rows and the bell badge update at once. No ids marks everything read.

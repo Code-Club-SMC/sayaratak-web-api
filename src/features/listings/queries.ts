@@ -22,11 +22,7 @@ import {
   type Range,
 } from "@/schemas/api"
 import { pageOf } from "@/schemas/fields"
-import type {
-  listingCreateSchema,
-  listingPatchSchema,
-  eventInputSchema,
-} from "@/schemas/inputs"
+import type { listingCreateSchema, listingPatchSchema } from "@/schemas/inputs"
 import {
   listingPageSchema,
   listingSchema,
@@ -168,12 +164,7 @@ export function useSetListingStatus() {
   })
 }
 
-// Fire and forget: views, contact clicks, shares and banner impressions.
-export const useTrackEvent = () =>
-  useMutation<unknown, ApiError, z.input<typeof eventInputSchema>>({
-    mutationFn: (body) =>
-      apiFetch("/events", { method: "POST", body, schema: okSchema }),
-  })
+export { useTrackEvent } from "./events"
 
 // Receipts, photos and documents. The mock accepts uploads before sign in so the post wizard works first.
 export const useUpload = () =>

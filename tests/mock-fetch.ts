@@ -10,7 +10,10 @@ export function useMockFetch(as?: string) {
       "http://localhost"
     )
     const headers = new Headers(init?.headers)
-    if (as) headers.set("cookie", `sy_session=${as}`)
+    const cookies = [as ? `sy_session=${as}` : "", document.cookie]
+      .filter(Boolean)
+      .join("; ")
+    if (cookies) headers.set("cookie", cookies)
     return handleMock(new Request(url, { ...init, headers }))
   })
 }

@@ -60,6 +60,7 @@ export const keys = {
   },
   verification: ["verification"] as const,
   content: {
+    settings: ["content", "settings"] as const,
     page: (slug: string) => ["content", "page", slug] as const,
     banners: (placement?: string) => ["content", "banners", placement] as const,
   },

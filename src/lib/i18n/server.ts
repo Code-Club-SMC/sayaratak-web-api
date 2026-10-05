@@ -26,6 +26,16 @@ function loadMessages(locale: Locale) {
   return messages
 }
 
+export const getShellCopy = createServerFn()
+  .validator(localeSchema)
+  .handler(({ data: locale }) => {
+    const common = loadMessages(locale).common
+    return {
+      title: common?.["nav.home"] ?? "",
+      description: common?.["nav.description"] ?? "",
+    }
+  })
+
 // Cookie first, then Accept-Language (listed order, q values ignored), then Arabic.
 function detectLocale(): Locale {
   const cookie = localeSchema.safeParse(getCookie("locale"))

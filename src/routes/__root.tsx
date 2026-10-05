@@ -11,7 +11,7 @@ import { TanStackDevtools } from "@tanstack/react-devtools"
 import { I18nextProvider } from "react-i18next"
 
 import { DevPanelHost } from "@/components/app/dev-panel-host"
-import { NotFound } from "@/components/app/not-found"
+import { OfflineBanner } from "@/components/app/offline-banner"
 import { meQuery } from "@/features/auth/me-query"
 import { DirectionProvider } from "@/components/ui/direction"
 import { Toaster } from "@/components/ui/toast"
@@ -73,7 +73,6 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     }),
     shellComponent: RootDocument,
     component: RootComponent,
-    notFoundComponent: NotFound,
   }
 )
 
@@ -115,6 +114,7 @@ function RootComponent() {
         <PrefsProvider prefs={prefs}>
           <NowProvider serverNow={serverNow}>
             <Toaster>
+              <OfflineBanner />
               <Outlet />
             </Toaster>
           </NowProvider>

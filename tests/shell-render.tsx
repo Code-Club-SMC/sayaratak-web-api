@@ -19,6 +19,8 @@ import { DirectionProvider } from "@/components/ui/direction"
 import { db } from "@/mocks/db"
 import ar from "@/messages/ar/common.json"
 import en from "@/messages/en/common.json"
+import arError from "@/messages/ar/error.json"
+import enError from "@/messages/en/error.json"
 import { useMockFetch } from "./mock-fetch"
 
 export async function renderShell(
@@ -46,7 +48,10 @@ export async function renderShell(
     defaultOptions: { queries: { retry: false }, mutations: { retry: false } },
   })
   client.setQueryData(keys.me, me)
-  const i18n = createI18n(locale, { common: locale === "ar" ? ar : en })
+  const i18n = createI18n(locale, {
+    common: locale === "ar" ? ar : en,
+    error: locale === "ar" ? arError : enError,
+  })
   const root = createRootRoute({
     component: () => (
       <QueryClientProvider client={client}>

@@ -14,6 +14,7 @@ import { Route as LocaleRouteRouteImport } from './routes/$locale/route'
 import { Route as LocalePublicRouteRouteImport } from './routes/$locale/_public/route'
 import { Route as ApiSplatRouteImport } from './routes/api/$'
 import { Route as LocalePublicIndexRouteImport } from './routes/$locale/_public/index'
+import { Route as LocalePublicSplatRouteImport } from './routes/$locale/_public/$'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -39,17 +40,24 @@ const LocalePublicIndexRoute = LocalePublicIndexRouteImport.update({
   path: '/',
   getParentRoute: () => LocalePublicRouteRoute,
 } as any)
+const LocalePublicSplatRoute = LocalePublicSplatRouteImport.update({
+  id: '/$',
+  path: '/$',
+  getParentRoute: () => LocalePublicRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/$locale': typeof LocaleRouteRouteWithChildren
   '/api/$': typeof ApiSplatRoute
+  '/$locale/$': typeof LocalePublicSplatRoute
   '/$locale/': typeof LocalePublicIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/$locale': typeof LocalePublicIndexRoute
   '/api/$': typeof ApiSplatRoute
+  '/$locale/$': typeof LocalePublicSplatRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -57,19 +65,21 @@ export interface FileRoutesById {
   '/$locale': typeof LocaleRouteRouteWithChildren
   '/$locale/_public': typeof LocalePublicRouteRouteWithChildren
   '/api/$': typeof ApiSplatRoute
+  '/$locale/_public/$': typeof LocalePublicSplatRoute
   '/$locale/_public/': typeof LocalePublicIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/$locale' | '/api/$' | '/$locale/'
+  fullPaths: '/' | '/$locale' | '/api/$' | '/$locale/$' | '/$locale/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/$locale' | '/api/$'
+  to: '/' | '/$locale' | '/api/$' | '/$locale/$'
   id:
     | '__root__'
     | '/'
     | '/$locale'
     | '/$locale/_public'
     | '/api/$'
+    | '/$locale/_public/$'
     | '/$locale/_public/'
   fileRoutesById: FileRoutesById
 }
@@ -116,14 +126,23 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LocalePublicIndexRouteImport
       parentRoute: typeof LocalePublicRouteRoute
     }
+    '/$locale/_public/$': {
+      id: '/$locale/_public/$'
+      path: '/$'
+      fullPath: '/$locale/$'
+      preLoaderRoute: typeof LocalePublicSplatRouteImport
+      parentRoute: typeof LocalePublicRouteRoute
+    }
   }
 }
 
 interface LocalePublicRouteRouteChildren {
+  LocalePublicSplatRoute: typeof LocalePublicSplatRoute
   LocalePublicIndexRoute: typeof LocalePublicIndexRoute
 }
 
 const LocalePublicRouteRouteChildren: LocalePublicRouteRouteChildren = {
+  LocalePublicSplatRoute: LocalePublicSplatRoute,
   LocalePublicIndexRoute: LocalePublicIndexRoute,
 }
 

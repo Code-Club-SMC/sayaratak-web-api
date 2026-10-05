@@ -7,5 +7,9 @@
   "billing.limit_reached": "You reached the limit of your plan",
   "billing.payment_pending": "A payment for this item is waiting for review",
   "reviews.already_reviewed": "You already reviewed this. Edit your review.",
-  "admin.in_use": "This item is in use and cannot be deleted"
+  "admin.in_use": "This item is in use and cannot be deleted",
+  "error.load_title": "Something went wrong",
+  "error.go_home": "Go home",
+  "error.search_listings": "Search listings",
+  "error.loading": "Loading"
 }

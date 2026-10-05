@@ -2,6 +2,9 @@ import { QueryClient } from "@tanstack/react-query"
 import { createRouter as createTanStackRouter } from "@tanstack/react-router"
 import { setupRouterSsrQueryIntegration } from "@tanstack/react-router-ssr-query"
 
+import { NotFound } from "@/components/app/not-found"
+import { PageSkeleton } from "@/components/app/page-skeleton"
+import { RouteError } from "@/components/app/route-error"
 import { routeTree } from "./routeTree.gen"
 
 // One QueryClient per router, and the router is created per request on the server, so nothing leaks between visitors.
@@ -17,6 +20,11 @@ export function getRouter() {
     scrollRestoration: true,
     defaultPreload: "intent",
     defaultPreloadStaleTime: 0,
+    defaultNotFoundComponent: NotFound,
+    defaultErrorComponent: RouteError,
+    defaultPendingComponent: PageSkeleton,
+    // Skeletons appear only for loads slower than 150 ms (A1b G6).
+    defaultPendingMs: 150,
   })
   setupRouterSsrQueryIntegration({ router, queryClient })
   return router

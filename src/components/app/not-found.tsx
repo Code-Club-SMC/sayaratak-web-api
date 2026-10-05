@@ -1,12 +1,25 @@
+import { buttonVariants } from "@/components/ui/button"
 import { useT } from "@/lib/i18n/use-t"
+import { localeHref } from "@/lib/navigation"
+import { StatePanel } from "./state-panel"
 
-// Minimal for step 1.1; step 3.2 adds the search link.
+// Native links: /search is built in a later phase and is not a typed route yet.
 export function NotFound() {
-  const { t } = useT()
+  const { t, locale } = useT()
   return (
-    <main className="p-6">
-      <h1 className="text-2xl font-semibold">{t("error.not_found_title")}</h1>
-      <p className="mt-2">{t("error.not_found_body")}</p>
-    </main>
+    <StatePanel
+      title={t("error.not_found_title")}
+      body={t("error.not_found_body")}
+    >
+      <a href={localeHref("/search", locale)} className={buttonVariants()}>
+        {t("error.search_listings")}
+      </a>
+      <a
+        href={localeHref("/", locale)}
+        className={buttonVariants({ variant: "outline" })}
+      >
+        {t("error.go_home")}
+      </a>
+    </StatePanel>
   )
 }

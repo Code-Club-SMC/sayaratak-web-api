@@ -2,7 +2,7 @@ import { act, fireEvent, screen, waitFor } from "@testing-library/react"
 import { beforeEach, describe, expect, it } from "vitest"
 
 import { keys } from "@/lib/api/query-keys"
-import { FinishSetupNotice } from "@/features/onboarding/components/finish-setup-notice"
+import { AccountMenu } from "@/components/app/account-menu"
 import {
   SetupChecklist,
   setupDismissed,
@@ -125,26 +125,30 @@ describe("SetupChecklist", () => {
   })
 })
 
-describe("FinishSetupNotice", () => {
-  it("shows only while onboarding is open and resumes it", async () => {
-    const { client } = await renderShell(<FinishSetupNotice />, {
-      role: "user",
+describe("finish setup in the account menu", () => {
+  it("adds a first menu item that resumes onboarding only while it is open", async () => {
+    const { client } = await renderShell(<AccountMenu />, { role: "user" })
+    fireEvent.click(screen.getByRole("button", { name: "Account" }))
+    await screen.findByRole("menuitem", { name: "Dashboard" })
+    expect(
+      screen.queryByRole("menuitem", { name: /Finish setting up/ })
+    ).toBeNull()
+    fireEvent.keyDown(document.activeElement ?? document.body, {
+      key: "Escape",
     })
-    expect(screen.queryByText("Finish setting up your account")).toBeNull()
     const me = client.getQueryData<{ onboardingDone: boolean }>(keys.me)!
     await act(async () => {
       client.setQueryData(keys.me, { ...me, onboardingDone: false })
     })
-    expect(
-      (await screen.findByRole("link", { name: "Continue" })).getAttribute(
-        "href"
-      )
-    ).toBe("/en/onboarding")
-    await act(async () => {
-      client.setQueryData(keys.me, null)
-    })
-    await waitFor(() =>
-      expect(screen.queryByText("Finish setting up your account")).toBeNull()
+    fireEvent.click(
+      await screen.findByRole("button", {
+        name: "Account, Finish setting up your account",
+      })
     )
+    const item = await screen.findByRole("menuitem", {
+      name: "Finish setting up your account",
+    })
+    expect(item.getAttribute("href")).toBe("/en/onboarding")
+    expect(screen.getAllByRole("menuitem")[0]).toBe(item)
   })
 })

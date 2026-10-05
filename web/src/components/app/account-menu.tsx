@@ -35,20 +35,38 @@ export function AccountMenu() {
       </a>
     )
   const base = dashboardPath(me.role)
+  // An account that has not finished onboarding gets a dot and a first menu item that resumes it.
+  const setup = !me.onboardingDone
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
         render={
-          <Button variant="ghost" size="icon" aria-label={t("nav.account")} />
+          <Button
+            variant="ghost"
+            size="icon"
+            className="relative"
+            aria-label={
+              setup
+                ? `${t("nav.account")}, ${t("nav.finish_setup")}`
+                : t("nav.account")
+            }
+          />
         }
       >
         <UserRound className="size-5" strokeWidth={1.5} aria-hidden="true" />
+        {setup && (
+          <span
+            aria-hidden="true"
+            className="absolute end-2 top-2 size-2 rounded-full bg-primary"
+          />
+        )}
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-60">
         <p className="truncate px-3 py-2 text-ui font-semibold" dir="auto">
           {me.fullName}
         </p>
         {[
+          ...(setup ? [{ key: "nav.finish_setup", path: "/onboarding" }] : []),
           { key: "nav.dashboard", path: base },
           { key: "nav.settings", path: `${base}/settings` },
         ].map((item) => (

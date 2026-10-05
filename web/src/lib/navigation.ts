@@ -49,9 +49,22 @@ export function personalHref(path: string, locale: Locale, me: User | null) {
     : `${localeHref("/auth", locale)}?redirect=${encodeURIComponent(destination)}`
 }
 
-// The `redirect` param is only followed when it is a path on this site: one leading slash, no protocol, no `//host`.
+// The `redirect` param is only followed when it is a path on this site: one leading slash, no protocol, no `//host`, no whitespace (browsers drop tabs and newlines, so `/\t/host` would become `//host`).
 export const safeRedirect = (value?: string) =>
-  value && /^\/(?![/\\])/.test(value) ? value : undefined
+  value && /^\/(?![/\\])\S*$/.test(value) ? value : undefined
+
+// Pages that need a signed-in user: the dashboards, the post wizard and onboarding. Signing out there returns home.
+const protectedRoots = [
+  ...Object.values(dashboardBases),
+  "/post",
+  "/onboarding",
+]
+export const isProtectedPath = (pathname: string) => {
+  const path = pathname.replace(/^\/(?:ar|en)(?=\/|$)/, "")
+  return protectedRoots.some(
+    (root) => path === root || path.startsWith(`${root}/`)
+  )
+}
 
 export function bannerHref(href: string, locale: Locale) {
   if (href.startsWith("/") && !href.startsWith("//"))

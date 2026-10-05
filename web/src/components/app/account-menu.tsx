@@ -1,9 +1,9 @@
 import { useQuery } from "@tanstack/react-query"
-import { useRouter } from "@tanstack/react-router"
+import { useLocation, useRouter } from "@tanstack/react-router"
 import { UserRound } from "lucide-react"
 
 import { useT } from "@/lib/i18n/use-t"
-import { dashboardPath, localeHref } from "@/lib/navigation"
+import { dashboardPath, isProtectedPath, localeHref } from "@/lib/navigation"
 import { meQuery } from "@/features/auth/me-query"
 import { useLogout } from "@/features/auth/queries"
 import { Button } from "@/components/ui/button"
@@ -19,6 +19,7 @@ export function AccountMenu() {
   const { data: me } = useQuery(meQuery)
   const logout = useLogout()
   const router = useRouter()
+  const pathname = useLocation({ select: (l) => l.pathname })
   if (!me)
     return (
       <a
@@ -84,8 +85,11 @@ export function AccountMenu() {
           className="min-h-11 md:min-h-10"
           onClick={() =>
             logout.mutate(undefined, {
+              // A public page stays and re-runs its loaders signed out; a protected one goes home.
               onSuccess: () => {
-                void router.invalidate()
+                if (isProtectedPath(pathname))
+                  router.history.push(localeHref("/", locale))
+                else void router.invalidate()
               },
             })
           }

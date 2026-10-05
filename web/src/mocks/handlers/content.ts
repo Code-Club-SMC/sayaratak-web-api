@@ -45,3 +45,9 @@ route("POST", "/mock/reset", () => {
   resetDb()
   return withSession(null, { ok: true })
 })
+// Dev panel triggers for the session edge cases (5.15): drop the cookie while the page still shows a user, or ban the signed-in account.
+route("POST", "/mock/expire-session", () => withSession(null, { ok: true }))
+route("POST", "/mock/ban-me", (c) => {
+  if (c.user) c.user.banned = true
+  return { ok: true }
+})

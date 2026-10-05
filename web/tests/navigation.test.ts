@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest"
 import {
   bannerHref,
   dashboardPath,
+  isProtectedPath,
   localeHref,
   messagesPath,
   postPath,
@@ -53,10 +54,30 @@ describe("safeRedirect", () => {
       "//evil.com",
       "/\\evil.com",
       "https://evil.com",
+      "/\t/evil.com",
       "evil",
       "",
     ])
       expect(safeRedirect(bad)).toBeUndefined()
     expect(safeRedirect()).toBeUndefined()
+  })
+})
+
+describe("isProtectedPath", () => {
+  it("flags dashboards, post and onboarding only", () => {
+    for (const p of [
+      "/en/account",
+      "/ar/dealer/inventory",
+      "/en/post",
+      "/en/onboarding/role",
+    ])
+      expect(isProtectedPath(p)).toBe(true)
+    for (const p of [
+      "/en",
+      "/en/vehicles/cars/sale",
+      "/en/accounts",
+      "/en/auth",
+    ])
+      expect(isProtectedPath(p)).toBe(false)
   })
 })

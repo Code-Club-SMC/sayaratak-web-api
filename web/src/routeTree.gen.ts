@@ -15,6 +15,7 @@ import { Route as LocalePublicRouteRouteImport } from './routes/$locale/_public/
 import { Route as ApiSplatRouteImport } from './routes/api/$'
 import { Route as LocalePublicIndexRouteImport } from './routes/$locale/_public/index'
 import { Route as LocalePublicSplatRouteImport } from './routes/$locale/_public/$'
+import { Route as LocalePublicSuspendedRouteImport } from './routes/$locale/_public/suspended'
 import { Route as LocaleAuthIndexRouteImport } from './routes/$locale/auth/index'
 import { Route as LocaleAuthForgotRouteImport } from './routes/$locale/auth/forgot'
 import { Route as LocaleAuthResetRouteImport } from './routes/$locale/auth/reset'
@@ -51,6 +52,11 @@ const LocalePublicIndexRoute = LocalePublicIndexRouteImport.update({
 const LocalePublicSplatRoute = LocalePublicSplatRouteImport.update({
   id: '/$',
   path: '/$',
+  getParentRoute: () => LocalePublicRouteRoute,
+} as any)
+const LocalePublicSuspendedRoute = LocalePublicSuspendedRouteImport.update({
+  id: '/suspended',
+  path: '/suspended',
   getParentRoute: () => LocalePublicRouteRoute,
 } as any)
 const LocaleAuthIndexRoute = LocaleAuthIndexRouteImport.update({
@@ -100,6 +106,7 @@ export interface FileRoutesByFullPath {
   '/$locale': typeof LocaleRouteRouteWithChildren
   '/api/$': typeof ApiSplatRoute
   '/$locale/$': typeof LocalePublicSplatRoute
+  '/$locale/suspended': typeof LocalePublicSuspendedRoute
   '/$locale/auth/forgot': typeof LocaleAuthForgotRoute
   '/$locale/auth/reset': typeof LocaleAuthResetRoute
   '/$locale/onboarding/role': typeof LocaleOnboardingRoleRoute
@@ -115,6 +122,7 @@ export interface FileRoutesByTo {
   '/$locale': typeof LocalePublicIndexRoute
   '/api/$': typeof ApiSplatRoute
   '/$locale/$': typeof LocalePublicSplatRoute
+  '/$locale/suspended': typeof LocalePublicSuspendedRoute
   '/$locale/auth/forgot': typeof LocaleAuthForgotRoute
   '/$locale/auth/reset': typeof LocaleAuthResetRoute
   '/$locale/onboarding/role': typeof LocaleOnboardingRoleRoute
@@ -131,6 +139,7 @@ export interface FileRoutesById {
   '/$locale/_public': typeof LocalePublicRouteRouteWithChildren
   '/api/$': typeof ApiSplatRoute
   '/$locale/_public/$': typeof LocalePublicSplatRoute
+  '/$locale/_public/suspended': typeof LocalePublicSuspendedRoute
   '/$locale/auth/forgot': typeof LocaleAuthForgotRoute
   '/$locale/auth/reset': typeof LocaleAuthResetRoute
   '/$locale/onboarding/role': typeof LocaleOnboardingRoleRoute
@@ -148,6 +157,7 @@ export interface FileRouteTypes {
     | '/$locale'
     | '/api/$'
     | '/$locale/$'
+    | '/$locale/suspended'
     | '/$locale/auth/forgot'
     | '/$locale/auth/reset'
     | '/$locale/onboarding/role'
@@ -163,6 +173,7 @@ export interface FileRouteTypes {
     | '/$locale'
     | '/api/$'
     | '/$locale/$'
+    | '/$locale/suspended'
     | '/$locale/auth/forgot'
     | '/$locale/auth/reset'
     | '/$locale/onboarding/role'
@@ -178,6 +189,7 @@ export interface FileRouteTypes {
     | '/$locale/_public'
     | '/api/$'
     | '/$locale/_public/$'
+    | '/$locale/_public/suspended'
     | '/$locale/auth/forgot'
     | '/$locale/auth/reset'
     | '/$locale/onboarding/role'
@@ -237,6 +249,13 @@ declare module '@tanstack/react-router' {
       path: '/$'
       fullPath: '/$locale/$'
       preLoaderRoute: typeof LocalePublicSplatRouteImport
+      parentRoute: typeof LocalePublicRouteRoute
+    }
+    '/$locale/_public/suspended': {
+      id: '/$locale/_public/suspended'
+      path: '/suspended'
+      fullPath: '/$locale/suspended'
+      preLoaderRoute: typeof LocalePublicSuspendedRouteImport
       parentRoute: typeof LocalePublicRouteRoute
     }
     '/$locale/auth/': {
@@ -300,6 +319,7 @@ declare module '@tanstack/react-router' {
 
 interface LocalePublicRouteRouteChildren {
   LocalePublicSplatRoute: typeof LocalePublicSplatRoute
+  LocalePublicSuspendedRoute: typeof LocalePublicSuspendedRoute
   LocalePublicIndexRoute: typeof LocalePublicIndexRoute
   LocalePublicDevGuardedRoute: typeof LocalePublicDevGuardedRoute
   LocalePublicDevSharedRoute: typeof LocalePublicDevSharedRoute
@@ -307,6 +327,7 @@ interface LocalePublicRouteRouteChildren {
 
 const LocalePublicRouteRouteChildren: LocalePublicRouteRouteChildren = {
   LocalePublicSplatRoute: LocalePublicSplatRoute,
+  LocalePublicSuspendedRoute: LocalePublicSuspendedRoute,
   LocalePublicIndexRoute: LocalePublicIndexRoute,
   LocalePublicDevGuardedRoute: LocalePublicDevGuardedRoute,
   LocalePublicDevSharedRoute: LocalePublicDevSharedRoute,

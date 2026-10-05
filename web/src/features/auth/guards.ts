@@ -26,3 +26,15 @@ export const requireRole = (role: User["role"]) => (guard: Guard) => {
       href: localeHref(dashboardPath(me.role), guard.context.locale),
     })
 }
+
+// A banned account sees the suspended page and the static pages that carry the support contact.
+const bannedAllowed =
+  /^\/(?:ar|en)\/(?:suspended|about|contact|privacy|terms)\/?$/
+export function redirectBanned(c: {
+  me: User | null
+  locale: Locale
+  pathname: string
+}) {
+  if (c.me?.banned && !bannedAllowed.test(c.pathname))
+    throw redirect({ href: localeHref("/suspended", c.locale) })
+}

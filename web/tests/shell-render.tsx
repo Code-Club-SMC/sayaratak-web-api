@@ -10,6 +10,7 @@ import {
 import { render } from "@testing-library/react"
 import { I18nextProvider } from "react-i18next"
 
+import { sessionCaches } from "@/features/auth/session-ended"
 import { keys } from "@/lib/api/query-keys"
 import { createI18n } from "@/lib/i18n/create"
 import { PrefsProvider, type Prefs } from "@/lib/prefs"
@@ -64,7 +65,8 @@ export async function renderShell(
       )
     : null
   useMockFetch(me?.id)
-  const client = new QueryClient({
+  const client: QueryClient = new QueryClient({
+    ...sessionCaches(() => client),
     defaultOptions: { queries: { retry: false }, mutations: { retry: false } },
   })
   client.setQueryData(keys.me, me)

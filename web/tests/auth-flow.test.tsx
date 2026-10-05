@@ -10,7 +10,7 @@ import { authGate, closeAuthGate } from "@/features/auth/auth-gate"
 import { AuthDialog } from "@/features/auth/components/auth-dialog"
 import { AuthFlow } from "@/features/auth/components/auth-flow"
 import { AuthHeader } from "@/features/auth/components/auth-header"
-import { signInDestination } from "@/features/auth/destination"
+import { redirectSearch, signInDestination } from "@/features/auth/destination"
 import { userSchema } from "@/schemas/user"
 import { db, resetDb } from "@/mocks/db"
 import { renderShell } from "./shell-render"
@@ -72,6 +72,13 @@ describe("signInDestination", () => {
     expect(signInDestination(user(true), undefined, "en")).toBe("/en/dealer")
     expect(signInDestination(user(false), undefined, "en")).toBe(
       "/en/onboarding/role"
+    )
+  })
+  it("ignores an unsafe redirect param", () => {
+    for (const bad of ["//evil.com", "https://evil.com", "/\t/evil.com"])
+      expect(redirectSearch.parse({ redirect: bad }).redirect).toBeUndefined()
+    expect(redirectSearch.parse({ redirect: "/en/post" }).redirect).toBe(
+      "/en/post"
     )
   })
 })

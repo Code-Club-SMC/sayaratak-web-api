@@ -43,5 +43,12 @@
   "onboarding.step_mechanic_contact_plan_helper": "أخبر الزبائن كيف يصلون إليك واختر باقة.",
   "onboarding.user_avatar_label": "أضف صورة",
   "onboarding.user_interests_legend": "ماذا تبحث عنه؟",
-  "onboarding.interest_tuk_tuks": "توك توك"
+  "onboarding.interest_tuk_tuks": "توك توك",
+  "onboarding.dealer_name_label": "اسم المعرض",
+  "onboarding.dealer_about_label": "نبذة عن المعرض",
+  "onboarding.logo_label": "الشعار",
+  "onboarding.cover_label": "صورة الغلاف",
+  "onboarding.plans_label": "الباقات",
+  "onboarding.plan_note": "يمكنك تغيير الباقة في أي وقت من صفحة الفواتير. تُفعَّل الباقات المدفوعة بعد التحقق من تحويلك.",
+  "onboarding.plans_error": "تعذر تحميل الباقات. حاول مرة أخرى."
 }

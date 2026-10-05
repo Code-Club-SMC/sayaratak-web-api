@@ -43,5 +43,12 @@
   "onboarding.step_mechanic_contact_plan_helper": "Tell customers how to reach you and choose a plan.",
   "onboarding.user_avatar_label": "Add a photo",
   "onboarding.user_interests_legend": "What are you looking for?",
-  "onboarding.interest_tuk_tuks": "Tuk-tuks"
+  "onboarding.interest_tuk_tuks": "Tuk-tuks",
+  "onboarding.dealer_name_label": "Dealership name",
+  "onboarding.dealer_about_label": "About the dealership",
+  "onboarding.logo_label": "Logo",
+  "onboarding.cover_label": "Cover photo",
+  "onboarding.plans_label": "Plans",
+  "onboarding.plan_note": "You can change plans anytime in Billing. Paid plans are activated after your transfer is verified.",
+  "onboarding.plans_error": "We could not load the plans. Try again."
 }

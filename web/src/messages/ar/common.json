@@ -158,5 +158,8 @@
   "form.no_listings": "لا توجد إعلانات معتمدة.",
   "form.listings_error": "تعذر تحميل إعلاناتك. حاول مرة أخرى.",
   "form.preview_name": "اسمك",
-  "form.preview_fact_negotiable": "السعر قابل للتفاوض"
+  "form.preview_fact_negotiable": "السعر قابل للتفاوض",
+  "form.address": "عنوان الشارع",
+  "form.whatsapp": "رقم واتساب",
+  "form.same_as_phone": "نفس رقم الهاتف الأول"
 }

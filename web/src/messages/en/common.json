@@ -150,5 +150,8 @@
   "form.no_listings": "No approved listings found.",
   "form.listings_error": "Could not load your listings. Try again.",
   "form.preview_name": "Your name",
-  "form.preview_fact_negotiable": "Price can be discussed"
+  "form.preview_fact_negotiable": "Price can be discussed",
+  "form.address": "Street address",
+  "form.whatsapp": "WhatsApp number",
+  "form.same_as_phone": "Same as first phone"
 }

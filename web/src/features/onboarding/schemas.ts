@@ -1,6 +1,12 @@
 import { z } from "zod"
 
-import { nameSchema } from "@/schemas/fields"
+import {
+  geoSchema,
+  nameSchema,
+  phoneSchema,
+  requiredText,
+  weeklyHoursSchema,
+} from "@/schemas/fields"
 import { interestSchema } from "@/schemas/user"
 
 export const roleChoiceSchema = z.object({
@@ -19,3 +25,37 @@ export const userOnboardingSchema = z.object({
   interests: z.array(interestSchema).max(7),
 })
 export type UserOnboarding = z.infer<typeof userOnboardingSchema>
+
+export const dealerBusinessSchema = z.object({
+  name: requiredText(80),
+  description: z
+    .string()
+    .trim()
+    .min(20, "validation.desc_min")
+    .max(1000, "validation.too_long"),
+  logoId: z.string().optional(),
+  coverId: z.string().optional(),
+})
+export type DealerBusiness = z.infer<typeof dealerBusinessSchema>
+
+// `location` is null until a pin is dropped, which is how the map block reports it.
+export const dealerLocationSchema = z.object({
+  cityId: z.string().min(1, "validation.required"),
+  districtId: z.string().min(1, "validation.required"),
+  address: requiredText(160),
+  location: geoSchema.nullable(),
+  phones: z
+    .array(z.object({ value: phoneSchema }))
+    .min(1, "validation.phone_min")
+    .max(3),
+  whatsapp: phoneSchema.or(z.literal("")),
+})
+export type DealerLocation = z.infer<typeof dealerLocationSchema>
+
+export const hoursStepSchema = z.object({ hours: weeklyHoursSchema })
+export type HoursStep = z.infer<typeof hoursStepSchema>
+
+export const planStepSchema = z.object({
+  planId: z.string().min(1, "validation.required"),
+})
+export type PlanStep = z.infer<typeof planStepSchema>

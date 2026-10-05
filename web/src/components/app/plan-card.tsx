@@ -39,6 +39,9 @@ export function PlanCard(props: Props) {
         {current && (
           <Badge variant="primary">{t("billing.current_plan")}</Badge>
         )}
+        {props.mode === "select" && plan.price === 0 && (
+          <Badge>{t("billing.start_free")}</Badge>
+        )}
       </div>
       <p className="flex flex-wrap items-baseline gap-x-1">
         <span className="text-title font-semibold num">{amount}</span>

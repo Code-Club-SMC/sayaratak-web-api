@@ -9,3 +9,9 @@ export function isOpenNow(hours: WeeklyHours, now: number) {
   const hm = `${String(t.getUTCHours()).padStart(2, "0")}:${String(t.getUTCMinutes()).padStart(2, "0")}`
   return Boolean(today && !today.closed && today.open <= hm && hm < today.close)
 }
+
+// Onboarding starts a business on Saturday to Thursday, 8:00 to 18:00, Friday closed (day 5).
+export const defaultWeeklyHours: WeeklyHours = Array.from(
+  { length: 7 },
+  (_, day) => ({ day, closed: day === 5, open: "08:00", close: "18:00" })
+)

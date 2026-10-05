@@ -27,5 +27,6 @@
   "promotion.name_pin": "تثبيت",
   "promotion.name_boost": "تعزيز",
   "promotion.name_homepage": "الصفحة الرئيسية",
-  "promotion.name_sponsored": "ممول"
+  "promotion.name_sponsored": "ممول",
+  "billing.start_free": "ابدأ مجاناً"
 }

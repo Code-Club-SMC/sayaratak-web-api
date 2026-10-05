@@ -25,11 +25,13 @@ export function LocationPicker({
   onChange,
   cityError,
   districtError,
+  districtRequired,
 }: {
   value: LocationValue
   onChange: (value: LocationValue) => void
   cityError?: string
   districtError?: string
+  districtRequired?: boolean
 }) {
   const { t } = useT()
   const { data } = useQuery(taxonomyQuery)
@@ -61,6 +63,7 @@ export function LocationPicker({
         value={value}
         cityError={cityError}
         districtError={districtError}
+        districtRequired={districtRequired}
         // A pin in another city would contradict the new one, so it is cleared.
         onChange={(next) => {
           setFocus(null)

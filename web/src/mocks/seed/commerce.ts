@@ -43,6 +43,16 @@ const planRows: PlanRow[] = [
     ["15 active listings|15 إعلاناً نشطاً", "Priority support|دعم أولوية"],
   ],
   [
+    "plan-dealer-free",
+    "dealership",
+    "Free",
+    "مجانية",
+    0,
+    30,
+    5,
+    ["Up to 5 vehicles|حتى 5 مركبات", "Dealer page|صفحة المعرض"],
+  ],
+  [
     "plan-dealer-starter",
     "dealership",
     "Starter",

@@ -2,8 +2,20 @@ import type { ComponentType } from "react"
 import type { FieldValues } from "react-hook-form"
 import { z } from "zod"
 
+import { defaultWeeklyHours } from "@/lib/hours"
 import type { User } from "@/schemas/user"
-import { userOnboardingSchema, type OnboardingRole } from "./schemas"
+import {
+  dealerBusinessSchema,
+  dealerLocationSchema,
+  hoursStepSchema,
+  planStepSchema,
+  userOnboardingSchema,
+  type OnboardingRole,
+} from "./schemas"
+import { DealerBusinessStep } from "./components/dealer-business-step"
+import { DealerLocationStep } from "./components/dealer-location-step"
+import { DealerPlanStep } from "./components/dealer-plan-step"
+import { HoursStep } from "./components/hours-step"
 import { UserDetailsStep } from "./components/user-details-step"
 
 export type FlowStep = {
@@ -43,9 +55,39 @@ export const flows = {
       Component: UserDetailsStep,
     },
   ],
-  dealership: ["business", "location", "hours", "plan"].map((id) =>
-    step("dealership", id)
-  ),
+  dealership: [
+    {
+      ...step("dealership", "business"),
+      schema: dealerBusinessSchema,
+      defaults: () => ({ name: "", description: "" }),
+      Component: DealerBusinessStep,
+    },
+    {
+      ...step("dealership", "location"),
+      schema: dealerLocationSchema,
+      defaults: (me) => ({
+        cityId: me.cityId ?? "",
+        districtId: "",
+        address: "",
+        location: null,
+        phones: [{ value: me.phone ?? "" }],
+        whatsapp: "",
+      }),
+      Component: DealerLocationStep,
+    },
+    {
+      ...step("dealership", "hours"),
+      schema: hoursStepSchema,
+      defaults: () => ({ hours: defaultWeeklyHours }),
+      Component: HoursStep,
+    },
+    {
+      ...step("dealership", "plan"),
+      schema: planStepSchema,
+      defaults: () => ({ planId: "" }),
+      Component: DealerPlanStep,
+    },
+  ],
   workshop: ["business", "location", "hours-services", "plan"].map((id) =>
     step("workshop", id)
   ),

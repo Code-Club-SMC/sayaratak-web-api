@@ -1,4 +1,4 @@
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useQuery } from "@tanstack/react-query"
 import { useRouter } from "@tanstack/react-router"
@@ -54,6 +54,9 @@ export function OnboardingStepPage({
   useEffect(() => {
     window.scrollTo({ top: 0 })
   }, [stepId])
+  // `values` reach the form in an effect, so for one render a new step would still see the old step's values. Fields mount once that effect has run.
+  const [loaded, setLoaded] = useState(stepId)
+  useEffect(() => setLoaded(stepId), [stepId])
   if (!step) return null
 
   const next = steps[index + 1]
@@ -104,7 +107,7 @@ export function OnboardingStepPage({
             })
           )}
         >
-          <step.Component key={step.id} />
+          {loaded === step.id && <step.Component key={step.id} />}
           {(save.isError || complete.isError) && (
             <p role="alert" className="text-ui text-destructive">
               {t("onboarding.save_error")}

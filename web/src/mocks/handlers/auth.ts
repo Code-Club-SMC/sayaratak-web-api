@@ -12,7 +12,6 @@ import {
   loginInputSchema,
   notificationPrefsInputSchema,
   oauthInputSchema,
-  onboardingInputSchema,
   otpSendInputSchema,
   otpVerifyInputSchema,
   passwordInputSchema,
@@ -20,14 +19,13 @@ import {
   registerInputSchema,
   resetInputSchema,
 } from "@/schemas/inputs"
-import { interestSchema, userSchema } from "@/schemas/user"
+import { userSchema } from "@/schemas/user"
 import { slugify } from "@/mocks/seed/util"
 
 import { db, find, insert, newId, remove } from "../db"
 import { fail, needUser, route, withSession } from "../http"
 import { nowIso } from "../lib"
 import type { UserRow } from "../types"
-import { template } from "./uploads"
 
 const WINDOW_MS = 10 * 60_000
 const MAX_FAILS = 5
@@ -233,88 +231,4 @@ route("PATCH", "/drafts/:key", async (c) => {
   if (row) row.data = data
   else insert(db.drafts, { id, userId: user.id, key: c.params.key ?? "", data })
   return draftSchema.parse({ data })
-})
-
-// Creates the business record for the chosen role and ends onboarding.
-route("POST", "/onboarding/complete", async (c) => {
-  const user = needUser(c)
-  const { role, payload } = await c.body(onboardingInputSchema)
-  const text = (k: string, fallback = "") =>
-    typeof payload[k] === "string" ? payload[k] : fallback
-  const city = text("cityId", user.cityId ?? "khartoum")
-  const district =
-    db.taxonomy.districts.find((d) => d.id === text("districtId")) ??
-    db.taxonomy.districts.find((d) => d.cityId === city)
-  const phone = text("phone", user.phone ?? "+249900000000")
-  const name = text("name", user.fullName)
-  const base = {
-    ownerId: user.id,
-    slug: `${slugify(name) || "business"}-${user.id.slice(-4)}`,
-    name,
-    cityId: city,
-    createdAt: nowIso(),
-    rating: { avg: 0, count: 0 },
-    verified: false,
-    status: "active" as const,
-  }
-  const hours = Array.from({ length: 7 }, (_, day) => ({
-    day,
-    closed: day === 5,
-    open: "08:00",
-    close: "17:00",
-  }))
-  const place = {
-    districtId: district?.id ?? "",
-    address: text("address"),
-    location: null,
-    hours,
-  }
-  if (role === "dealership")
-    db.dealerships.push({
-      ...base,
-      id: newId("d"),
-      logoUrl: "",
-      coverUrl: "",
-      description: text("description"),
-      phones: [phone],
-      whatsapp: null,
-      inventoryCount: 0,
-      ...place,
-    })
-  if (role === "workshop")
-    db.workshops.push({
-      ...base,
-      id: newId("w"),
-      logoUrl: "",
-      description: text("description"),
-      phone,
-      whatsapp: null,
-      images: [],
-      services: [],
-      ...place,
-    })
-  if (role === "mechanic")
-    db.mechanics.push({
-      ...base,
-      id: newId("m"),
-      photoUrl: "",
-      bio: text("description"),
-      servedCityIds: [city],
-      yearsOfExperience: 0,
-      specializationIds: [],
-      phone,
-      whatsapp: null,
-      portfolio: [],
-      available: true,
-    })
-  if (role === "user") {
-    user.fullName = text("fullName", user.fullName)
-    const avatarId = text("avatarId")
-    if (avatarId) user.avatarUrl = template(avatarId)
-    user.interests = interestSchema.array().catch([]).parse(payload.interests)
-  }
-  user.role = role
-  user.cityId = city
-  user.onboardingDone = true
-  return publicUser(user)
 })

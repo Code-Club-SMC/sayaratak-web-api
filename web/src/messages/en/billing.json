@@ -15,5 +15,6 @@
   "promotion.name_pin": "Pin",
   "promotion.name_boost": "Boost",
   "promotion.name_homepage": "Home page",
-  "promotion.name_sponsored": "Sponsored"
+  "promotion.name_sponsored": "Sponsored",
+  "billing.start_free": "Start free"
 }

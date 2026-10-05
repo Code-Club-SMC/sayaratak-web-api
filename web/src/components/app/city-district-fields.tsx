@@ -14,11 +14,13 @@ export function CityDistrictFields({
   onChange,
   cityError,
   districtError,
+  districtRequired = false,
 }: {
   value: CityDistrictValue
   onChange: (value: CityDistrictValue) => void
   cityError?: string
   districtError?: string
+  districtRequired?: boolean
 }) {
   const { t, locale } = useT()
   const { data } = useQuery(taxonomyQuery)
@@ -31,7 +33,11 @@ export function CityDistrictFields({
         error={cityError}
         onChange={(cityId) => onChange({ cityId, districtId: null })}
       />
-      <FormField label={t("form.district")} error={districtError} optional>
+      <FormField
+        label={t("form.district")}
+        error={districtError}
+        optional={!districtRequired}
+      >
         {(control) => (
           <NativeSelect
             {...control}

@@ -5,7 +5,7 @@ const locales: Locale[] = ["ar", "en"]
 const ogLocale = { ar: "ar_AR", en: "en_US" } as const
 
 // Canonical and hreflang URLs must be absolute: APP_ORIGIN on the server, the page origin in the browser.
-const origin = () =>
+export const origin = () =>
   typeof window === "undefined"
     ? (process.env.APP_ORIGIN ?? "")
     : window.location.origin

@@ -16,12 +16,8 @@ import { Route as ApiSplatRouteImport } from './routes/api/$'
 import { Route as LocalePublicIndexRouteImport } from './routes/$locale/_public/index'
 import { Route as LocalePublicSplatRouteImport } from './routes/$locale/_public/$'
 import { Route as LocalePublicDevAuthGateRouteImport } from './routes/$locale/_public/dev.auth-gate'
-import { Route as LocalePublicDevCardsRouteImport } from './routes/$locale/_public/dev.cards'
-import { Route as LocalePublicDevDashboardRouteImport } from './routes/$locale/_public/dev.dashboard'
-import { Route as LocalePublicDevFormsRouteImport } from './routes/$locale/_public/dev.forms'
 import { Route as LocalePublicDevGuardedRouteImport } from './routes/$locale/_public/dev.guarded'
-import { Route as LocalePublicDevMediaRouteImport } from './routes/$locale/_public/dev.media'
-import { Route as LocalePublicDevSearchRouteImport } from './routes/$locale/_public/dev.search'
+import { Route as LocalePublicDevSharedRouteImport } from './routes/$locale/_public/dev.shared'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -57,35 +53,14 @@ const LocalePublicDevAuthGateRoute = LocalePublicDevAuthGateRouteImport.update({
   path: '/dev/auth-gate',
   getParentRoute: () => LocalePublicRouteRoute,
 } as any)
-const LocalePublicDevCardsRoute = LocalePublicDevCardsRouteImport.update({
-  id: '/dev/cards',
-  path: '/dev/cards',
-  getParentRoute: () => LocalePublicRouteRoute,
-} as any)
-const LocalePublicDevDashboardRoute =
-  LocalePublicDevDashboardRouteImport.update({
-    id: '/dev/dashboard',
-    path: '/dev/dashboard',
-    getParentRoute: () => LocalePublicRouteRoute,
-  } as any)
-const LocalePublicDevFormsRoute = LocalePublicDevFormsRouteImport.update({
-  id: '/dev/forms',
-  path: '/dev/forms',
-  getParentRoute: () => LocalePublicRouteRoute,
-} as any)
 const LocalePublicDevGuardedRoute = LocalePublicDevGuardedRouteImport.update({
   id: '/dev/guarded',
   path: '/dev/guarded',
   getParentRoute: () => LocalePublicRouteRoute,
 } as any)
-const LocalePublicDevMediaRoute = LocalePublicDevMediaRouteImport.update({
-  id: '/dev/media',
-  path: '/dev/media',
-  getParentRoute: () => LocalePublicRouteRoute,
-} as any)
-const LocalePublicDevSearchRoute = LocalePublicDevSearchRouteImport.update({
-  id: '/dev/search',
-  path: '/dev/search',
+const LocalePublicDevSharedRoute = LocalePublicDevSharedRouteImport.update({
+  id: '/dev/shared',
+  path: '/dev/shared',
   getParentRoute: () => LocalePublicRouteRoute,
 } as any)
 
@@ -96,12 +71,8 @@ export interface FileRoutesByFullPath {
   '/$locale/$': typeof LocalePublicSplatRoute
   '/$locale/': typeof LocalePublicIndexRoute
   '/$locale/dev/auth-gate': typeof LocalePublicDevAuthGateRoute
-  '/$locale/dev/cards': typeof LocalePublicDevCardsRoute
-  '/$locale/dev/dashboard': typeof LocalePublicDevDashboardRoute
-  '/$locale/dev/forms': typeof LocalePublicDevFormsRoute
   '/$locale/dev/guarded': typeof LocalePublicDevGuardedRoute
-  '/$locale/dev/media': typeof LocalePublicDevMediaRoute
-  '/$locale/dev/search': typeof LocalePublicDevSearchRoute
+  '/$locale/dev/shared': typeof LocalePublicDevSharedRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -109,12 +80,8 @@ export interface FileRoutesByTo {
   '/api/$': typeof ApiSplatRoute
   '/$locale/$': typeof LocalePublicSplatRoute
   '/$locale/dev/auth-gate': typeof LocalePublicDevAuthGateRoute
-  '/$locale/dev/cards': typeof LocalePublicDevCardsRoute
-  '/$locale/dev/dashboard': typeof LocalePublicDevDashboardRoute
-  '/$locale/dev/forms': typeof LocalePublicDevFormsRoute
   '/$locale/dev/guarded': typeof LocalePublicDevGuardedRoute
-  '/$locale/dev/media': typeof LocalePublicDevMediaRoute
-  '/$locale/dev/search': typeof LocalePublicDevSearchRoute
+  '/$locale/dev/shared': typeof LocalePublicDevSharedRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -125,12 +92,8 @@ export interface FileRoutesById {
   '/$locale/_public/$': typeof LocalePublicSplatRoute
   '/$locale/_public/': typeof LocalePublicIndexRoute
   '/$locale/_public/dev/auth-gate': typeof LocalePublicDevAuthGateRoute
-  '/$locale/_public/dev/cards': typeof LocalePublicDevCardsRoute
-  '/$locale/_public/dev/dashboard': typeof LocalePublicDevDashboardRoute
-  '/$locale/_public/dev/forms': typeof LocalePublicDevFormsRoute
   '/$locale/_public/dev/guarded': typeof LocalePublicDevGuardedRoute
-  '/$locale/_public/dev/media': typeof LocalePublicDevMediaRoute
-  '/$locale/_public/dev/search': typeof LocalePublicDevSearchRoute
+  '/$locale/_public/dev/shared': typeof LocalePublicDevSharedRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -141,12 +104,8 @@ export interface FileRouteTypes {
     | '/$locale/$'
     | '/$locale/'
     | '/$locale/dev/auth-gate'
-    | '/$locale/dev/cards'
-    | '/$locale/dev/dashboard'
-    | '/$locale/dev/forms'
     | '/$locale/dev/guarded'
-    | '/$locale/dev/media'
-    | '/$locale/dev/search'
+    | '/$locale/dev/shared'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -154,12 +113,8 @@ export interface FileRouteTypes {
     | '/api/$'
     | '/$locale/$'
     | '/$locale/dev/auth-gate'
-    | '/$locale/dev/cards'
-    | '/$locale/dev/dashboard'
-    | '/$locale/dev/forms'
     | '/$locale/dev/guarded'
-    | '/$locale/dev/media'
-    | '/$locale/dev/search'
+    | '/$locale/dev/shared'
   id:
     | '__root__'
     | '/'
@@ -169,12 +124,8 @@ export interface FileRouteTypes {
     | '/$locale/_public/$'
     | '/$locale/_public/'
     | '/$locale/_public/dev/auth-gate'
-    | '/$locale/_public/dev/cards'
-    | '/$locale/_public/dev/dashboard'
-    | '/$locale/_public/dev/forms'
     | '/$locale/_public/dev/guarded'
-    | '/$locale/_public/dev/media'
-    | '/$locale/_public/dev/search'
+    | '/$locale/_public/dev/shared'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -234,27 +185,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LocalePublicDevAuthGateRouteImport
       parentRoute: typeof LocalePublicRouteRoute
     }
-    '/$locale/_public/dev/cards': {
-      id: '/$locale/_public/dev/cards'
-      path: '/dev/cards'
-      fullPath: '/$locale/dev/cards'
-      preLoaderRoute: typeof LocalePublicDevCardsRouteImport
-      parentRoute: typeof LocalePublicRouteRoute
-    }
-    '/$locale/_public/dev/dashboard': {
-      id: '/$locale/_public/dev/dashboard'
-      path: '/dev/dashboard'
-      fullPath: '/$locale/dev/dashboard'
-      preLoaderRoute: typeof LocalePublicDevDashboardRouteImport
-      parentRoute: typeof LocalePublicRouteRoute
-    }
-    '/$locale/_public/dev/forms': {
-      id: '/$locale/_public/dev/forms'
-      path: '/dev/forms'
-      fullPath: '/$locale/dev/forms'
-      preLoaderRoute: typeof LocalePublicDevFormsRouteImport
-      parentRoute: typeof LocalePublicRouteRoute
-    }
     '/$locale/_public/dev/guarded': {
       id: '/$locale/_public/dev/guarded'
       path: '/dev/guarded'
@@ -262,18 +192,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LocalePublicDevGuardedRouteImport
       parentRoute: typeof LocalePublicRouteRoute
     }
-    '/$locale/_public/dev/media': {
-      id: '/$locale/_public/dev/media'
-      path: '/dev/media'
-      fullPath: '/$locale/dev/media'
-      preLoaderRoute: typeof LocalePublicDevMediaRouteImport
-      parentRoute: typeof LocalePublicRouteRoute
-    }
-    '/$locale/_public/dev/search': {
-      id: '/$locale/_public/dev/search'
-      path: '/dev/search'
-      fullPath: '/$locale/dev/search'
-      preLoaderRoute: typeof LocalePublicDevSearchRouteImport
+    '/$locale/_public/dev/shared': {
+      id: '/$locale/_public/dev/shared'
+      path: '/dev/shared'
+      fullPath: '/$locale/dev/shared'
+      preLoaderRoute: typeof LocalePublicDevSharedRouteImport
       parentRoute: typeof LocalePublicRouteRoute
     }
   }
@@ -283,24 +206,16 @@ interface LocalePublicRouteRouteChildren {
   LocalePublicSplatRoute: typeof LocalePublicSplatRoute
   LocalePublicIndexRoute: typeof LocalePublicIndexRoute
   LocalePublicDevAuthGateRoute: typeof LocalePublicDevAuthGateRoute
-  LocalePublicDevCardsRoute: typeof LocalePublicDevCardsRoute
-  LocalePublicDevDashboardRoute: typeof LocalePublicDevDashboardRoute
-  LocalePublicDevFormsRoute: typeof LocalePublicDevFormsRoute
   LocalePublicDevGuardedRoute: typeof LocalePublicDevGuardedRoute
-  LocalePublicDevMediaRoute: typeof LocalePublicDevMediaRoute
-  LocalePublicDevSearchRoute: typeof LocalePublicDevSearchRoute
+  LocalePublicDevSharedRoute: typeof LocalePublicDevSharedRoute
 }
 
 const LocalePublicRouteRouteChildren: LocalePublicRouteRouteChildren = {
   LocalePublicSplatRoute: LocalePublicSplatRoute,
   LocalePublicIndexRoute: LocalePublicIndexRoute,
   LocalePublicDevAuthGateRoute: LocalePublicDevAuthGateRoute,
-  LocalePublicDevCardsRoute: LocalePublicDevCardsRoute,
-  LocalePublicDevDashboardRoute: LocalePublicDevDashboardRoute,
-  LocalePublicDevFormsRoute: LocalePublicDevFormsRoute,
   LocalePublicDevGuardedRoute: LocalePublicDevGuardedRoute,
-  LocalePublicDevMediaRoute: LocalePublicDevMediaRoute,
-  LocalePublicDevSearchRoute: LocalePublicDevSearchRoute,
+  LocalePublicDevSharedRoute: LocalePublicDevSharedRoute,
 }
 
 const LocalePublicRouteRouteWithChildren =

@@ -136,5 +136,19 @@
   "table.columns": "Columns",
   "table.select_row": "Select row",
   "table.select_all": "Select all rows on this page",
-  "table.error": "Could not load the table. Try again."
+  "table.error": "Could not load the table. Try again.",
+  "common.breadcrumb": "Breadcrumb",
+  "common.skip": "Skip",
+  "common.view_on_map": "View on map",
+  "common.hide_map": "Hide map",
+  "common.loading": "Loading",
+  "form.add_phone": "Add a phone number",
+  "form.phone_number": "Phone number {{number}}",
+  "form.remove_phone": "Remove phone number {{number}}",
+  "form.pick_date": "Choose a date",
+  "form.search_listings": "Search your listings",
+  "form.no_listings": "No approved listings found.",
+  "form.listings_error": "Could not load your listings. Try again.",
+  "form.preview_name": "Your name",
+  "form.preview_fact_negotiable": "Price can be discussed"
 }

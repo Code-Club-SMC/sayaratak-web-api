@@ -35,6 +35,8 @@ import arStatus from "@/messages/ar/status.json"
 import enStatus from "@/messages/en/status.json"
 import arDashboard from "@/messages/ar/dashboard.json"
 import enDashboard from "@/messages/en/dashboard.json"
+import arBilling from "@/messages/ar/billing.json"
+import enBilling from "@/messages/en/billing.json"
 import arToast from "@/messages/ar/toast.json"
 import enToast from "@/messages/en/toast.json"
 import { useMockFetch } from "./mock-fetch"
@@ -74,6 +76,7 @@ export async function renderShell(
     directory: locale === "ar" ? arDirectory : enDirectory,
     status: locale === "ar" ? arStatus : enStatus,
     dashboard: locale === "ar" ? arDashboard : enDashboard,
+    billing: locale === "ar" ? arBilling : enBilling,
     toast: locale === "ar" ? arToast : enToast,
   })
   const root = createRootRoute({

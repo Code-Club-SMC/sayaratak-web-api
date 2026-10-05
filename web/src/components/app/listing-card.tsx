@@ -20,9 +20,12 @@ import { VerifiedBadge } from "./verified-badge"
 export function ListingCard({
   listing,
   variant = "grid",
+  preview = false,
 }: {
   listing: Listing
   variant?: "grid" | "row"
+  // A draft that is not published yet: no heart and no link, since neither has a target.
+  preview?: boolean
 }) {
   const { t, locale } = useT()
   const now = useNow()
@@ -68,20 +71,28 @@ export function ListingCard({
             </span>
           )}
         </div>
-        <FavoriteButton
-          listingId={listing.id}
-          className="absolute end-1 top-1 z-10"
-        />
+        {!preview && (
+          <FavoriteButton
+            listingId={listing.id}
+            className="absolute end-1 top-1 z-10"
+          />
+        )}
       </div>
       <div className="flex min-w-0 flex-1 flex-col gap-1 px-1 pb-1">
         <PriceText price={listing.price} period={listing.rentPeriod} />
         <h3 className="min-h-[2lh] text-ui font-medium">
-          <a
-            href={localeHref(`/listing/${listing.slug}`, locale)}
-            className="line-clamp-2 group-hover:underline after:absolute after:inset-0"
-          >
-            <bdi>{listing.title}</bdi>
-          </a>
+          {preview ? (
+            <span className="line-clamp-2">
+              <bdi>{listing.title}</bdi>
+            </span>
+          ) : (
+            <a
+              href={localeHref(`/listing/${listing.slug}`, locale)}
+              className="line-clamp-2 group-hover:underline after:absolute after:inset-0"
+            >
+              <bdi>{listing.title}</bdi>
+            </a>
+          )}
         </h3>
         <p className="flex flex-wrap gap-x-3 text-caption text-muted-foreground">
           {facts.map((fact) => (

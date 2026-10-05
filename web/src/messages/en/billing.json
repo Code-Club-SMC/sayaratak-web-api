@@ -1,1 +1,19 @@
-{}
+{
+  "billing.duration_days_one": "{{count}} day",
+  "billing.duration_days_other": "{{count}} days",
+  "billing.listing_limit_one": "Up to {{count}} listing",
+  "billing.listing_limit_other": "Up to {{count}} listings",
+  "billing.vehicle_limit_one": "Up to {{count}} vehicle",
+  "billing.vehicle_limit_other": "Up to {{count}} vehicles",
+  "billing.unlimited": "No limit",
+  "billing.used_unlimited": "{{used}} used, no limit",
+  "billing.current_plan": "Current plan",
+  "promotion.effect_pin": "Stays at the top of its category results",
+  "promotion.effect_boost": "Moves up in search results",
+  "promotion.effect_homepage": "Shown on the home page",
+  "promotion.effect_sponsored": "Shown in sponsored spots across the site",
+  "promotion.name_pin": "Pin",
+  "promotion.name_boost": "Boost",
+  "promotion.name_homepage": "Home page",
+  "promotion.name_sponsored": "Sponsored"
+}

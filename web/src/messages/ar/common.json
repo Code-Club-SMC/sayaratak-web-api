@@ -144,5 +144,19 @@
   "table.columns": "الأعمدة",
   "table.select_row": "تحديد الصف",
   "table.select_all": "تحديد كل صفوف هذه الصفحة",
-  "table.error": "تعذّر تحميل الجدول. حاول مرة أخرى."
+  "table.error": "تعذّر تحميل الجدول. حاول مرة أخرى.",
+  "common.breadcrumb": "مسار التنقل",
+  "common.skip": "تخطي",
+  "common.view_on_map": "عرض على الخريطة",
+  "common.hide_map": "إخفاء الخريطة",
+  "common.loading": "جارٍ التحميل",
+  "form.add_phone": "إضافة رقم هاتف",
+  "form.phone_number": "رقم الهاتف {{number}}",
+  "form.remove_phone": "حذف رقم الهاتف {{number}}",
+  "form.pick_date": "اختر تاريخًا",
+  "form.search_listings": "ابحث في إعلاناتك",
+  "form.no_listings": "لا توجد إعلانات معتمدة.",
+  "form.listings_error": "تعذر تحميل إعلاناتك. حاول مرة أخرى.",
+  "form.preview_name": "اسمك",
+  "form.preview_fact_negotiable": "السعر قابل للتفاوض"
 }

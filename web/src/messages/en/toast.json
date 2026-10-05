@@ -4,5 +4,9 @@
   "toast.saved": "Changes saved",
   "toast.favorite_removed": "Removed from favorites",
   "toast.link_copied": "Link copied",
-  "toast.error_save": "Could not save. Try again."
+  "toast.error_save": "Could not save. Try again.",
+  "toast.message_sent": "Message sent",
+  "toast.report_sent": "Report sent. Thank you.",
+  "toast.review_saved": "Review saved",
+  "toast.tiktok_copied": "Link copied. Open TikTok and paste it in your post or message."
 }

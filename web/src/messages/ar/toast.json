@@ -4,5 +4,9 @@
   "toast.saved": "تم حفظ التغييرات",
   "toast.favorite_removed": "تمت الإزالة من المفضلة",
   "toast.link_copied": "تم نسخ الرابط",
-  "toast.error_save": "تعذّر الحفظ. حاول مرة أخرى."
+  "toast.error_save": "تعذّر الحفظ. حاول مرة أخرى.",
+  "toast.message_sent": "تم إرسال الرسالة",
+  "toast.report_sent": "تم إرسال البلاغ. شكرًا لك.",
+  "toast.review_saved": "تم حفظ التقييم",
+  "toast.tiktok_copied": "تم نسخ الرابط. افتح تيك توك والصقه في منشورك أو رسالتك."
 }

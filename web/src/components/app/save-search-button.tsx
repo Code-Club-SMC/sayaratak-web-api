@@ -32,7 +32,7 @@ export function SaveSearchButton({ params }: { params: SearchParams }) {
             onError: () => toast.add({ title: t("search.save_error") }),
           }
         ),
-      t("search.save")
+      "auth.reason_save_search"
     )
   return (
     <Button

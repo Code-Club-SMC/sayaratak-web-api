@@ -3,13 +3,13 @@ import type { ReactNode } from "react"
 import { BrandLogo } from "./brand-logo"
 import { LanguageSwitcher } from "./language-switcher"
 
-// Centered column for the pages outside the public shell (forgot and reset password).
+// Centered column for the pages outside the public shell. Without a `title` the children bring their own heading (the sign in flow).
 export function AuthCardLayout({
   title,
   description,
   children,
 }: {
-  title: string
+  title?: string
   description?: string
   children: ReactNode
 }) {
@@ -19,12 +19,14 @@ export function AuthCardLayout({
         <BrandLogo />
         <LanguageSwitcher />
       </div>
-      <div className="flex flex-col gap-1">
-        <h1 className="text-page font-semibold">{title}</h1>
-        {description && (
-          <p className="text-ui text-muted-foreground">{description}</p>
-        )}
-      </div>
+      {title && (
+        <div className="flex flex-col gap-1">
+          <h1 className="text-page font-semibold">{title}</h1>
+          {description && (
+            <p className="text-ui text-muted-foreground">{description}</p>
+          )}
+        </div>
+      )}
       <div className="flex flex-col gap-4 rounded-xl bg-card p-6">
         {children}
       </div>

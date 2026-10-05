@@ -35,7 +35,7 @@ export function FavoriteButton({
             onClick: () => mutate({ id: listingId, on: true }),
           },
         })
-    })
+    }, "auth.reason_favorite")
   return (
     <button
       type="button"

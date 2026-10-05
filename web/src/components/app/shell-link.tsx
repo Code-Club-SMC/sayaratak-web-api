@@ -10,12 +10,14 @@ export function ShellLink({
   children,
   className = "text-ui inline-flex min-h-11 items-center rounded-lg font-medium hover:text-primary md:min-h-10",
   label,
+  newTab,
   onClick,
 }: {
   path: string
   children: ReactNode
   className?: string
   label?: string
+  newTab?: boolean
   onClick?: () => void
 }) {
   const { locale } = useT()
@@ -26,6 +28,8 @@ export function ShellLink({
     <a
       href={href}
       aria-label={label}
+      target={newTab ? "_blank" : undefined}
+      rel={newTab ? "noopener" : undefined}
       aria-current={active ? "page" : undefined}
       className={`${className} ${active ? "text-primary" : ""}`}
       onClick={onClick}

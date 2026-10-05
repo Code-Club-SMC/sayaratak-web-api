@@ -1,4 +1,4 @@
-import { expect, it } from "vitest"
+import { describe, expect, it } from "vitest"
 
 import {
   bannerHref,
@@ -6,6 +6,7 @@ import {
   localeHref,
   messagesPath,
   postPath,
+  safeRedirect,
 } from "@/lib/navigation"
 
 it("changes only the locale segment and preserves the raw search and hash", () => {
@@ -43,4 +44,19 @@ it("localizes internal banner links and rejects executable or invalid destinatio
     "broken",
   ])
     expect(bannerHref(href, "en")).toBeNull()
+})
+
+describe("safeRedirect", () => {
+  it("keeps same-site paths and drops everything else", () => {
+    expect(safeRedirect("/en/account?tab=x")).toBe("/en/account?tab=x")
+    for (const bad of [
+      "//evil.com",
+      "/\\evil.com",
+      "https://evil.com",
+      "evil",
+      "",
+    ])
+      expect(safeRedirect(bad)).toBeUndefined()
+    expect(safeRedirect()).toBeUndefined()
+  })
 })

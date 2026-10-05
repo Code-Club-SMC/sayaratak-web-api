@@ -59,7 +59,7 @@ export function MessageComposer({
         type="button"
         variant={variant}
         className={className}
-        onClick={() => requireAuth(() => setOpen(true), t("listing.message"))}
+        onClick={() => requireAuth(() => setOpen(true), "auth.reason_message")}
       >
         <MailIcon
           aria-hidden="true"

@@ -36,6 +36,16 @@ export const getShellCopy = createServerFn()
     }
   })
 
+// Translated strings for a route's head(), looked up by key in whichever file holds them.
+export const getCopy = createServerFn()
+  .validator(z.object({ locale: localeSchema, keys: z.array(z.string()) }))
+  .handler(({ data }) => {
+    const groups = Object.values(loadMessages(data.locale))
+    return data.keys.map(
+      (key) => groups.find((messages) => key in messages)?.[key] ?? ""
+    )
+  })
+
 // Cookie first, then Accept-Language (listed order, q values ignored), then Arabic.
 function detectLocale(): Locale {
   const cookie = localeSchema.safeParse(getCookie("locale"))

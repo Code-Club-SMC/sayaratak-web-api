@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react"
+import { useFocusOnChange } from "@/hooks/use-focus-on-change"
 
 // Takes focus when `step` changes, so a screen reader hears the new step. Not on first render.
 export function StepHeader({
@@ -10,13 +10,7 @@ export function StepHeader({
   helper?: string
   step: string | number
 }) {
-  const heading = useRef<HTMLHeadingElement>(null)
-  const previous = useRef(step)
-  useEffect(() => {
-    if (previous.current === step) return
-    previous.current = step
-    heading.current?.focus()
-  }, [step])
+  const heading = useFocusOnChange<HTMLHeadingElement>(step)
   return (
     <div className="flex flex-col gap-1">
       <h1

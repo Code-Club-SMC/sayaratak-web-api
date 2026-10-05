@@ -49,6 +49,10 @@ export function personalHref(path: string, locale: Locale, me: User | null) {
     : `${localeHref("/auth", locale)}?redirect=${encodeURIComponent(destination)}`
 }
 
+// The `redirect` param is only followed when it is a path on this site: one leading slash, no protocol, no `//host`.
+export const safeRedirect = (value?: string) =>
+  value && /^\/(?![/\\])/.test(value) ? value : undefined
+
 export function bannerHref(href: string, locale: Locale) {
   if (href.startsWith("/") && !href.startsWith("//"))
     return localeHref(href, locale)

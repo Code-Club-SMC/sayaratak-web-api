@@ -57,7 +57,7 @@ export function ReportDialog({
         type="button"
         variant="ghost"
         className={className}
-        onClick={() => requireAuth(() => setOpen(true), t("listing.report"))}
+        onClick={() => requireAuth(() => setOpen(true), "auth.reason_report")}
       >
         <FlagIcon
           aria-hidden="true"

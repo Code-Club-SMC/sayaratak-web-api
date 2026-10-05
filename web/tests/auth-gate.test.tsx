@@ -3,7 +3,7 @@ import { isRedirect } from "@tanstack/react-router"
 import { fireEvent, screen, waitFor } from "@testing-library/react"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 
-import { AuthDialogHost } from "@/features/auth/components/auth-dialog-host"
+import { AuthDialog } from "@/features/auth/components/auth-dialog"
 import { closeAuthGate, useRequireAuth } from "@/features/auth/auth-gate"
 import { requireRole, requireUser } from "@/features/auth/guards"
 import { userSchema } from "@/schemas/user"
@@ -28,7 +28,7 @@ function Demo() {
         gated
       </button>
       <output>runs {runs}</output>
-      <AuthDialogHost />
+      <AuthDialog />
     </>
   )
 }
@@ -42,7 +42,7 @@ afterEach(() => {
   vi.unstubAllGlobals()
 })
 
-describe("auth dialog host", () => {
+describe("auth dialog", () => {
   it("opens for a signed-out visitor and replays the action after sign in", async () => {
     await renderShell(<Demo />)
     fireEvent.click(screen.getByRole("button", { name: "gated" }))

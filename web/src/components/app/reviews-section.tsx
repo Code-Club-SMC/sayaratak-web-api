@@ -51,7 +51,7 @@ export function ReviewsSection({
             type="button"
             variant="outline"
             onClick={() =>
-              requireAuth(() => setWriting(true), t("reviews.write"))
+              requireAuth(() => setWriting(true), "auth.reason_review")
             }
           >
             {t("reviews.write")}

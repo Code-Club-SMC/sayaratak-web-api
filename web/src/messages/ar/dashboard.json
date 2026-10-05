@@ -1,1 +1,9 @@
-{}
+{
+  "dashboard.vs_previous": "مقارنة بالفترة السابقة",
+  "dashboard.range_label": "الفترة",
+  "dashboard.range_7d": "آخر 7 أيام",
+  "dashboard.range_30d": "آخر 30 يومًا",
+  "dashboard.range_90d": "آخر 90 يومًا",
+  "dashboard.chart_error": "تعذّر تحميل الرسم البياني. حاول مرة أخرى.",
+  "dashboard.chart_empty": "لا توجد بيانات لهذه الفترة بعد."
+}

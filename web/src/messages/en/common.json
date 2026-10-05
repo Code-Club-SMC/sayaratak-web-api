@@ -126,5 +126,15 @@
   "form.load_map": "Load map",
   "form.map_label": "Map",
   "form.remove_pin": "Remove pin",
-  "form.location": "Location"
+  "form.location": "Location",
+  "common.copy_failed": "Could not copy. Try again.",
+  "table.row_actions": "Actions for {{name}}",
+  "table.bulk_actions": "Actions for selected rows",
+  "table.selected_one": "{{count}} selected",
+  "table.selected_other": "{{count}} selected",
+  "table.clear_selection": "Clear selection",
+  "table.columns": "Columns",
+  "table.select_row": "Select row",
+  "table.select_all": "Select all rows on this page",
+  "table.error": "Could not load the table. Try again."
 }

@@ -53,3 +53,11 @@ export const formatWeekday = (day: number, locale: Locale) =>
   new Intl.DateTimeFormat(locale, { weekday: "long", timeZone: "UTC" }).format(
     Date.UTC(2023, 0, 1 + day)
   )
+
+// Day and month only, for chart axes.
+export const formatShortDate = (iso: string, locale: Locale) =>
+  new Intl.DateTimeFormat(locale, {
+    ...dateBase,
+    day: "numeric",
+    month: "short",
+  }).format(new Date(iso))

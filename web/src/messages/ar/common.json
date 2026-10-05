@@ -130,5 +130,19 @@
   "form.load_map": "تحميل الخريطة",
   "form.map_label": "الخريطة",
   "form.remove_pin": "إزالة الدبوس",
-  "form.location": "الموقع"
+  "form.location": "الموقع",
+  "common.copy_failed": "تعذّر النسخ. حاول مرة أخرى.",
+  "table.row_actions": "إجراءات {{name}}",
+  "table.bulk_actions": "إجراءات الصفوف المحددة",
+  "table.selected_zero": "لا صفوف محددة",
+  "table.selected_one": "صف واحد محدد",
+  "table.selected_two": "صفان محددان",
+  "table.selected_few": "{{count}} صفوف محددة",
+  "table.selected_many": "{{count}} صفًا محددًا",
+  "table.selected_other": "{{count}} صف محدد",
+  "table.clear_selection": "إلغاء التحديد",
+  "table.columns": "الأعمدة",
+  "table.select_row": "تحديد الصف",
+  "table.select_all": "تحديد كل صفوف هذه الصفحة",
+  "table.error": "تعذّر تحميل الجدول. حاول مرة أخرى."
 }

@@ -1,1 +1,9 @@
-{}
+{
+  "dashboard.vs_previous": "vs previous period",
+  "dashboard.range_label": "Period",
+  "dashboard.range_7d": "Last 7 days",
+  "dashboard.range_30d": "Last 30 days",
+  "dashboard.range_90d": "Last 90 days",
+  "dashboard.chart_error": "Could not load the chart. Try again.",
+  "dashboard.chart_empty": "No data for this period yet."
+}

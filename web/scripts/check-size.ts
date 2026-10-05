@@ -5,7 +5,9 @@ import { gzipSync } from "node:zlib"
 
 const dir = ".output/public/assets"
 // ponytail: entry = `index-*.js`; if the home route gets its own chunk, point the 200 KB limit at that instead (raised from 180 in step 2.3, see Decisions)
-const limit = (name: string) => (name.startsWith("index-") ? 200 : 80)
+// ponytail: `chart-impl-*` is the lazy Recharts chunk (about 105 KB gzip, only dashboards load it), so it gets its own 120 KB limit (step 4.6, see Decisions)
+const limit = (name: string) =>
+  name.startsWith("index-") ? 200 : name.startsWith("chart-impl-") ? 120 : 80
 
 let failed = 0
 for (const name of readdirSync(dir).filter((f) => f.endsWith(".js"))) {

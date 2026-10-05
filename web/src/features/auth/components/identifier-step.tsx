@@ -1,4 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod"
+import { useState } from "react"
 import { useForm } from "react-hook-form"
 
 import { FormField } from "@/components/app/form-field"
@@ -6,24 +7,23 @@ import { SubmitButton } from "@/components/app/submit-button"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Separator } from "@/components/ui/separator"
-import { toast } from "@/components/ui/toast"
-import { errorText } from "@/lib/api/error-text"
 import { useT } from "@/lib/i18n/use-t"
 import {
   identifierKind,
   looksLikePhone,
   normalizeIdentifier,
 } from "../identifier"
-import { useIdentify, useOauthLogin } from "../queries"
+import { useIdentify } from "../queries"
 import { identifierFormSchema, type IdentifierForm } from "../schemas"
 import { DemoAccounts } from "./demo-accounts"
-import { SocialButtons } from "./social-buttons"
+import { MockOAuthDialog } from "./mock-oauth-dialog"
+import { SocialButtons, type Provider } from "./social-buttons"
 import type { StepProps } from "./step-switch"
 
 export function IdentifierStep({ state, dispatch, onDone, mode }: StepProps) {
   const { t } = useT()
   const identify = useIdentify()
-  const oauth = useOauthLogin()
+  const [provider, setProvider] = useState<Provider | null>(null)
   const form = useForm<IdentifierForm>({
     resolver: zodResolver(identifierFormSchema),
     mode: "onTouched",
@@ -92,18 +92,11 @@ export function IdentifierStep({ state, dispatch, onDone, mode }: StepProps) {
         {t("auth.or")}
         <Separator className="flex-1" />
       </div>
-      <SocialButtons
-        disabled={oauth.isPending}
-        // Stand-in until 5.6 adds the account chooser: signs in a fixed mock account.
-        onSelect={(provider) =>
-          oauth.mutate(
-            { provider, accountId: "Sara Ahmed" },
-            {
-              onSuccess: onDone,
-              onError: (e) => toast.add({ title: errorText(t, e) }),
-            }
-          )
-        }
+      <SocialButtons onSelect={setProvider} />
+      <MockOAuthDialog
+        provider={provider}
+        onClose={() => setProvider(null)}
+        onDone={onDone}
       />
       <DemoAccounts onDone={onDone} />
     </div>

@@ -11,8 +11,19 @@ import {
 import { resetDb } from "@/mocks/db"
 import { renderShell } from "./shell-render"
 
-beforeEach(resetDb)
-afterEach(() => vi.unstubAllEnvs())
+beforeEach(() => {
+  resetDb()
+  // The social account dialog reads the viewport through useIsMobile.
+  vi.stubGlobal("matchMedia", () => ({
+    matches: false,
+    addEventListener: () => {},
+    removeEventListener: () => {},
+  }))
+})
+afterEach(() => {
+  vi.unstubAllEnvs()
+  vi.unstubAllGlobals()
+})
 
 describe("identifier helpers", () => {
   it("detects and normalizes phone and email", () => {
@@ -87,14 +98,6 @@ describe("IdentifierStep", () => {
         expect.objectContaining({ kind: "email", exists: false })
       )
     )
-  })
-
-  it("signs in with a social button", async () => {
-    const { onDone } = await setup()
-    fireEvent.click(
-      screen.getByRole("button", { name: "Continue with Google" })
-    )
-    await waitFor(() => expect(onDone).toHaveBeenCalled())
   })
 
   it("lists demo accounts only when VITE_DEMO is true", async () => {

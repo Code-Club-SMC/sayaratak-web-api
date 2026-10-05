@@ -114,4 +114,6 @@ export type Db = {
   broadcasts: BroadcastRow[]
   uploads: Map<string, UploadRow>
   attempts: Map<string, number[]>
+  // The account the last forgot-password request named; the demo token resets it.
+  resetUserId: string | null
 }

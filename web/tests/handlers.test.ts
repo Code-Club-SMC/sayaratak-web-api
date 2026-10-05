@@ -63,9 +63,11 @@ describe("auth", () => {
     })
     expect(locked.status).toBe(429)
     expect(locked.body.retryAfter).toBeGreaterThan(0)
+    await call("POST", "/auth/forgot", {
+      body: { identifier: "admin@demo.sy" },
+    })
     await call("POST", "/auth/reset", {
       body: {
-        identifier: "admin@demo.sy",
         token: "demo-reset",
         password: "Demo1234",
       },

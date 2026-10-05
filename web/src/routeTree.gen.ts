@@ -16,6 +16,8 @@ import { Route as ApiSplatRouteImport } from './routes/api/$'
 import { Route as LocalePublicIndexRouteImport } from './routes/$locale/_public/index'
 import { Route as LocalePublicSplatRouteImport } from './routes/$locale/_public/$'
 import { Route as LocaleAuthIndexRouteImport } from './routes/$locale/auth/index'
+import { Route as LocaleAuthForgotRouteImport } from './routes/$locale/auth/forgot'
+import { Route as LocaleAuthResetRouteImport } from './routes/$locale/auth/reset'
 import { Route as LocalePublicDevGuardedRouteImport } from './routes/$locale/_public/dev.guarded'
 import { Route as LocalePublicDevSharedRouteImport } from './routes/$locale/_public/dev.shared'
 
@@ -53,6 +55,16 @@ const LocaleAuthIndexRoute = LocaleAuthIndexRouteImport.update({
   path: '/auth/',
   getParentRoute: () => LocaleRouteRoute,
 } as any)
+const LocaleAuthForgotRoute = LocaleAuthForgotRouteImport.update({
+  id: '/auth/forgot',
+  path: '/auth/forgot',
+  getParentRoute: () => LocaleRouteRoute,
+} as any)
+const LocaleAuthResetRoute = LocaleAuthResetRouteImport.update({
+  id: '/auth/reset',
+  path: '/auth/reset',
+  getParentRoute: () => LocaleRouteRoute,
+} as any)
 const LocalePublicDevGuardedRoute = LocalePublicDevGuardedRouteImport.update({
   id: '/dev/guarded',
   path: '/dev/guarded',
@@ -69,6 +81,8 @@ export interface FileRoutesByFullPath {
   '/$locale': typeof LocaleRouteRouteWithChildren
   '/api/$': typeof ApiSplatRoute
   '/$locale/$': typeof LocalePublicSplatRoute
+  '/$locale/auth/forgot': typeof LocaleAuthForgotRoute
+  '/$locale/auth/reset': typeof LocaleAuthResetRoute
   '/$locale/': typeof LocalePublicIndexRoute
   '/$locale/auth/': typeof LocaleAuthIndexRoute
   '/$locale/dev/guarded': typeof LocalePublicDevGuardedRoute
@@ -79,6 +93,8 @@ export interface FileRoutesByTo {
   '/$locale': typeof LocalePublicIndexRoute
   '/api/$': typeof ApiSplatRoute
   '/$locale/$': typeof LocalePublicSplatRoute
+  '/$locale/auth/forgot': typeof LocaleAuthForgotRoute
+  '/$locale/auth/reset': typeof LocaleAuthResetRoute
   '/$locale/auth': typeof LocaleAuthIndexRoute
   '/$locale/dev/guarded': typeof LocalePublicDevGuardedRoute
   '/$locale/dev/shared': typeof LocalePublicDevSharedRoute
@@ -90,6 +106,8 @@ export interface FileRoutesById {
   '/$locale/_public': typeof LocalePublicRouteRouteWithChildren
   '/api/$': typeof ApiSplatRoute
   '/$locale/_public/$': typeof LocalePublicSplatRoute
+  '/$locale/auth/forgot': typeof LocaleAuthForgotRoute
+  '/$locale/auth/reset': typeof LocaleAuthResetRoute
   '/$locale/_public/': typeof LocalePublicIndexRoute
   '/$locale/auth/': typeof LocaleAuthIndexRoute
   '/$locale/_public/dev/guarded': typeof LocalePublicDevGuardedRoute
@@ -102,6 +120,8 @@ export interface FileRouteTypes {
     | '/$locale'
     | '/api/$'
     | '/$locale/$'
+    | '/$locale/auth/forgot'
+    | '/$locale/auth/reset'
     | '/$locale/'
     | '/$locale/auth/'
     | '/$locale/dev/guarded'
@@ -112,6 +132,8 @@ export interface FileRouteTypes {
     | '/$locale'
     | '/api/$'
     | '/$locale/$'
+    | '/$locale/auth/forgot'
+    | '/$locale/auth/reset'
     | '/$locale/auth'
     | '/$locale/dev/guarded'
     | '/$locale/dev/shared'
@@ -122,6 +144,8 @@ export interface FileRouteTypes {
     | '/$locale/_public'
     | '/api/$'
     | '/$locale/_public/$'
+    | '/$locale/auth/forgot'
+    | '/$locale/auth/reset'
     | '/$locale/_public/'
     | '/$locale/auth/'
     | '/$locale/_public/dev/guarded'
@@ -185,6 +209,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LocaleAuthIndexRouteImport
       parentRoute: typeof LocaleRouteRoute
     }
+    '/$locale/auth/forgot': {
+      id: '/$locale/auth/forgot'
+      path: '/auth/forgot'
+      fullPath: '/$locale/auth/forgot'
+      preLoaderRoute: typeof LocaleAuthForgotRouteImport
+      parentRoute: typeof LocaleRouteRoute
+    }
+    '/$locale/auth/reset': {
+      id: '/$locale/auth/reset'
+      path: '/auth/reset'
+      fullPath: '/$locale/auth/reset'
+      preLoaderRoute: typeof LocaleAuthResetRouteImport
+      parentRoute: typeof LocaleRouteRoute
+    }
     '/$locale/_public/dev/guarded': {
       id: '/$locale/_public/dev/guarded'
       path: '/dev/guarded'
@@ -221,11 +259,15 @@ const LocalePublicRouteRouteWithChildren =
 
 interface LocaleRouteRouteChildren {
   LocalePublicRouteRoute: typeof LocalePublicRouteRouteWithChildren
+  LocaleAuthForgotRoute: typeof LocaleAuthForgotRoute
+  LocaleAuthResetRoute: typeof LocaleAuthResetRoute
   LocaleAuthIndexRoute: typeof LocaleAuthIndexRoute
 }
 
 const LocaleRouteRouteChildren: LocaleRouteRouteChildren = {
   LocalePublicRouteRoute: LocalePublicRouteRouteWithChildren,
+  LocaleAuthForgotRoute: LocaleAuthForgotRoute,
+  LocaleAuthResetRoute: LocaleAuthResetRoute,
   LocaleAuthIndexRoute: LocaleAuthIndexRoute,
 }
 

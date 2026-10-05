@@ -16,3 +16,6 @@ export type IdentifierForm = z.infer<typeof identifierFormSchema>
 export const otpFormSchema = z.object({
   code: z.string().regex(/^\d{6}$/, "validation.otp"),
 })
+export const forgotFormSchema = identifierFormSchema
+export const resetFormSchema = z.object({ password: passwordSchema })
+export type ResetForm = z.infer<typeof resetFormSchema>

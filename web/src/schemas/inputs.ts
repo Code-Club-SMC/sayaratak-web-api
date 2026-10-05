@@ -52,7 +52,6 @@ export const otpVerifyInputSchema = z.object({
 })
 export const forgotInputSchema = z.object({ identifier: identifierSchema })
 export const resetInputSchema = z.object({
-  identifier: identifierSchema,
   token: z.string().min(1, "validation.required"),
   password: passwordSchema,
 })

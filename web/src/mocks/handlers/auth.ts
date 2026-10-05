@@ -163,16 +163,22 @@ route("POST", "/auth/otp/verify", async (c) => {
 })
 
 route("POST", "/auth/forgot", async (c) => {
-  await c.body(forgotInputSchema)
+  const { identifier } = await c.body(forgotInputSchema)
+  db.resetUserId = findByIdentifier(identifier)?.id ?? null
   return okSchema.parse({ ok: true })
 })
+// The demo token resets the account of the last forgot request, else the demo user.
 route("POST", "/auth/reset", async (c) => {
-  const { identifier, token, password } = await c.body(resetInputSchema)
-  const user = findByIdentifier(identifier)
-  if (token !== "demo-reset" || !user)
-    throw fail(422, "validation", { token: "validation.required" })
+  const { token, password } = await c.body(resetInputSchema)
+  const user =
+    token === "demo-reset" &&
+    (db.users.find((u) => u.id === db.resetUserId) ??
+      findByIdentifier("+249912345601"))
+  if (!user) throw fail(422, "invalid_token")
   user.password = password
-  db.attempts.delete(normalize(identifier))
+  for (const id of [user.email, user.phone])
+    if (id) db.attempts.delete(normalize(id))
+  db.resetUserId = null
   return okSchema.parse({ ok: true })
 })
 route("POST", "/auth/logout", () => withSession(null, { ok: true }))

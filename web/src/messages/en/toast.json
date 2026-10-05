@@ -8,5 +8,6 @@
   "toast.message_sent": "Message sent",
   "toast.report_sent": "Report sent. Thank you.",
   "toast.review_saved": "Review saved",
-  "toast.tiktok_copied": "Link copied. Open TikTok and paste it in your post or message."
+  "toast.tiktok_copied": "Link copied. Open TikTok and paste it in your post or message.",
+  "toast.password_changed": "Password changed"
 }

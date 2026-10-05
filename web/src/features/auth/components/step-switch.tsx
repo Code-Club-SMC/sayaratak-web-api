@@ -4,6 +4,7 @@ import { useT } from "@/lib/i18n/use-t"
 import type { AuthAction, AuthState, AuthStep } from "../auth-flow-state"
 import { stepCopy } from "./auth-header"
 import { IdentifierStep } from "./identifier-step"
+import { PasswordStep } from "./password-step"
 
 export type StepProps = {
   state: AuthState
@@ -13,7 +14,7 @@ export type StepProps = {
   mode: "dialog" | "page"
 }
 
-// Stands in until steps 5.3 to 5.5 build the real step.
+// Stands in until steps 5.4 and 5.5 build the real step.
 function StepPlaceholder({ state }: StepProps) {
   const { t } = useT()
   return (
@@ -25,7 +26,7 @@ function StepPlaceholder({ state }: StepProps) {
 
 const steps = {
   identifier: IdentifierStep,
-  password: StepPlaceholder,
+  password: PasswordStep,
   create: StepPlaceholder,
   otp: StepPlaceholder,
 } satisfies Record<AuthStep, (props: StepProps) => ReactNode>

@@ -5,6 +5,7 @@ import {
   nameSchema,
   optionalInt,
   phoneSchema,
+  requiredInt,
   requiredText,
   weeklyHoursSchema,
 } from "@/schemas/fields"
@@ -77,3 +78,28 @@ export const planStepSchema = z.object({
   planId: z.string().min(1, "validation.required"),
 })
 export type PlanStep = z.infer<typeof planStepSchema>
+
+export const mechanicAboutSchema = z.object({
+  name: nameSchema,
+  photoId: z.string().optional(),
+  yearsOfExperience: requiredInt(0, 60),
+  bio: z
+    .string()
+    .trim()
+    .min(20, "validation.desc_min")
+    .max(600, "validation.too_long"),
+})
+export type MechanicAbout = z.infer<typeof mechanicAboutSchema>
+
+export const mechanicExpertiseSchema = z.object({
+  specializationIds: z.array(z.string()).min(1, "validation.select_min").max(6),
+  cityId: z.string().min(1, "validation.required"),
+  servedCityIds: z.array(z.string()).max(5),
+})
+export type MechanicExpertise = z.infer<typeof mechanicExpertiseSchema>
+
+export const mechanicContactPlanSchema = planStepSchema.extend({
+  phone: phoneSchema,
+  whatsapp: phoneSchema.or(z.literal("")),
+})
+export type MechanicContactPlan = z.infer<typeof mechanicContactPlanSchema>

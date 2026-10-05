@@ -116,6 +116,16 @@ const planRows: PlanRow[] = [
     ["Unlimited services|خدمات غير محدودة", "Photo gallery|معرض صور"],
   ],
   [
+    "plan-mechanic-free",
+    "mechanic",
+    "Free",
+    "مجانية",
+    0,
+    30,
+    undefined,
+    ["Mechanic page|صفحة الميكانيكي", "Listed in the directory|ظهور في الدليل"],
+  ],
+  [
     "plan-mechanic-basic",
     "mechanic",
     "Basic",

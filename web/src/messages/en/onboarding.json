@@ -53,5 +53,11 @@
   "onboarding.cover_label": "Cover photo",
   "onboarding.plans_label": "Plans",
   "onboarding.plan_note": "You can change plans anytime in Billing. Paid plans are activated after your transfer is verified.",
-  "onboarding.plans_error": "We could not load the plans. Try again."
+  "onboarding.plans_error": "We could not load the plans. Try again.",
+  "onboarding.mechanic_photo_label": "Add a photo",
+  "onboarding.mechanic_years_label": "Years of experience",
+  "onboarding.mechanic_bio_label": "Short bio",
+  "onboarding.mechanic_specializations_legend": "Specializations",
+  "onboarding.mechanic_home_city_label": "Home city",
+  "onboarding.mechanic_served_cities_legend": "Other cities you cover"
 }

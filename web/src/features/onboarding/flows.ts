@@ -1,6 +1,6 @@
 import { createElement, type ComponentType } from "react"
 import type { FieldValues } from "react-hook-form"
-import { z } from "zod"
+import type { z } from "zod"
 
 import { defaultWeeklyHours } from "@/lib/hours"
 import type { User } from "@/schemas/user"
@@ -8,6 +8,9 @@ import {
   dealerBusinessSchema,
   dealerLocationSchema,
   hoursStepSchema,
+  mechanicAboutSchema,
+  mechanicContactPlanSchema,
+  mechanicExpertiseSchema,
   planStepSchema,
   userOnboardingSchema,
   workshopBusinessSchema,
@@ -18,6 +21,9 @@ import {
 import { BusinessStep } from "./components/business-step"
 import { DealerLocationStep } from "./components/dealer-location-step"
 import { HoursStep } from "./components/hours-step"
+import { MechanicAboutStep } from "./components/mechanic-about-step"
+import { MechanicContactPlanStep } from "./components/mechanic-contact-plan-step"
+import { MechanicExpertiseStep } from "./components/mechanic-expertise-step"
 import { PlanStep } from "./components/plan-step"
 import { UserDetailsStep } from "./components/user-details-step"
 import { WorkshopHoursServicesStep } from "./components/workshop-hours-services-step"
@@ -40,17 +46,9 @@ const businessStep = (kind: "dealership" | "workshop") => () =>
 const planStep = (audience: "dealership" | "workshop") => () =>
   createElement(PlanStep, { audience })
 
-// Steps 5.10 to 5.13 replace `schema` and `Component` of each step with its real fields.
-const noFields = () => null
-const step = (role: OnboardingRole, id: string): FlowStep => {
+const step = (role: OnboardingRole, id: string) => {
   const key = `onboarding.step_${role}_${id.replaceAll("-", "_")}`
-  return {
-    id,
-    titleKey: `${key}_title`,
-    helperKey: `${key}_helper`,
-    schema: z.object({}),
-    Component: noFields,
-  }
+  return { id, titleKey: `${key}_title`, helperKey: `${key}_helper` }
 }
 
 export const flows = {
@@ -132,9 +130,38 @@ export const flows = {
       Component: planStep("workshop"),
     },
   ],
-  mechanic: ["about", "expertise", "contact-plan"].map((id) =>
-    step("mechanic", id)
-  ),
+  mechanic: [
+    {
+      ...step("mechanic", "about"),
+      schema: mechanicAboutSchema,
+      defaults: (me) => ({
+        name: me.fullName,
+        yearsOfExperience: null,
+        bio: "",
+      }),
+      Component: MechanicAboutStep,
+    },
+    {
+      ...step("mechanic", "expertise"),
+      schema: mechanicExpertiseSchema,
+      defaults: (me) => ({
+        specializationIds: [],
+        cityId: me.cityId ?? "",
+        servedCityIds: [],
+      }),
+      Component: MechanicExpertiseStep,
+    },
+    {
+      ...step("mechanic", "contact-plan"),
+      schema: mechanicContactPlanSchema,
+      defaults: (me) => ({
+        phone: me.phone ?? "",
+        whatsapp: "",
+        planId: "",
+      }),
+      Component: MechanicContactPlanStep,
+    },
+  ],
 } satisfies Record<OnboardingRole, FlowStep[]>
 
 export const isRole = (value: string): value is OnboardingRole =>

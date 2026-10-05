@@ -53,5 +53,11 @@
   "onboarding.cover_label": "صورة الغلاف",
   "onboarding.plans_label": "الباقات",
   "onboarding.plan_note": "يمكنك تغيير الباقة في أي وقت من صفحة الفواتير. تُفعَّل الباقات المدفوعة بعد التحقق من تحويلك.",
-  "onboarding.plans_error": "تعذر تحميل الباقات. حاول مرة أخرى."
+  "onboarding.plans_error": "تعذر تحميل الباقات. حاول مرة أخرى.",
+  "onboarding.mechanic_photo_label": "أضف صورة",
+  "onboarding.mechanic_years_label": "سنوات الخبرة",
+  "onboarding.mechanic_bio_label": "نبذة قصيرة",
+  "onboarding.mechanic_specializations_legend": "التخصصات",
+  "onboarding.mechanic_home_city_label": "مدينتك",
+  "onboarding.mechanic_served_cities_legend": "مدن أخرى تخدمها"
 }

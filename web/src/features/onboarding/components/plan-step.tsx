@@ -1,6 +1,6 @@
 import { useEffect } from "react"
 import { useQuery } from "@tanstack/react-query"
-import { Controller, useFormContext } from "react-hook-form"
+import { Controller, useFormContext, useWatch } from "react-hook-form"
 
 import { FieldError } from "@/components/app/field-error"
 import { PlansGrid } from "@/components/app/plans-grid"
@@ -15,16 +15,17 @@ import type { PlanStep as PlanValues } from "../schemas"
 export function PlanStep({
   audience,
 }: {
-  audience: "dealership" | "workshop"
+  audience: "dealership" | "workshop" | "mechanic"
 }) {
   const { t } = useT()
-  const { control, getValues, setValue } = useFormContext<PlanValues>()
+  const { control, setValue } = useFormContext<PlanValues>()
+  const planId = useWatch({ control, name: "planId" })
   const plans = useQuery(billingQueries.plans(audience))
   const waiting = useDelayed(plans.isPending)
   const free = plans.data?.find((p) => p.price === 0)
   useEffect(() => {
-    if (free && !getValues("planId")) setValue("planId", free.id)
-  }, [free, getValues, setValue])
+    if (free && !planId) setValue("planId", free.id)
+  }, [free, planId, setValue])
   if (plans.isError)
     return (
       <div role="alert" className="flex flex-col items-start gap-2">

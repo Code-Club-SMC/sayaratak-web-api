@@ -85,11 +85,18 @@ route("POST", "/onboarding/complete", async (c) => {
     db.mechanics.push({
       ...base,
       id: newId("m"),
-      photoUrl: "",
-      bio: text("description"),
-      servedCityIds: [city],
-      yearsOfExperience: 0,
-      specializationIds: [],
+      photoUrl: image("photoId"),
+      bio: text("bio"),
+      servedCityIds: [
+        ...new Set([
+          city,
+          ...(get(z.array(z.string()), "servedCityIds") ?? []),
+        ]),
+      ],
+      yearsOfExperience: get(z.number().int().min(0), "yearsOfExperience") ?? 0,
+      specializationIds: (
+        get(z.array(z.string()), "specializationIds") ?? []
+      ).filter((id) => db.taxonomy.specializations.some((s) => s.id === id)),
       phone,
       whatsapp,
       portfolio: [],

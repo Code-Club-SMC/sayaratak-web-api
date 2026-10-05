@@ -2,7 +2,9 @@ import type { ComponentType } from "react"
 import type { FieldValues } from "react-hook-form"
 import { z } from "zod"
 
-import type { OnboardingRole } from "./schemas"
+import type { User } from "@/schemas/user"
+import { userOnboardingSchema, type OnboardingRole } from "./schemas"
+import { UserDetailsStep } from "./components/user-details-step"
 
 export type FlowStep = {
   id: string
@@ -10,6 +12,8 @@ export type FlowStep = {
   helperKey: string
   schema: z.ZodType<FieldValues, FieldValues>
   optional?: boolean
+  // Starting values for a step with no saved draft, e.g. the account name.
+  defaults?: (me: User) => FieldValues
   Component: ComponentType
 }
 
@@ -27,7 +31,18 @@ const step = (role: OnboardingRole, id: string): FlowStep => {
 }
 
 export const flows = {
-  user: [step("user", "details")],
+  user: [
+    {
+      ...step("user", "details"),
+      schema: userOnboardingSchema,
+      defaults: (me) => ({
+        fullName: me.fullName,
+        cityId: me.cityId ?? "",
+        interests: [],
+      }),
+      Component: UserDetailsStep,
+    },
+  ],
   dealership: ["business", "location", "hours", "plan"].map((id) =>
     step("dealership", id)
   ),

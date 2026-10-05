@@ -20,13 +20,14 @@ import {
   registerInputSchema,
   resetInputSchema,
 } from "@/schemas/inputs"
-import { userSchema } from "@/schemas/user"
+import { interestSchema, userSchema } from "@/schemas/user"
 import { slugify } from "@/mocks/seed/util"
 
 import { db, find, insert, newId, remove } from "../db"
 import { fail, needUser, route, withSession } from "../http"
 import { nowIso } from "../lib"
 import type { UserRow } from "../types"
+import { template } from "./uploads"
 
 const WINDOW_MS = 10 * 60_000
 const MAX_FAILS = 5
@@ -306,6 +307,12 @@ route("POST", "/onboarding/complete", async (c) => {
       portfolio: [],
       available: true,
     })
+  if (role === "user") {
+    user.fullName = text("fullName", user.fullName)
+    const avatarId = text("avatarId")
+    if (avatarId) user.avatarUrl = template(avatarId)
+    user.interests = interestSchema.array().catch([]).parse(payload.interests)
+  }
   user.role = role
   user.cityId = city
   user.onboardingDone = true

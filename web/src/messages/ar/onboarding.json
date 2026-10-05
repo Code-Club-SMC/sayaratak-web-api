@@ -40,5 +40,8 @@
   "onboarding.step_mechanic_expertise_title": "مهاراتك",
   "onboarding.step_mechanic_expertise_helper": "اختر ما تصلحه وأين تعمل.",
   "onboarding.step_mechanic_contact_plan_title": "التواصل والباقة",
-  "onboarding.step_mechanic_contact_plan_helper": "أخبر الزبائن كيف يصلون إليك واختر باقة."
+  "onboarding.step_mechanic_contact_plan_helper": "أخبر الزبائن كيف يصلون إليك واختر باقة.",
+  "onboarding.user_avatar_label": "أضف صورة",
+  "onboarding.user_interests_legend": "ماذا تبحث عنه؟",
+  "onboarding.interest_tuk_tuks": "توك توك"
 }

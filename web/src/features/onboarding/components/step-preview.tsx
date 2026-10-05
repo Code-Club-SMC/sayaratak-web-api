@@ -2,10 +2,10 @@ import { useWatch } from "react-hook-form"
 import { z } from "zod"
 
 import { ProfilePreview } from "@/components/app/profile-preview"
-import { buildUrl } from "@/lib/api/client"
 import { weeklyHoursSchema } from "@/schemas/fields"
 import { flatValues, type DraftData } from "../draft"
 import type { FlowStep } from "../flows"
+import { uploadTemplate } from "../media"
 import type { OnboardingRole } from "../schemas"
 
 // Half-typed values must never break the preview, so every field falls back to empty.
@@ -18,8 +18,7 @@ const previewSchema = z.object({
   hours: weeklyHoursSchema.optional().catch(undefined),
 })
 
-const imageUrl = (id?: string) =>
-  id ? `${buildUrl(`/uploads/${id}`)}?w={w}` : undefined
+const imageUrl = (id?: string) => (id ? uploadTemplate(id) : undefined)
 
 // The saved steps plus what is being typed in the current one.
 export function StepPreview({

@@ -10,6 +10,7 @@ import { StickyFooter } from "@/components/app/sticky-footer"
 import { SubmitButton } from "@/components/app/submit-button"
 import { Button } from "@/components/ui/button"
 import { draftQuery, useSaveDraft } from "@/features/auth/queries"
+import { meQuery } from "@/features/auth/me-query"
 import { useT } from "@/lib/i18n/use-t"
 import { dashboardPath, localeHref } from "@/lib/navigation"
 import { useCompleteOnboarding } from "../queries"
@@ -36,13 +37,14 @@ export function OnboardingStepPage({
   const router = useRouter()
   const key = onboardingDraftKey(role)
   const data = useQuery(draftQuery(key)).data?.data ?? {}
+  const me = useQuery(meQuery).data
   const save = useSaveDraft(key)
   const complete = useCompleteOnboarding()
   const index = steps.findIndex((s) => s.id === stepId)
   const step = steps[index]
   const form = useForm<FieldValues>({
     resolver: zodResolver(step?.schema ?? noSchema),
-    values: stepValues(data, stepId),
+    values: { ...(me && step?.defaults?.(me)), ...stepValues(data, stepId) },
   })
   // The router keeps the page mounted between steps, so it does not scroll by itself.
   useEffect(() => {

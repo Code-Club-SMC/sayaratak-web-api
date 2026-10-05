@@ -36,7 +36,7 @@ export async function storeUpload(
   })
 }
 
-const template = (id: string) => `/api/uploads/${id}?w={w}`
+export const template = (id: string) => `/api/uploads/${id}?w={w}`
 
 // Returns a Media. A real backend reads width, height and the dominant color from the file;
 // the mock takes them from the client, which already decoded the image, and serves the original for every `{w}`.

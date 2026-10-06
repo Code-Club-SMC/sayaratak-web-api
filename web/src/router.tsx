@@ -3,6 +3,7 @@ import { createRouter as createTanStackRouter } from "@tanstack/react-router"
 import { setupRouterSsrQueryIntegration } from "@tanstack/react-router-ssr-query"
 
 import { sessionCaches } from "@/features/auth/session-ended"
+import { pageTransition } from "@/lib/motion"
 import { NotFound } from "@/components/app/not-found"
 import { PageSkeleton } from "@/components/app/page-skeleton"
 import { RouteError } from "@/components/app/route-error"
@@ -25,8 +26,10 @@ export function getRouter() {
     defaultNotFoundComponent: NotFound,
     defaultErrorComponent: RouteError,
     defaultPendingComponent: PageSkeleton,
-    // Skeletons appear only for loads slower than 150 ms (A1b G6).
-    defaultPendingMs: 150,
+    // A route skeleton only for loads slower than 400 ms, then shown for at least 300 ms. Before that the page stays and the progress bar answers (A5b).
+    defaultPendingMs: 400,
+    defaultPendingMinMs: 300,
+    defaultViewTransition: pageTransition,
   })
   setupRouterSsrQueryIntegration({ router, queryClient })
   return router

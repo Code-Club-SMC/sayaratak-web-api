@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react"
+import { useState } from "react"
 import { ImageOffIcon } from "lucide-react"
 
 import { mediaSrc, mediaSrcSet } from "@/lib/media"
@@ -27,13 +27,14 @@ export function MediaImage({
   className?: string
 }) {
   const { dataSaver } = usePrefs()
-  const image = useRef<HTMLImageElement>(null)
   const [failed, setFailed] = useState(false)
-  // A file that failed before hydration never fires `onError` again.
-  useEffect(() => {
-    if (image.current?.complete && image.current.naturalWidth === 0)
-      setFailed(true)
-  }, [])
+  const [loaded, setLoaded] = useState(false)
+  // A file that finished (or failed) before hydration never fires `onLoad` or `onError` again, so the ref callback checks it.
+  const check = (img: HTMLImageElement | null) => {
+    if (!img?.complete) return
+    if (img.naturalWidth === 0) setFailed(true)
+    else setLoaded(true)
+  }
   const maxWidth = dataSaver ? DATA_SAVER_WIDTH : 1280
   return (
     <div
@@ -51,7 +52,9 @@ export function MediaImage({
     >
       {src && !failed ? (
         <img
-          ref={image}
+          ref={check}
+          data-fade={priority ? undefined : ""}
+          data-loaded={loaded ? "" : undefined}
           src={mediaSrc(src, Math.min(960, maxWidth))}
           srcSet={mediaSrcSet(src, maxWidth)}
           sizes={sizes}
@@ -59,6 +62,7 @@ export function MediaImage({
           loading={priority ? "eager" : "lazy"}
           fetchPriority={priority ? "high" : undefined}
           decoding="async"
+          onLoad={() => setLoaded(true)}
           onError={() => setFailed(true)}
           className={cn(
             "absolute inset-0 size-full",

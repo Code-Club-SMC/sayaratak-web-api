@@ -1,6 +1,7 @@
 import type { MouseEvent } from "react"
 
 import { useT } from "@/lib/i18n/use-t"
+import { resultsHeadingId } from "./results-header"
 import {
   Pagination,
   PaginationContent,
@@ -25,7 +26,7 @@ function windowOf(page: number, count: number) {
   return out
 }
 
-// Real links, so each page has a URL crawlers and the back button can use. A plain click is handed to `onPageChange` to navigate without a reload.
+// Real links, so each page has a URL crawlers and the back button can use. A plain click is handed to `onPageChange` to navigate without a reload, then the results heading takes focus.
 export function ResultsPagination({
   page,
   pageCount,
@@ -46,6 +47,10 @@ export function ResultsPagination({
       if (e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return
       e.preventDefault()
       onPageChange(p)
+      // The new page starts at its heading: scrolled to at once, never smoothly, and focused for screen readers.
+      const heading = document.getElementById(resultsHeadingId)
+      heading?.scrollIntoView({ block: "start" })
+      heading?.focus({ preventScroll: true })
     },
   })
   return (

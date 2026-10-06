@@ -50,7 +50,12 @@ export function ListingCard({
         row ? "gap-3" : "flex-col gap-2"
       )}
     >
-      <div className={cn("relative", row && "w-30 shrink-0")}>
+      <div
+        className={cn(
+          "relative transition-opacity group-has-[a:active]:opacity-92",
+          row && "w-30 shrink-0"
+        )}
+      >
         <MediaImage
           src={first?.type === "video" ? first.posterUrl : (first?.url ?? null)}
           alt=""
@@ -88,7 +93,7 @@ export function ListingCard({
           ) : (
             <a
               href={localeHref(`/listing/${listing.slug}`, locale)}
-              className="line-clamp-2 group-hover:underline after:absolute after:inset-0"
+              className="line-clamp-2 underline decoration-transparent motion-color group-hover:decoration-current after:absolute after:inset-0"
             >
               <bdi>{listing.title}</bdi>
             </a>

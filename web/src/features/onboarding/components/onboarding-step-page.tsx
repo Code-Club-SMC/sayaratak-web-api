@@ -163,7 +163,7 @@ export function OnboardingStepPage({
         >
           <div
             key={step.id}
-            className="flex min-h-80 animate-in flex-col gap-4 duration-120 fade-in"
+            className="flex min-h-80 flex-col gap-4 transition-opacity duration-(--dur-fast) ease-(--ease-standard) starting:opacity-0"
           >
             {loaded === step.id && <step.Component />}
           </div>

@@ -1,6 +1,8 @@
 import { createContext, use, useEffect, useState, type ReactNode } from "react"
 import { useRouter } from "@tanstack/react-router"
 
+import { motionAllowed, pageTransition } from "./motion"
+
 export type Prefs = { dataSaver: boolean; listingView: "grid" | "row" }
 
 const PrefsContext = createContext<Prefs>({
@@ -21,11 +23,22 @@ export function PrefsProvider({
 }) {
   const [current, setCurrent] = useState(prefs)
   const router = useRouter()
+  // Data saver and reduced motion switch hover preload and view transitions off, and back on, without a reload. `motionAllowed()` reads the <html> attribute, so it is set first.
   useEffect(() => {
-    router.update({
-      context: router.options.context,
-      defaultPreload: current.dataSaver ? false : "intent",
-    })
+    document.documentElement.toggleAttribute(
+      "data-data-saver",
+      current.dataSaver
+    )
+    const apply = () =>
+      router.update({
+        context: router.options.context,
+        defaultPreload: current.dataSaver ? false : "intent",
+        defaultViewTransition: motionAllowed() ? pageTransition : false,
+      })
+    apply()
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)")
+    reduced.addEventListener("change", apply)
+    return () => reduced.removeEventListener("change", apply)
   }, [current.dataSaver, router])
   const update = (patch: Partial<Prefs>) => {
     for (const [key, value] of Object.entries(patch)) {

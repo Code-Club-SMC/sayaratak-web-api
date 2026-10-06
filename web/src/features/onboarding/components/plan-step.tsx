@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 import { billingQueries } from "@/features/billing/queries"
 import { useT } from "@/lib/i18n/use-t"
-import { useDelayed } from "@/lib/use-delayed"
+import { useDelayedFlag } from "@/lib/use-delayed-flag"
 import type { PlanStep as PlanValues } from "../schemas"
 
 // The audience's plans; its free plan is preselected so finishing needs no choice.
@@ -21,7 +21,7 @@ export function PlanStep({
   const { control, setValue } = useFormContext<PlanValues>()
   const planId = useWatch({ control, name: "planId" })
   const plans = useQuery(billingQueries.plans(audience))
-  const waiting = useDelayed(plans.isPending)
+  const waiting = useDelayedFlag(plans.isPending)
   const free = plans.data?.find((p) => p.price === 0)
   useEffect(() => {
     if (free && !planId) setValue("planId", free.id)

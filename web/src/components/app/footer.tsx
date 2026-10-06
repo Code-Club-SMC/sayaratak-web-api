@@ -40,7 +40,7 @@ export function Footer() {
   }, [isPending])
   const contact = data?.contact
   return (
-    <footer className="mt-8 bg-card py-8 md:mt-12 md:py-12">
+    <footer className="mt-8 bg-card py-8 [view-transition-name:site-footer] md:mt-12 md:py-12">
       <div className="mx-auto max-w-[1200px] px-4 md:px-6">
         <nav
           aria-label={t("nav.footer")}

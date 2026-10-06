@@ -4,3 +4,43 @@ import { afterEach } from "vitest"
 afterEach(cleanup)
 
 process.env.MOCK_LATENCY_MS = "0"
+
+// jsdom has no matchMedia: report "no reduced-motion preference" unless a test overrides it.
+if (
+  typeof window !== "undefined" &&
+  typeof Reflect.get(window, "matchMedia") !== "function"
+) {
+  Object.defineProperty(window, "matchMedia", {
+    configurable: true,
+    writable: true,
+    value: (query: string) => ({
+      matches: false,
+      media: query,
+      addEventListener: () => {},
+      removeEventListener: () => {},
+      addListener: () => {},
+      removeListener: () => {},
+      dispatchEvent: () => false,
+      onchange: null,
+    }),
+  })
+}
+
+// jsdom has no IntersectionObserver: a no-op one, so sticky bars and banners mount. Tests that need entries stub their own.
+if (
+  typeof window !== "undefined" &&
+  typeof Reflect.get(window, "IntersectionObserver") !== "function"
+) {
+  Object.defineProperty(window, "IntersectionObserver", {
+    configurable: true,
+    writable: true,
+    value: class {
+      observe() {}
+      unobserve() {}
+      disconnect() {}
+      takeRecords() {
+        return []
+      }
+    },
+  })
+}

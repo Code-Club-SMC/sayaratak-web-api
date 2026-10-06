@@ -7,6 +7,7 @@ import {
 } from "lucide-react"
 
 import { useT } from "@/lib/i18n/use-t"
+import { motionAllowed } from "@/lib/motion"
 import { arrowStep, detailSizes } from "@/lib/media"
 import { clamp, cn } from "@/lib/utils"
 import type { Media } from "@/schemas/listing"
@@ -45,7 +46,7 @@ export function Gallery({
     const n = clamp(to, 0, last)
     show(n)
     strip.current?.children[n]?.scrollIntoView({
-      behavior: "smooth",
+      behavior: motionAllowed() ? "smooth" : "auto",
       inline: "center",
       block: "nearest",
     })

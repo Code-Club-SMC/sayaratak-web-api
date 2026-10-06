@@ -44,14 +44,14 @@ export function MobileTabBar() {
   return (
     <nav
       aria-label={t("nav.mobile_tabs")}
-      className="fixed inset-x-0 bottom-0 z-(--z-sticky) flex bg-card pb-[env(safe-area-inset-bottom)] md:hidden"
+      className="fixed inset-x-0 bottom-0 z-(--z-sticky) flex bg-card pb-[env(safe-area-inset-bottom)] [view-transition-name:tab-bar] md:hidden"
     >
       {tabs.map(({ key, href, icon: Icon }) => (
         <a
           key={key}
           href={href}
           aria-current={pathname === href ? "page" : undefined}
-          className={`flex h-14 min-w-0 flex-1 flex-col items-center justify-center gap-1 rounded-lg text-caption font-medium hover:bg-muted ${pathname === href ? "text-primary" : "text-muted-foreground"}`}
+          className={`flex h-14 min-w-0 flex-1 press flex-col items-center justify-center gap-1 rounded-lg text-caption font-medium hover:bg-muted ${pathname === href ? "text-primary" : "text-muted-foreground"}`}
         >
           <Icon className="size-5" strokeWidth={1.5} aria-hidden="true" />
           <span className="max-w-full truncate">{t(key)}</span>

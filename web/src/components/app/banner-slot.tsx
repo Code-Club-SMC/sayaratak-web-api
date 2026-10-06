@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react"
 import { useQuery } from "@tanstack/react-query"
 
 import { useT } from "@/lib/i18n/use-t"
+import { useDelayedFlag } from "@/lib/use-delayed-flag"
 import type { Banner } from "@/schemas/admin"
 import { bannersQuery } from "@/features/pages/queries"
 import { Button } from "@/components/ui/button"
@@ -13,12 +13,7 @@ export function BannerSlot({ placement }: { placement: Banner["placement"] }) {
   const { data, isPending, isError, refetch } = useQuery(
     bannersQuery(placement)
   )
-  const [delayed, setDelayed] = useState(false)
-  useEffect(() => {
-    if (!isPending) return
-    const timeout = window.setTimeout(() => setDelayed(true), 150)
-    return () => window.clearTimeout(timeout)
-  }, [isPending, placement])
+  const delayed = useDelayedFlag(isPending)
   if (isPending)
     return delayed ? (
       <Skeleton

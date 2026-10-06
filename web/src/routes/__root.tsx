@@ -12,6 +12,7 @@ import { I18nextProvider } from "react-i18next"
 
 import { DevPanelHost } from "@/components/app/dev-panel-host"
 import { AuthDialog } from "@/features/auth/components/auth-dialog"
+import { NavigationProgress } from "@/components/app/navigation-progress"
 import { OfflineBanner } from "@/components/app/offline-banner"
 import { meQuery } from "@/features/auth/me-query"
 import { DirectionProvider } from "@/components/ui/direction"
@@ -64,6 +65,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
           title: "Sayaratak",
         },
       ],
+      // Runs before first paint: images fade in only when JavaScript is there to mark them loaded (`img[data-fade]` in styles.css).
+      scripts: [{ children: "document.documentElement.classList.add('js')" }],
       links: [
         {
           rel: "stylesheet",
@@ -78,9 +81,14 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 )
 
 function RootDocument({ children }: { children: React.ReactNode }) {
-  const { locale } = Route.useLoaderData()
+  const { locale, prefs } = Route.useLoaderData()
   return (
-    <html lang={locale} dir={isRtl(locale) ? "rtl" : "ltr"}>
+    <html
+      lang={locale}
+      dir={isRtl(locale) ? "rtl" : "ltr"}
+      data-data-saver={prefs.dataSaver ? "" : undefined}
+      suppressHydrationWarning
+    >
       <head>
         <HeadContent />
       </head>
@@ -115,6 +123,7 @@ function RootComponent() {
         <PrefsProvider prefs={prefs}>
           <NowProvider serverNow={serverNow}>
             <Toaster>
+              <NavigationProgress />
               <OfflineBanner />
               <Outlet />
               <AuthDialog />

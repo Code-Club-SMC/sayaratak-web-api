@@ -9,7 +9,7 @@ import { ArrowDownIcon, ArrowUpIcon } from "lucide-react"
 
 import { dataTableFeatures, type DataColumn } from "@/lib/table"
 import { useT } from "@/lib/i18n/use-t"
-import { useDelayed } from "@/lib/use-delayed"
+import { useDelayedFlag } from "@/lib/use-delayed-flag"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -79,7 +79,7 @@ export function DataTable<T extends RowData>({
   onPageChange,
 }: DataTableProps<T>) {
   const { t } = useT()
-  const showSkeleton = useDelayed(!!loading)
+  const showSkeleton = useDelayedFlag(!!loading)
   const table = useTable({
     features: dataTableFeatures,
     columns,

@@ -1,3 +1,4 @@
+import { useState } from "react"
 import { useQuery } from "@tanstack/react-query"
 import { HeartIcon } from "lucide-react"
 
@@ -24,9 +25,12 @@ export function FavoriteButton({
   const { data: ids } = useQuery({ ...favoriteQueries.ids, enabled: !!me })
   const { mutate } = useToggleFavorite()
   const active = ids?.includes(listingId) ?? false
+  // The pop plays once, right after the person saves, never on mount or when coming Back.
+  const [justSaved, setJustSaved] = useState(false)
   const toggle = () =>
     requireAuth(() => {
       mutate({ id: listingId, on: !active })
+      setJustSaved(!active)
       if (active)
         toast.add({
           title: t("toast.favorite_removed"),
@@ -43,7 +47,7 @@ export function FavoriteButton({
       aria-label={t("listing.favorite_add")}
       onClick={toggle}
       className={cn(
-        "grid size-11 place-items-center rounded-full md:size-10",
+        "grid size-11 press place-items-center rounded-full md:size-10",
         className
       )}
     >
@@ -57,9 +61,11 @@ export function FavoriteButton({
           aria-hidden="true"
           strokeWidth={1.5}
           className={cn(
-            "size-5",
-            active ? "fill-primary text-primary" : "text-foreground"
+            "size-5 transition-colors",
+            active ? "fill-primary text-primary" : "text-foreground",
+            justSaved && "motion-safe:animate-heart-pop"
           )}
+          onAnimationEnd={() => setJustSaved(false)}
         />
       </span>
     </button>

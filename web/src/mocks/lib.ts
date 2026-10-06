@@ -2,6 +2,7 @@ import type { Bilingual } from "@/schemas/fields"
 import type { Notification } from "@/schemas/messaging"
 import { db, find, newId, paginate } from "./db"
 import { fail, pageParams, type Ctx } from "./http"
+import type { Promotion } from "@/schemas/billing"
 import type { ListingRow, UserRow } from "./types"
 
 export const DAY_MS = 86_400_000
@@ -9,7 +10,7 @@ export const nowIso = () => new Date().toISOString()
 export const dayKey = (d: Date | number = new Date()) =>
   new Date(d).toISOString().slice(0, 10)
 
-// Text is stored in the recipient's language.
+// Both languages are stored, so the recipient sees the right one even after switching.
 export function notify(
   userId: string,
   type: Notification["type"],
@@ -17,14 +18,13 @@ export function notify(
   body: Bilingual,
   href?: string
 ) {
-  const user = find(db.users, userId)
-  if (!user) return
+  if (!find(db.users, userId)) return
   db.notifications.unshift({
     id: newId("n"),
     userId,
     type,
-    title: title[user.locale],
-    body: body[user.locale],
+    title,
+    body,
     href,
     createdAt: nowIso(),
   })
@@ -59,21 +59,83 @@ export const businessType = (id: string) =>
         ? ("mechanic" as const)
         : null
 
+// A listing counts against the owner's limit while it is pending or approved, available or reserved, and not expired.
 const live = (l: ListingRow) =>
   (l.moderation === "pending" || l.moderation === "approved") &&
-  (l.status === "available" || l.status === "reserved")
+  (l.status === "available" || l.status === "reserved") &&
+  Date.parse(l.expiresAt) > Date.now()
 export const listingUsage = (userId: string) =>
   db.listings.filter((l) => l.ownerUserId === userId && live(l)).length
+
+// The active subscription, else the pending one.
+export const currentSubscription = (userId: string) => {
+  const mine = db.subscriptions
+    .filter((s) => s.userId === userId)
+    .sort((a, b) => b.startsAt.localeCompare(a.startsAt))
+  return (
+    mine.find((s) => s.status === "active") ??
+    mine.find((s) => s.status === "pending")
+  )
+}
+
+// A7 usage rules. Individuals: no limit while individual subscriptions are off, else their subscription's limit, else the free limit. Dealerships: their subscription's limit. Workshops and mechanics post no listings, so no limit.
 export function listingLimit(userId: string) {
+  const user = find(db.users, userId)
+  if (user?.role === "workshop" || user?.role === "mechanic") return null
   const sub = db.subscriptions.find(
     (s) => s.userId === userId && s.status === "active"
   )
-  const plan = sub ? find(db.plans, sub.planId) : undefined
-  return (
-    plan?.listingLimit ??
-    plan?.vehicleLimit ??
-    (sub ? null : db.settings.freeListingLimit)
-  )
+  if (user?.role === "dealership") return sub?.usage.limit ?? null
+  if (!db.settings.individualSubscriptionsEnabled) return null
+  return sub ? sub.usage.limit : db.settings.freeListingLimit
+}
+
+// A stable reference per payer and item, so the checkout shows the same code the payment keeps.
+export const paymentReference = (userId: string, itemId: string) => {
+  let hash = 0
+  for (const ch of `${userId}:${itemId}`)
+    hash = (hash * 31 + ch.charCodeAt(0)) % 900_000
+  return `SY-${100_000 + hash}`
+}
+
+export const promotionPrice = (type: Promotion["type"]) =>
+  db.promotionPrices.find((p) => p.type === type)
+
+// A promotion with the listing and payment details of `myPromotionSchema`. An active one whose end has passed reads as ended.
+export function promotionView(p: Promotion) {
+  const listing = listingById(p.listingId)
+  const cover = listing.media[0]
+  const payment = db.payments
+    .filter((x) => x.itemType === "promotion" && x.itemId === p.id)
+    .sort((a, b) => b.createdAt.localeCompare(a.createdAt))[0]
+  const over = p.status === "active" && Date.parse(p.endsAt ?? "") < Date.now()
+  return {
+    ...p,
+    status: over ? ("ended" as const) : p.status,
+    listing: {
+      id: listing.id,
+      slug: listing.slug,
+      title: listing.title,
+      coverUrl:
+        (cover?.type === "video" ? cover.posterUrl : cover?.url) ?? null,
+    },
+    price:
+      p.source === "admin_grant" ? 0 : (promotionPrice(p.type)?.price ?? 0),
+    paymentStatus: payment?.status ?? ("none" as const),
+  }
+}
+
+// Starts the clock: from now for the promotion's days, and the listing carries it while it runs.
+export function activatePromotion(p: Promotion) {
+  const listing = listingById(p.listingId)
+  p.status = "active"
+  p.startsAt = nowIso()
+  p.endsAt = new Date(Date.now() + p.durationDays * DAY_MS).toISOString()
+  listing.promotions.push({
+    type: p.type,
+    startsAt: p.startsAt,
+    endsAt: p.endsAt,
+  })
 }
 
 export function canEditListing(user: UserRow, listing: ListingRow) {

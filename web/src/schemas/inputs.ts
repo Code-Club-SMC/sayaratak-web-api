@@ -238,6 +238,7 @@ export const serviceInputSchema = z.object({
   name: requiredText(80),
   description: optionalText(300),
   priceFrom: optionalInt(1, 9_999_999_999, "validation.price_min"),
+  templateId: z.string().nullable().default(null), // kept from the template, never edited by hand
 })
 export const portfolioInputSchema = z.object({
   url: z.string().min(1, "validation.required"),
@@ -265,7 +266,13 @@ export const banInputSchema = z.object({
 export const businessAdminPatchSchema = z
   .object({ status: z.enum(["active", "suspended"]), verified: z.boolean() })
   .partial()
-export const assignPlanInputSchema = z.object({ planId: z.string().min(1) })
+// A plan for one business; price, limit and duration are optional custom values copied into the subscription.
+export const assignPlanInputSchema = z.object({
+  planId: z.string().min(1),
+  price: z.number().int().min(0).optional(),
+  limit: z.number().int().min(1).nullable().optional(),
+  durationDays: z.number().int().min(1).optional(),
+})
 export const grantInputSchema = z.object({
   listingId: z.string().min(1),
   type: promotionTypeSchema,

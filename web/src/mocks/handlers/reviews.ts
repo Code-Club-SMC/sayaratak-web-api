@@ -7,6 +7,7 @@ import {
 } from "@/schemas/inputs"
 import { reviewSchema, targetTypeSchema, type Review } from "@/schemas/review"
 
+import { ratingFrom } from "../seed/util"
 import { db, find, insert, newId, paginate } from "../db"
 import { fail, needUser, pageParams, route } from "../http"
 import { byNewest, findBusiness, nowIso, notify } from "../lib"
@@ -14,17 +15,11 @@ import { byNewest, findBusiness, nowIso, notify } from "../lib"
 export function recomputeRating(targetId: string) {
   const target = findBusiness(targetId)
   if (!target) return
-  const visible = db.reviews.filter(
-    (r) => r.targetId === targetId && r.status === "visible"
+  target.rating = ratingFrom(
+    db.reviews
+      .filter((r) => r.targetId === targetId && r.status !== "hidden")
+      .map((r) => r.rating)
   )
-  target.rating = {
-    count: visible.length,
-    avg: visible.length
-      ? Math.round(
-          (visible.reduce((s, r) => s + r.rating, 0) / visible.length) * 10
-        ) / 10
-      : 0,
-  }
 }
 
 const reviewOf = (id: string) => {
@@ -43,7 +38,7 @@ route("GET", "/reviews", (c) => {
       (r) =>
         r.targetType === type.data &&
         r.targetId === targetId &&
-        r.status === "visible"
+        r.status !== "hidden"
     )
     .sort(byNewest)
   const { page, pageSize } = pageParams(c.query, 10)
@@ -105,6 +100,16 @@ route("DELETE", "/reviews/:id", (c) => {
   db.reviews = db.reviews.filter((r) => r.id !== row.id)
   recomputeRating(row.targetId)
   return okSchema.parse({ ok: true })
+})
+
+// The owner of the target asks the admin to look at a review. It stays public until an admin hides it, and flagging twice changes nothing.
+route("POST", "/reviews/:id/flag", (c) => {
+  const user = needUser(c)
+  const row = reviewOf(c.params.id ?? "")
+  if (findBusiness(row.targetId)?.ownerId !== user.id)
+    throw fail(403, "forbidden")
+  if (row.status === "visible") row.status = "flagged"
+  return reviewSchema.parse(row)
 })
 
 route("POST", "/reviews/:id/reply", async (c) => {

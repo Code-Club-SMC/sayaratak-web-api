@@ -1,5 +1,5 @@
 import { searchParamsSchema } from "@/features/search/schemas"
-import { analyticsSchema } from "@/schemas/api"
+import { listingAnalyticsSchema } from "@/schemas/api"
 import {
   listingCreateSchema,
   listingPatchSchema,
@@ -29,42 +29,55 @@ import {
   nowIso,
   rangeDays,
 } from "../lib"
-import { facets, matches, sortListings } from "../search"
+import { facets, isPublic, matches, sortListings } from "../search"
 import type { ListingRow, UserRow } from "../types"
 
 const owned = (l: ListingRow) => listingSchema.parse(l)
-const page = (rows: ListingRow[], p: number, size = 24) => ({
-  ...paginate(rows, p, size),
-  items: paginate(rows, p, size).items.map(owned),
-})
+
+// Everyone except the owner and admins sees the position rounded to 2 decimals (about 1 km), so a private seller's exact spot stays private.
+const round2 = (n: number) => Math.round(n * 100) / 100
+const forViewer = (l: ListingRow, viewer?: UserRow | null) =>
+  l.location && viewer?.id !== l.ownerUserId && viewer?.role !== "admin"
+    ? {
+        ...l,
+        location: { lat: round2(l.location.lat), lng: round2(l.location.lng) },
+      }
+    : l
+const shown = (l: ListingRow, viewer?: UserRow | null) =>
+  owned(forViewer(l, viewer))
 
 route("GET", "/taxonomy", () => taxonomySchema.parse(db.taxonomy))
 
+// `limit` (1 to 24) and `exclude` serve the rails; they are not search params of a page.
 route("GET", "/listings", (c) => {
   const params = searchParamsSchema.parse(
     queryObject(c.query, ["fuel", "transmission"])
   )
+  const exclude = c.query.get("exclude")
   const rows = sortListings(
-    db.listings.filter((l) => matches(l, params)),
+    db.listings.filter((l) => l.id !== exclude && matches(l, params)),
     params
   )
+  const { pageSize } = pageParams(c.query, 24)
+  const result = paginate(rows, params.page, pageSize)
   return listingPageSchema.parse({
-    ...page(rows, params.page),
+    ...result,
+    items: result.items.map((l) => shown(l, c.user)),
     facets: facets(params),
   })
 })
 
-// Not-yet-approved listings are visible to their owner and to admins only.
+// Draft, pending, rejected and removed listings, and those of a banned owner or suspended business, are visible to their owner and to admins only.
 route("GET", "/listings/:slug", (c) => {
   const row = find(db.listings, parseListingId(c.params.slug ?? ""))
   if (
     !row ||
-    (row.moderation !== "approved" &&
+    (!isPublic(row) &&
       c.user?.id !== row.ownerUserId &&
       c.user?.role !== "admin")
   )
     throw fail(404, "not_found")
-  return owned(row)
+  return shown(row, c.user)
 })
 
 route("GET", "/listings/:id/similar", (c) => {
@@ -73,7 +86,7 @@ route("GET", "/listings/:id/similar", (c) => {
     .filter(
       (l) =>
         l.id !== row.id &&
-        l.moderation === "approved" &&
+        isPublic(l) &&
         l.status === "available" &&
         l.kind === row.kind &&
         l.intent === row.intent &&
@@ -83,7 +96,7 @@ route("GET", "/listings/:id/similar", (c) => {
       (a, b) => Math.abs(a.price - row.price) - Math.abs(b.price - row.price)
     )
     .slice(0, 8)
-  return similar.map(owned)
+  return similar.map((l) => shown(l, c.user))
 })
 
 // Verified dealers skip review when the admin setting is on.
@@ -260,9 +273,24 @@ route("GET", "/me/listings", (c) => {
   const moderation = c.query.get("moderation")
   const status = c.query.get("status")
   const attention = c.query.get("needsAttention") === "true"
+  const tab = c.query.get("tab") ?? "all"
   const now = Date.now()
+  // Tab rules (8.2): active is approved, available or reserved and not expired; pending, rejected and drafts follow `moderation`.
+  const expired = (l: ListingRow) => Date.parse(l.expiresAt) <= now
+  const inTab: Record<string, (l: ListingRow) => boolean> = {
+    active: (l) =>
+      l.moderation === "approved" &&
+      (l.status === "available" || l.status === "reserved") &&
+      !expired(l),
+    pending: (l) => l.moderation === "pending",
+    rejected: (l) => l.moderation === "rejected",
+    drafts: (l) => l.moderation === "draft",
+    closed: (l) => l.status === "sold" || l.status === "rented",
+    expired: (l) => l.moderation === "approved" && expired(l),
+  }
   const rows = db.listings
     .filter((l) => l.ownerUserId === user.id)
+    .filter((l) => inTab[tab]?.(l) ?? true)
     .filter((l) => !q || l.title.toLowerCase().includes(q))
     .filter((l) => !moderation || l.moderation === moderation)
     .filter((l) => !status || l.status === status)
@@ -276,11 +304,10 @@ route("GET", "/me/listings", (c) => {
               now - Date.parse(l.updatedAt) >= 14 * DAY_MS)))
     )
     .sort(byNewest)
-  const { page: p, pageSize } = pageParams(c.query, 20)
-  return {
-    ...paginate(rows, p, pageSize),
-    items: paginate(rows, p, pageSize).items.map(owned),
-  }
+  // `pageSize` goes up to 500 here, for the CSV export.
+  const { page: p, pageSize } = pageParams(c.query, 20, 500)
+  const result = paginate(rows, p, pageSize)
+  return { ...result, items: result.items.map(owned) }
 })
 
 route("GET", "/listings/:id/analytics", (c) => {
@@ -291,7 +318,7 @@ route("GET", "/listings/:id/analytics", (c) => {
   const series = eventSeries((id) => id === row.id, days)
   const sum = (key: "views" | "phoneClicks" | "whatsappClicks" | "shares") =>
     series.reduce((s, d) => s + d[key], 0)
-  return analyticsSchema.parse({
+  return listingAnalyticsSchema.parse({
     range: `${days}d`,
     totals: {
       views: sum("views"),

@@ -50,7 +50,7 @@ const hours = Array.from({ length: 7 }, (_, day) => ({
   open: "08:00",
   close: "18:00",
 }))
-const rating = { avg: 4.5, count: 10 }
+const rating = { avg: 4.5, count: 10, distribution: [0, 0, 1, 4, 5] }
 const media = {
   id: "m1",
   type: "image",
@@ -177,7 +177,7 @@ const cases: [string, z.ZodType, unknown][] = [
       ...business,
       phone,
       images: [media],
-      services: [{ id: "s", name: "Oil", description: "D" }],
+      services: [{ id: "s", name: "Oil", description: "D", templateId: null }],
     },
   ],
   [
@@ -248,7 +248,7 @@ const cases: [string, z.ZodType, unknown][] = [
   [
     "notification",
     notificationSchema,
-    { id: "n1", type: "broadcast", title: "T", body: "B", createdAt: t },
+    { id: "n1", type: "broadcast", title: bi, body: bi, createdAt: t },
   ],
   [
     "saved search",
@@ -286,6 +286,7 @@ const cases: [string, z.ZodType, unknown][] = [
       status: "active",
       startsAt: t,
       endsAt: t,
+      price: 0,
       usage: { used: 1, limit: null },
     },
   ],
@@ -297,10 +298,11 @@ const cases: [string, z.ZodType, unknown][] = [
       userId: "u1",
       itemType: "plan",
       itemId: "p1",
-      itemLabel: "Plan",
+      itemLabel: bi,
       amount: 50000,
       method: "bankak_transfer",
       reference: "R",
+      payerName: "Omar",
       transactionRef: "T123",
       receiptUrl: "/r.webp",
       status: "pending_review",
@@ -314,6 +316,8 @@ const cases: [string, z.ZodType, unknown][] = [
       id: "pr1",
       listingId: "k3f9a2",
       type: "boost",
+      status: "active",
+      durationDays: 3,
       startsAt: t,
       endsAt: t,
       source: "paid",

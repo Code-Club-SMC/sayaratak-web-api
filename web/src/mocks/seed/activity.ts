@@ -10,7 +10,7 @@ import type {
   ThreadRow,
   UserRow,
 } from "../types"
-import { DAY, HOUR, ago, chance, int, pick } from "./util"
+import { DAY, HOUR, ago, chance, int, pick, ratingFrom } from "./util"
 import {
   buyerLines,
   customerLines,
@@ -82,17 +82,11 @@ export function applyRatings(
   rows: (Dealership | Workshop | Mechanic)[]
 ) {
   for (const row of rows) {
-    const mine = reviews.filter(
-      (r) => r.targetId === row.id && r.status === "visible"
+    row.rating = ratingFrom(
+      reviews
+        .filter((r) => r.targetId === row.id && r.status !== "hidden")
+        .map((r) => r.rating)
     )
-    row.rating = {
-      count: mine.length,
-      avg: mine.length
-        ? Math.round(
-            (mine.reduce((s, r) => s + r.rating, 0) / mine.length) * 10
-          ) / 10
-        : 0,
-    }
   }
 }
 
@@ -234,8 +228,8 @@ export function seedNotifications(demoIds: string[]) {
         id: `n-${rows.length + 1}`,
         userId,
         type,
-        title: title[0],
-        body: body[0],
+        title: { ar: title[0], en: title[1] },
+        body: { ar: body[0], en: body[1] },
         href: href || undefined,
         createdAt,
         readAt: i > 3 ? createdAt : undefined,

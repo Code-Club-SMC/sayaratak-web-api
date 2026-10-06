@@ -21,7 +21,10 @@ export function WorkshopHoursServicesStep() {
           <ServicePicker
             value={field.value}
             onChange={field.onChange}
-            templates={templates.map((s) => s.name[locale])}
+            templates={templates.map((s) => ({
+              id: s.id,
+              name: s.name[locale],
+            }))}
             errors={field.value.map((_, i) => {
               const e = formState.errors.services?.[i]
               return {

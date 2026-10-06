@@ -76,7 +76,7 @@ describe("workshop schemas", () => {
   })
 
   it("services need one to ten rows and a price above zero", () => {
-    const row = { name: "Oil change", priceFrom: null }
+    const row = { name: "Oil change", priceFrom: null, templateId: null }
     const hours = defaultWeeklyHours
     const parse = (services: unknown[]) =>
       workshopHoursServicesSchema.safeParse({ hours, services })
@@ -136,8 +136,8 @@ describe("workshop steps", () => {
       expect(draft()).toMatchObject({
         "hours-services": {
           services: [
-            { name: "Oil change", priceFrom: 25000 },
-            { name: "Wheel wash", priceFrom: null },
+            { name: "Oil change", priceFrom: 25000, templateId: "oil-change" },
+            { name: "Wheel wash", priceFrom: null, templateId: null },
           ],
         },
       })
@@ -179,8 +179,8 @@ describe("workshop plan step and finish", () => {
     "hours-services": {
       hours: defaultWeeklyHours,
       services: [
-        { name: "Oil change", priceFrom: 25000 },
-        { name: "Brakes", priceFrom: null },
+        { name: "Oil change", priceFrom: 25000, templateId: "oil-change" },
+        { name: "Brakes", priceFrom: null, templateId: null },
       ],
     },
   }
@@ -189,7 +189,7 @@ describe("workshop plan step and finish", () => {
     await open("plan", saved)
     await screen.findByRole("radio", { checked: true })
     const radios = screen.getAllByRole("radio")
-    expect(radios).toHaveLength(3)
+    expect(radios).toHaveLength(2)
     expect((radios[0] as HTMLInputElement).checked).toBe(true)
     expect(screen.getByText("Start free")).toBeTruthy()
   })
@@ -212,7 +212,8 @@ describe("workshop plan step and finish", () => {
     expect(made.services[1]?.priceFrom).toBeUndefined()
     expect(owner().role).toBe("workshop")
     const sub = await (await fetch("/api/me/subscription")).json()
-    expect(sub.planId).toBe("plan-workshop-free")
+    expect(sub.subscription.planId).toBe("plan-workshop-basic")
+    expect(sub.subscription.price).toBe(0)
     const listed = await (await fetch("/api/workshops?q=Nile")).json()
     expect(listed.items.map((w: { name: string }) => w.name)).toContain(
       "Nile Garage"

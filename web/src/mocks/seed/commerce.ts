@@ -1,10 +1,11 @@
 import type {
   Payment,
   Plan,
+  Promotion,
   PromotionPrice,
   Subscription,
 } from "@/schemas/billing"
-import type { PromotionPriceRow, UserRow } from "../types"
+import type { ListingRow, PromotionPriceRow, UserRow } from "../types"
 import { DAY, ago, ahead, int, pick } from "./util"
 
 type PlanRow = [
@@ -43,24 +44,14 @@ const planRows: PlanRow[] = [
     ["15 active listings|15 إعلاناً نشطاً", "Priority support|دعم أولوية"],
   ],
   [
-    "plan-dealer-free",
-    "dealership",
-    "Free",
-    "مجانية",
-    0,
-    30,
-    5,
-    ["Up to 5 vehicles|حتى 5 مركبات", "Dealer page|صفحة المعرض"],
-  ],
-  [
     "plan-dealer-starter",
     "dealership",
     "Starter",
     "المبتدئ",
-    150_000,
+    0,
     30,
-    25,
-    ["Up to 25 vehicles|حتى 25 مركبة", "Dealer page|صفحة المعرض"],
+    10,
+    ["Up to 10 vehicles|حتى 10 مركبات", "Dealer page|صفحة المعرض"],
   ],
   [
     "plan-dealer-growth",
@@ -86,21 +77,11 @@ const planRows: PlanRow[] = [
     ["Up to 300 vehicles|حتى 300 مركبة", "Featured placement|ظهور مميز"],
   ],
   [
-    "plan-workshop-free",
-    "workshop",
-    "Free",
-    "مجانية",
-    0,
-    30,
-    undefined,
-    ["Workshop page|صفحة الورشة", "Listed in the directory|ظهور في الدليل"],
-  ],
-  [
     "plan-workshop-basic",
     "workshop",
     "Basic",
     "أساسية",
-    50_000,
+    0,
     30,
     undefined,
     ["Workshop page|صفحة الورشة", "Up to 10 services|حتى 10 خدمات"],
@@ -116,21 +97,11 @@ const planRows: PlanRow[] = [
     ["Unlimited services|خدمات غير محدودة", "Photo gallery|معرض صور"],
   ],
   [
-    "plan-mechanic-free",
-    "mechanic",
-    "Free",
-    "مجانية",
-    0,
-    30,
-    undefined,
-    ["Mechanic page|صفحة الميكانيكي", "Listed in the directory|ظهور في الدليل"],
-  ],
-  [
     "plan-mechanic-basic",
     "mechanic",
     "Basic",
     "أساسية",
-    20_000,
+    0,
     30,
     undefined,
     ["Mechanic page|صفحة الميكانيكي", "Portfolio of 5 photos|معرض 5 صور"],
@@ -146,6 +117,7 @@ const planRows: PlanRow[] = [
     ["Unlimited portfolio|معرض غير محدود", "Top of search|ظهور متقدم"],
   ],
 ]
+// A9: the first plan of each audience costs nothing and is its free plan.
 export const plans: Plan[] = planRows.map(
   ([id, audience, en, ar, price, durationDays, limit, features], i) => ({
     id,
@@ -190,6 +162,7 @@ export function seedSubscriptions() {
       status: "active",
       startsAt: ago(10 * DAY),
       endsAt: ahead(20 * DAY),
+      price: plan?.price ?? 0,
       usage: {
         used: 0,
         limit: plan?.listingLimit ?? plan?.vehicleLimit ?? null,
@@ -198,28 +171,51 @@ export function seedSubscriptions() {
   })
 }
 
-// Five waiting for review, eight already reviewed (six approved, two rejected).
-export function seedPayments(users: UserRow[]) {
+// Five waiting for review, eight already reviewed (six approved, two rejected). Promotion payments point at a real promotion: a waiting one for the pending payments, a finished one for the approved.
+export function seedPayments(
+  users: UserRow[],
+  listings: ListingRow[],
+  promotions: Promotion[]
+) {
   const payers = users.filter((u) =>
     ["u-omar", "u-dealer", "u-workshop", "u-mechanic"].includes(u.id)
   )
+  const waiting = promotions.filter((p) => p.status === "pending_payment")
+  const reviewed = promotions.filter(
+    (p) => p.source === "paid" && p.status !== "pending_payment"
+  )
   const out: Payment[] = []
   for (let i = 0; i < 13; i++) {
-    const user = payers[i % payers.length]
-    if (!user) continue
     const pending = i < 5
-    const plan = plans.find((p) => p.id === demoPlan[user.id])
-    const isPlan = i % 3 !== 2 && plan
     const rejected = !pending && i >= 11
+    const promo =
+      i % 3 === 2 && !rejected
+        ? (pending ? waiting : reviewed).shift()
+        : undefined
+    const listing = promo && listings.find((l) => l.id === promo.listingId)
+    const user =
+      (listing && users.find((u) => u.id === listing.ownerUserId)) ??
+      payers[i % payers.length]
+    if (!user) continue
+    const plan = plans.find((p) => p.id === demoPlan[user.id])
+    const isPlan = !promo && plan
+    const id = `pay-${i + 1}`
+    if (promo && !pending) promo.paymentId = id
     out.push({
-      id: `pay-${i + 1}`,
+      id,
       userId: user.id,
       itemType: isPlan ? "plan" : "promotion",
-      itemId: isPlan ? plan.id : "boost",
-      itemLabel: isPlan ? plan.name.ar : "تثبيت إعلان",
-      amount: isPlan ? plan.price : pick([20_000, 50_000, 120_000]),
+      itemId: isPlan ? plan.id : (promo?.id ?? ""),
+      itemLabel: isPlan
+        ? plan.name
+        : { ar: listing?.title ?? "", en: listing?.title ?? "" },
+      amount: isPlan
+        ? plan.price
+        : (promotionPrices.find((p) => p.type === promo?.type)?.price ??
+          pick([20_000, 50_000, 120_000])),
       method: "bankak_transfer",
       reference: `SY-${String(100_000 + i * 137).slice(0, 6)}`,
+      payerName: user.fullName,
       transactionRef: String(int(10_000_000, 99_999_999)),
       receiptUrl: `/mock/receipt-0${(i % 3) + 1}.webp`,
       status: pending ? "pending_review" : rejected ? "rejected" : "approved",

@@ -1,6 +1,7 @@
 import { useState } from "react"
 import { useQuery } from "@tanstack/react-query"
 
+import { adminQueries } from "@/features/admin/queries"
 import { listingQueries } from "@/features/listings/queries"
 import { useDebounced } from "@/hooks/use-debounced"
 import { useT } from "@/lib/i18n/use-t"
@@ -11,25 +12,33 @@ import { MediaImage } from "./media-image"
 import { PriceText } from "./price-text"
 import { ResponsiveDialog } from "./responsive-dialog"
 
-// The owner's approved listings, searchable by title. Returns one id and closes.
+// Approved listings, searchable by title: the owner's own (`source="me"`, active ones) or every seller's (`source="admin"`, for granting a promotion). Returns one id and closes.
 export function ListingPickerDialog({
   open,
   onOpenChange,
   onSelect,
   title,
+  source = "me",
 }: {
   open: boolean
   onOpenChange: (open: boolean) => void
   onSelect: (listingId: string) => void
   title: string
+  source?: "me" | "admin"
 }) {
   const { t } = useT()
   const [q, setQ] = useState("")
   const search = useDebounced(q.trim())
-  const { data, isError, refetch } = useQuery({
-    ...listingQueries.mine({ moderation: "approved", q: search || undefined }),
-    enabled: open,
+  const q2 = search || undefined
+  const mine = useQuery({
+    ...listingQueries.mine({ tab: "active", q: q2 }),
+    enabled: open && source === "me",
   })
+  const everyone = useQuery({
+    ...adminQueries.listings({ moderation: "approved", q: q2 }),
+    enabled: open && source === "admin",
+  })
+  const { data, isError, refetch } = source === "admin" ? everyone : mine
   return (
     <ResponsiveDialog open={open} onOpenChange={onOpenChange} title={title}>
       <Input

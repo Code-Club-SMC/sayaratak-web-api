@@ -9,8 +9,9 @@ import { byNewest, nowIso } from "../lib"
 
 route("GET", "/notifications", (c) => {
   const user = needUser(c)
+  const unread = c.query.get("unread") === "true"
   const rows = db.notifications
-    .filter((n) => n.userId === user.id)
+    .filter((n) => n.userId === user.id && (!unread || !n.readAt))
     .sort(byNewest)
   const { page, pageSize } = pageParams(c.query, 20)
   return pageOf(notificationSchema).parse(paginate(rows, page, pageSize))

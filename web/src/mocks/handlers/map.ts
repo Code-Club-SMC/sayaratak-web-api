@@ -1,19 +1,17 @@
-import { mapPointSchema, type MapPoint } from "@/schemas/api"
-import { z } from "zod"
+import { searchParamsSchema } from "@/features/search/schemas"
+import { mapResponseSchema, type MapPoint } from "@/schemas/responses"
 
 import { db } from "../db"
-import { route } from "../http"
-import { tierOf } from "../search"
+import { queryObject, route } from "../http"
+import { matches, tierOf } from "../search"
 
 const MAX_POINTS = 300
+const allLayers = ["vehicles", "dealerships", "workshops", "mechanics"]
 
-// bbox is "west,south,east,north"; layers is a comma list.
+// `layers` repeats like every array param, `bbox` is "west,south,east,north". The vehicle layer also takes the search filters. Anyone but the owner gets listing positions rounded to 2 decimals (about 1 km).
 route("GET", "/map", (c) => {
-  const layers = new Set(
-    (c.query.get("layers") ?? "vehicles,dealerships,workshops,mechanics").split(
-      ","
-    )
-  )
+  const asked = c.query.getAll("layers").flatMap((l) => l.split(","))
+  const layers = new Set(asked.length ? asked : allLayers)
   const [west = -180, south = -90, east = 180, north = 90] = (
     c.query.get("bbox") ?? ""
   )
@@ -26,61 +24,73 @@ route("GET", "/map", (c) => {
     Boolean(
       p && p.lng >= west && p.lng <= east && p.lat >= south && p.lat <= north
     )
+  const round2 = (n: number) => Math.round(n * 100) / 100
   const points: MapPoint[] = []
   if (layers.has("vehicles")) {
+    const filters = searchParamsSchema.parse({
+      ...queryObject(c.query, ["fuel", "transmission"]),
+      kind: "vehicle",
+    })
     const listings = db.listings
-      .filter(
-        (l) =>
-          l.moderation === "approved" &&
-          l.status === "available" &&
-          l.kind === "vehicle"
-      )
+      .filter((l) => matches(l, filters))
       .sort((a, b) => tierOf(b) - tierOf(a))
     for (const l of listings)
-      if (inside(l.location))
+      if (inside(l.location)) {
+        const own = c.user?.id === l.ownerUserId || c.user?.role === "admin"
+        const cover = l.media[0]
         points.push({
           id: l.id,
-          layer: "vehicles",
-          lat: l.location.lat,
-          lng: l.location.lng,
+          kind: "vehicle",
           title: l.title,
+          slug: l.slug,
+          location: own
+            ? l.location
+            : { lat: round2(l.location.lat), lng: round2(l.location.lng) },
           price: l.price,
-          image: l.media[0]?.url,
-          href: `/listing/${l.slug}`,
+          rating: null,
+          photoUrl:
+            (cover?.type === "video" ? cover.posterUrl : cover?.url) ?? null,
         })
+      }
   }
   const businesses = [
-    ["dealerships", db.dealerships],
-    ["workshops", db.workshops],
+    ["dealerships", "dealership", db.dealerships],
+    ["workshops", "workshop", db.workshops],
   ] as const
-  for (const [layer, rows] of businesses) {
+  for (const [layer, kind, rows] of businesses) {
     if (!layers.has(layer)) continue
     for (const b of rows)
       if (b.status === "active" && inside(b.location))
         points.push({
           id: b.id,
-          layer,
-          lat: b.location.lat,
-          lng: b.location.lng,
+          kind,
           title: b.name,
-          image: b.logoUrl,
-          href: `/${layer}/${b.slug}`,
+          slug: b.slug,
+          location: b.location,
+          price: null,
+          rating: b.rating.count ? b.rating.avg : null,
+          photoUrl: b.logoUrl,
         })
   }
+  // Mechanics have no pin of their own: they sit at the center of their city.
   if (layers.has("mechanics")) {
     for (const m of db.mechanics) {
       const city = db.taxonomy.cities.find((x) => x.id === m.cityId)
-      if (m.status === "active" && inside(city?.center ?? null) && city)
+      if (m.status === "active" && city && inside(city.center))
         points.push({
           id: m.id,
-          layer: "mechanics",
-          lat: city.center.lat,
-          lng: city.center.lng,
+          kind: "mechanic",
           title: m.name,
-          image: m.photoUrl,
-          href: `/mechanics/${m.slug}`,
+          slug: m.slug,
+          location: city.center,
+          price: null,
+          rating: m.rating.count ? m.rating.avg : null,
+          photoUrl: m.photoUrl,
         })
     }
   }
-  return z.array(mapPointSchema).parse(points.slice(0, MAX_POINTS))
+  return mapResponseSchema.parse({
+    items: points.slice(0, MAX_POINTS),
+    total: points.length,
+  })
 })

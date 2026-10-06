@@ -1,17 +1,20 @@
 import { okSchema } from "@/schemas/api"
-import {
-  bannerSchema,
-  publicSettingsSchema,
-  sitePageSchema,
-} from "@/schemas/admin"
+import { bannerSchema, sitePageSchema } from "@/schemas/admin"
 import { contactInputSchema } from "@/schemas/inputs"
+import { siteSchema } from "@/schemas/responses"
 import { z } from "zod"
 
 import { db, insert, newId, resetDb } from "../db"
 import { fail, route, withSession } from "../http"
 import { nowIso } from "../lib"
 
-route("GET", "/settings", () => publicSettingsSchema.parse(db.settings))
+// Public: contact details and locales only, never banking or moderation settings.
+route("GET", "/site", () =>
+  siteSchema.parse({
+    contact: db.settings.contact,
+    locales: db.settings.locales,
+  })
+)
 
 route("GET", "/pages/:slug", (c) => {
   const row = db.pages.find((p) => p.slug === c.params.slug)

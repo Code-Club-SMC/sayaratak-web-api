@@ -2,7 +2,6 @@ import { useState } from "react"
 import { useQuery } from "@tanstack/react-query"
 import { HeartIcon } from "lucide-react"
 
-import { meQuery } from "@/features/auth/me-query"
 import { useRequireAuth } from "@/features/auth/auth-gate"
 import { favoriteQueries, useToggleFavorite } from "@/features/listings/queries"
 import { useT } from "@/lib/i18n/use-t"
@@ -21,8 +20,7 @@ export function FavoriteButton({
 }) {
   const { t } = useT()
   const requireAuth = useRequireAuth()
-  const { data: me } = useQuery(meQuery)
-  const { data: ids } = useQuery({ ...favoriteQueries.ids, enabled: !!me })
+  const { data: ids } = useQuery(favoriteQueries.ids)
   const { mutate } = useToggleFavorite()
   const active = ids?.includes(listingId) ?? false
   // The pop plays once, right after the person saves, never on mount or when coming Back.

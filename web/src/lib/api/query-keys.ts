@@ -12,6 +12,8 @@ export const keys = {
   listings: {
     all: ["listings"] as const,
     list: (f: SearchParams) => ["listings", "list", f] as const,
+    rail: (f: Partial<SearchParams> & { exclude?: string }, limit: number) =>
+      ["listings", "rail", f, limit] as const,
     detail: (slug: string) => ["listings", "detail", slug] as const,
     similar: (id: string) => ["listings", "similar", id] as const,
     mine: (f: Params) => ["listings", "mine", f] as const,
@@ -57,10 +59,11 @@ export const keys = {
     payments: (f: Params) => ["billing", "payments", f] as const,
     promotionPrices: ["billing", "promotion-prices"] as const,
     promotions: ["billing", "promotions"] as const,
+    checkout: (item: string) => ["billing", "checkout", item] as const,
   },
   verification: ["verification"] as const,
   content: {
-    settings: ["content", "settings"] as const,
+    site: ["content", "site"] as const,
     page: (slug: string) => ["content", "page", slug] as const,
     banners: (placement?: string) => ["content", "banners", placement] as const,
   },

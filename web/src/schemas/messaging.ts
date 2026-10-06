@@ -1,6 +1,6 @@
 import { z } from "zod"
 
-import { idSchema } from "./fields"
+import { bilingualSchema, idSchema } from "./fields"
 
 export const threadSchema = z.object({
   id: idSchema,
@@ -48,8 +48,9 @@ export const notificationSchema = z.object({
     "verification_result",
     "broadcast",
   ]),
-  title: z.string(),
-  body: z.string(),
+  // Both languages are stored; the UI shows the active locale.
+  title: bilingualSchema,
+  body: bilingualSchema,
   href: z.string().optional(),
   createdAt: z.string(),
   readAt: z.string().optional(),

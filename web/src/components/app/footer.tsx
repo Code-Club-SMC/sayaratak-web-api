@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query"
 import { useT } from "@/lib/i18n/use-t"
 import { marketplaceLinks, serviceLinks } from "@/lib/navigation"
 import { toWhatsappUrl } from "@/lib/phone"
-import { publicSettingsQuery } from "@/features/pages/queries"
+import { siteQuery } from "@/features/pages/queries"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 import { LanguageSwitcher } from "./language-switcher"
@@ -31,7 +31,7 @@ const groups = [
 
 export function Footer() {
   const { t } = useT()
-  const { data, isPending, isError, refetch } = useQuery(publicSettingsQuery)
+  const { data, isPending, isError, refetch } = useQuery(siteQuery)
   const [delayed, setDelayed] = useState(false)
   useEffect(() => {
     if (!isPending) return

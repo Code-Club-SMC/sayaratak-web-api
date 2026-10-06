@@ -83,9 +83,7 @@ route("GET", "/workshops", (c) => {
     .filter((w) => w.status === "active")
     .filter((w) => !q || w.name.toLowerCase().includes(q))
     .filter((w) => !c.query.get("city") || w.cityId === c.query.get("city"))
-    .filter(
-      (w) => !service || w.services.some((s) => s.id.startsWith(`${service}-`))
-    )
+    .filter((w) => !service || w.services.some((s) => s.templateId === service))
     .filter((w) => c.query.get("verified") !== "true" || w.verified)
     .filter(
       (w) => c.query.get("openNow") !== "true" || isOpenNow(w.hours, Date.now())
@@ -227,6 +225,7 @@ route("POST", "/me/services", async (c) => {
     name: input.name,
     description: input.description ?? "",
     priceFrom: input.priceFrom ?? undefined,
+    templateId: input.templateId,
   }
   w.services.push(row)
   return row

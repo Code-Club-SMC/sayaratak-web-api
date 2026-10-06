@@ -81,8 +81,6 @@ export const settingsSchema = z.object({
   locales: z.array(localeSchema),
 })
 export type Settings = z.infer<typeof settingsSchema>
-// Public shell only needs contact details, never banking or moderation settings.
-export const publicSettingsSchema = settingsSchema.pick({ contact: true })
 
 export const backupSchema = z.object({
   id: idSchema,

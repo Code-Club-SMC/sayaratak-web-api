@@ -7,10 +7,14 @@ import { ChipMultiSelect } from "./chip-multi-select"
 import { FormField } from "./form-field"
 import { NumberField } from "./number-field"
 
-export type ServiceRow = { name: string; priceFrom: number | null }
+export type ServiceRow = {
+  name: string
+  priceFrom: number | null
+  templateId: string | null
+}
 type RowError = { name?: string; priceFrom?: string } | undefined
 
-// Template chips add or remove a row of the same name, so no template id is stored. A row whose name was edited becomes a custom service. Takes a value and `onChange` like the other blocks, so it works with RHF `Controller`.
+// A template chip adds or removes the row that carries its `templateId`; editing a row's name keeps the id, so the chip stays ticked and a language switch changes nothing. Custom rows have a null id. Takes a value and `onChange` like the other blocks, so it works with RHF `Controller`.
 export function ServicePicker({
   value,
   onChange,
@@ -21,7 +25,7 @@ export function ServicePicker({
 }: {
   value: ServiceRow[]
   onChange: (value: ServiceRow[]) => void
-  templates: string[]
+  templates: { id: string; name: string }[]
   errors?: RowError[]
   error?: string
   max?: number
@@ -29,21 +33,26 @@ export function ServicePicker({
   const { t } = useT()
   const patch = (i: number, p: Partial<ServiceRow>) =>
     onChange(value.map((r, j) => (j === i ? { ...r, ...p } : r)))
+  const ticked = value.flatMap((r) => (r.templateId ? [r.templateId] : []))
   return (
     <div className="flex flex-col gap-4">
       <ChipMultiSelect
         legend={t("form.services")}
-        options={templates.map((name) => ({ value: name, label: name }))}
-        value={value.map((r) => r.name)}
-        onChange={(names) =>
+        options={templates.map((s) => ({ value: s.id, label: s.name }))}
+        value={ticked}
+        onChange={(ids) =>
           onChange([
-            ...value.filter((r) => names.includes(r.name)),
-            ...names
-              .filter((n) => !value.some((r) => r.name === n))
-              .map((name) => ({ name, priceFrom: null })),
+            ...value.filter((r) => !r.templateId || ids.includes(r.templateId)),
+            ...templates
+              .filter((s) => ids.includes(s.id) && !ticked.includes(s.id))
+              .map((s) => ({
+                name: s.name,
+                priceFrom: null,
+                templateId: s.id,
+              })),
           ])
         }
-        max={max}
+        max={max - (value.length - ticked.length)}
         error={error}
       />
       {value.map((row, i) => (
@@ -93,7 +102,12 @@ export function ServicePicker({
           type="button"
           variant="secondary"
           className="self-start"
-          onClick={() => onChange([...value, { name: "", priceFrom: null }])}
+          onClick={() =>
+            onChange([
+              ...value,
+              { name: "", priceFrom: null, templateId: null },
+            ])
+          }
         >
           <PlusIcon data-icon="inline-start" />
           {t("form.add_service")}

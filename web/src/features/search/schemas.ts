@@ -35,6 +35,7 @@ export const searchParamsSchema = z.object({
   lng: optional(z.coerce.number()),
   verifiedOnly: optional(z.boolean()),
   hasVideo: optional(z.boolean()),
+  featured: optional(z.boolean()), // an active homepage or sponsored promotion; used by the home Featured rail
   includeSold: z.boolean().default(false).catch(false),
   seller: optional(z.string()), // owner id, used by profile inventory tabs
   sort: z

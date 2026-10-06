@@ -67,6 +67,7 @@ export type WorkshopLocation = z.infer<typeof workshopLocationSchema>
 export const serviceRowSchema = z.object({
   name: requiredText(60),
   priceFrom: optionalInt(1, 9_999_999_999, "validation.price_min"),
+  templateId: z.string().nullable(), // set when picked from the templates, null for a custom service
 })
 
 export const workshopHoursServicesSchema = hoursStepSchema.extend({

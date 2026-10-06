@@ -67,8 +67,11 @@ const open = async (step: string, saved: object = {}) => {
 }
 // What the billing page would read: the newest subscription of the signed-in account.
 const planOnFile = async () =>
-  ((await (await fetch("/api/me/subscription")).json()) as { planId: string })
-    .planId
+  (
+    (await (await fetch("/api/me/subscription")).json()) as {
+      subscription: { planId: string }
+    }
+  ).subscription.planId
 const next = () =>
   fireEvent.click(screen.getByRole("button", { name: "Continue" }))
 const change = (name: string | RegExp, value: string, role = "textbox") =>
@@ -253,7 +256,7 @@ describe("plan step and finish", () => {
     await open("plan", saved)
     await screen.findByRole("radio", { checked: true })
     const radios = screen.getAllByRole("radio")
-    expect(radios).toHaveLength(4)
+    expect(radios).toHaveLength(3)
     expect((radios[0] as HTMLInputElement).checked).toBe(true)
     expect(screen.getByText("Start free")).toBeTruthy()
     expect(screen.getByText(/Paid plans start once your transfer/)).toBeTruthy()
@@ -278,7 +281,7 @@ describe("plan step and finish", () => {
       phones: ["+249912345678"],
     })
     expect(owner().role).toBe("dealership")
-    expect(await planOnFile()).toBe("plan-dealer-free")
+    expect(await planOnFile()).toBe("plan-dealer-starter")
     const listed = await (await fetch("/api/dealerships?q=Desert")).json()
     expect(listed.items.map((d: { name: string }) => d.name)).toContain(
       "Desert Motors"
@@ -295,6 +298,6 @@ describe("plan step and finish", () => {
       expect(router.state.location.pathname).toBe("/en/dealer")
     )
     expect(draft()).toMatchObject({ plan: { planId: "plan-dealer-growth" } })
-    expect(await planOnFile()).toBe("plan-dealer-free")
+    expect(await planOnFile()).toBe("plan-dealer-starter")
   })
 })

@@ -19,3 +19,12 @@ export const slugify = (s: string) =>
     .replace(/^-|-$/g, "")
 export const jitter = (n: number, spread = 0.04) =>
   n + (faker.number.float() - 0.5) * spread * 2
+
+// Rating of a business from its reviews (hidden ones already left out): average to one decimal, count, and the count per star.
+export const ratingFrom = (stars: number[]) => ({
+  count: stars.length,
+  avg: stars.length
+    ? Math.round((stars.reduce((s, r) => s + r, 0) / stars.length) * 10) / 10
+    : 0,
+  distribution: [1, 2, 3, 4, 5].map((n) => stars.filter((r) => r === n).length),
+})

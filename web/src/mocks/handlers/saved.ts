@@ -26,15 +26,13 @@ route("GET", "/favorites", (c) => {
     paginate(favoriteListings(user.id), page, pageSize)
   )
 })
-// Ids only, so every card can draw its heart without loading the full list.
-route("GET", "/favorites/ids", (c) =>
-  z
-    .array(z.string())
-    .parse(
-      db.favorites
-        .filter((f) => f.userId === needUser(c).id)
-        .map((f) => f.listingId)
-    )
+// Ids only, so every card can draw its heart without loading the full list. Public: empty when signed out.
+route("GET", "/me/favorite-ids", (c) =>
+  z.object({ ids: z.array(z.string()) }).parse({
+    ids: db.favorites
+      .filter((f) => f.userId === c.user?.id)
+      .map((f) => f.listingId),
+  })
 )
 
 route("POST", "/favorites", async (c) => {

@@ -172,7 +172,7 @@ describe("public shell", () => {
       expect(screen.queryByRole("navigation")).toBeNull()
     }
   )
-  it("loads contact details from settings without exposing admin settings", async () => {
+  it("loads contact details and locales from the site endpoint without exposing admin settings", async () => {
     db.settings.contact.email = "test@example.com"
     await renderShell(<Footer />)
     expect(
@@ -180,8 +180,11 @@ describe("public shell", () => {
         await screen.findByRole("link", { name: "test@example.com" })
       ).getAttribute("href")
     ).toBe("mailto:test@example.com")
-    const data: unknown = await (await fetch("/api/settings")).json()
-    expect(data).toEqual({ contact: db.settings.contact })
+    const data: unknown = await (await fetch("/api/site")).json()
+    expect(data).toEqual({
+      contact: db.settings.contact,
+      locales: db.settings.locales,
+    })
   })
   it("keeps footer links usable after a contact failure and recovers on retry", async () => {
     setFailMode("500")

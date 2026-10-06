@@ -17,7 +17,7 @@ export const planSchema = z.object({
 })
 export type Plan = z.infer<typeof planSchema>
 
-// `limit` is null when the plan has no cap.
+// `price` and `usage.limit` are copied from the plan when the subscription is created (an admin can set custom ones). `limit` is null when there is no cap.
 export const subscriptionSchema = z.object({
   id: idSchema,
   userId: idSchema,
@@ -25,6 +25,7 @@ export const subscriptionSchema = z.object({
   status: z.enum(["active", "pending", "expired", "canceled"]),
   startsAt: z.string(),
   endsAt: z.string(),
+  price: z.number().int(),
   usage: z.object({
     used: z.number().int(),
     limit: z.number().int().nullable(),
@@ -37,10 +38,11 @@ export const paymentSchema = z.object({
   userId: idSchema,
   itemType: z.enum(["plan", "promotion"]),
   itemId: idSchema,
-  itemLabel: z.string(),
+  itemLabel: bilingualSchema,
   amount: z.number().int(),
   method: z.literal("bankak_transfer"),
   reference: z.string(),
+  payerName: z.string(),
   transactionRef: z.string(),
   receiptUrl: z.string(),
   status: z.enum(["pending_review", "approved", "rejected"]),
@@ -50,12 +52,15 @@ export const paymentSchema = z.object({
 })
 export type Payment = z.infer<typeof paymentSchema>
 
+// `startsAt` and `endsAt` are set when the promotion becomes active; the `promotions` array on a listing holds active ones only.
 export const promotionSchema = z.object({
   id: idSchema,
   listingId: idSchema,
   type: promotionTypeSchema,
-  startsAt: z.string(),
-  endsAt: z.string(),
+  status: z.enum(["pending_payment", "active", "ended"]),
+  durationDays: z.number().int(),
+  startsAt: z.string().optional(),
+  endsAt: z.string().optional(),
   source: z.enum(["paid", "admin_grant"]),
   paymentId: z.string().optional(),
 })

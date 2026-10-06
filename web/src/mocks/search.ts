@@ -33,9 +33,17 @@ const names = (id: string | null) => {
 const text = (l: ListingRow) =>
   `${l.title} ${l.description} ${names(l.makeId)} ${names(l.modelId)}`.toLowerCase()
 
+// Anyone sees an approved listing unless its owner is banned or its business is suspended.
+export const isPublic = (l: ListingRow) =>
+  l.moderation === "approved" &&
+  !db.users.some((u) => u.id === l.ownerUserId && u.banned) &&
+  ![...db.dealerships, ...db.workshops, ...db.mechanics].some(
+    (b) => b.ownerId === l.ownerUserId && b.status === "suspended"
+  )
+
 export function matches(l: ListingRow, p: SearchParams, skip: string[] = []) {
   const on = (key: string) => !skip.includes(key)
-  if (l.moderation !== "approved" || l.kind !== p.kind) return false
+  if (!isPublic(l) || l.kind !== p.kind) return false
   if (!p.includeSold && (l.status === "sold" || l.status === "rented"))
     return false
   if (p.intent && l.intent !== p.intent) return false
@@ -62,6 +70,13 @@ export function matches(l: ListingRow, p: SearchParams, skip: string[] = []) {
   if (p.partCategory && l.partCategoryId !== p.partCategory) return false
   if (p.verifiedOnly && !l.owner.verified) return false
   if (p.hasVideo && !l.media.some((m) => m.type === "video")) return false
+  if (
+    p.featured &&
+    !activePromotions(l).some(
+      (x) => x.type === "homepage" || x.type === "sponsored"
+    )
+  )
+    return false
   if (p.seller && l.owner.id !== p.seller && l.ownerUserId !== p.seller)
     return false
   if (p.q) {
@@ -85,15 +100,12 @@ export function matches(l: ListingRow, p: SearchParams, skip: string[] = []) {
 }
 
 const tiers = { sponsored: 3, pin: 2, boost: 1, homepage: 0 } as const
-export const tierOf = (l: ListingRow, now = Date.now()) =>
-  Math.max(
-    0,
-    ...l.promotions
-      .filter(
-        (x) => Date.parse(x.startsAt) <= now && Date.parse(x.endsAt) >= now
-      )
-      .map((x) => tiers[x.type])
+const activePromotions = (l: ListingRow, now = Date.now()) =>
+  l.promotions.filter(
+    (x) => Date.parse(x.startsAt) <= now && Date.parse(x.endsAt) >= now
   )
+export const tierOf = (l: ListingRow, now = Date.now()) =>
+  Math.max(0, ...activePromotions(l, now).map((x) => tiers[x.type]))
 const newest = (a: ListingRow, b: ListingRow) =>
   b.createdAt.localeCompare(a.createdAt)
 

@@ -53,6 +53,8 @@ export const workshopSchema = z.object({
       name: z.string(),
       description: z.string(),
       priceFrom: z.number().int().optional(),
+      // Set when the service was picked from the service templates, null for a custom one. The directory `service` filter matches on it.
+      templateId: z.string().nullable(),
     })
   ),
   rating: ratingSchema,

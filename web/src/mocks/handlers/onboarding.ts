@@ -4,7 +4,7 @@ import { defaultWeeklyHours } from "@/lib/hours"
 import { geoSchema, phoneSchema, weeklyHoursSchema } from "@/schemas/fields"
 import { onboardingInputSchema } from "@/schemas/inputs"
 import { interestSchema, userSchema } from "@/schemas/user"
-import { DAY, slugify } from "@/mocks/seed/util"
+import { DAY, ratingFrom, slugify } from "@/mocks/seed/util"
 
 import { db, newId } from "../db"
 import { needUser, route } from "../http"
@@ -13,7 +13,11 @@ import { template } from "./uploads"
 
 const phoneRows = z.array(z.object({ value: phoneSchema }))
 const serviceRows = z.array(
-  z.object({ name: z.string(), priceFrom: z.number().int().nullable() })
+  z.object({
+    name: z.string(),
+    priceFrom: z.number().int().nullable(),
+    templateId: z.string().nullable().catch(null),
+  })
 )
 
 // Creates the business record for the chosen role and ends onboarding. The forms validate before they post, so a missing or malformed field falls back to a default here.
@@ -36,7 +40,7 @@ route("POST", "/onboarding/complete", async (c) => {
     name,
     cityId: city,
     createdAt: nowIso(),
-    rating: { avg: 0, count: 0 },
+    rating: ratingFrom([]),
     verified: false,
     status: "active" as const,
   }
@@ -76,6 +80,7 @@ route("POST", "/onboarding/complete", async (c) => {
         id: newId("svc"),
         name: s.name,
         description: "",
+        templateId: s.templateId,
         ...(s.priceFrom ? { priceFrom: s.priceFrom } : {}),
       })),
       ...place,
@@ -112,7 +117,9 @@ route("POST", "/onboarding/complete", async (c) => {
     role === "user"
       ? undefined
       : db.plans.find((p) => p.audience === role && p.price === 0)
-  if (free)
+  if (free) {
+    for (const s of db.subscriptions)
+      if (s.userId === user.id && s.status === "active") s.status = "canceled"
     db.subscriptions.push({
       id: newId("sub"),
       userId: user.id,
@@ -120,8 +127,10 @@ route("POST", "/onboarding/complete", async (c) => {
       status: "active",
       startsAt: nowIso(),
       endsAt: new Date(Date.now() + free.durationDays * DAY).toISOString(),
+      price: free.price,
       usage: { used: 0, limit: free.vehicleLimit ?? free.listingLimit ?? null },
     })
+  }
   user.role = role
   user.cityId = city
   user.onboardingDone = true

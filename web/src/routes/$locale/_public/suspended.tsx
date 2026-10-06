@@ -3,7 +3,7 @@ import { createFileRoute } from "@tanstack/react-router"
 
 import { StatePanel } from "@/components/app/state-panel"
 import { buttonVariants } from "@/components/ui/button"
-import { publicSettingsQuery } from "@/features/pages/queries"
+import { siteQuery } from "@/features/pages/queries"
 import { getCopy } from "@/lib/i18n/server"
 import { useT } from "@/lib/i18n/use-t"
 import { toWhatsappUrl } from "@/lib/phone"
@@ -29,7 +29,7 @@ export const Route = createFileRoute("/$locale/_public/suspended")({
 
 function Suspended() {
   const { t } = useT()
-  const contact = useQuery(publicSettingsQuery).data?.contact
+  const contact = useQuery(siteQuery).data?.contact
   const link = buttonVariants({ variant: "outline" })
   return (
     <StatePanel

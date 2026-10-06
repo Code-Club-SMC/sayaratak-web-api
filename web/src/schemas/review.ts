@@ -2,9 +2,11 @@ import { z } from "zod"
 
 import { idSchema } from "./fields"
 
+// `distribution` holds five counts, for 1 to 5 stars, and feeds the RatingSummary histogram. Hidden reviews are not counted.
 export const ratingSchema = z.object({
   avg: z.number(),
   count: z.number().int(),
+  distribution: z.array(z.number().int()).length(5),
 })
 export type Rating = z.infer<typeof ratingSchema>
 

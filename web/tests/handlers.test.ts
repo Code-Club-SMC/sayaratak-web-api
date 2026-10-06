@@ -232,16 +232,18 @@ describe("saved", () => {
     const id = db.listings.find((l) => l.moderation === "approved")?.id ?? ""
     const before = db.listings.find((l) => l.id === id)?.stats.favorites ?? 0
     await call("POST", "/favorites", { as: "u-new", body: { listingId: id } })
-    expect((await call("GET", "/favorites/ids", { as: "u-new" })).body).toEqual(
-      [id]
-    )
+    expect(
+      (await call("GET", "/me/favorite-ids", { as: "u-new" })).body
+    ).toEqual({ ids: [id] })
     expect(db.listings.find((l) => l.id === id)?.stats.favorites).toBe(
       before + 1
     )
     await call("DELETE", `/favorites/${id}`, { as: "u-new" })
-    expect((await call("GET", "/favorites/ids", { as: "u-new" })).body).toEqual(
-      []
-    )
+    expect(
+      (await call("GET", "/me/favorite-ids", { as: "u-new" })).body
+    ).toEqual({ ids: [] })
+    // The ids endpoint is public: signed out it is just empty.
+    expect((await call("GET", "/me/favorite-ids")).body).toEqual({ ids: [] })
     expect((await call("GET", "/favorites")).status).toBe(401)
   })
   it("saved searches: create, mark seen", async () => {
@@ -310,22 +312,31 @@ describe("messaging and notifications", () => {
 })
 
 describe("billing, promotions and payments", () => {
-  it("a receipt creates a pending payment; approval activates the plan and notifies", async () => {
+  const receipt = (itemType: string, itemId: string, extra = {}) => {
     const form = new FormData()
-    form.set("itemType", "plan")
-    form.set("itemId", "plan-user-plus")
+    form.set("itemType", itemType)
+    form.set("itemId", itemId)
     form.set("transactionRef", "TX123456")
+    form.set("payerName", "Omar Hassan")
     form.set("receipt", file("r.png", 100))
-    const paid = await call("POST", "/payments", { as: "u-1", form })
+    for (const [k, v] of Object.entries(extra)) form.set(k, String(v))
+    return form
+  }
+  it("a receipt creates a pending payment; approval activates the plan and notifies", async () => {
+    const paid = await call("POST", "/payments", {
+      as: "u-1",
+      form: receipt("plan", "plan-user-plus"),
+    })
     expect(paid.status).toBe(200)
     expect(paid.body.status).toBe("pending_review")
-    const dup = new FormData()
-    dup.set("itemType", "plan")
-    dup.set("itemId", "plan-user-plus")
-    dup.set("transactionRef", "TX123456")
-    dup.set("receipt", file("r.png", 100))
+    expect(paid.body.payerName).toBe("Omar Hassan")
     expect(
-      (await call("POST", "/payments", { as: "u-1", form: dup })).body.code
+      (
+        await call("POST", "/payments", {
+          as: "u-1",
+          form: receipt("plan", "plan-user-plus"),
+        })
+      ).body.code
     ).toBe("payment_pending")
     expect(
       (
@@ -337,27 +348,72 @@ describe("billing, promotions and payments", () => {
     await call("POST", `/admin/payments/${paid.body.id}/approve`, {
       as: "u-admin",
     })
-    expect(
-      (await call("GET", "/me/subscription", { as: "u-1" })).body.planId
-    ).toBe("plan-user-plus")
+    const mine = (await call("GET", "/me/subscription", { as: "u-1" })).body
+    expect(mine.subscription.planId).toBe("plan-user-plus")
+    expect(mine.subscription.price).toBe(50_000)
+    expect(mine.plan.id).toBe("plan-user-plus")
     expect(
       db.notifications.some(
         (n) => n.userId === "u-1" && n.type === "payment_approved"
       )
     ).toBe(true)
   })
-  it("a promotion payment adds the promotion when approved; rejection needs a reason", async () => {
+  it("a payment needs the payer name", async () => {
+    const res = await call("POST", "/payments", {
+      as: "u-1",
+      form: receipt("plan", "plan-user-plus", { payerName: "" }),
+    })
+    expect(res.status).toBe(422)
+    expect(res.body.fields.payerName).toBe("validation.name_min")
+  })
+  it("a promotion starts unpaid, is paid through checkout, and runs once approved", async () => {
     const listing = db.listings.find(
       (l) =>
         l.ownerUserId === "u-omar" &&
         l.moderation === "approved" &&
-        l.promotions.length === 0
+        l.promotions.length === 0 &&
+        !db.promotions.some((p) => p.listingId === l.id)
     )
-    const pay = await call("POST", "/promotions", {
+    const made = await call("POST", "/promotions", {
       as: "u-omar",
       body: { listingId: listing?.id, type: "pin" },
     })
-    expect(pay.body.status).toBe("pending_review")
+    expect(made.body.status).toBe("pending_payment")
+    expect(made.body.durationDays).toBe(7)
+    // Asking again returns the same unpaid promotion.
+    const again = await call("POST", "/promotions", {
+      as: "u-omar",
+      body: { listingId: listing?.id, type: "pin" },
+    })
+    expect(again.body.id).toBe(made.body.id)
+    const item = `promotion:${made.body.id}`
+    const checkout = await call("GET", `/checkout?item=${item}`, {
+      as: "u-omar",
+    })
+    expect(checkout.body).toMatchObject({
+      itemType: "promotion",
+      amount: 50_000,
+      durationDays: 7,
+      pendingPaymentId: null,
+      bankak: { name: "Sayaratak", number: "1234567" },
+    })
+    const pay = await call("POST", "/payments", {
+      as: "u-omar",
+      form: receipt("promotion", made.body.id),
+    })
+    expect(pay.body.reference).toBe(checkout.body.reference)
+    expect(
+      (await call("GET", `/checkout?item=${item}`, { as: "u-omar" })).body
+        .pendingPaymentId
+    ).toBe(pay.body.id)
+    const mine = (await call("GET", "/me/promotions", { as: "u-omar" })).body
+    expect(
+      mine.items.find((p: { id: string }) => p.id === made.body.id)
+    ).toMatchObject({
+      status: "pending_payment",
+      paymentStatus: "pending_review",
+      price: 50_000,
+    })
     expect(
       (
         await call("POST", `/admin/payments/${pay.body.id}/reject`, {
@@ -370,7 +426,62 @@ describe("billing, promotions and payments", () => {
       as: "u-admin",
     })
     expect(listing?.promotions.map((p) => p.type)).toContain("pin")
-    expect((await call("GET", "/plans")).body.length).toBeGreaterThan(5)
+    const running = db.promotions.find((p) => p.id === made.body.id)
+    expect(running?.status).toBe("active")
+    expect(running?.endsAt).toBeTruthy()
+    // Ending it takes it off the listing.
+    await call("POST", `/admin/promotions/${made.body.id}/end`, {
+      as: "u-admin",
+    })
+    expect(listing?.promotions.map((p) => p.type)).not.toContain("pin")
+    expect(db.promotions.find((p) => p.id === made.body.id)?.status).toBe(
+      "ended"
+    )
+  })
+  it("an admin grant starts at once and is free", async () => {
+    const listing = db.listings.find(
+      (l) => l.moderation === "approved" && l.promotions.length === 0
+    )
+    const grant = await call("POST", "/admin/promotions/grant", {
+      as: "u-admin",
+      body: { listingId: listing?.id, type: "boost", days: 5 },
+    })
+    expect(grant.body).toMatchObject({
+      status: "active",
+      source: "admin_grant",
+      durationDays: 5,
+      price: 0,
+      paymentStatus: "none",
+    })
+    expect(listing?.promotions.map((p) => p.type)).toContain("boost")
+  })
+  it("plans hide the individual ones when individual subscriptions are off", async () => {
+    expect((await call("GET", "/plans?audience=user")).body.length).toBe(2)
+    db.settings.individualSubscriptionsEnabled = false
+    expect((await call("GET", "/plans?audience=user")).body).toEqual([])
+    const all = (await call("GET", "/plans")).body
+    expect(all.some((p: { audience: string }) => p.audience === "user")).toBe(
+      false
+    )
+    const usage = (await call("GET", "/me/subscription", { as: "u-1" })).body
+      .usage
+    expect(usage.limit).toBeNull()
+  })
+  it("the first plan of every audience is free", () => {
+    for (const audience of ["user", "dealership", "workshop", "mechanic"]) {
+      const first = db.plans
+        .filter((p) => p.audience === audience)
+        .sort((a, b) => a.sortOrder - b.sortOrder)[0]
+      expect(first?.price).toBe(0)
+    }
+  })
+  it("the payments page carries the summary strip and the payer", async () => {
+    const page = (await call("GET", "/admin/payments", { as: "u-admin" })).body
+    expect(page.summary.pendingCount).toBe(
+      db.payments.filter((p) => p.status === "pending_review").length
+    )
+    expect(page.items[0].user.name).toBeTruthy()
+    expect(page.summary.approvedThisMonth).toBeGreaterThanOrEqual(0)
   })
 })
 
@@ -402,13 +513,33 @@ describe("trust, content, map, uploads, analytics", () => {
     ).toHaveLength(1)
   })
   it("map is capped at 300 points and respects the bbox", async () => {
+    // `layers` repeats like every array param.
     const all = await call(
       "GET",
-      "/map?layers=vehicles,dealerships,workshops,mechanics"
+      "/map?layers=vehicles&layers=dealerships&layers=workshops&layers=mechanics"
     )
-    expect(all.body.length).toBeLessThanOrEqual(300)
+    expect(all.body.items.length).toBeLessThanOrEqual(300)
+    expect(all.body.total).toBeGreaterThanOrEqual(all.body.items.length)
     const none = await call("GET", "/map?layers=vehicles&bbox=0,0,1,1")
-    expect(none.body).toEqual([])
+    expect(none.body).toEqual({ items: [], total: 0 })
+    const dealers = await call("GET", "/map?layers=dealerships")
+    expect(
+      dealers.body.items.every((p: { kind: string }) => p.kind === "dealership")
+    ).toBe(true)
+  })
+  it("the vehicle layer rounds positions for everyone but the owner", async () => {
+    const mine = db.listings.find(
+      (l) =>
+        l.ownerUserId === "u-omar" && l.moderation === "approved" && l.location
+    )
+    const point = (await call("GET", "/map?layers=vehicles")).body.items.find(
+      (p: { id: string }) => p.id === mine?.id
+    )
+    const round = (n: number) => Math.round(n * 100) / 100
+    expect(point.location).toEqual({
+      lat: round(mine?.location?.lat ?? 0),
+      lng: round(mine?.location?.lng ?? 0),
+    })
   })
   it("uploads return a Media, serve the file and refuse files over the limits", async () => {
     const form = new FormData()
@@ -470,8 +601,16 @@ describe("trust, content, map, uploads, analytics", () => {
     })
     expect(listing?.stats.views).toBe(before + 1)
     const a = await call("GET", "/me/analytics?range=7d", { as: "u-omar" })
-    expect(a.body.series).toHaveLength(7)
+    expect(a.body.daily).toHaveLength(7)
     expect(a.body.totals.views).toBeGreaterThan(0)
+    expect(a.body.previous.views).toBeGreaterThanOrEqual(0)
+    // Only dealerships get a top-listings table.
+    expect(a.body.topListings).toEqual([])
+    const dealer = await call("GET", "/me/analytics?range=30d", {
+      as: "u-dealer",
+    })
+    expect(dealer.body.topListings.length).toBeGreaterThan(0)
+    expect(dealer.body.topListings.length).toBeLessThanOrEqual(10)
   })
 })
 
@@ -522,9 +661,19 @@ describe("admin", () => {
     expect(
       (await call("GET", "/me/counts", { as: "u-admin" })).body.pendingListings
     ).toBeGreaterThan(0)
-    expect(
-      (await call("GET", "/admin/stats", { as: "u-admin" })).body.users
-    ).toBe(db.users.length)
+    const stats = (
+      await call("GET", "/admin/stats?range=7d", { as: "u-admin" })
+    ).body
+    expect(stats.totals.users).toBe(db.users.length)
+    expect(stats.series.newListings).toHaveLength(7)
+    expect(stats.series.revenue).toHaveLength(7)
+    // The feed is newest first, at most ten, and each row links to its screen with the item selected.
+    const feed = (await call("GET", "/admin/activity", { as: "u-admin" })).body
+      .items
+    expect(feed.length).toBeLessThanOrEqual(10)
+    expect(feed.every((i: { href: string }) => i.href.includes("?id="))).toBe(
+      true
+    )
   })
   it("taxonomy rows in use cannot be deleted; broadcasts notify the audience", async () => {
     expect(
@@ -559,7 +708,7 @@ describe("admin", () => {
       as: "u-admin",
       body: { audience: "mechanic", title: "Hello", body: "Welcome" },
     })
-    expect(sent.body.recipients).toBe(est.body.recipients)
+    expect(sent.body.recipients).toBe(est.body.count)
     expect(
       db.notifications.some(
         (n) => n.userId === "u-mechanic" && n.type === "broadcast"

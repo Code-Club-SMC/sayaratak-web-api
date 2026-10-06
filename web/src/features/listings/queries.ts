@@ -15,7 +15,7 @@ import {
   useApiMutation,
 } from "@/lib/api/mutation"
 import { keys } from "@/lib/api/query-keys"
-import { analyticsSchema, okSchema, type Range } from "@/schemas/api"
+import { listingAnalyticsSchema, okSchema, type Range } from "@/schemas/api"
 import { pageOf } from "@/schemas/fields"
 import type { listingCreateSchema, listingPatchSchema } from "@/schemas/inputs"
 import {
@@ -47,6 +47,18 @@ export const listingQueries = {
         }),
       staleTime: 30_000,
       placeholderData: keepPreviousData, // old results stay visible while the next page loads
+    }),
+  // A short list for rails (home, similar, more from the seller). `limit` is an API value, never a URL param of a page, so it has its own key.
+  rail: (params: Partial<SearchParams>, limit: number, exclude?: string) =>
+    queryOptions({
+      queryKey: keys.listings.rail({ ...params, exclude }, limit),
+      queryFn: ({ signal }) =>
+        apiFetch("/listings", {
+          query: { ...params, exclude, limit },
+          schema: listingPageSchema,
+          signal,
+        }),
+      staleTime: 30_000,
     }),
   detail: (slug: string) =>
     queryOptions({
@@ -83,7 +95,7 @@ export const listingQueries = {
       queryFn: ({ signal }) =>
         apiFetch(`/listings/${id}/analytics`, {
           query: { range },
-          schema: analyticsSchema,
+          schema: listingAnalyticsSchema,
           signal,
         }),
     }),
@@ -174,7 +186,10 @@ export const favoriteQueries = {
   ids: queryOptions({
     queryKey: keys.favorites.ids,
     queryFn: ({ signal }) =>
-      apiFetch("/favorites/ids", { schema: z.array(z.string()), signal }),
+      apiFetch("/me/favorite-ids", {
+        schema: z.object({ ids: z.array(z.string()) }),
+        signal,
+      }).then((r) => r.ids),
     staleTime: 60_000,
   }),
   list: (filters: Query = {}) =>

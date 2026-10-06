@@ -3,10 +3,14 @@ import {
   paymentSchema,
   planSchema,
   promotionPriceSchema,
-  promotionSchema,
   subscriptionSchema,
 } from "@/schemas/billing"
 import { pageOf } from "@/schemas/fields"
+import {
+  adminPaymentsPageSchema,
+  estimateSchema,
+  myPromotionSchema,
+} from "@/schemas/responses"
 import {
   broadcastInputSchema,
   grantInputSchema,
@@ -17,6 +21,7 @@ import { db, find, insert, newId, remove } from "../db"
 import { fail, needRole, route, type Ctx } from "../http"
 import {
   DAY_MS,
+  activatePromotion,
   byNewest,
   listPage,
   listingById,
@@ -24,6 +29,7 @@ import {
   listingUsage,
   nowIso,
   notify,
+  promotionView,
 } from "../lib"
 import type { PromotionPriceRow } from "../types"
 
@@ -34,40 +40,65 @@ const paymentOf = (id: string) => {
   if (row.status !== "pending_review") throw fail(409, "exists")
   return row
 }
-function addPromotion(
+// An admin grant starts at once and costs nothing.
+function grantPromotion(
   listingId: string,
   type: PromotionPriceRow["type"],
-  days: number,
-  source: "paid" | "admin_grant",
-  paymentId?: string
+  days: number
 ) {
-  const listing = listingById(listingId)
-  const startsAt = nowIso()
-  const endsAt = new Date(Date.now() + days * DAY_MS).toISOString()
-  listing.promotions.push({ type, startsAt, endsAt })
-  return insert(db.promotions, {
+  listingById(listingId)
+  const promotion = insert(db.promotions, {
     id: newId("promo"),
     listingId,
     type,
-    startsAt,
-    endsAt,
-    source,
-    paymentId,
+    status: "active" as const,
+    durationDays: days,
+    source: "admin_grant" as const,
   })
+  activatePromotion(promotion)
+  return promotion
 }
 
+const khartoumMonth = (iso: string) =>
+  new Date(iso)
+    .toLocaleDateString("en-CA", { timeZone: "Africa/Khartoum" })
+    .slice(0, 7)
+
+// A page of payments with the payer's name, plus the strip above the table: approved this month (Khartoum calendar), and what waits for review.
 route("GET", "/admin/payments", (c) => {
   admin(c)
   const rows = db.payments
     .filter((p) => !c.query.get("status") || p.status === c.query.get("status"))
     .sort(byNewest)
-  return pageOf(paymentSchema).parse(
-    listPage(
-      c,
-      rows,
-      (p) => `${p.reference} ${p.transactionRef} ${p.itemLabel}`
-    )
+  const page = listPage(
+    c,
+    rows,
+    (p) =>
+      `${p.reference} ${p.transactionRef} ${p.itemLabel.ar} ${p.itemLabel.en}`
   )
+  const month = khartoumMonth(nowIso())
+  const waiting = db.payments.filter((p) => p.status === "pending_review")
+  return adminPaymentsPageSchema.parse({
+    ...page,
+    items: page.items.map((p) => ({
+      ...p,
+      user: {
+        id: p.userId,
+        name: find(db.users, p.userId)?.fullName ?? p.payerName,
+      },
+    })),
+    summary: {
+      approvedThisMonth: db.payments
+        .filter(
+          (p) =>
+            p.status === "approved" &&
+            khartoumMonth(p.reviewedAt ?? p.createdAt) === month
+        )
+        .reduce((sum, p) => sum + p.amount, 0),
+      pendingCount: waiting.length,
+      pendingAmount: waiting.reduce((sum, p) => sum + p.amount, 0),
+    },
+  })
 })
 // Approval activates the plan or adds the promotion, then tells the payer.
 route("POST", "/admin/payments/:id/approve", (c) => {
@@ -86,13 +117,16 @@ route("POST", "/admin/payments/:id/approve", (c) => {
       status: "active",
       startsAt: nowIso(),
       endsAt: new Date(Date.now() + plan.durationDays * DAY_MS).toISOString(),
+      price: plan.price,
       usage: { used: 0, limit: plan.listingLimit ?? plan.vehicleLimit ?? null },
     })
   } else {
-    const [listingId = "", type = ""] = row.itemId.split(":")
-    const price = db.promotionPrices.find((p) => p.type === type)
-    if (!price) throw fail(404, "not_found")
-    addPromotion(listingId, price.type, price.durationDays, "paid", row.id)
+    const promotion = find(db.promotions, row.itemId)
+    if (!promotion) throw fail(404, "not_found")
+    if (promotion.status === "pending_payment") {
+      promotion.paymentId = row.id
+      activatePromotion(promotion)
+    }
   }
   row.status = "approved"
   row.reviewedAt = nowIso()
@@ -100,7 +134,7 @@ route("POST", "/admin/payments/:id/approve", (c) => {
     row.userId,
     "payment_approved",
     { ar: "تمت الموافقة على الدفع", en: "Payment approved" },
-    { ar: row.itemLabel, en: row.itemLabel },
+    row.itemLabel,
     "/billing"
   )
   return paymentSchema.parse(row)
@@ -201,25 +235,36 @@ route("DELETE", "/admin/promotion-prices/:id", (c) => {
   return okSchema.parse({ ok: true })
 })
 
-route(
-  "GET",
-  "/admin/promotions",
-  (c) => (
-    admin(c),
-    pageOf(promotionSchema).parse(
-      listPage(
-        c,
-        [...db.promotions].sort((a, b) => b.startsAt.localeCompare(a.startsAt))
-      )
-    )
+route("GET", "/admin/promotions", (c) => {
+  admin(c)
+  const status = c.query.get("status")
+  const rows = db.promotions
+    .map(promotionView)
+    .filter((p) => !status || p.status === status)
+    .sort((a, b) => (b.startsAt ?? "9").localeCompare(a.startsAt ?? "9"))
+  return pageOf(myPromotionSchema).parse(
+    listPage(c, rows, (p) => p.listing.title)
   )
-)
+})
 route("POST", "/admin/promotions/grant", async (c) => {
   admin(c)
   const { listingId, type, days } = await c.body(grantInputSchema)
-  return promotionSchema.parse(
-    addPromotion(listingId, type, days, "admin_grant")
+  return myPromotionSchema.parse(
+    promotionView(grantPromotion(listingId, type, days))
   )
+})
+// Ending takes the promotion off its listing at once.
+route("POST", "/admin/promotions/:id/end", (c) => {
+  admin(c)
+  const promotion = find(db.promotions, c.params.id ?? "")
+  if (!promotion) throw fail(404, "not_found")
+  const listing = find(db.listings, promotion.listingId)
+  if (listing)
+    listing.promotions = listing.promotions.filter(
+      (p) => !(p.type === promotion.type && p.startsAt === promotion.startsAt)
+    )
+  promotion.status = "ended"
+  return myPromotionSchema.parse(promotionView(promotion))
 })
 
 const audience = (a: string) =>
@@ -241,7 +286,9 @@ route(
   "/admin/broadcasts/estimate",
   (c) => (
     admin(c),
-    { recipients: audience(c.query.get("audience") ?? "all").length }
+    estimateSchema.parse({
+      count: audience(c.query.get("audience") ?? "all").length,
+    })
   )
 )
 route("POST", "/admin/broadcasts", async (c) => {

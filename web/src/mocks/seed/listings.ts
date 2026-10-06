@@ -356,6 +356,8 @@ export function seedListings(ctx: Ctx) {
           id: `promo-${promotions.length + 1}`,
           listingId: id,
           type: promoType,
+          status: "active",
+          durationDays: promoDays[promoType],
           startsAt,
           endsAt,
           source: "paid",
@@ -397,10 +399,34 @@ export function seedListings(ctx: Ctx) {
       id: `promo-${promotions.length + 1}`,
       listingId: row.id,
       type: "boost",
+      status: "ended",
+      durationDays: 3,
       startsAt: ago(20 * DAY),
       endsAt: ago(17 * DAY),
       source: "paid",
     })
+  }
+  // Two promotions waiting for payment on listings of the demo seller and the demo dealership, for the checkout and the admin queue.
+  const waiting: [string, PromotionType][] = [
+    ["u-omar", "boost"],
+    ["u-dealer", "pin"],
+  ]
+  for (const [ownerId, type] of waiting) {
+    const mine = listings.find(
+      (l) =>
+        l.ownerUserId === ownerId &&
+        l.moderation === "approved" &&
+        l.promotions.length === 0
+    )
+    if (mine)
+      promotions.push({
+        id: `promo-${promotions.length + 1}`,
+        listingId: mine.id,
+        type,
+        status: "pending_payment",
+        durationDays: promoDays[type],
+        source: "paid",
+      })
   }
   return { listings, promotions }
 }

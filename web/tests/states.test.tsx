@@ -16,7 +16,7 @@ import { NotFound } from "@/components/app/not-found"
 import { OfflineBanner } from "@/components/app/offline-banner"
 import { PageSkeleton } from "@/components/app/page-skeleton"
 import { RouteError } from "@/components/app/route-error"
-import { publicSettingsQuery } from "@/features/pages/queries"
+import { siteQuery } from "@/features/pages/queries"
 import { ApiError } from "@/lib/api/client"
 import { setFailMode } from "@/lib/api/dev-flags"
 import { createI18n } from "@/lib/i18n/create"
@@ -121,7 +121,7 @@ describe("state pages", () => {
     const page = createRoute({
       getParentRoute: () => root,
       path: "/page",
-      loader: () => client.fetchQuery(publicSettingsQuery),
+      loader: () => client.fetchQuery(siteQuery),
       component: () => <p>loaded</p>,
     })
     const missing = createRoute({

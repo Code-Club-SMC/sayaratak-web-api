@@ -10,13 +10,13 @@ import {
   planSchema,
   promotionPriceSchema,
   promotionSchema,
-  subscriptionSchema,
 } from "@/schemas/billing"
 import type { promotionInputSchema } from "@/schemas/inputs"
-
-const myPromotionSchema = promotionSchema.extend({
-  state: z.enum(["active", "scheduled", "ended"]),
-})
+import {
+  checkoutSchema,
+  meSubscriptionSchema,
+  myPromotionsSchema,
+} from "@/schemas/responses"
 
 export const billingQueries = {
   plans: (audience?: string) =>
@@ -33,8 +33,19 @@ export const billingQueries = {
   subscription: queryOptions({
     queryKey: keys.billing.subscription,
     queryFn: ({ signal }) =>
-      apiFetch("/me/subscription", { schema: subscriptionSchema, signal }),
+      apiFetch("/me/subscription", { schema: meSubscriptionSchema, signal }),
   }),
+  // `item` is `plan:<planId>` or `promotion:<promotionId>`.
+  checkout: (item: string) =>
+    queryOptions({
+      queryKey: keys.billing.checkout(item),
+      queryFn: ({ signal }) =>
+        apiFetch("/checkout", {
+          query: { item },
+          schema: checkoutSchema,
+          signal,
+        }),
+    }),
   payments: (filters: Record<string, unknown> = {}) =>
     queryOptions({
       queryKey: keys.billing.payments(filters),
@@ -59,9 +70,9 @@ export const billingQueries = {
     queryKey: keys.billing.promotions,
     queryFn: ({ signal }) =>
       apiFetch("/me/promotions", {
-        schema: z.array(myPromotionSchema),
+        schema: myPromotionsSchema,
         signal,
-      }),
+      }).then((r) => r.items),
   }),
 }
 
@@ -72,6 +83,7 @@ export const useCreatePayment = () =>
       itemType: "plan" | "promotion"
       itemId: string
       transactionRef: string
+      payerName: string
       receipt: File
     }) => {
       const form = new FormData()
@@ -87,6 +99,10 @@ export const useCreatePayment = () =>
 export const useCreatePromotion = () =>
   useApiMutation(
     (body: z.input<typeof promotionInputSchema>) =>
-      apiFetch("/promotions", { method: "POST", body, schema: paymentSchema }),
+      apiFetch("/promotions", {
+        method: "POST",
+        body,
+        schema: promotionSchema,
+      }),
     [keys.billing.all]
   )

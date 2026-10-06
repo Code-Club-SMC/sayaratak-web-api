@@ -166,7 +166,7 @@ describe("mechanic contact step and finish", () => {
     await open("contact-plan", { about, expertise })
     await screen.findByRole("radio", { checked: true })
     const radios = screen.getAllByRole("radio")
-    expect(radios).toHaveLength(3)
+    expect(radios).toHaveLength(2)
     expect((radios[0] as HTMLInputElement).checked).toBe(true)
     expect(screen.getByText("Start free")).toBeTruthy()
     expect(screen.getByRole("textbox", { name: "Phone number" })).toBeTruthy()
@@ -193,7 +193,7 @@ describe("mechanic contact step and finish", () => {
     })
     expect(owner().role).toBe("mechanic")
     const sub = await (await fetch("/api/me/subscription")).json()
-    expect(sub.planId).toBe("plan-mechanic-free")
+    expect(sub.subscription.planId).toBe("plan-mechanic-basic")
     const listed = await (await fetch("/api/mechanics?q=Hassan")).json()
     expect(listed.items.map((m: { name: string }) => m.name)).toContain(
       "Hassan Ali"

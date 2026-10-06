@@ -4,7 +4,17 @@ import type { Dealership, Mechanic, Workshop } from "@/schemas/profile"
 import type { WeeklyHours } from "@/schemas/fields"
 import type { UserRow } from "../types"
 import { businessMedia, businessPhoto } from "./photos"
-import { DAY, ago, chance, int, jitter, pick, roundTo, slugify } from "./util"
+import {
+  DAY,
+  ago,
+  chance,
+  int,
+  jitter,
+  pick,
+  ratingFrom,
+  roundTo,
+  slugify,
+} from "./util"
 import {
   dealerDesc,
   dealerNames,
@@ -189,7 +199,7 @@ export function seedPeople(taxonomy: Taxonomy, empty: boolean) {
         whatsapp:
           chance(0.7) || demo ? (demo ? "+249912345602" : phone()) : null,
         hours: weeklyHours(chance(0.4)),
-        rating: { avg: 0, count: 0 },
+        rating: ratingFrom([]),
         verified: demo || i < 8,
         inventoryCount: 0,
         status: i === 11 ? "suspended" : "active",
@@ -226,9 +236,10 @@ export function seedPeople(taxonomy: Taxonomy, empty: boolean) {
             name: s.name.ar,
             description: s.name.en,
             priceFrom: roundTo(int(20_000, 400_000), 5000),
+            templateId: s.id,
           })),
-        rating: { avg: 0, count: 0 },
-        verified: demo || i < 9,
+        rating: ratingFrom([]),
+        verified: !demo && i < 10, // the demo workshop starts unverified (A9)
         status: "active",
         createdAt: ago(int(60, 700) * DAY),
       }
@@ -279,8 +290,8 @@ export function seedPeople(taxonomy: Taxonomy, empty: boolean) {
           placeholderColor: "#c9d3cf",
         })),
         available: chance(0.75),
-        rating: { avg: 0, count: 0 },
-        verified: demo || i < 10,
+        rating: ratingFrom([]),
+        verified: !demo && i < 11, // the demo mechanic starts unverified (A9)
         status: "active",
         createdAt: ago(int(60, 700) * DAY),
       }

@@ -4,14 +4,16 @@ import { z } from "zod"
 import { apiFetch } from "@/lib/api/client"
 import { useApiMutation } from "@/lib/api/mutation"
 import { keys } from "@/lib/api/query-keys"
-import { mapPointSchema, okSchema } from "@/schemas/api"
+import { okSchema } from "@/schemas/api"
+import { mapResponseSchema } from "@/schemas/responses"
 import type {
   savedSearchInputSchema,
   savedSearchPatchSchema,
 } from "@/schemas/inputs"
 import { savedSearchSchema } from "@/schemas/saved-search"
 
-type MapFilters = { layers?: string; bbox?: string }
+// `layers` repeats in the query string like every array param.
+type MapFilters = { layers?: string[]; bbox?: string }
 
 export const savedSearchQueries = {
   list: queryOptions({
@@ -30,7 +32,7 @@ export const mapQuery = (filters: MapFilters) =>
     queryFn: ({ signal }) =>
       apiFetch("/map", {
         query: filters,
-        schema: z.array(mapPointSchema),
+        schema: mapResponseSchema,
         signal,
       }),
     staleTime: 60_000,

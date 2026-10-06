@@ -1,11 +1,9 @@
+import { adminBusinessSchema, okSchema } from "@/schemas/api"
 import {
   activitySchema,
-  adminBusinessSchema,
   adminSearchSchema,
-  adminSeriesSchema,
   adminStatsSchema,
-  okSchema,
-} from "@/schemas/api"
+} from "@/schemas/responses"
 import { verificationRequestSchema } from "@/schemas/admin"
 import {
   assignPlanInputSchema,
@@ -26,7 +24,6 @@ import {
   businessType,
   byNewest,
   dayKey,
-  eventSeries,
   findBusiness,
   listPage,
   nowIso,
@@ -37,143 +34,155 @@ import { matches } from "../search"
 import type { ListingRow } from "../types"
 
 const admin = (c: Ctx) => needRole(c, "admin")
-const recent = (iso: string, days: number) =>
-  Date.now() - Date.parse(iso) < days * DAY_MS
 const listingOf = (id: string) => {
   const row = find(db.listings, id)
   if (!row) throw fail(404, "not_found")
   return row
 }
 
+// KPI totals and the three daily series over the range (revenue is approved payments, by review day).
 route("GET", "/admin/stats", (c) => {
   admin(c)
+  const days = rangeDays(c.query)
+  const since = Date.now() - days * DAY_MS
+  const inRange = (iso: string) => Date.parse(iso) >= since
+  const approved = db.payments.filter((p) => p.status === "approved")
+  const perDay = <T>(
+    rows: T[],
+    at: (r: T) => string,
+    value: (r: T) => number
+  ) =>
+    Array.from({ length: days }, (_, i) => {
+      const date = dayKey(Date.now() - (days - 1 - i) * DAY_MS)
+      return {
+        date,
+        value: rows
+          .filter((r) => dayKey(Date.parse(at(r))) === date)
+          .reduce((sum, r) => sum + value(r), 0),
+      }
+    })
+  const live = db.listings.filter((l) => l.moderation === "approved")
   return adminStatsSchema.parse({
-    users: db.users.length,
-    listings: db.listings.filter((l) => l.moderation === "approved").length,
-    businesses:
-      db.dealerships.length + db.workshops.length + db.mechanics.length,
-    pendingListings: db.listings.filter((l) => l.moderation === "pending")
-      .length,
-    pendingPayments: db.payments.filter((p) => p.status === "pending_review")
-      .length,
-    pendingVerifications: db.verifications.filter((v) => v.status === "pending")
-      .length,
-    openReports: db.reports.filter((r) => r.status === "open").length,
-    activeSubscriptions: db.subscriptions.filter((s) => s.status === "active")
-      .length,
-    revenue: db.payments
-      .filter((p) => p.status === "approved")
-      .reduce((s, p) => s + p.amount, 0),
-    newUsers7d: db.users.filter((u) => recent(u.createdAt, 7)).length,
-    newListings7d: db.listings.filter((l) => recent(l.createdAt, 7)).length,
+    range: `${days}d`,
+    totals: {
+      users: db.users.length,
+      listings: live.length,
+      vehicles: live.filter((l) => l.kind === "vehicle").length,
+      dealerships: db.dealerships.length,
+      workshops: db.workshops.length,
+      mechanics: db.mechanics.length,
+      activeSubscriptions: db.subscriptions.filter((s) => s.status === "active")
+        .length,
+      revenue: approved
+        .filter((p) => inRange(p.reviewedAt ?? p.createdAt))
+        .reduce((sum, p) => sum + p.amount, 0),
+    },
+    series: {
+      newListings: perDay(
+        db.listings,
+        (l) => l.createdAt,
+        () => 1
+      ),
+      newUsers: perDay(
+        db.users,
+        (u) => u.createdAt,
+        () => 1
+      ),
+      revenue: perDay(
+        approved,
+        (p) => p.reviewedAt ?? p.createdAt,
+        (p) => p.amount
+      ),
+    },
   })
 })
 
-route("GET", "/admin/series", (c) => {
-  admin(c)
-  const views = eventSeries(() => true, rangeDays(c.query))
-  const count = (rows: { createdAt: string }[], day: string) =>
-    rows.filter((r) => dayKey(Date.parse(r.createdAt)) === day).length
-  return adminSeriesSchema.parse(
-    views.map((d) => ({
-      day: d.day,
-      views: d.views,
-      users: count(db.users, d.day),
-      listings: count(db.listings, d.day),
-    }))
-  )
-})
-
+// The ten newest events, each with the admin screen that shows it selected (`?id=`).
 route("GET", "/admin/activity", (c) => {
   admin(c)
   const feed = [
-    ...db.listings.map((l) => ({
-      id: l.id,
-      type: "listing" as const,
-      subject: l.title,
-      createdAt: l.createdAt,
-      href: `/admin/listings`,
-    })),
-    ...db.users.map((u) => ({
-      id: u.id,
-      type: "user" as const,
-      subject: u.fullName,
-      createdAt: u.createdAt,
-      href: `/admin/users`,
-    })),
+    ...db.listings
+      .filter((l) => l.moderation !== "draft")
+      .map((l) => ({
+        id: l.id,
+        type: "listing_submitted" as const,
+        label: l.title,
+        href: `/admin/moderation?id=${l.id}`,
+        createdAt: l.createdAt,
+      })),
+    ...(["dealership", "workshop", "mechanic"] as const).flatMap((type) =>
+      db[`${type}s` as const].map((b) => ({
+        id: b.id,
+        type: "business_joined" as const,
+        label: b.name,
+        href: `/admin/${type}s?id=${b.id}`,
+        createdAt: b.createdAt,
+      }))
+    ),
     ...db.payments.map((p) => ({
       id: p.id,
-      type: "payment" as const,
-      subject: p.reference,
+      type: "payment_submitted" as const,
+      label: p.reference,
+      href: `/admin/payments?id=${p.id}`,
       createdAt: p.createdAt,
-      href: `/admin/payments`,
     })),
     ...db.reports.map((r) => ({
       id: r.id,
-      type: "report" as const,
-      subject: r.reason,
+      type: "report_filed" as const,
+      label: find(db.listings, r.listingId)?.title ?? r.reason,
+      href: `/admin/reports?id=${r.id}`,
       createdAt: r.createdAt,
-      href: `/admin/reports`,
-    })),
-    ...db.verifications.map((v) => ({
-      id: v.id,
-      type: "verification" as const,
-      subject: v.targetId,
-      createdAt: v.createdAt,
-      href: `/admin/verifications`,
     })),
   ]
-  return activitySchema.parse(feed.sort(byNewest).slice(0, 15))
+  return activitySchema.parse({ items: feed.sort(byNewest).slice(0, 10) })
 })
 
+// Up to five hits per kind, each with a second line and the admin screen that opens it.
 route("GET", "/admin/search", (c) => {
   admin(c)
   const q = (c.query.get("q") ?? "").trim().toLowerCase()
   const has = (...parts: (string | undefined)[]) =>
     parts.some((p) => p?.toLowerCase().includes(q))
-  if (!q)
-    return adminSearchSchema.parse({
-      listings: [],
-      users: [],
-      businesses: [],
-      payments: [],
-    })
-  const businesses = [
-    ...db.dealerships.map((b) => ({
-      id: b.id,
-      name: b.name,
-      type: "dealership" as const,
-    })),
-    ...db.workshops.map((b) => ({
-      id: b.id,
-      name: b.name,
-      type: "workshop" as const,
-    })),
-    ...db.mechanics.map((b) => ({
-      id: b.id,
-      name: b.name,
-      type: "mechanic" as const,
-    })),
-  ]
+  const businesses = (["dealership", "workshop", "mechanic"] as const).flatMap(
+    (type) =>
+      db[`${type}s` as const].map((b) => ({
+        id: b.id,
+        label: b.name,
+        detail: type,
+        href: `/admin/${type}s?id=${b.id}`,
+      }))
+  )
+  const none = { listings: [], users: [], businesses: [], payments: [] }
+  if (!q) return adminSearchSchema.parse(none)
   return adminSearchSchema.parse({
     listings: db.listings
       .filter((l) => has(l.title, l.id))
       .slice(0, 5)
-      .map((l) => ({ id: l.id, title: l.title })),
+      .map((l) => ({
+        id: l.id,
+        label: l.title,
+        detail: l.moderation,
+        href: `/admin/listings?id=${l.id}`,
+      })),
     users: db.users
       .filter((u) => has(u.fullName, u.phone, u.email))
       .slice(0, 5)
       .map((u) => ({
         id: u.id,
-        name: u.fullName,
-        phone: u.phone,
-        email: u.email,
+        label: u.fullName,
+        detail: u.phone ?? u.email ?? null,
+        href: `/admin/users?id=${u.id}`,
       })),
-    businesses: businesses.filter((b) => has(b.name)).slice(0, 5),
+    businesses: businesses.filter((b) => has(b.label)).slice(0, 5),
     payments: db.payments
-      .filter((p) => has(p.reference))
+      .filter((p) => has(p.reference, p.payerName))
       .slice(0, 5)
-      .map((p) => ({ id: p.id, reference: p.reference })),
+      .map((p) => ({
+        id: p.id,
+        label: p.reference,
+        detail: p.payerName,
+        href: `/admin/payments?id=${p.id}`,
+      })),
   })
 })
 
@@ -325,7 +334,8 @@ route("PATCH", "/admin/businesses/:id", async (c) => {
 route("POST", "/admin/businesses/:id/assign-plan", async (c) => {
   admin(c)
   const row = findBusiness(c.params.id ?? "")
-  const plan = find(db.plans, (await c.body(assignPlanInputSchema)).planId)
+  const input = await c.body(assignPlanInputSchema)
+  const plan = find(db.plans, input.planId)
   if (!row || !plan) throw fail(404, "not_found")
   for (const s of db.subscriptions)
     if (s.userId === row.ownerId && s.status === "active") s.status = "canceled"
@@ -335,8 +345,17 @@ route("POST", "/admin/businesses/:id/assign-plan", async (c) => {
     planId: plan.id,
     status: "active",
     startsAt: nowIso(),
-    endsAt: new Date(Date.now() + plan.durationDays * DAY_MS).toISOString(),
-    usage: { used: 0, limit: plan.listingLimit ?? plan.vehicleLimit ?? null },
+    endsAt: new Date(
+      Date.now() + (input.durationDays ?? plan.durationDays) * DAY_MS
+    ).toISOString(),
+    price: input.price ?? plan.price,
+    usage: {
+      used: 0,
+      limit:
+        input.limit === undefined
+          ? (plan.listingLimit ?? plan.vehicleLimit ?? null)
+          : input.limit,
+    },
   })
   return okSchema.parse({ ok: true })
 })

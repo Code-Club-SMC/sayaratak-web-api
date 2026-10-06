@@ -62,6 +62,7 @@ describe("setupItems", () => {
         id: `s${i}`,
         name: "x",
         description: "",
+        templateId: null,
       })),
       images: Array.from({ length: 3 }, () => shop.images[0]!),
     }
@@ -95,6 +96,7 @@ describe("SetupChecklist", () => {
         id: `s${i}`,
         name: "x",
         description: "",
+        templateId: null,
       })),
       images: Array.from({ length: 3 }, (_, i) => ({
         ...db.workshops.find((w) => w.images.length)!.images[0]!,

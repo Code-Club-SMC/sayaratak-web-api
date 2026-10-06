@@ -94,7 +94,7 @@ export function buildSeed({ empty = false }: { empty?: boolean } = {}): Db {
     notifications: empty ? [] : seedNotifications(demoIds.slice(0, 5)),
     plans: structuredClone(plans),
     subscriptions: seedSubscriptions(),
-    payments: empty ? [] : seedPayments(users),
+    payments: empty ? [] : seedPayments(users, listings, promotions),
     promotions,
     promotionPrices: structuredClone(promotionPrices),
     reports: empty ? [] : seedReports(listings, users),

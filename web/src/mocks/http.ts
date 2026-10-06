@@ -110,8 +110,18 @@ export function queryObject(query: URLSearchParams, arrayKeys: string[] = []) {
   }
   return out
 }
-export const pageParams = (query: URLSearchParams, defaultSize = 20) => ({
-  page: Math.max(1, Number(query.get("page")) || 1),
-  pageSize: Math.min(100, Number(query.get("pageSize")) || defaultSize),
-})
+// `limit` (1 to 24) is for rails and short lists, `pageSize` (up to `maxSize`) for whole pages and exports.
+export const pageParams = (
+  query: URLSearchParams,
+  defaultSize = 20,
+  maxSize = 100
+) => {
+  const limit = Number(query.get("limit"))
+  return {
+    page: Math.max(1, Number(query.get("page")) || 1),
+    pageSize: limit
+      ? Math.min(24, Math.max(1, Math.floor(limit)))
+      : Math.min(maxSize, Number(query.get("pageSize")) || defaultSize),
+  }
+}
 export const ok = { ok: true } as const

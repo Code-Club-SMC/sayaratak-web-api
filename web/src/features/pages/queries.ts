@@ -4,18 +4,15 @@ import { z } from "zod"
 import { apiFetch } from "@/lib/api/client"
 import { useApiMutation } from "@/lib/api/mutation"
 import { keys } from "@/lib/api/query-keys"
-import {
-  bannerSchema,
-  publicSettingsSchema,
-  sitePageSchema,
-} from "@/schemas/admin"
+import { bannerSchema, sitePageSchema } from "@/schemas/admin"
 import { okSchema } from "@/schemas/api"
 import type { contactInputSchema } from "@/schemas/inputs"
+import { siteSchema } from "@/schemas/responses"
 
-export const publicSettingsQuery = queryOptions({
-  queryKey: keys.content.settings,
-  queryFn: ({ signal }) =>
-    apiFetch("/settings", { schema: publicSettingsSchema, signal }),
+// Contact details and locales for the footer, the contact page and the suspended page (`GET /site`).
+export const siteQuery = queryOptions({
+  queryKey: keys.content.site,
+  queryFn: ({ signal }) => apiFetch("/site", { schema: siteSchema, signal }),
   staleTime: 5 * 60_000,
 })
 

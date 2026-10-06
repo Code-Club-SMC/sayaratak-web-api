@@ -14,11 +14,7 @@ import {
   type Settings,
 } from "@/schemas/admin"
 import {
-  activitySchema,
   adminBusinessSchema,
-  adminSearchSchema,
-  adminSeriesSchema,
-  adminStatsSchema,
   broadcastSchema,
   okSchema,
   taxonomyRowSchema,
@@ -29,10 +25,17 @@ import {
   paymentSchema,
   planSchema,
   promotionPriceSchema,
-  promotionSchema,
   subscriptionSchema,
 } from "@/schemas/billing"
 import { pageOf } from "@/schemas/fields"
+import {
+  activitySchema,
+  adminPaymentsPageSchema,
+  adminSearchSchema,
+  adminStatsSchema,
+  estimateSchema,
+  myPromotionSchema,
+} from "@/schemas/responses"
 import type {
   bannerInputSchema,
   broadcastInputSchema,
@@ -69,9 +72,8 @@ const adminPlain = <TSchema extends z.ZodType>(
   })
 
 export const adminQueries = {
-  stats: adminPlain("stats", "/admin/stats", adminStatsSchema),
-  series: (range: Range = "30d") =>
-    adminPlain("series", "/admin/series", adminSeriesSchema, { range }),
+  stats: (range: Range = "30d") =>
+    adminPlain("stats", "/admin/stats", adminStatsSchema, { range }),
   activity: adminPlain("activity", "/admin/activity", activitySchema),
   search: (q: string) =>
     adminPlain("search", "/admin/search", adminSearchSchema, { q }),
@@ -89,8 +91,18 @@ export const adminQueries = {
       verificationRequestSchema,
       p
     ),
-  payments: (p?: Params) =>
-    adminList("payments", "/admin/payments", paymentSchema, p),
+  // A page plus the summary strip (approved this month, pending count and amount).
+  payments: (p: Params = {}) =>
+    queryOptions({
+      queryKey: keys.admin.list("payments", p),
+      queryFn: ({ signal }) =>
+        apiFetch("/admin/payments", {
+          query: p,
+          schema: adminPaymentsPageSchema,
+          signal,
+        }),
+      placeholderData: keepPreviousData,
+    }),
   plans: adminPlain("plans", "/admin/plans", z.array(planSchema)),
   subscriptions: (p?: Params) =>
     adminList("subscriptions", "/admin/subscriptions", subscriptionSchema, p),
@@ -100,7 +112,7 @@ export const adminQueries = {
     z.array(promotionPriceSchema)
   ),
   promotions: (p?: Params) =>
-    adminList("promotions", "/admin/promotions", promotionSchema, p),
+    adminList("promotions", "/admin/promotions", myPromotionSchema, p),
   reviews: (p?: Params) =>
     adminList("reviews", "/admin/reviews", reviewSchema, p),
   reports: (p?: Params) =>
@@ -117,7 +129,7 @@ export const adminQueries = {
     adminPlain(
       "broadcast-estimate",
       "/admin/broadcasts/estimate",
-      z.object({ recipients: z.number() }),
+      estimateSchema,
       { audience }
     ),
   banners: adminPlain("banners", "/admin/banners", z.array(bannerSchema)),
@@ -296,8 +308,13 @@ export const useDeletePromotionPrice = () =>
 export const useGrantPromotion = () =>
   useApiMutation(
     (body: z.input<typeof grantInputSchema>) =>
-      post(promotionSchema)("/admin/promotions/grant", body),
+      post(myPromotionSchema)("/admin/promotions/grant", body),
     withListings
+  )
+export const useEndPromotion = () =>
+  useApiMutation(
+    (id: string) => post(myPromotionSchema)(`/admin/promotions/${id}/end`),
+    [...withListings, keys.billing.all]
   )
 export const useSendBroadcast = () =>
   useApiMutation(
@@ -377,7 +394,7 @@ export const useUpdatePage = () =>
 export const useUpdateSettings = () =>
   useApiMutation(
     (body: Partial<Settings>) => patch(settingsSchema)("/admin/settings", body),
-    [...touched, keys.content.settings]
+    [...touched, keys.content.site]
   )
 export const useCreateBackup = () =>
   useApiMutation(() => post(backupSchema)("/admin/backups"), touched)

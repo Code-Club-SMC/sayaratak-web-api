@@ -59,6 +59,7 @@ export const listingQueries = {
           signal,
         }),
       staleTime: 30_000,
+      placeholderData: keepPreviousData, // a rail whose params change (radius, position) keeps its cards while the next ones load
     }),
   detail: (slug: string) =>
     queryOptions({

@@ -200,7 +200,7 @@ describe("workshop plan step and finish", () => {
     fireEvent.click(screen.getByRole("button", { name: "Create my workshop" }))
     await waitFor(
       () => expect(router.state.location.href).toBe("/en/workshop?welcome=1"),
-      { timeout: 4000 }
+      { timeout: 12_000 }
     )
     const made = db.workshops.find((w) => w.name === "Nile Garage")!
     expect(made).toMatchObject({

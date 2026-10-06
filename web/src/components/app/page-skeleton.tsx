@@ -2,7 +2,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { useT } from "@/lib/i18n/use-t"
 
 // Static blocks at the size of the final content (A5), so nothing jumps when data arrives.
-function GridCard() {
+export function GridCard() {
   return (
     <div className="flex flex-col">
       <Skeleton className="aspect-[4/3]" />

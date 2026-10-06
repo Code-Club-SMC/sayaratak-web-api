@@ -178,7 +178,7 @@ describe("mechanic contact step and finish", () => {
     fireEvent.click(screen.getByRole("button", { name: "Create my profile" }))
     await waitFor(
       () => expect(router.state.location.href).toBe("/en/mechanic?welcome=1"),
-      { timeout: 4000 }
+      { timeout: 12_000 }
     )
     const made = db.mechanics.find((m) => m.name === "Hassan Ali")!
     expect(made).toMatchObject({

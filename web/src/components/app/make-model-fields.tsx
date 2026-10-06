@@ -23,12 +23,17 @@ export function MakeModelFields({
   vehicleType,
   makeError,
   modelError,
+  search = false,
+  className = "grid gap-4 sm:grid-cols-2",
 }: {
   value: MakeModelValue
   onChange: (value: MakeModelValue) => void
   vehicleType?: VehicleType | null
   makeError?: string
   modelError?: string
+  // Search forms: no "Other", and the model select is always there, disabled until a make is picked.
+  search?: boolean
+  className?: string
 }) {
   const { t, locale } = useT()
   const { data } = useQuery(taxonomyQuery)
@@ -56,7 +61,7 @@ export function MakeModelFields({
     </FormField>
   )
   return (
-    <div className="grid gap-4 sm:grid-cols-2">
+    <div className={className}>
       <FormField
         label={t("form.make")}
         error={makeIsOther ? undefined : makeError}
@@ -93,15 +98,17 @@ export function MakeModelFields({
                 {m.name[locale]}
               </NativeSelectOption>
             ))}
-            <NativeSelectOption value={OTHER}>
-              {t("form.other")}
-            </NativeSelectOption>
+            {!search && (
+              <NativeSelectOption value={OTHER}>
+                {t("form.other")}
+              </NativeSelectOption>
+            )}
           </NativeSelect>
         )}
       </FormField>
       {makeIsOther && text(t("form.make_name"), "makeOther", makeError)}
       {makeIsOther && text(t("form.model_name"), "modelOther", modelError)}
-      {value.makeId && (
+      {(value.makeId || search) && (
         <FormField
           label={t("form.model")}
           error={modelIsOther ? undefined : modelError}
@@ -110,6 +117,7 @@ export function MakeModelFields({
             <NativeSelect
               {...control}
               className="w-full"
+              disabled={!value.makeId}
               value={modelIsOther ? OTHER : (value.modelId ?? "")}
               onChange={(e) => {
                 const v = e.target.value
@@ -128,9 +136,11 @@ export function MakeModelFields({
                   {m.name[locale]}
                 </NativeSelectOption>
               ))}
-              <NativeSelectOption value={OTHER}>
-                {t("form.other")}
-              </NativeSelectOption>
+              {!search && (
+                <NativeSelectOption value={OTHER}>
+                  {t("form.other")}
+                </NativeSelectOption>
+              )}
             </NativeSelect>
           )}
         </FormField>

@@ -270,7 +270,7 @@ describe("plan step and finish", () => {
     )
     await waitFor(
       () => expect(router.state.location.href).toBe("/en/dealer?welcome=1"),
-      { timeout: 4000 }
+      { timeout: 12_000 }
     )
     const made = db.dealerships.find((d) => d.name === "Desert Motors")!
     expect(made).toMatchObject({

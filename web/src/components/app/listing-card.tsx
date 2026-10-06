@@ -21,11 +21,14 @@ export function ListingCard({
   listing,
   variant = "grid",
   preview = false,
+  priority = false,
 }: {
   listing: Listing
   variant?: "grid" | "row"
   // A draft that is not published yet: no heart and no link, since neither has a target.
   preview?: boolean
+  // The photo loads at once and never fades (first row of a page).
+  priority?: boolean
 }) {
   const { t, locale } = useT()
   const now = useNow()
@@ -59,6 +62,7 @@ export function ListingCard({
         <MediaImage
           src={first?.type === "video" ? first.posterUrl : (first?.url ?? null)}
           alt=""
+          priority={priority}
           placeholderColor={first?.placeholderColor}
           sizes={row ? "120px" : cardSizes}
           className={row ? "aspect-square" : undefined}

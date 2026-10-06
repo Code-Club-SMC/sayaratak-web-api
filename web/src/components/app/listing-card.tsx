@@ -1,9 +1,11 @@
+import { Link } from "@tanstack/react-router"
+
 import { useCityName } from "@/hooks/use-city-name"
 import { useListingTitle } from "@/hooks/use-listing-title"
 import { formatMileage } from "@/lib/format"
 import { useT } from "@/lib/i18n/use-t"
 import { cardSizes } from "@/lib/media"
-import { localeHref } from "@/lib/navigation"
+import { markSharedCover } from "@/lib/motion"
 import { useNow } from "@/lib/now"
 import { promotionKind } from "@/lib/promotion"
 import { cn } from "@/lib/utils"
@@ -97,12 +99,20 @@ export function ListingCard({
               <bdi>{title}</bdi>
             </span>
           ) : (
-            <a
-              href={localeHref(`/listing/${listing.slug}`, locale)}
+            <Link
+              to="/$locale/listing/$slug"
+              params={{ locale, slug: listing.slug }}
+              onClick={(e) =>
+                markSharedCover(
+                  e.currentTarget
+                    .closest("article")
+                    ?.querySelector("[data-media]")
+                )
+              }
               className="line-clamp-2 underline decoration-transparent motion-color group-hover:decoration-current after:absolute after:inset-0"
             >
               <bdi>{title}</bdi>
-            </a>
+            </Link>
           )}
         </h3>
         <p className="flex flex-wrap gap-x-3 text-caption text-muted-foreground">

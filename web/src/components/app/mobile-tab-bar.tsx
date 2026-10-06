@@ -44,7 +44,7 @@ export function MobileTabBar() {
   return (
     <nav
       aria-label={t("nav.mobile_tabs")}
-      className="fixed inset-x-0 bottom-0 z-(--z-sticky) flex bg-card pb-[env(safe-area-inset-bottom)] [view-transition-name:tab-bar] md:hidden"
+      className="fixed inset-x-0 bottom-0 z-(--z-sticky) flex bg-card pb-[env(safe-area-inset-bottom)] [view-transition-name:tab-bar] md:hidden [body:has([data-mobile-contact-bar])_&]:hidden"
     >
       {tabs.map(({ key, href, icon: Icon }) => (
         <a

@@ -44,3 +44,19 @@ if (
     },
   })
 }
+
+// Same for ResizeObserver (the listing description measures itself).
+if (
+  typeof window !== "undefined" &&
+  typeof Reflect.get(window, "ResizeObserver") !== "function"
+) {
+  Object.defineProperty(window, "ResizeObserver", {
+    configurable: true,
+    writable: true,
+    value: class {
+      observe() {}
+      unobserve() {}
+      disconnect() {}
+    },
+  })
+}

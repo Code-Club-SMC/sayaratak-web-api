@@ -162,5 +162,12 @@
   "form.preview_fact_negotiable": "Price can be discussed",
   "form.address": "Street address",
   "form.whatsapp": "WhatsApp number",
-  "form.same_as_phone": "Same as first phone"
+  "form.same_as_phone": "Same as first phone",
+  "color.white": "White",
+  "color.black": "Black",
+  "color.silver": "Silver",
+  "color.grey": "Grey",
+  "color.blue": "Blue",
+  "color.red": "Red",
+  "color.gold": "Gold"
 }

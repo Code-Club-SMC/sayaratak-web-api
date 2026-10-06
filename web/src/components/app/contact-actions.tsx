@@ -27,14 +27,20 @@ export function ContactActions({
   whatsapp: string | null
   showPhone?: boolean
   methods?: Method[]
-  layout?: "stack" | "row"
+  layout?: "stack" | "row" | "bar"
   className?: string
 }) {
   const { t } = useT()
   const url = usePageUrl()
   const [revealed, setRevealed] = useState(false)
   const { mutate: track } = useTrackEvent()
-  const item = layout === "row" ? "flex-1" : "w-full"
+  // "bar" is the fixed mobile bar: three equal buttons with the icon above a caption-size label.
+  const item =
+    layout === "stack"
+      ? "w-full"
+      : layout === "row"
+        ? "flex-1"
+        : "h-12 min-w-0 flex-1 flex-col gap-0.5 px-1 text-[length:var(--text-caption)] has-data-[icon=inline-start]:ps-1 md:h-12 [&_svg:not([class*='size-'])]:size-5"
   const text = t(
     target.type === "listing"
       ? "listing.whatsapp_text"
@@ -44,7 +50,7 @@ export function ContactActions({
   return (
     <div
       className={cn(
-        layout === "row" ? "flex gap-2" : "flex flex-col gap-3",
+        layout === "stack" ? "flex flex-col gap-3" : "flex gap-2",
         className
       )}
     >
@@ -55,7 +61,11 @@ export function ContactActions({
             href={`tel:${phone}`}
             autoFocus
             aria-label={t("listing.call_number", { phone: formatPhone(phone) })}
-            className={cn(buttonVariants(), item)}
+            className={cn(
+              buttonVariants(),
+              item,
+              layout === "bar" && "flex-[2]"
+            )}
           >
             <PhoneIcon aria-hidden="true" strokeWidth={1.5} />
             <bdi dir="ltr">{formatPhone(phone)}</bdi>

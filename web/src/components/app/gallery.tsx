@@ -7,7 +7,7 @@ import {
 } from "lucide-react"
 
 import { useT } from "@/lib/i18n/use-t"
-import { motionAllowed } from "@/lib/motion"
+import { coverName, motionAllowed } from "@/lib/motion"
 import { arrowStep, detailSizes } from "@/lib/media"
 import { clamp, cn } from "@/lib/utils"
 import type { Media } from "@/schemas/listing"
@@ -24,10 +24,16 @@ const Lightbox = lazy(() =>
 export function Gallery({
   items,
   alt,
+  bleed = false,
+  sharedCover = false,
   className,
 }: {
   items: Media[]
   alt: string
+  // Below md the photo runs edge to edge (the page passes a negative margin) and loses its rounded corners.
+  bleed?: boolean
+  // The first photo carries the name a pressed listing card hands over (A5b shared image).
+  sharedCover?: boolean
   className?: string
 }) {
   const { t } = useT()
@@ -73,22 +79,31 @@ export function Gallery({
     >
       <div
         className="relative"
-        tabIndex={0}
         onKeyDown={(e) => {
           const step = arrowStep(e.key, dir)
           if (step) go(index + step)
         }}
       >
+        {/* The scroll strip is the tab stop (a scrollable region must be focusable); arrow keys bubble up to the wrapper. */}
         <div
           ref={strip}
+          tabIndex={0}
           onScroll={onScroll}
-          className="flex snap-x snap-mandatory [scrollbar-width:none] overflow-x-auto rounded-lg [&::-webkit-scrollbar]:hidden"
+          className={cn(
+            "flex snap-x snap-mandatory [scrollbar-width:none] overflow-x-auto rounded-lg [&::-webkit-scrollbar]:hidden",
+            bleed && "max-md:rounded-none"
+          )}
         >
           {items.map((media, i) => (
             <div
               key={media.id}
               role="group"
               aria-roledescription="slide"
+              {...(sharedCover &&
+                i === 0 && {
+                  "data-shared-cover": "",
+                  style: { viewTransitionName: coverName },
+                })}
               aria-label={t("common.count_of", {
                 current: i + 1,
                 max: items.length,
@@ -100,6 +115,7 @@ export function Gallery({
                 alt={`${alt} ${i + 1}`}
                 sizes={detailSizes}
                 priority={i === 0}
+                className={bleed ? "max-md:rounded-none" : undefined}
               />
             </div>
           ))}
@@ -137,7 +153,9 @@ export function Gallery({
           <Maximize2Icon />
         </Button>
       </div>
-      <div className="flex gap-2 overflow-x-auto p-1">
+      <div
+        className={cn("flex gap-2 overflow-x-auto p-1", bleed && "max-md:px-5")}
+      >
         {items.map((media, i) => (
           <button
             key={media.id}

@@ -2,7 +2,7 @@ import { useState, type ReactNode } from "react"
 import { fireEvent, screen, waitFor } from "@testing-library/react"
 import { afterEach, describe, expect, it, vi } from "vitest"
 
-import { motionAllowed, pageTransition } from "@/lib/motion"
+import { markSharedCover, motionAllowed, pageTransition } from "@/lib/motion"
 import { MediaImage } from "@/components/app/media-image"
 import { ResultsRegion } from "@/components/app/results-region"
 import { SubmitButton } from "@/components/app/submit-button"
@@ -32,6 +32,33 @@ describe("motionAllowed", () => {
     expect(pageTransition.types({ pathChanged: false })).toBe(false)
     document.documentElement.setAttribute("data-data-saver", "")
     expect(pageTransition.types({ pathChanged: true })).toBe(false)
+  })
+})
+
+describe("markSharedCover", () => {
+  const holders = () => document.querySelectorAll("[data-shared-cover]").length
+  const photo = () => {
+    const el = document.createElement("div")
+    document.body.append(el)
+    return el
+  }
+  afterEach(() => (document.body.innerHTML = ""))
+
+  it("keeps the name on one element: the pressed photo takes it from the old holder", () => {
+    const cover = photo()
+    markSharedCover(cover)
+    const card = photo()
+    markSharedCover(card)
+    expect(holders()).toBe(1)
+    expect(cover.style.viewTransitionName).toBe("")
+    expect(card.style.viewTransitionName).toBe("listing-cover")
+  })
+
+  it("does nothing with data saver on or without a photo", () => {
+    document.documentElement.setAttribute("data-data-saver", "")
+    markSharedCover(photo())
+    markSharedCover(null)
+    expect(holders()).toBe(0)
   })
 })
 

@@ -8,7 +8,7 @@ import { MobileTabBar } from "./mobile-tab-bar"
 export function PublicLayout() {
   const { t } = useT()
   return (
-    <div className="flex min-h-dvh flex-col pb-[calc(56px+env(safe-area-inset-bottom))] md:pb-0">
+    <div className="flex min-h-dvh flex-col pb-[calc(56px+env(safe-area-inset-bottom))] has-[[data-mobile-contact-bar]]:pb-[calc(80px+env(safe-area-inset-bottom))] md:pb-0 md:has-[[data-mobile-contact-bar]]:pb-[calc(80px+env(safe-area-inset-bottom))] lg:has-[[data-mobile-contact-bar]]:pb-0">
       <a
         href="#main-content"
         className="sr-only z-(--z-dialog) rounded-lg bg-primary px-4 py-3 text-ui font-medium text-primary-foreground focus:not-sr-only focus:fixed focus:start-4 focus:top-2"

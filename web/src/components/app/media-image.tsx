@@ -38,6 +38,7 @@ export function MediaImage({
   const maxWidth = dataSaver ? DATA_SAVER_WIDTH : 1280
   return (
     <div
+      data-media=""
       role={alt && (failed || !src) ? "img" : undefined}
       aria-label={alt && (failed || !src) ? alt : undefined}
       className={cn(

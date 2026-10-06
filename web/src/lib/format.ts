@@ -32,6 +32,14 @@ export const formatDate = (iso: string, locale: Locale) =>
     year: "numeric",
   }).format(new Date(iso))
 
+// "October 2025", for member-since lines.
+export const formatMonthYear = (iso: string, locale: Locale) =>
+  new Intl.DateTimeFormat(locale, {
+    ...dateBase,
+    month: "long",
+    year: "numeric",
+  }).format(new Date(iso))
+
 // "3 hours ago" for the last month, then the plain date. `now` is passed in so SSR and hydration agree.
 export function formatRelative(iso: string, now: number, locale: Locale) {
   const seconds = Math.round((new Date(iso).getTime() - now) / 1000)

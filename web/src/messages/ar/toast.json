@@ -9,5 +9,6 @@
   "toast.report_sent": "تم إرسال البلاغ. شكرًا لك.",
   "toast.review_saved": "تم حفظ التقييم",
   "toast.tiktok_copied": "تم نسخ الرابط. افتح تيك توك والصقه في منشورك أو رسالتك.",
-  "toast.password_changed": "تم تغيير كلمة المرور"
+  "toast.password_changed": "تم تغيير كلمة المرور",
+  "toast.status_updated": "تم تحديث الحالة"
 }

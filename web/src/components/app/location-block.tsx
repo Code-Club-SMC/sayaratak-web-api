@@ -12,10 +12,13 @@ export function LocationBlock({
   cityId,
   address,
   location,
+  approximate = false,
 }: {
   cityId: string
   address?: string
   location: Geo | null
+  // The seller's exact spot is hidden from visitors (rounded to about 1 km), so the map says so.
+  approximate?: boolean
 }) {
   const { t } = useT()
   const city = useCityName(cityId)
@@ -30,6 +33,11 @@ export function LocationBlock({
         <MapPinIcon aria-hidden="true" className="mt-1 size-4 shrink-0" />
         <span>{[address, city].filter(Boolean).join(", ")}</span>
       </p>
+      {approximate && location && (
+        <p className="text-caption text-muted-foreground">
+          {t("listing.location_approx")}
+        </p>
+      )}
       {location && (
         <>
           <Button

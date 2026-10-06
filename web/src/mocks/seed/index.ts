@@ -75,7 +75,7 @@ export function buildSeed({ empty = false }: { empty?: boolean } = {}): Db {
     : seedSaved(users, listings)
   const owned = new Set(
     listings
-      .filter((l) => l.ownerUserId === "u-omar" || l.owner.id === "d-1")
+      .filter((l) => l.ownerUserId === "u-omar" || l.ownerUserId === "u-dealer")
       .map((l) => l.id)
   )
   return {

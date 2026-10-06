@@ -308,7 +308,7 @@ export function seedListings(ctx: Ctx) {
       promotions: [],
       owner: dealer
         ? {
-            id: dealer.id,
+            id: dealer.ownerId,
             type: "dealership",
             name: dealer.name,
             avatarUrl: dealer.logoUrl,

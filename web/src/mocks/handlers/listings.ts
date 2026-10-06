@@ -159,7 +159,7 @@ route("POST", "/listings", async (c) => {
     promotions: [],
     owner: dealer
       ? {
-          id: dealer.id,
+          id: dealer.ownerId,
           type: "dealership",
           name: dealer.name,
           avatarUrl: dealer.logoUrl,

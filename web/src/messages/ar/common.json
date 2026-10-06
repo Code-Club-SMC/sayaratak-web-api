@@ -170,5 +170,12 @@
   "form.preview_fact_negotiable": "السعر قابل للتفاوض",
   "form.address": "عنوان الشارع",
   "form.whatsapp": "رقم واتساب",
-  "form.same_as_phone": "نفس رقم الهاتف الأول"
+  "form.same_as_phone": "نفس رقم الهاتف الأول",
+  "color.white": "أبيض",
+  "color.black": "أسود",
+  "color.silver": "فضي",
+  "color.grey": "رمادي",
+  "color.blue": "أزرق",
+  "color.red": "أحمر",
+  "color.gold": "ذهبي"
 }

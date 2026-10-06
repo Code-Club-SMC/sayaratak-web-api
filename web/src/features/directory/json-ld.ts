@@ -1,5 +1,7 @@
 import { mediaSrc } from "@/lib/media"
-import type { Dealership } from "@/schemas/profile"
+import type { Geo, WeeklyHours } from "@/schemas/fields"
+import type { Rating } from "@/schemas/review"
+import type { Dealership, Workshop } from "@/schemas/profile"
 
 const days = [
   "Sunday",
@@ -11,49 +13,53 @@ const days = [
   "Saturday",
 ]
 
-// schema.org AutoDealer. `url` and `origin` are absolute; the rating is left out until there is a review.
-export function dealershipJsonLd(
-  d: Dealership,
-  {
-    name,
-    description,
-    city,
-    url,
-    origin,
-  }: {
-    name: string
-    description: string
-    city?: string
-    url: string
-    origin: string
-  }
+type Opts = {
+  name: string
+  description: string
+  city?: string
+  url: string
+  origin: string
+}
+
+// schema.org local business (AutoDealer, AutoRepair). `url` and `origin` are absolute; the rating is left out until there is a review.
+function businessJsonLd(
+  type: "AutoDealer" | "AutoRepair",
+  b: {
+    images: string[]
+    phone?: string
+    address: string
+    location: Geo | null
+    hours: WeeklyHours
+    rating: Rating
+  },
+  { name, description, city, url, origin }: Opts
 ) {
-  const image = [d.logoUrl, d.coverUrl]
+  const image = b.images
     .filter(Boolean)
     .map((src) => mediaSrc(src, 1280))
     .map((src) => (src.startsWith("/") ? origin + src : src))
   return {
     "@context": "https://schema.org",
-    "@type": "AutoDealer",
+    "@type": type,
     name,
     description,
     url,
     ...(image.length > 0 && { image }),
-    ...(d.phones[0] && { telephone: d.phones[0] }),
+    ...(b.phone && { telephone: b.phone }),
     address: {
       "@type": "PostalAddress",
-      streetAddress: d.address,
+      streetAddress: b.address,
       ...(city && { addressLocality: city }),
       addressCountry: "SD",
     },
-    ...(d.location && {
+    ...(b.location && {
       geo: {
         "@type": "GeoCoordinates",
-        latitude: d.location.lat,
-        longitude: d.location.lng,
+        latitude: b.location.lat,
+        longitude: b.location.lng,
       },
     }),
-    openingHoursSpecification: d.hours
+    openingHoursSpecification: b.hours
       .filter((h) => !h.closed)
       .map((h) => ({
         "@type": "OpeningHoursSpecification",
@@ -61,12 +67,29 @@ export function dealershipJsonLd(
         opens: h.open,
         closes: h.close,
       })),
-    ...(d.rating.count > 0 && {
+    ...(b.rating.count > 0 && {
       aggregateRating: {
         "@type": "AggregateRating",
-        ratingValue: d.rating.avg,
-        reviewCount: d.rating.count,
+        ratingValue: b.rating.avg,
+        reviewCount: b.rating.count,
       },
     }),
   }
 }
+
+export const dealershipJsonLd = (d: Dealership, opts: Opts) =>
+  businessJsonLd(
+    "AutoDealer",
+    { ...d, images: [d.logoUrl, d.coverUrl], phone: d.phones[0] },
+    opts
+  )
+
+export const workshopJsonLd = (w: Workshop, opts: Opts) =>
+  businessJsonLd(
+    "AutoRepair",
+    {
+      ...w,
+      images: [w.logoUrl, w.coverUrl ?? "", ...w.images.map((i) => i.url)],
+    },
+    opts
+  )

@@ -17,7 +17,7 @@ import {
   type DealershipProfileSearch,
 } from "../schemas"
 import { useDealershipProfileNavigation } from "../use-dealership-profile-navigation"
-import { DealershipAbout } from "./dealership-about"
+import { BusinessAbout } from "./business-about"
 import { DealershipInventory } from "./dealership-inventory"
 import { DealershipJsonLd } from "./dealership-json-ld"
 
@@ -88,7 +88,14 @@ export function DealershipProfilePage({
           />
         </TabsContent>
         <TabsContent value="about" className="pt-4">
-          <DealershipAbout dealership={d} />
+          <BusinessAbout
+            description={d.description[locale] || d.description.ar}
+            cityId={d.cityId}
+            address={d.address}
+            location={d.location}
+            hours={d.hours}
+            phones={d.phones}
+          />
         </TabsContent>
         <TabsContent value="reviews" className="pt-4">
           <div className="rounded-xl bg-card p-4 md:p-5">

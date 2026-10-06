@@ -3,7 +3,13 @@ import type { Workshop } from "@/schemas/profile"
 import { OpenNowBadge } from "./open-now-badge"
 import { ProviderCard } from "./provider-card"
 
-export function WorkshopCard({ workshop: w }: { workshop: Workshop }) {
+export function WorkshopCard({
+  workshop: w,
+  headingAs,
+}: {
+  workshop: Workshop
+  headingAs?: "h2" | "h3"
+}) {
   const { locale } = useT()
   return (
     <ProviderCard
@@ -15,6 +21,7 @@ export function WorkshopCard({ workshop: w }: { workshop: Workshop }) {
       cityId={w.cityId}
       summary={w.description[locale]}
       badge={<OpenNowBadge hours={w.hours} />}
+      headingAs={headingAs}
     />
   )
 }

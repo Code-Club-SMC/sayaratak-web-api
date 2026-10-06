@@ -21,5 +21,20 @@
   "directory.about_title": "About",
   "directory.address_title": "Address",
   "directory.hours_title": "Opening hours",
-  "directory.phones_title": "Phone numbers"
+  "directory.phones_title": "Phone numbers",
+  "directory.workshops_description": "Browse verified car workshops in Sudan, see their services, opening hours and reviews.",
+  "directory.workshop_search_name": "Workshop name",
+  "directory.workshops_load_error": "Could not load workshops",
+  "directory.workshops_empty_title": "No workshops found",
+  "directory.workshops_empty_body": "Try another name, city or service, or clear the filters.",
+  "directory.service": "Service",
+  "directory.any_service": "Any service",
+  "directory.open_now_only": "Open now",
+  "directory.clear_location": "Clear my location",
+  "directory.tab_services": "Services",
+  "directory.services_title": "Services",
+  "directory.services_empty": "This workshop has not listed its services yet.",
+  "directory.price_from": "From",
+  "directory.photos_title": "Photos",
+  "directory.open_photo": "Open photo {{current}} of {{max}}"
 }

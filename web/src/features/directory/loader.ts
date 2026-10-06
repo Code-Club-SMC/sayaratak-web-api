@@ -24,7 +24,7 @@ type Context = { queryClient: QueryClient; locale: Locale }
 export const dealershipFilters = (s: DealershipSearch) => ({ ...s, limit: 24 })
 
 // A failed first load is dropped from the cache, so server and client both start from "loading" and the page shows its own error and retry. A filter or page change on the same page does not wait (the old cards dim instead).
-function firstLoad<T, TKey extends QueryKey>(
+export function firstLoad<T, TKey extends QueryKey>(
   queryClient: QueryClient,
   query: FetchQueryOptions<T, Error, T, TKey>,
   cause: string

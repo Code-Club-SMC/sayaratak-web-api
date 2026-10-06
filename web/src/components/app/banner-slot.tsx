@@ -29,7 +29,7 @@ export function BannerSlot({
         className={cn(
           "w-full",
           variant === "hero"
-            ? "aspect-[3/1] rounded-xl md:aspect-[4/1] md:rounded-2xl"
+            ? "aspect-[2/1] rounded-xl md:aspect-[3/1] md:rounded-2xl"
             : "aspect-[6/1] rounded-lg"
         )}
       />

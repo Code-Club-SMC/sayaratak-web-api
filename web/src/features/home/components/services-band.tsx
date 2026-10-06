@@ -6,7 +6,7 @@ import { WorkshopCard } from "@/components/app/workshop-card"
 import { homeQueries } from "../queries"
 import { ProviderSection } from "./provider-section"
 
-const column = "flex flex-col gap-3"
+const column = "flex flex-col gap-5"
 
 // Two columns: the three best rated workshops and mechanics. A column with nothing to show leaves, and with both empty so does the band.
 export function ServicesBand() {

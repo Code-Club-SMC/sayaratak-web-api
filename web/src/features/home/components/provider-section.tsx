@@ -34,7 +34,7 @@ export function ProviderSection({
       <div
         role="status"
         aria-label={t("common.loading")}
-        className="flex flex-col gap-3"
+        className="flex flex-col gap-5"
       >
         <Skeleton className="h-7 w-40" />
         <div className={className}>
@@ -55,7 +55,7 @@ export function ProviderSection({
     )
   if (!items.length) return null
   return (
-    <section aria-labelledby={id} className="flex flex-col gap-3">
+    <section aria-labelledby={id} className="flex flex-col gap-5">
       <div className="flex items-baseline justify-between gap-4">
         <h2 id={id} className="text-title font-semibold">
           {title}

@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils"
 import type { Banner } from "@/schemas/admin"
 import { useTrackEvent } from "@/features/listings/events"
 
-// "hero" is the tall home banner (1600 x 400, shown first and loaded at once); "strip" is the 1200 x 200 banner of every other slot.
+// "hero" is the tall home banner (1800 x 600, 3:1, 2:1 on mobile, shown first and loaded at once); "strip" is the 1200 x 200 banner of every other slot. Art keeps its text and subject inside the middle 1200 px, so the mobile crop never cuts them.
 export function BannerItem({
   banner,
   variant = "strip",
@@ -15,7 +15,7 @@ export function BannerItem({
   variant?: "strip" | "hero"
 }) {
   const hero = variant === "hero"
-  const shape = hero ? "aspect-[3/1] md:aspect-[4/1]" : "aspect-[6/1]"
+  const shape = hero ? "aspect-[2/1] md:aspect-[3/1]" : "aspect-[6/1]"
   const { t, locale } = useT()
   const link = useRef<HTMLAnchorElement>(null)
   const image = useRef<HTMLImageElement>(null)
@@ -59,8 +59,8 @@ export function BannerItem({
         <img
           ref={image}
           src={banner.imageUrl[locale]}
-          width={hero ? 1600 : 1200}
-          height={hero ? 400 : 200}
+          width={hero ? 1800 : 1200}
+          height={hero ? 600 : 200}
           loading={hero ? "eager" : "lazy"}
           fetchPriority={hero ? "high" : undefined}
           decoding="async"

@@ -25,7 +25,7 @@ export function HomePage({
 }) {
   const { t } = useT()
   return (
-    <div className="flex flex-col gap-12 pt-4 pb-12 md:pt-6">
+    <div className="flex flex-col gap-12 pt-4 pb-12 md:gap-16 md:pt-6 md:pb-16">
       <HomeHero searchCity={searchCity} />
       <CategoryTiles />
       <HomeRail

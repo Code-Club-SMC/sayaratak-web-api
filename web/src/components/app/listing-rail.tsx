@@ -26,7 +26,7 @@ export function ListingRail({
   const { t, locale } = useT()
   const id = useId()
   return (
-    <section aria-labelledby={id} className="flex flex-col gap-3">
+    <section aria-labelledby={id} className="flex flex-col gap-5">
       <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
         <h2 id={id} className="text-title font-semibold">
           {title}

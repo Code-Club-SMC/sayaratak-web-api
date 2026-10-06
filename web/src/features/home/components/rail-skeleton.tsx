@@ -9,7 +9,7 @@ export function RailSkeleton() {
     <div
       role="status"
       aria-label={t("common.loading")}
-      className="flex flex-col gap-3"
+      className="flex flex-col gap-5"
     >
       <Skeleton className="h-7 w-40" />
       <div className="flex gap-3 overflow-hidden lg:grid lg:grid-cols-4">

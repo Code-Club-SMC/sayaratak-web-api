@@ -3,8 +3,8 @@ import { useId, type ReactNode } from "react"
 import { useT } from "@/lib/i18n/use-t"
 import { localeHref } from "@/lib/navigation"
 import { useDelayedFlag } from "@/lib/use-delayed-flag"
+import { SectionError } from "@/components/app/section-error"
 import { Skeleton } from "@/components/ui/skeleton"
-import { SectionError } from "./section-error"
 
 // A titled list of provider cards (dealerships, workshops or mechanics): skeleton after 150 ms, an error with retry, and nothing when empty. `href` is a path without the locale.
 export function ProviderSection({
@@ -44,7 +44,15 @@ export function ProviderSection({
         </div>
       </div>
     ) : null
-  if (error) return <SectionError onRetry={onRetry} />
+  if (error)
+    return (
+      <SectionError
+        title={title}
+        message={t("home.section_error")}
+        hint={t("home.section_error_hint")}
+        onRetry={onRetry}
+      />
+    )
   if (!items.length) return null
   return (
     <section aria-labelledby={id} className="flex flex-col gap-3">

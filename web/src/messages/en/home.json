@@ -24,5 +24,6 @@
   "home.mechanics": "Top mechanics",
   "home.all_mechanics": "All mechanics",
   "home.post_band": "Selling a vehicle or spare parts? Post a listing and buyers can call you today.",
-  "home.section_error": "This section did not load."
+  "home.section_error": "This section did not load.",
+  "home.section_error_hint": "Check your connection and try again."
 }

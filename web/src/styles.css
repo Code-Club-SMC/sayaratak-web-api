@@ -233,6 +233,55 @@
   }
 }
 
+/* Text fields and the select trigger: one focus treatment instead of the global outline stacked on a border. The border turns green and a soft ring grows in over the base duration; hover darkens the border a little. */
+@utility field-surface {
+  caret-color: var(--primary);
+  transition-property: border-color, box-shadow;
+  transition-duration: var(--dur-base);
+  transition-timing-function: var(--ease-standard);
+  &:hover:not(
+      :focus-visible,
+      :disabled,
+      [data-popup-open],
+      [aria-invalid="true"]
+    ) {
+    border-color: color-mix(in oklch, var(--input), var(--foreground) 35%);
+  }
+  &:focus-visible,
+  &[data-popup-open] {
+    outline: none;
+    border-color: var(--ring);
+    box-shadow: 0 0 0 3px color-mix(in oklch, var(--ring) 16%, transparent);
+  }
+  &[aria-invalid="true"]:focus-visible {
+    border-color: var(--destructive);
+    box-shadow: 0 0 0 3px
+      color-mix(in oklch, var(--destructive) 16%, transparent);
+  }
+}
+
+/* Select and dropdown menu share one surface and one row: a hairline ring under the floating shadow, roomy rows, a soft green highlight and a thin scrollbar. */
+@utility menu-surface {
+  @apply rounded-xl bg-popover p-1.5 text-popover-foreground shadow-floating ring-1 ring-foreground/10;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+@utility menu-row {
+  @apply relative flex min-h-11 w-full cursor-pointer items-center gap-2.5 rounded-lg px-3 text-ui outline-hidden select-none md:min-h-9;
+  transition-property: background-color, color;
+  transition-duration: var(--dur-fast);
+  transition-timing-function: var(--ease-standard);
+  &[data-highlighted] {
+    @apply bg-accent text-accent-foreground;
+  }
+  &[data-disabled] {
+    @apply pointer-events-none opacity-50;
+  }
+  & svg {
+    @apply pointer-events-none shrink-0;
+  }
+}
+
 @layer base {
   * {
     @apply border-border;

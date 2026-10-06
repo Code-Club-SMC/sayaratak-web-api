@@ -5,9 +5,9 @@ import { useDelayedFlag } from "@/lib/use-delayed-flag"
 import { cn } from "@/lib/utils"
 import type { Banner } from "@/schemas/admin"
 import { bannersQuery } from "@/features/pages/queries"
-import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 import { BannerItem } from "./banner-item"
+import { SectionError } from "./section-error"
 
 // `variant="hero"` shows only the first banner, tall, at the top of the home page.
 export function BannerSlot({
@@ -36,17 +36,12 @@ export function BannerSlot({
     ) : null
   if (isError)
     return (
-      <div role="status" className="flex flex-wrap items-center gap-2 text-ui">
-        <p>{t("nav.banner_error")}</p>
-        <Button
-          variant="ghost"
-          onClick={() => {
-            void refetch()
-          }}
-        >
-          {t("common.retry")}
-        </Button>
-      </div>
+      <SectionError
+        message={t("nav.banner_error")}
+        onRetry={() => {
+          void refetch()
+        }}
+      />
     )
   if (!data.length) return null
   return (

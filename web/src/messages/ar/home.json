@@ -24,5 +24,6 @@
   "home.mechanics": "أفضل الميكانيكيين",
   "home.all_mechanics": "كل الميكانيكيين",
   "home.post_band": "تبيع مركبة أو قطع غيار؟ أضف إعلانك ويتصل بك المشترون اليوم.",
-  "home.section_error": "تعذر تحميل هذا القسم."
+  "home.section_error": "تعذر تحميل هذا القسم.",
+  "home.section_error_hint": "تحقق من اتصالك ثم حاول مرة أخرى."
 }

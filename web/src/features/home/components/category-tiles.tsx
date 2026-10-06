@@ -17,7 +17,7 @@ const typePhoto: Record<VehicleType, string> = {
   rickshaw: "rickshaws",
 }
 
-// Eight tiles: the enabled vehicle types, Parts, Workshops and Mechanics, each a photo with a live count. The vehicle counts are the facets of the "Newly added" rail, so they cost no request of their own.
+// Eight tiles, four to a row: the enabled vehicle types, Parts, Workshops and Mechanics, each a photo with a live count. The vehicle counts are the facets of the "Newly added" rail, so they cost no request of their own.
 export function CategoryTiles() {
   const { t, locale } = useT()
   const taxonomy = useQuery(taxonomyQuery).data
@@ -77,7 +77,7 @@ export function CategoryTiles() {
       <h2 id="home-categories" className="sr-only">
         {t("home.categories")}
       </h2>
-      <ul className="grid grid-cols-4 gap-x-2 gap-y-4 lg:grid-cols-8 lg:gap-x-3">
+      <ul className="grid grid-cols-4 gap-x-2 gap-y-4 md:gap-x-4 md:gap-y-6">
         {tiles.map(({ key, label, path, photo, count }) => (
           <li key={key}>
             <a
@@ -88,7 +88,7 @@ export function CategoryTiles() {
                 <img
                   src={`/images/categories/${photo}-320.webp`}
                   srcSet={`/images/categories/${photo}-320.webp 320w, /images/categories/${photo}-640.webp 640w`}
-                  sizes="(min-width: 1024px) 138px, 25vw"
+                  sizes="(min-width: 1280px) 276px, 25vw"
                   width={320}
                   height={240}
                   alt=""

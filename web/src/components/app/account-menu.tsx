@@ -1,6 +1,12 @@
 import { useQuery } from "@tanstack/react-query"
 import { useLocation, useRouter } from "@tanstack/react-router"
-import { UserRound } from "lucide-react"
+import {
+  ArrowRightIcon,
+  LayoutDashboardIcon,
+  LogOutIcon,
+  SettingsIcon,
+  UserRound,
+} from "lucide-react"
 
 import { useT } from "@/lib/i18n/use-t"
 import { dashboardPath, isProtectedPath, localeHref } from "@/lib/navigation"
@@ -11,6 +17,7 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 
@@ -66,23 +73,32 @@ export function AccountMenu() {
         <p className="truncate px-3 py-2 text-ui font-semibold" dir="auto">
           {me.fullName}
         </p>
+        <DropdownMenuSeparator />
         {[
-          ...(setup ? [{ key: "nav.finish_setup", path: "/onboarding" }] : []),
-          { key: "nav.dashboard", path: base },
-          { key: "nav.settings", path: `${base}/settings` },
+          ...(setup
+            ? [
+                {
+                  key: "nav.finish_setup",
+                  path: "/onboarding",
+                  icon: ArrowRightIcon,
+                },
+              ]
+            : []),
+          { key: "nav.dashboard", path: base, icon: LayoutDashboardIcon },
+          { key: "nav.settings", path: `${base}/settings`, icon: SettingsIcon },
         ].map((item) => (
           <DropdownMenuItem
             key={item.key}
-            className="min-h-11 md:min-h-10"
             render={<a href={localeHref(item.path, locale)} />}
           >
+            <item.icon className="text-muted-foreground" />
             {t(item.key)}
           </DropdownMenuItem>
         ))}
+        <DropdownMenuSeparator />
         <DropdownMenuItem
           closeOnClick={false}
           disabled={logout.isPending}
-          className="min-h-11 md:min-h-10"
           onClick={() =>
             logout.mutate(undefined, {
               // A public page stays and re-runs its loaders signed out; a protected one goes home.
@@ -94,6 +110,7 @@ export function AccountMenu() {
             })
           }
         >
+          <LogOutIcon className="text-muted-foreground" />
           {t("common.sign_out")}
         </DropdownMenuItem>
         {logout.isError && (

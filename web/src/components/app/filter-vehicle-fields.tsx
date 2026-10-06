@@ -6,11 +6,11 @@ import type { FilterDraft } from "@/features/search/filters"
 import { useFacetLabel } from "@/features/search/use-facet-label"
 import { useT } from "@/lib/i18n/use-t"
 import type { ListingPage } from "@/schemas/listing"
-import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select"
 import { ChipMultiSelect } from "./chip-multi-select"
 import { FormField } from "./form-field"
 import { FormSection } from "./form-section"
 import { NumberField } from "./number-field"
+import { SelectInput } from "./select-input"
 
 // Make and model, year, mileage, fuel and transmission. Vehicles only; part searches skip this group.
 export function FilterVehicleFields({
@@ -37,44 +37,34 @@ export function FilterVehicleFields({
       <FormSection title={t("search.group_make")}>
         <FormField label={t("form.make")}>
           {(c) => (
-            <NativeSelect
+            <SelectInput
               {...c}
-              className="w-full"
               value={draft.make}
-              onChange={(e) => {
-                setValue("make", e.target.value)
+              placeholder={t("form.select_make")}
+              options={makes.map((m) => ({
+                value: m.id,
+                label: withCount(m.name[locale], facets?.make, m.id),
+              }))}
+              onChange={(v) => {
+                setValue("make", v)
                 setValue("model", "")
               }}
-            >
-              <NativeSelectOption value="">
-                {t("form.select_make")}
-              </NativeSelectOption>
-              {makes.map((m) => (
-                <NativeSelectOption key={m.id} value={m.id}>
-                  {withCount(m.name[locale], facets?.make, m.id)}
-                </NativeSelectOption>
-              ))}
-            </NativeSelect>
+            />
           )}
         </FormField>
         {draft.make && (
           <FormField label={t("form.model")}>
             {(c) => (
-              <NativeSelect
+              <SelectInput
                 {...c}
-                className="w-full"
                 value={draft.model}
-                onChange={(e) => setValue("model", e.target.value)}
-              >
-                <NativeSelectOption value="">
-                  {t("form.select_model")}
-                </NativeSelectOption>
-                {models.map((m) => (
-                  <NativeSelectOption key={m.id} value={m.id}>
-                    {m.name[locale]}
-                  </NativeSelectOption>
-                ))}
-              </NativeSelect>
+                placeholder={t("form.select_model")}
+                options={models.map((m) => ({
+                  value: m.id,
+                  label: m.name[locale],
+                }))}
+                onChange={(v) => setValue("model", v)}
+              />
             )}
           </FormField>
         )}

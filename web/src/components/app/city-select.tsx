@@ -2,10 +2,10 @@ import { useQuery } from "@tanstack/react-query"
 
 import { taxonomyQuery } from "@/features/listings/queries"
 import { useT } from "@/lib/i18n/use-t"
-import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select"
 import { FormField } from "./form-field"
+import { SelectInput } from "./select-input"
 
-// A native select: light on low-end phones and the best picker on mobile. Options come from the taxonomy, which route loaders prefetch.
+// Options come from the taxonomy, which route loaders prefetch.
 export function CitySelect({
   value,
   onChange,
@@ -30,22 +30,17 @@ export function CitySelect({
       optional={optional}
     >
       {(control) => (
-        <NativeSelect
+        <SelectInput
           {...control}
-          className="w-full"
           disabled={disabled}
           value={value}
-          onChange={(e) => onChange(e.target.value)}
-        >
-          <NativeSelectOption value="">
-            {t("form.select_city")}
-          </NativeSelectOption>
-          {data?.cities.map((city) => (
-            <NativeSelectOption key={city.id} value={city.id}>
-              {city.name[locale]}
-            </NativeSelectOption>
-          ))}
-        </NativeSelect>
+          onChange={onChange}
+          placeholder={t("form.select_city")}
+          options={(data?.cities ?? []).map((c) => ({
+            value: c.id,
+            label: c.name[locale],
+          }))}
+        />
       )}
     </FormField>
   )

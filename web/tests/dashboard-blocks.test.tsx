@@ -12,6 +12,7 @@ import { DateRangeSelect } from "@/components/app/date-range-select"
 import { EmptyState } from "@/components/app/empty-state"
 import { RowActions } from "@/components/app/row-actions"
 import { StatCard } from "@/components/app/stat-card"
+import { pick } from "./pick"
 import { renderShell } from "./shell-render"
 
 type Row = { id: string; name: string; price: number }
@@ -178,9 +179,7 @@ describe("DateRangeSelect", () => {
   it("reports the chosen range", async () => {
     const onChange = vi.fn()
     await renderShell(<DateRangeSelect value="30d" onChange={onChange} />)
-    fireEvent.change(screen.getByLabelText("Period"), {
-      target: { value: "7d" },
-    })
+    await pick(screen.getByLabelText("Period"), "Last 7 days")
     expect(onChange).toHaveBeenCalledWith("7d")
   })
 })

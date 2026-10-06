@@ -1,4 +1,5 @@
 import { useCityName } from "@/hooks/use-city-name"
+import { useListingTitle } from "@/hooks/use-listing-title"
 import { useT } from "@/lib/i18n/use-t"
 import type { Listing } from "@/schemas/listing"
 import { ListingCard } from "./listing-card"
@@ -15,6 +16,7 @@ export function ListingPreview({
 }) {
   const { t } = useT()
   const city = useCityName(listing.cityId)
+  const title = useListingTitle()(listing)
   const first = listing.media[0]
   if (compact)
     return (
@@ -28,7 +30,7 @@ export function ListingPreview({
         />
         <div className="flex min-w-0 flex-col gap-1">
           <span className="truncate text-ui font-medium">
-            <bdi>{listing.title}</bdi>
+            <bdi>{title}</bdi>
           </span>
           <PriceText
             price={listing.price}

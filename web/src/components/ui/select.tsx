@@ -77,7 +77,7 @@ function SelectContent({
         align={align}
         alignOffset={alignOffset}
         alignItemWithTrigger={alignItemWithTrigger}
-        className="isolate z-(--z-popover)"
+        className="isolate z-(--z-dialog)"
       >
         <SelectPrimitive.Popup
           data-slot="select-content"

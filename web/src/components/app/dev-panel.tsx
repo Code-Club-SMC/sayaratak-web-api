@@ -8,6 +8,7 @@ import { okSchema } from "@/schemas/api"
 import { meQuery } from "@/features/auth/me-query"
 import { useLogin, useLogout } from "@/features/auth/queries"
 import { useResetDemoData } from "@/features/admin/queries"
+import { SelectInput } from "./select-input"
 import {
   failModes,
   getFailMode,
@@ -51,21 +52,16 @@ export function DevPanel({ onClose }: { onClose: () => void }) {
       </div>
       <label className="flex flex-col gap-1">
         Failure
-        <select
+        <SelectInput
           value={fail}
-          onChange={(e) => {
-            const mode = failModes.find((m) => m === e.target.value) ?? "none"
+          options={failModes.map((m) => ({ value: m, label: m }))}
+          onChange={(v) => {
+            const mode = failModes.find((m) => m === v) ?? "none"
             setFailMode(mode)
             setFail(mode)
             void refresh()
           }}
-        >
-          {failModes.map((m) => (
-            <option key={m} value={m}>
-              {m}
-            </option>
-          ))}
-        </select>
+        />
       </label>
       <label className="flex flex-col gap-1">
         Latency:{" "}
@@ -94,28 +90,24 @@ export function DevPanel({ onClose }: { onClose: () => void }) {
       <label className="flex flex-col gap-1">
         Signed in as:{" "}
         {me.data ? `${me.data.fullName} (${me.data.role})` : "nobody"}
-        <select
+        <SelectInput
           value=""
-          onChange={async (e) => {
-            if (e.target.value === "out") await logout.mutateAsync()
+          placeholder="Switch account"
+          options={[
+            ...accounts.map((a) => ({ value: a.identifier, label: a.label })),
+            { value: "out", label: "Sign out" },
+          ]}
+          onChange={async (v) => {
+            if (!v) return
+            if (v === "out") await logout.mutateAsync()
             else
               await login.mutateAsync({
-                identifier: e.target.value,
+                identifier: v,
                 password: "Demo1234",
               })
             void refresh()
           }}
-        >
-          <option value="" disabled>
-            Switch account
-          </option>
-          {accounts.map((a) => (
-            <option key={a.identifier} value={a.identifier}>
-              {a.label}
-            </option>
-          ))}
-          <option value="out">Sign out</option>
-        </select>
+        />
       </label>
       <button
         type="button"

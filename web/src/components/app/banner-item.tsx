@@ -2,10 +2,20 @@ import { useEffect, useRef, useState } from "react"
 
 import { useT } from "@/lib/i18n/use-t"
 import { bannerHref } from "@/lib/navigation"
+import { cn } from "@/lib/utils"
 import type { Banner } from "@/schemas/admin"
 import { useTrackEvent } from "@/features/listings/events"
 
-export function BannerItem({ banner }: { banner: Banner }) {
+// "hero" is the tall home banner (1600 x 400, shown first and loaded at once); "strip" is the 1200 x 200 banner of every other slot.
+export function BannerItem({
+  banner,
+  variant = "strip",
+}: {
+  banner: Banner
+  variant?: "strip" | "hero"
+}) {
+  const hero = variant === "hero"
+  const shape = hero ? "aspect-[3/1] md:aspect-[4/1]" : "aspect-[6/1]"
   const { t, locale } = useT()
   const link = useRef<HTMLAnchorElement>(null)
   const image = useRef<HTMLImageElement>(null)
@@ -40,22 +50,31 @@ export function BannerItem({ banner }: { banner: Banner }) {
       href={href}
       aria-label={t("nav.view_advertisement")}
       onClick={() => mutate({ type: "banner_click", targetId: banner.id })}
-      className="relative block min-h-11 overflow-hidden rounded-lg bg-muted"
+      className={cn(
+        "relative block min-h-11 overflow-hidden bg-muted",
+        hero ? "rounded-xl md:rounded-2xl" : "rounded-lg"
+      )}
     >
       {!missing ? (
         <img
           ref={image}
           src={banner.imageUrl[locale]}
-          width={1200}
-          height={200}
-          loading="lazy"
+          width={hero ? 1600 : 1200}
+          height={hero ? 400 : 200}
+          loading={hero ? "eager" : "lazy"}
+          fetchPriority={hero ? "high" : undefined}
           decoding="async"
           alt=""
           onError={() => setMissing(true)}
-          className="aspect-[6/1] w-full object-cover"
+          className={cn("w-full object-cover", shape)}
         />
       ) : (
-        <span className="flex aspect-[6/1] min-h-11 items-center justify-center p-4 text-ui text-muted-foreground">
+        <span
+          className={cn(
+            "flex min-h-11 items-center justify-center p-4 text-ui text-muted-foreground",
+            shape
+          )}
+        >
           {t("nav.advertisement")}
         </span>
       )}

@@ -1,4 +1,5 @@
 import { useCityName } from "@/hooks/use-city-name"
+import { useListingTitle } from "@/hooks/use-listing-title"
 import { formatMileage } from "@/lib/format"
 import { useT } from "@/lib/i18n/use-t"
 import { cardSizes } from "@/lib/media"
@@ -33,6 +34,7 @@ export function ListingCard({
   const { t, locale } = useT()
   const now = useNow()
   const city = useCityName(listing.cityId)
+  const title = useListingTitle()(listing)
   const promoted = promotionKind(listing.promotions, now)
   const first = listing.media[0]
   const facts =
@@ -92,14 +94,14 @@ export function ListingCard({
         <h3 className="min-h-[2lh] text-ui font-medium">
           {preview ? (
             <span className="line-clamp-2">
-              <bdi>{listing.title}</bdi>
+              <bdi>{title}</bdi>
             </span>
           ) : (
             <a
               href={localeHref(`/listing/${listing.slug}`, locale)}
               className="line-clamp-2 underline decoration-transparent motion-color group-hover:decoration-current after:absolute after:inset-0"
             >
-              <bdi>{listing.title}</bdi>
+              <bdi>{title}</bdi>
             </a>
           )}
         </h3>

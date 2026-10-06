@@ -2,9 +2,9 @@ import { useQuery } from "@tanstack/react-query"
 
 import { taxonomyQuery } from "@/features/listings/queries"
 import { useT } from "@/lib/i18n/use-t"
-import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select"
 import { CitySelect } from "./city-select"
 import { FormField } from "./form-field"
+import { SelectInput } from "./select-input"
 
 export type CityDistrictValue = { cityId: string; districtId: string | null }
 
@@ -39,24 +39,17 @@ export function CityDistrictFields({
         optional={!districtRequired}
       >
         {(control) => (
-          <NativeSelect
+          <SelectInput
             {...control}
-            className="w-full"
             disabled={districts.length === 0}
             value={value.districtId ?? ""}
-            onChange={(e) =>
-              onChange({ ...value, districtId: e.target.value || null })
-            }
-          >
-            <NativeSelectOption value="">
-              {t("form.select_district")}
-            </NativeSelectOption>
-            {districts.map((d) => (
-              <NativeSelectOption key={d.id} value={d.id}>
-                {d.name[locale]}
-              </NativeSelectOption>
-            ))}
-          </NativeSelect>
+            onChange={(id) => onChange({ ...value, districtId: id || null })}
+            placeholder={t("form.select_district")}
+            options={districts.map((d) => ({
+              value: d.id,
+              label: d.name[locale],
+            }))}
+          />
         )}
       </FormField>
     </div>

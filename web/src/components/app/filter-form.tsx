@@ -14,7 +14,6 @@ import { useFacetLabel } from "@/features/search/use-facet-label"
 import { useT } from "@/lib/i18n/use-t"
 import type { ListingPage } from "@/schemas/listing"
 import { Button } from "@/components/ui/button"
-import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select"
 import { ChipSingleSelect } from "./chip-single-select"
 import { CheckboxGroup } from "./checkbox-group"
 import { CityDistrictFields } from "./city-district-fields"
@@ -22,6 +21,7 @@ import { FormField } from "./form-field"
 import { FilterVehicleFields } from "./filter-vehicle-fields"
 import { FormSection } from "./form-section"
 import { NumberField } from "./number-field"
+import { SelectInput } from "./select-input"
 
 type Facets = ListingPage["facets"]
 
@@ -155,27 +155,17 @@ export function FilterForm({
           />
           <FormField label={t("search.radius")}>
             {(c) => (
-              <NativeSelect
+              <SelectInput
                 {...c}
-                className="w-full"
                 disabled={!draft.city && params.lat === undefined}
-                value={draft.radius ?? ""}
-                onChange={(e) =>
-                  setValue(
-                    "radius",
-                    e.target.value ? Number(e.target.value) : null
-                  )
-                }
-              >
-                <NativeSelectOption value="">
-                  {t("search.radius_any")}
-                </NativeSelectOption>
-                {radii.map((r) => (
-                  <NativeSelectOption key={r} value={r}>
-                    {t("search.radius_value", { km: r })}
-                  </NativeSelectOption>
-                ))}
-              </NativeSelect>
+                value={draft.radius ? String(draft.radius) : ""}
+                placeholder={t("search.radius_any")}
+                options={radii.map((r) => ({
+                  value: String(r),
+                  label: t("search.radius_value", { km: r }),
+                }))}
+                onChange={(v) => setValue("radius", v ? Number(v) : null)}
+              />
             )}
           </FormField>
         </FormSection>

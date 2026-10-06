@@ -10,6 +10,7 @@ import {
   mechanicExpertiseSchema,
 } from "@/features/onboarding/schemas"
 import { db, resetDb } from "@/mocks/db"
+import { pick } from "./pick"
 import { renderShell } from "./shell-render"
 
 beforeEach(() => {
@@ -137,14 +138,10 @@ describe("mechanic steps", () => {
     expect(
       screen.getAllByRole<HTMLInputElement>("checkbox").filter((c) => c.checked)
     ).toHaveLength(6)
-    fireEvent.change(screen.getByRole("combobox", { name: "Home city" }), {
-      target: { value: "khartoum" },
-    })
+    await pick(screen.getByRole("combobox", { name: "Home city" }), "Khartoum")
     expect(screen.queryByRole("checkbox", { name: "Khartoum" })).toBeNull()
     fireEvent.click(await chip("Omdurman"))
-    fireEvent.change(screen.getByRole("combobox", { name: "Home city" }), {
-      target: { value: "omdurman" },
-    })
+    await pick(screen.getByRole("combobox", { name: "Home city" }), "Omdurman")
     expect(screen.queryByRole("checkbox", { name: "Omdurman" })).toBeNull()
     next()
     await waitFor(() =>

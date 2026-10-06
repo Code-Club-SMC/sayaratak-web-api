@@ -24,7 +24,8 @@ import { PriceFields, type PriceValue } from "@/components/app/price-fields"
 import { StepIndicator } from "@/components/app/step-indicator"
 import { SubmitButton } from "@/components/app/submit-button"
 import { WeeklyHoursEditor } from "@/components/app/weekly-hours-editor"
-import { resetDb } from "@/mocks/db"
+import { db, resetDb } from "@/mocks/db"
+import { pick } from "./pick"
 import { renderShell } from "./shell-render"
 
 vi.mock("@/components/app/map-canvas-impl", () => ({
@@ -164,25 +165,16 @@ describe("dependent selects", () => {
     }
     await renderShell(<Harness />)
     const [city, district] = screen.getAllByRole("combobox")
-    expect((district as HTMLSelectElement).disabled).toBe(true)
-    await waitFor(() =>
-      expect(within(city!).getAllByRole("option").length).toBeGreaterThan(2)
-    )
-    const cities = within(city!).getAllByRole("option").slice(1)
-    type(city!, (cities[0] as HTMLOptionElement).value)
-    await waitFor(() =>
-      expect((district as HTMLSelectElement).disabled).toBe(false)
-    )
-    const d = within(district!).getAllByRole("option")[1] as HTMLOptionElement
-    type(district!, d.value)
-    expect(document.querySelector("output")?.textContent).toContain(d.value)
-    type(city!, (cities[1] as HTMLOptionElement).value)
+    expect(district!.hasAttribute("disabled")).toBe(true)
+    await pick(city!, "Khartoum")
+    await waitFor(() => expect(district!.hasAttribute("disabled")).toBe(false))
+    const d = db.taxonomy.districts.find((x) => x.cityId === "khartoum")!
+    await pick(district!, d.name.en)
+    expect(document.querySelector("output")?.textContent).toContain(d.id)
+    await pick(city!, "Omdurman")
     expect(
       JSON.parse(document.querySelector("output")?.textContent ?? "{}")
-    ).toEqual({
-      cityId: (cities[1] as HTMLOptionElement).value,
-      districtId: null,
-    })
+    ).toEqual({ cityId: "omdurman", districtId: null })
   })
 
   it("keeps ids and free text apart for make and model", async () => {
@@ -204,10 +196,7 @@ describe("dependent selects", () => {
     const out = () =>
       JSON.parse(document.querySelector("output")?.textContent ?? "{}")
     const make = screen.getByRole("combobox")
-    await waitFor(() =>
-      expect(within(make).getAllByRole("option").length).toBeGreaterThan(2)
-    )
-    type(make, "__other")
+    await pick(make, "Other")
     expect(out()).toEqual({
       makeId: null,
       modelId: null,
@@ -221,15 +210,14 @@ describe("dependent selects", () => {
       target: { value: "Coolray" },
     })
     expect(out()).toMatchObject({ makeOther: "Geely", modelOther: "Coolray" })
-    const real = within(make).getAllByRole("option")[1] as HTMLOptionElement
-    type(make, real.value)
+    await pick(make, "Toyota")
     expect(out()).toEqual({
-      makeId: real.value,
+      makeId: "toyota",
       modelId: null,
       makeOther: null,
       modelOther: null,
     })
-    type(screen.getAllByRole("combobox")[1]!, "__other")
+    await pick(screen.getAllByRole("combobox")[1]!, "Other")
     expect(out()).toMatchObject({ modelId: null, modelOther: "" })
     expect(screen.getByLabelText("Type the model")).toBeTruthy()
   })

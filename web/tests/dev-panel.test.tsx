@@ -11,6 +11,7 @@ import {
 } from "@/lib/api/dev-flags"
 import { resetDb } from "@/mocks/db"
 import { useMockFetch } from "./mock-fetch"
+import { pick } from "./pick"
 
 const invalidate = vi.fn()
 vi.mock("@tanstack/react-router", () => ({ useRouter: () => ({ invalidate }) }))
@@ -48,9 +49,7 @@ describe("dev panel", () => {
   })
   it("failure selector sets the cookie the mock router reads and re-runs loaders", async () => {
     open()
-    fireEvent.change(await screen.findByLabelText("Failure"), {
-      target: { value: "500" },
-    })
+    await pick(await screen.findByLabelText("Failure"), "500")
     expect(getFailMode()).toBe("500")
     expect(invalidate).toHaveBeenCalled()
     expect(
@@ -69,9 +68,7 @@ describe("dev panel", () => {
   })
   it("switches the signed-in account", async () => {
     open()
-    fireEvent.change(await screen.findByLabelText(/Signed in as/), {
-      target: { value: "admin@demo.sy" },
-    })
+    await pick(await screen.findByLabelText(/Signed in as/), "Admin")
     await waitFor(() => expect(invalidate).toHaveBeenCalled())
   })
 })

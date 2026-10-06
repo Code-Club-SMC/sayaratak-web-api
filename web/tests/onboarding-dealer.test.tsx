@@ -1,4 +1,4 @@
-import { fireEvent, screen, waitFor, within } from "@testing-library/react"
+import { fireEvent, screen, waitFor } from "@testing-library/react"
 import { useRouterState } from "@tanstack/react-router"
 import { beforeEach, describe, expect, it, vi } from "vitest"
 
@@ -13,6 +13,7 @@ import {
 } from "@/features/onboarding/schemas"
 import { defaultWeeklyHours } from "@/lib/hours"
 import { db, resetDb } from "@/mocks/db"
+import { pick } from "./pick"
 import { renderShell } from "./shell-render"
 
 beforeEach(() => {
@@ -166,13 +167,12 @@ describe("location step", () => {
   it("saves the place, the phones and a WhatsApp number copied from the first phone", async () => {
     const { router } = await open("location")
     const city = screen.getByRole("combobox", { name: "City" })
-    await waitFor(() =>
-      expect(within(city).getAllByRole("option").length).toBeGreaterThan(1)
+    await pick(city, "Khartoum")
+    await pick(
+      screen.getByRole("combobox", { name: "District" }),
+      db.taxonomy.districts.find((d) => d.id === districtOf("khartoum"))!.name
+        .en
     )
-    fireEvent.change(city, { target: { value: "khartoum" } })
-    fireEvent.change(screen.getByRole("combobox", { name: "District" }), {
-      target: { value: districtOf("khartoum") },
-    })
     change("Street address", "Street 15")
     const phone = screen.getByRole("textbox", { name: "Phone number 1" })
     fireEvent.change(phone, { target: { value: "912345678" } })

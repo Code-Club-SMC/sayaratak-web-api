@@ -1,5 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useRouter } from "@tanstack/react-router"
+import { SearchIcon } from "lucide-react"
 import { Controller, useForm } from "react-hook-form"
 
 import { CitySelect } from "@/components/app/city-select"
@@ -20,7 +21,7 @@ const YEAR = 365 * 24 * 60 * 60
 const choice =
   "aria-pressed:bg-primary aria-pressed:text-primary-foreground aria-pressed:hover:bg-primary/90"
 
-// The search card: vehicles or parts, buy or rent, city, make, model and the highest price. It builds the search URL and goes there; nothing is stored but the city, which the home and search pages remember.
+// The search card, with the page heading: vehicles or parts, buy or rent, city, make, model and the highest price. It builds the search URL and goes there; nothing is stored but the city, which the home and search pages remember.
 export function HeroSearch({ city }: { city: string }) {
   const { t, locale } = useT()
   const router = useRouter()
@@ -58,8 +59,15 @@ export function HeroSearch({ city }: { city: string }) {
     <form
       noValidate
       onSubmit={handleSubmit(go)}
-      className="rounded-xl bg-card p-4 md:p-6"
+      aria-labelledby="home-title"
+      className="rounded-2xl bg-card p-4 pb-5 md:p-8"
     >
+      <h1
+        id="home-title"
+        className="mb-4 text-page font-semibold md:mb-6 md:text-hero"
+      >
+        {t("home.title")}
+      </h1>
       <Tabs
         value={kind}
         onValueChange={(v) =>
@@ -98,20 +106,22 @@ export function HeroSearch({ city }: { city: string }) {
           )}
         </div>
         <TabsContent value={kind} tabIndex={-1}>
-          <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-[repeat(4,minmax(0,1fr))_auto] lg:items-end [&_input]:h-12 [&_select]:h-12">
-            <Controller
-              control={control}
-              name="city"
-              render={({ field }) => (
-                <CitySelect
-                  value={field.value ?? ""}
-                  onChange={(id) => {
-                    field.onChange(id)
-                    if (id) setCookie("city", id, YEAR)
-                  }}
-                />
-              )}
-            />
+          <div className="mt-4 grid grid-cols-2 gap-3 lg:grid-cols-[repeat(4,minmax(0,1fr))_auto] lg:items-end [&_[data-slot=select-trigger]]:h-12! [&_[data-slot=select-trigger]]:text-ui! [&_input]:h-12">
+            <div className="col-span-2 lg:col-span-1">
+              <Controller
+                control={control}
+                name="city"
+                render={({ field }) => (
+                  <CitySelect
+                    value={field.value ?? ""}
+                    onChange={(id) => {
+                      field.onChange(id)
+                      if (id) setCookie("city", id, YEAR)
+                    }}
+                  />
+                )}
+              />
+            </div>
             <MakeModelFields
               search
               className="contents"
@@ -126,31 +136,34 @@ export function HeroSearch({ city }: { city: string }) {
                 setValue("model", v.modelId ?? "")
               }}
             />
-            <Controller
-              control={control}
-              name="maxPrice"
-              render={({ field }) => (
-                <FormField
-                  label={t("search.max_price")}
-                  error={formState.errors.maxPrice?.message}
-                >
-                  {(c) => (
-                    <NumberField
-                      {...c}
-                      grouping
-                      min={0}
-                      value={field.value}
-                      onChange={field.onChange}
-                    />
-                  )}
-                </FormField>
-              )}
-            />
+            <div className="col-span-2 lg:col-span-1">
+              <Controller
+                control={control}
+                name="maxPrice"
+                render={({ field }) => (
+                  <FormField
+                    label={t("search.max_price")}
+                    error={formState.errors.maxPrice?.message}
+                  >
+                    {(c) => (
+                      <NumberField
+                        {...c}
+                        grouping
+                        min={0}
+                        value={field.value}
+                        onChange={field.onChange}
+                      />
+                    )}
+                  </FormField>
+                )}
+              />
+            </div>
             <SubmitButton
               size="lg"
               pending={formState.isSubmitting}
-              className="w-full lg:w-auto"
+              className="col-span-2 h-12 w-full lg:col-span-1 lg:w-auto lg:px-8"
             >
+              <SearchIcon data-icon="inline-start" />
               {t("common.search")}
             </SubmitButton>
           </div>

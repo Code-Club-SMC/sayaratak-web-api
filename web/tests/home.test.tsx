@@ -5,6 +5,7 @@ import { HomePage } from "@/features/home/components/home-page"
 import { HeroSearch } from "@/features/home/components/hero-search"
 import { heroSearchSchema } from "@/features/home/schemas"
 import { db, resetDb } from "@/mocks/db"
+import { pick } from "./pick"
 import { renderShell } from "./shell-render"
 
 const center = { lat: 15.5007, lng: 32.5599 }
@@ -49,10 +50,7 @@ describe("HeroSearch", () => {
   it("goes to the search page with the chosen filters", async () => {
     const { router } = await renderShell(<HeroSearch city="" />)
     const city = await screen.findByRole("combobox", { name: "City" })
-    await waitFor(() =>
-      expect(within(city).getAllByRole("option").length).toBeGreaterThan(1)
-    )
-    fireEvent.change(city, { target: { value: "omdurman" } })
+    await pick(city, "Omdurman")
     fireEvent.change(screen.getByRole("textbox", { name: "Highest price" }), {
       target: { value: "5000000" },
     })
@@ -88,27 +86,38 @@ describe("HeroSearch", () => {
   it("keeps the model disabled until a make is chosen", async () => {
     await renderShell(<HeroSearch city="" />)
     const model = await screen.findByRole("combobox", { name: "Model" })
-    expect((model as HTMLSelectElement).disabled).toBe(true)
+    expect(model.hasAttribute("disabled")).toBe(true)
     const make = screen.getByRole("combobox", { name: "Make" })
-    await waitFor(() =>
-      expect(within(make).getAllByRole("option").length).toBeGreaterThan(2)
-    )
-    expect(within(make).queryByRole("option", { name: "Other" })).toBeNull()
-    fireEvent.change(make, { target: { value: "toyota" } })
-    expect((model as HTMLSelectElement).disabled).toBe(false)
+    await pick(make, "Toyota")
+    expect(screen.queryByRole("option", { name: "Other" })).toBeNull()
+    await waitFor(() => expect(model.hasAttribute("disabled")).toBe(false))
   })
 
   it("starts from the city cookie", async () => {
     await renderShell(<HeroSearch city="bahri" />)
     await waitFor(() =>
       expect(
-        screen.getByRole<HTMLSelectElement>("combobox", { name: "City" }).value
-      ).toBe("bahri")
+        screen.getByRole("combobox", { name: "City" }).textContent
+      ).toContain("Bahri")
     )
   })
 })
 
 describe("HomePage", () => {
+  it("leads with the banner, then the search card that carries the heading", async () => {
+    await renderShell(page())
+    const [banner] = await screen.findAllByRole("link", {
+      name: "View advertisement",
+    })
+    const form = screen
+      .getByRole("heading", { level: 1 })
+      .closest("form") as HTMLElement
+    expect(form.querySelector("[role=combobox]")).toBeTruthy()
+    expect(
+      banner!.compareDocumentPosition(form) & Node.DOCUMENT_POSITION_FOLLOWING
+    ).toBeTruthy()
+  })
+
   it("shows the heading, eight tiles with counts, the rails and the bands", async () => {
     await renderShell(page())
     expect(
@@ -249,9 +258,9 @@ describe("Near you", () => {
     const radius = await within(section).findByRole("combobox", {
       name: "Distance",
     })
-    expect((radius as HTMLSelectElement).value).toBe("25")
+    expect(radius.textContent).toContain("25 km")
     expect(document.cookie).toContain("geo=")
-    fireEvent.change(radius, { target: { value: "5" } })
+    await pick(radius, "Within 5 km")
     await waitFor(() =>
       expect(
         within(section)

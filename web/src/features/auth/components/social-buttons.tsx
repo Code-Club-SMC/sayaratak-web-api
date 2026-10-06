@@ -1,3 +1,4 @@
+import { BrandIcon } from "@/components/app/brand-icon"
 import { Button } from "@/components/ui/button"
 import { useT } from "@/lib/i18n/use-t"
 
@@ -19,6 +20,7 @@ export function SocialButtons({
         disabled={disabled}
         onClick={() => onSelect("google")}
       >
+        <BrandIcon name="google" />
         {t("auth.continue_google")}
       </Button>
       <Button
@@ -27,6 +29,7 @@ export function SocialButtons({
         disabled={disabled}
         onClick={() => onSelect("facebook")}
       >
+        <BrandIcon name="facebook" />
         {t("auth.continue_facebook")}
       </Button>
     </div>

@@ -13,6 +13,7 @@ import { FilterPanel } from "@/components/app/filter-panel"
 import { ResultsPagination } from "@/components/app/results-pagination"
 import { SortSelect } from "@/components/app/sort-select"
 import { resetDb } from "@/mocks/db"
+import { pick } from "./pick"
 import { renderShell } from "./shell-render"
 
 beforeEach(() => resetDb())
@@ -105,9 +106,7 @@ describe("search blocks", () => {
   })
   it("sort, pagination and suggestions update the params", async () => {
     await renderShell(<Harness start={{ ...base, maxPrice: 10, page: 4 }} />)
-    fireEvent.change(await screen.findByLabelText("Sort by"), {
-      target: { value: "price_asc" },
-    })
+    await pick(await screen.findByLabelText("Sort by"), "Price: low to high")
     await waitFor(() => expect(out().sort).toBe("price_asc"))
     fireEvent.click(screen.getByRole("link", { name: "Go to page 5" }))
     await waitFor(() => expect(out().page).toBe(5))

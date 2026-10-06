@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { MessageCircleIcon, PhoneIcon } from "lucide-react"
+import { PhoneIcon } from "lucide-react"
 
 import { useTrackEvent } from "@/features/listings/events"
 import { useT } from "@/lib/i18n/use-t"
@@ -7,6 +7,7 @@ import { formatPhone, toWhatsappUrl } from "@/lib/phone"
 import { usePageUrl } from "@/lib/use-page-url"
 import { cn } from "@/lib/utils"
 import { buttonVariants, Button } from "@/components/ui/button"
+import { BrandIcon } from "./brand-icon"
 import { MessageComposer, type MessageSubject } from "./message-composer"
 
 type Method = "call" | "whatsapp" | "chat"
@@ -80,7 +81,7 @@ export function ContactActions({
           onClick={() => track({ type: "whatsapp_click", targetId: target.id })}
           className={cn(buttonVariants({ variant: "outline" }), item)}
         >
-          <MessageCircleIcon aria-hidden="true" strokeWidth={1.5} />
+          <BrandIcon name="whatsapp" />
           {t("listing.whatsapp")}
         </a>
       )}

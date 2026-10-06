@@ -2,7 +2,7 @@ import { useId } from "react"
 
 import { rangeSchema, type Range } from "@/schemas/api"
 import { useT } from "@/lib/i18n/use-t"
-import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select"
+import { SelectInput } from "./select-input"
 
 const ranges = ["7d", "30d", "90d"] as const
 
@@ -21,17 +21,16 @@ export function DateRangeSelect({
       <label htmlFor={id} className="text-ui text-muted-foreground">
         {t("dashboard.range_label")}
       </label>
-      <NativeSelect
+      <SelectInput
         id={id}
+        className="w-auto"
         value={value}
-        onChange={(e) => onChange(rangeSchema.parse(e.target.value))}
-      >
-        {ranges.map((r) => (
-          <NativeSelectOption key={r} value={r}>
-            {t(`dashboard.range_${r}`)}
-          </NativeSelectOption>
-        ))}
-      </NativeSelect>
+        options={ranges.map((r) => ({
+          value: r,
+          label: t(`dashboard.range_${r}`),
+        }))}
+        onChange={(next) => onChange(rangeSchema.parse(next))}
+      />
     </div>
   )
 }

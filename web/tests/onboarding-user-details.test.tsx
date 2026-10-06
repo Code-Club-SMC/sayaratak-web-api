@@ -2,9 +2,11 @@ import { fireEvent, screen, waitFor } from "@testing-library/react"
 import { beforeEach, describe, expect, it, vi } from "vitest"
 
 import { draftQuery } from "@/features/auth/queries"
+import { taxonomyQuery } from "@/features/listings/queries"
 import { OnboardingStepPage } from "@/features/onboarding/components/onboarding-step-page"
 import { userOnboardingSchema } from "@/features/onboarding/schemas"
 import { db, resetDb } from "@/mocks/db"
+import { pick } from "./pick"
 import { renderShell } from "./shell-render"
 
 beforeEach(() => {
@@ -39,7 +41,7 @@ const open = async (draft?: object) => {
     ).toBeDefined()
   )
   await waitFor(() =>
-    expect(screen.getAllByRole("option").length).toBeGreaterThan(1)
+    expect(shell.client.getQueryData(taxonomyQuery.queryKey)).toBeDefined()
   )
   return { ...shell, user: u }
 }
@@ -87,7 +89,7 @@ describe("UserDetailsStep", () => {
 
   it("finishes with only a city and lands on the account", async () => {
     const { router, user } = await open()
-    fireEvent.change(city(), { target: { value: "khartoum" } })
+    await pick(city(), "Khartoum")
     finish()
     await waitFor(() =>
       expect(router.state.location.href).toBe("/en/account?welcome=1")
@@ -102,7 +104,7 @@ describe("UserDetailsStep", () => {
       details: { avatarId: "up-1" },
     })
     expect(screen.getByRole("button", { name: "Change photo" })).toBeTruthy()
-    fireEvent.change(city(), { target: { value: "khartoum" } })
+    await pick(city(), "Khartoum")
     fireEvent.click(screen.getByRole("checkbox", { name: "Tuk-tuks" }))
     fireEvent.click(screen.getByRole("checkbox", { name: "Parts" }))
     finish()

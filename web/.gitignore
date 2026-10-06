@@ -23,3 +23,6 @@ plan/
 playwright-report
 test-results
 !.env.example
+
+# full-size design sources (the optimized copies live in public/images)
+assets-src/

@@ -48,6 +48,29 @@ afterEach(() => {
   vi.unstubAllGlobals()
 })
 
+describe("listing title", () => {
+  it.each(["en", "ar"] as const)(
+    "is built from the taxonomy in the page language (%s), not the seller's typed text",
+    async (locale) => {
+      const row = db.listings.find(
+        (l) => l.kind === "vehicle" && l.makeId && l.modelId && l.year
+      )!
+      const make = db.taxonomy.makes.find((m) => m.id === row.makeId)!
+      const model = db.taxonomy.models.find((m) => m.id === row.modelId)!
+      await renderShell(
+        withNow(<ListingCard listing={listing({ ...row, title: "typed" })} />),
+        { locale }
+      )
+      expect(
+        await screen.findByText(
+          `${make.name[locale]} ${model.name[locale]} ${row.year}`
+        )
+      ).toBeTruthy()
+      expect(screen.queryByText("typed")).toBeNull()
+    }
+  )
+})
+
 describe("hours and promotions", () => {
   it("reads opening hours on the Khartoum clock", () => {
     expect(isOpenNow(hours, MON_8AM)).toBe(true)

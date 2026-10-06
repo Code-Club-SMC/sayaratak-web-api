@@ -1,9 +1,9 @@
-// Fails on physical-direction classes (outside components/ui) and on TODO, FIXME, console.log in src/**.
+// Fails on physical-direction classes (outside components/ui), on a native <select>, and on TODO, FIXME, console.log in src/**.
 import { readFileSync, readdirSync } from "node:fs"
 import process from "node:process"
 
 const physical = /(?<!\w)-?(?:ml|mr|pl|pr|left|right)-\S|text-(?:left|right)\b/
-const banned = /\b(?:TODO|FIXME)\b|console\.log/
+const banned = /\b(?:TODO|FIXME)\b|console\.log|<select[\s>]/
 const skip = ["src/components/ui/", "src/routeTree.gen.ts"]
 
 let failed = 0

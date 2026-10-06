@@ -4,7 +4,7 @@ import { radii } from "@/features/search/filters"
 import { useT } from "@/lib/i18n/use-t"
 import type { Geo } from "@/schemas/fields"
 import { Button } from "@/components/ui/button"
-import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select"
+import { SelectInput } from "@/components/app/select-input"
 
 export type LocateStatus = "idle" | "locating" | "denied" | "failed"
 
@@ -30,17 +30,16 @@ export function LocationControl({
   if (geo)
     return (
       <div className="flex flex-wrap items-center gap-2">
-        <NativeSelect
+        <SelectInput
           aria-label={t("search.radius")}
-          value={radius}
-          onChange={(e) => onRadius(Number(e.target.value))}
-        >
-          {radii.map((km) => (
-            <NativeSelectOption key={km} value={km}>
-              {t("search.radius_value", { km })}
-            </NativeSelectOption>
-          ))}
-        </NativeSelect>
+          className="w-auto"
+          value={String(radius)}
+          onChange={(km) => onRadius(Number(km))}
+          options={radii.map((km) => ({
+            value: String(km),
+            label: t("search.radius_value", { km }),
+          }))}
+        />
         <Button variant="ghost" onClick={onReset}>
           {t("home.use_city", { city: cityName })}
         </Button>

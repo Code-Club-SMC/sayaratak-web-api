@@ -1,7 +1,7 @@
 import { useId } from "react"
 
 import { useT } from "@/lib/i18n/use-t"
-import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select"
+import { SelectInput } from "./select-input"
 
 // Options come from the page: search pages pass the `sort` values of searchParamsSchema, favorites passes its own.
 export function SortSelect<T extends string>({
@@ -20,20 +20,19 @@ export function SortSelect<T extends string>({
       <label htmlFor={id} className="text-ui text-muted-foreground">
         {t("search.sort_label")}
       </label>
-      <NativeSelect
+      <SelectInput
         id={id}
+        className="w-auto"
         value={value}
-        onChange={(e) => {
-          const next = options.find((o) => o === e.target.value)
-          if (next) onChange(next)
+        options={options.map((o) => ({
+          value: o,
+          label: t(`search.sort_${o}`),
+        }))}
+        onChange={(next) => {
+          const found = options.find((o) => o === next)
+          if (found) onChange(found)
         }}
-      >
-        {options.map((o) => (
-          <NativeSelectOption key={o} value={o}>
-            {t(`search.sort_${o}`)}
-          </NativeSelectOption>
-        ))}
-      </NativeSelect>
+      />
     </div>
   )
 }

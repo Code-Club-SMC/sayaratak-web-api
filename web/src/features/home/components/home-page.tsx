@@ -5,14 +5,13 @@ import type { Geo } from "@/schemas/fields"
 import { homeQueries } from "../queries"
 import { CategoryTiles } from "./category-tiles"
 import { DealershipRow } from "./dealership-row"
-import { HeroSearch } from "./hero-search"
+import { HomeHero } from "./home-hero"
 import { HomeRail } from "./home-rail"
 import { NearYouRail } from "./near-you-rail"
 import { PostBand } from "./post-band"
-import { QuickLinks } from "./quick-links"
 import { ServicesBand } from "./services-band"
 
-// Search first (A4), then the banner, the categories and the rails. A rail or band with nothing to show leaves the page.
+// The banner leads, the search card overlaps its lower edge (owner decision, see Deviations 6.1 hero), then the categories and the rails. A rail or band with nothing to show leaves the page.
 export function HomePage({
   searchCity,
   city,
@@ -26,15 +25,8 @@ export function HomePage({
 }) {
   const { t } = useT()
   return (
-    <div className="flex flex-col gap-12 py-12">
-      <section className="flex flex-col gap-3">
-        <h1 className="mb-1 text-page font-semibold md:text-hero">
-          {t("home.title")}
-        </h1>
-        <HeroSearch city={searchCity} />
-        <QuickLinks />
-      </section>
-      <BannerSlot placement="home_top" />
+    <div className="flex flex-col gap-12 pt-4 pb-12 md:pt-6">
+      <HomeHero searchCity={searchCity} />
       <CategoryTiles />
       <HomeRail
         title={t("home.featured")}

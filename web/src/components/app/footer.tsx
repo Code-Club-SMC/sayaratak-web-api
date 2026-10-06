@@ -7,6 +7,7 @@ import { toWhatsappUrl } from "@/lib/phone"
 import { siteQuery } from "@/features/pages/queries"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
+import { BrandIcon } from "./brand-icon"
 import { LanguageSwitcher } from "./language-switcher"
 import { ShellLink } from "./shell-link"
 
@@ -86,8 +87,9 @@ export function Footer() {
                 {contact.whatsapp && (
                   <a
                     href={toWhatsappUrl(contact.whatsapp)}
-                    className="inline-flex min-h-11 items-center rounded-lg md:min-h-10"
+                    className="inline-flex min-h-11 items-center gap-2 rounded-lg md:min-h-10"
                   >
+                    <BrandIcon name="whatsapp" className="size-4" />
                     {t("nav.whatsapp")}
                   </a>
                 )}

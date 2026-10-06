@@ -4,8 +4,8 @@ import { taxonomyQuery } from "@/features/listings/queries"
 import { useT } from "@/lib/i18n/use-t"
 import type { VehicleType } from "@/schemas/listing"
 import { Input } from "@/components/ui/input"
-import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select"
 import { FormField } from "./form-field"
+import { SelectInput } from "./select-input"
 
 export type MakeModelValue = {
   makeId: string | null
@@ -67,12 +67,15 @@ export function MakeModelFields({
         error={makeIsOther ? undefined : makeError}
       >
         {(control) => (
-          <NativeSelect
+          <SelectInput
             {...control}
-            className="w-full"
             value={makeIsOther ? OTHER : (value.makeId ?? "")}
-            onChange={(e) => {
-              const v = e.target.value
+            placeholder={t("form.select_make")}
+            options={[
+              ...makes.map((m) => ({ value: m.id, label: m.name[locale] })),
+              ...(search ? [] : [{ value: OTHER, label: t("form.other") }]),
+            ]}
+            onChange={(v) =>
               onChange(
                 v === OTHER
                   ? {
@@ -88,22 +91,8 @@ export function MakeModelFields({
                       modelOther: null,
                     }
               )
-            }}
-          >
-            <NativeSelectOption value="">
-              {t("form.select_make")}
-            </NativeSelectOption>
-            {makes.map((m) => (
-              <NativeSelectOption key={m.id} value={m.id}>
-                {m.name[locale]}
-              </NativeSelectOption>
-            ))}
-            {!search && (
-              <NativeSelectOption value={OTHER}>
-                {t("form.other")}
-              </NativeSelectOption>
-            )}
-          </NativeSelect>
+            }
+          />
         )}
       </FormField>
       {makeIsOther && text(t("form.make_name"), "makeOther", makeError)}
@@ -114,34 +103,23 @@ export function MakeModelFields({
           error={modelIsOther ? undefined : modelError}
         >
           {(control) => (
-            <NativeSelect
+            <SelectInput
               {...control}
-              className="w-full"
               disabled={!value.makeId}
               value={modelIsOther ? OTHER : (value.modelId ?? "")}
-              onChange={(e) => {
-                const v = e.target.value
+              placeholder={t("form.select_model")}
+              options={[
+                ...models.map((m) => ({ value: m.id, label: m.name[locale] })),
+                ...(search ? [] : [{ value: OTHER, label: t("form.other") }]),
+              ]}
+              onChange={(v) =>
                 onChange(
                   v === OTHER
                     ? { ...value, modelId: null, modelOther: "" }
                     : { ...value, modelId: v || null, modelOther: null }
                 )
-              }}
-            >
-              <NativeSelectOption value="">
-                {t("form.select_model")}
-              </NativeSelectOption>
-              {models.map((m) => (
-                <NativeSelectOption key={m.id} value={m.id}>
-                  {m.name[locale]}
-                </NativeSelectOption>
-              ))}
-              {!search && (
-                <NativeSelectOption value={OTHER}>
-                  {t("form.other")}
-                </NativeSelectOption>
-              )}
-            </NativeSelect>
+              }
+            />
           )}
         </FormField>
       )}

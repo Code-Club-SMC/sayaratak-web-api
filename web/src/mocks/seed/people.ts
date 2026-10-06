@@ -7,9 +7,11 @@ import { businessMedia, businessPhoto } from "./photos"
 import {
   DAY,
   ago,
+  bilingualName,
   chance,
   int,
   jitter,
+  joinPairs,
   pick,
   ratingFrom,
   roundTo,
@@ -188,10 +190,10 @@ export function seedPeople(taxonomy: Taxonomy, empty: boolean) {
         id: `d-${i + 1}`,
         slug: slugify(en),
         ownerId: ownerRow?.id ?? "u-dealer",
-        name: demo ? en : ar,
+        name: { ar, en },
         logoUrl: businessPhoto(i, 320),
         coverUrl: businessPhoto(i + 1, 1280),
-        description: dealerDesc.slice(0, int(2, 3)).join(" "),
+        description: joinPairs(dealerDesc, int(2, 3)),
         ...where(cityId),
         phones: demo
           ? ["+249912345602"]
@@ -218,10 +220,10 @@ export function seedPeople(taxonomy: Taxonomy, empty: boolean) {
         id: `w-${i + 1}`,
         slug: slugify(en),
         ownerId: ownerRow?.id ?? "u-workshop",
-        name: demo ? en : ar,
+        name: { ar, en },
         logoUrl: businessPhoto(i + 2, 320),
         coverUrl: businessPhoto(i + 3, 1280),
-        description: workshopDesc.slice(0, int(2, 3)).join(" "),
+        description: joinPairs(workshopDesc, int(2, 3)),
         ...where(demo ? "omdurman" : pick(cities).id),
         phone: phoneNo,
         whatsapp: demo || chance(0.7) ? phoneNo : null,
@@ -259,9 +261,9 @@ export function seedPeople(taxonomy: Taxonomy, empty: boolean) {
           ? "yousif-ibrahim"
           : `${slugify(ownerRow?.id ?? "m")}-${i + 1}`,
         ownerId: ownerRow?.id ?? "u-mechanic",
-        name: ownerRow?.fullName ?? "",
+        name: bilingualName(ownerRow?.fullName ?? ""),
         photoUrl: businessPhoto(i + 4, 320),
-        bio: mechanicBio.slice(0, int(1, 3)).join(" "),
+        bio: joinPairs(mechanicBio, int(1, 3)),
         cityId,
         servedCityIds: [
           ...new Set([

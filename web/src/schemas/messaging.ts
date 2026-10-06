@@ -6,7 +6,7 @@ export const threadSchema = z.object({
   id: idSchema,
   subjectType: z.enum(["listing", "dealership", "workshop", "mechanic"]),
   subjectId: idSchema,
-  subjectTitle: z.string(),
+  subjectTitle: bilingualSchema,
   subjectImage: z.string().optional(),
   participants: z.array(
     z.object({

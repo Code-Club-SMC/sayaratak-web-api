@@ -197,12 +197,25 @@ describe("provider cards", () => {
     })
     await renderShell(withNow(<DealershipCard dealership={d} />))
     expect(
-      screen.getByRole("link", { name: d.name }).getAttribute("href")
+      screen.getByRole("link", { name: d.name.en }).getAttribute("href")
     ).toBe(`/en/dealerships/${d.slug}`)
     expect(screen.getByText("Open now")).toBeTruthy()
     const city = db.taxonomy.cities.find((c) => c.id === d.cityId)!
     expect(await screen.findByText(city.name.en)).toBeTruthy()
   })
+
+  it.each(["en", "ar"] as const)(
+    "shows the business name and description in %s",
+    async (locale) => {
+      const d = dealershipSchema.parse({
+        ...db.dealerships[1],
+        inventoryCount: 0,
+      })
+      await renderShell(withNow(<DealershipCard dealership={d} />), { locale })
+      expect(screen.getByRole("link", { name: d.name[locale] })).toBeTruthy()
+      expect(screen.getByText(d.description[locale])).toBeTruthy()
+    }
+  )
 
   it("shows availability, not hours, for a mechanic", async () => {
     const m = mechanicSchema.parse({ ...db.mechanics[0], available: false })

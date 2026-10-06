@@ -272,7 +272,7 @@ describe("plan step and finish", () => {
       () => expect(router.state.location.href).toBe("/en/dealer?welcome=1"),
       { timeout: 12_000 }
     )
-    const made = db.dealerships.find((d) => d.name === "Desert Motors")!
+    const made = db.dealerships.find((d) => d.name.en === "Desert Motors")!
     expect(made).toMatchObject({
       status: "active",
       verified: false,
@@ -283,9 +283,9 @@ describe("plan step and finish", () => {
     expect(owner().role).toBe("dealership")
     expect(await planOnFile()).toBe("plan-dealer-starter")
     const listed = await (await fetch("/api/dealerships?q=Desert")).json()
-    expect(listed.items.map((d: { name: string }) => d.name)).toContain(
-      "Desert Motors"
-    )
+    expect(
+      listed.items.map((d: { name: { en: string } }) => d.name.en)
+    ).toContain("Desert Motors")
   })
 
   it("keeps a chosen paid plan in the draft and still starts on the free plan", async () => {

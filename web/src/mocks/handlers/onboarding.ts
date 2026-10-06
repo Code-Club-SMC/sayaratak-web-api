@@ -4,7 +4,7 @@ import { defaultWeeklyHours } from "@/lib/hours"
 import { geoSchema, phoneSchema, weeklyHoursSchema } from "@/schemas/fields"
 import { onboardingInputSchema } from "@/schemas/inputs"
 import { interestSchema, userSchema } from "@/schemas/user"
-import { DAY, ratingFrom, slugify } from "@/mocks/seed/util"
+import { DAY, both, ratingFrom, slugify } from "@/mocks/seed/util"
 
 import { db, newId } from "../db"
 import { needUser, route } from "../http"
@@ -37,7 +37,7 @@ route("POST", "/onboarding/complete", async (c) => {
   const base = {
     ownerId: user.id,
     slug: `${slugify(name) || "business"}-${user.id.slice(-4)}`,
-    name,
+    name: both(name),
     cityId: city,
     createdAt: nowIso(),
     rating: ratingFrom([]),
@@ -58,7 +58,7 @@ route("POST", "/onboarding/complete", async (c) => {
       id: newId("d"),
       logoUrl: image("logoId"),
       coverUrl: image("coverId"),
-      description: text("description"),
+      description: both(text("description")),
       phones: phones?.length ? phones : [phone],
       whatsapp,
       inventoryCount: 0,
@@ -72,7 +72,7 @@ route("POST", "/onboarding/complete", async (c) => {
       id: newId("w"),
       logoUrl: image("logoId"),
       coverUrl: image("coverId"),
-      description: text("description"),
+      description: both(text("description")),
       phone,
       whatsapp,
       images: [],
@@ -91,7 +91,7 @@ route("POST", "/onboarding/complete", async (c) => {
       ...base,
       id: newId("m"),
       photoUrl: image("photoId"),
-      bio: text("bio"),
+      bio: both(text("bio")),
       servedCityIds: [
         ...new Set([
           city,

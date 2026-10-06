@@ -15,7 +15,11 @@ export function setupItems(
   if ("photoUrl" in b)
     return [
       item("dashboard.setup_photo", Boolean(b.photoUrl), "/mechanic/profile"),
-      item("dashboard.setup_bio", Boolean(b.bio), "/mechanic/profile"),
+      item(
+        "dashboard.setup_bio",
+        Boolean(b.bio.ar || b.bio.en),
+        "/mechanic/profile"
+      ),
       item(
         "dashboard.setup_specializations",
         b.specializationIds.length > 0,
@@ -34,7 +38,7 @@ export function setupItems(
       item("dashboard.setup_logo", Boolean(b.logoUrl), "/workshop/profile"),
       item(
         "dashboard.setup_description",
-        Boolean(b.description),
+        Boolean(b.description.ar || b.description.en),
         "/workshop/profile"
       ),
       item("dashboard.setup_hours", hours, "/workshop/profile"),
@@ -51,7 +55,7 @@ export function setupItems(
     item("dashboard.setup_cover", Boolean(b.coverUrl), "/dealer/profile"),
     item(
       "dashboard.setup_description",
-      Boolean(b.description),
+      Boolean(b.description.ar || b.description.en),
       "/dealer/profile"
     ),
     item("dashboard.setup_hours", hours, "/dealer/profile"),

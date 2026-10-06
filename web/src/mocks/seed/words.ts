@@ -26,6 +26,43 @@ export const firstNames = [
   "نجلاء",
   "سارة",
 ]
+// Arabic name part to its English spelling.
+export const nameEn: Record<string, string> = {
+  محمد: "Mohamed",
+  أحمد: "Ahmed",
+  عمر: "Omar",
+  خالد: "Khalid",
+  إبراهيم: "Ibrahim",
+  يوسف: "Yousif",
+  عثمان: "Osman",
+  الطيب: "Al Tayeb",
+  مصطفى: "Mustafa",
+  عبدالله: "Abdullah",
+  علي: "Ali",
+  حسن: "Hassan",
+  ياسر: "Yasir",
+  هشام: "Hisham",
+  صلاح: "Salah",
+  مجدي: "Magdi",
+  عادل: "Adil",
+  فيصل: "Faisal",
+  طارق: "Tariq",
+  أسامة: "Osama",
+  فاطمة: "Fatima",
+  آمنة: "Amna",
+  مها: "Maha",
+  نجلاء: "Najla",
+  سارة: "Sara",
+  بشير: "Bashir",
+  عبدالرحمن: "Abdelrahman",
+  إدريس: "Idris",
+  حامد: "Hamid",
+  النور: "Al Nour",
+  آدم: "Adam",
+  موسى: "Musa",
+  سليمان: "Suleiman",
+  الزين: "Al Zein",
+}
 export const familyNames = [
   "حسن",
   "إبراهيم",
@@ -104,9 +141,17 @@ export const descRentOpen = [
   "{make} {model} {year} للإيجار بحالة ممتازة.",
   "إيجار {make} {model} {year} مع صيانة دورية.",
 ]
+export const descRentOpenEn = [
+  "{make} {model} {year} for rent in excellent condition.",
+  "{make} {model} {year} for rent with regular maintenance.",
+]
 export const descPartOpen = [
   "{part} جديد ومضمون.",
   "{part} بحالة ممتازة ومطابق للمواصفات.",
+]
+export const descPartOpenEn = [
+  "{part}, new and guaranteed.",
+  "{part} in excellent condition, matches the specs.",
 ]
 export const descClose = [
   "للتواصل اتصال أو واتساب.",
@@ -172,18 +217,45 @@ export const providerLines = [
   "نفحصها ونخبرك بالسعر قبل العمل.",
 ]
 
-export const dealerDesc = [
-  "معرض متخصص في بيع وشراء السيارات الجديدة والمستعملة.",
-  "نوفر فحصاً شاملاً وضماناً على جميع السيارات المعروضة.",
-  "خبرة أكثر من عشر سنوات في سوق السيارات.",
+export const dealerDesc: [string, string][] = [
+  [
+    "معرض متخصص في بيع وشراء السيارات الجديدة والمستعملة.",
+    "A showroom specialising in buying and selling new and used cars.",
+  ],
+  [
+    "نوفر فحصاً شاملاً وضماناً على جميع السيارات المعروضة.",
+    "We provide a full inspection and a warranty on every car on display.",
+  ],
+  [
+    "خبرة أكثر من عشر سنوات في سوق السيارات.",
+    "More than ten years of experience in the car market.",
+  ],
 ]
-export const workshopDesc = [
-  "ورشة متكاملة للصيانة الدورية وإصلاح الأعطال.",
-  "فنيون مدربون وقطع غيار أصلية بأسعار واضحة.",
-  "نقدم فحصاً مجانياً قبل أي إصلاح.",
+export const workshopDesc: [string, string][] = [
+  [
+    "ورشة متكاملة للصيانة الدورية وإصلاح الأعطال.",
+    "A full workshop for routine service and fault repairs.",
+  ],
+  [
+    "فنيون مدربون وقطع غيار أصلية بأسعار واضحة.",
+    "Trained technicians and genuine parts at clear prices.",
+  ],
+  [
+    "نقدم فحصاً مجانياً قبل أي إصلاح.",
+    "We offer a free inspection before any repair.",
+  ],
 ]
-export const mechanicBio = [
-  "ميكانيكي بخبرة طويلة في صيانة السيارات اليابانية والكورية.",
-  "أصل إلى موقعك وأصلح العطل في مكانه.",
-  "متخصص في الفحص بالكمبيوتر وإصلاح الكهرباء.",
+export const mechanicBio: [string, string][] = [
+  [
+    "ميكانيكي بخبرة طويلة في صيانة السيارات اليابانية والكورية.",
+    "Mechanic with long experience servicing Japanese and Korean cars.",
+  ],
+  [
+    "أصل إلى موقعك وأصلح العطل في مكانه.",
+    "I come to your location and fix the fault on the spot.",
+  ],
+  [
+    "متخصص في الفحص بالكمبيوتر وإصلاح الكهرباء.",
+    "Specialised in computer diagnostics and electrical repairs.",
+  ],
 ]

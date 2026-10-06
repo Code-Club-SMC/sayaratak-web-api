@@ -56,7 +56,7 @@ describe("setupItems", () => {
     const done = {
       ...shop,
       logoUrl: "x",
-      description: "x",
+      description: { ar: "x", en: "x" },
       hours: shop.hours.map((h) => ({ ...h, closed: false })),
       services: Array.from({ length: 3 }, (_, i) => ({
         id: `s${i}`,
@@ -76,7 +76,7 @@ describe("SetupChecklist", () => {
     const shop = workshop()
     Object.assign(shop, {
       logoUrl: "",
-      description: "x",
+      description: { ar: "x", en: "x" },
       services: [],
       images: [],
     })

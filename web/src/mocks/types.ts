@@ -34,7 +34,7 @@ export type ThreadRow = {
   id: string
   subjectType: "listing" | "dealership" | "workshop" | "mechanic"
   subjectId: string
-  subjectTitle: string
+  subjectTitle: Bilingual
   subjectImage?: string
   participantIds: string[]
 }

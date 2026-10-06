@@ -2,6 +2,7 @@ import { okSchema } from "@/schemas/api"
 import { messageInputSchema, threadInputSchema } from "@/schemas/inputs"
 import { messageSchema, threadSchema, type Thread } from "@/schemas/messaging"
 import { pageOf } from "@/schemas/fields"
+import { both } from "@/mocks/seed/util"
 
 import { db, find, insert, newId, paginate } from "../db"
 import { fail, needUser, pageParams, route } from "../http"
@@ -95,7 +96,9 @@ route("POST", "/threads", async (c) => {
       id: newId("t"),
       subjectType: input.subjectType,
       subjectId: input.subjectId,
-      subjectTitle: listing?.title ?? business?.name ?? "",
+      subjectTitle: listing
+        ? both(listing.title)
+        : (business?.name ?? both("")),
       subjectImage: listing?.media[0]?.url,
       participantIds: [user.id, ownerId],
     })

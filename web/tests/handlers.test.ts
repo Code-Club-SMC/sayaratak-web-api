@@ -115,7 +115,7 @@ describe("auth", () => {
       },
     })
     expect(done.body).toMatchObject({ role: "workshop", onboardingDone: true })
-    expect(db.workshops.some((w) => w.name === "Test Garage")).toBe(true)
+    expect(db.workshops.some((w) => w.name.en === "Test Garage")).toBe(true)
   })
 })
 

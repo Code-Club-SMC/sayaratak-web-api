@@ -1,3 +1,4 @@
+import type { Bilingual } from "@/schemas/fields"
 import type { Message } from "@/schemas/messaging"
 import type { Review } from "@/schemas/review"
 import type { Dealership, Mechanic, Workshop } from "@/schemas/profile"
@@ -10,7 +11,7 @@ import type {
   ThreadRow,
   UserRow,
 } from "../types"
-import { DAY, HOUR, ago, chance, int, pick, ratingFrom } from "./util"
+import { DAY, HOUR, ago, both, chance, int, pick, ratingFrom } from "./util"
 import {
   buyerLines,
   customerLines,
@@ -28,7 +29,7 @@ const isPlain = (u: UserRow) => /^u-\d+$/.test(u.id)
 type Business = {
   id: string
   ownerId: string
-  name: string
+  name: Bilingual
   type: "dealership" | "workshop" | "mechanic"
   photo: string
 }
@@ -122,13 +123,13 @@ export function seedThreads(
       ? {
           subjectType: "listing" as const,
           subjectId: listing.id,
-          subjectTitle: listing.title,
+          subjectTitle: both(listing.title),
           subjectImage: listing.media[0]?.url,
         }
       : {
           subjectType: biz?.type ?? ("mechanic" as const),
           subjectId: biz?.id ?? "m-1",
-          subjectTitle: biz?.name ?? "",
+          subjectTitle: biz?.name ?? both(""),
           subjectImage: biz?.photo,
         }
     const id = `t-${i + 1}`

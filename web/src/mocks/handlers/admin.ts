@@ -16,6 +16,7 @@ import {
 import { listingSchema } from "@/schemas/listing"
 import { pageOf } from "@/schemas/fields"
 import { userSchema } from "@/schemas/user"
+import { both } from "@/mocks/seed/util"
 
 import { db, find, insert, newId } from "../db"
 import { fail, needRole, route, type Ctx } from "../http"
@@ -29,6 +30,7 @@ import {
   nowIso,
   notify,
   rangeDays,
+  textOf,
 } from "../lib"
 import { matches } from "../search"
 import type { ListingRow } from "../types"
@@ -106,7 +108,7 @@ route("GET", "/admin/activity", (c) => {
       .map((l) => ({
         id: l.id,
         type: "listing_submitted" as const,
-        label: l.title,
+        label: both(l.title),
         href: `/admin/moderation?id=${l.id}`,
         createdAt: l.createdAt,
       })),
@@ -122,14 +124,14 @@ route("GET", "/admin/activity", (c) => {
     ...db.payments.map((p) => ({
       id: p.id,
       type: "payment_submitted" as const,
-      label: p.reference,
+      label: both(p.reference),
       href: `/admin/payments?id=${p.id}`,
       createdAt: p.createdAt,
     })),
     ...db.reports.map((r) => ({
       id: r.id,
       type: "report_filed" as const,
-      label: find(db.listings, r.listingId)?.title ?? r.reason,
+      label: both(find(db.listings, r.listingId)?.title ?? r.reason),
       href: `/admin/reports?id=${r.id}`,
       createdAt: r.createdAt,
     })),
@@ -160,7 +162,7 @@ route("GET", "/admin/search", (c) => {
       .slice(0, 5)
       .map((l) => ({
         id: l.id,
-        label: l.title,
+        label: both(l.title),
         detail: l.moderation,
         href: `/admin/listings?id=${l.id}`,
       })),
@@ -169,17 +171,19 @@ route("GET", "/admin/search", (c) => {
       .slice(0, 5)
       .map((u) => ({
         id: u.id,
-        label: u.fullName,
+        label: both(u.fullName),
         detail: u.phone ?? u.email ?? null,
         href: `/admin/users?id=${u.id}`,
       })),
-    businesses: businesses.filter((b) => has(b.label)).slice(0, 5),
+    businesses: businesses
+      .filter((b) => has(b.label.ar, b.label.en))
+      .slice(0, 5),
     payments: db.payments
       .filter((p) => has(p.reference, p.payerName))
       .slice(0, 5)
       .map((p) => ({
         id: p.id,
-        label: p.reference,
+        label: both(p.reference),
         detail: p.payerName,
         href: `/admin/payments?id=${p.id}`,
       })),
@@ -274,7 +278,7 @@ route("GET", "/admin/listings", (c) => {
     .filter((l) => !c.query.get("status") || l.status === c.query.get("status"))
     .sort(byNewest)
   return pageOf(listingSchema).parse(
-    listPage(c, rows, (l) => `${l.title} ${l.id} ${l.owner.name}`)
+    listPage(c, rows, (l) => `${l.title} ${l.id} ${textOf(l.owner.name)}`)
   )
 })
 route("PATCH", "/admin/listings/:id", async (c) => {
@@ -320,7 +324,9 @@ route("GET", "/admin/businesses", (c) => {
   const rows = allBusinesses()
     .filter((b) => !c.query.get("type") || b.type === c.query.get("type"))
     .sort(byNewest)
-  return pageOf(adminBusinessSchema).parse(listPage(c, rows, (b) => b.name))
+  return pageOf(adminBusinessSchema).parse(
+    listPage(c, rows, (b) => textOf(b.name))
+  )
 })
 route("PATCH", "/admin/businesses/:id", async (c) => {
   admin(c)

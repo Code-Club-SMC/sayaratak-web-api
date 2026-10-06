@@ -177,7 +177,7 @@ describe("mechanic contact step and finish", () => {
       () => expect(router.state.location.href).toBe("/en/mechanic?welcome=1"),
       { timeout: 12_000 }
     )
-    const made = db.mechanics.find((m) => m.name === "Hassan Ali")!
+    const made = db.mechanics.find((m) => m.name.en === "Hassan Ali")!
     expect(made).toMatchObject({
       status: "active",
       verified: false,
@@ -185,15 +185,15 @@ describe("mechanic contact step and finish", () => {
       servedCityIds: ["khartoum", "omdurman"],
       yearsOfExperience: 8,
       specializationIds: ["engine", "ac"],
-      bio: about.bio,
+      bio: { ar: about.bio, en: about.bio },
       phone: "+249912345678",
     })
     expect(owner().role).toBe("mechanic")
     const sub = await (await fetch("/api/me/subscription")).json()
     expect(sub.subscription.planId).toBe("plan-mechanic-basic")
     const listed = await (await fetch("/api/mechanics?q=Hassan")).json()
-    expect(listed.items.map((m: { name: string }) => m.name)).toContain(
-      "Hassan Ali"
-    )
+    expect(
+      listed.items.map((m: { name: { en: string } }) => m.name.en)
+    ).toContain("Hassan Ali")
   })
 })

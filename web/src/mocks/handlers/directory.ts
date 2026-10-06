@@ -18,7 +18,8 @@ import type { z } from "zod"
 
 import { db, insert, newId, paginate } from "../db"
 import { fail, needRole, pageParams, route } from "../http"
-import { byNewest, businessOf } from "../lib"
+import { both } from "@/mocks/seed/util"
+import { byNewest, businessOf, textOf } from "../lib"
 import { haversineKm } from "../search"
 
 const inventory = (ownerId: string, dealerId: string) =>
@@ -48,7 +49,7 @@ route("GET", "/dealerships", (c) => {
   }
   const rows = db.dealerships
     .filter((d) => d.status === "active")
-    .filter((d) => !q || d.name.toLowerCase().includes(q))
+    .filter((d) => !q || textOf(d.name).includes(q))
     .filter((d) => !c.query.get("city") || d.cityId === c.query.get("city"))
     .filter((d) => c.query.get("verified") !== "true" || d.verified)
     .sort(sorts[sort ?? "rating"] ?? rating)
@@ -81,7 +82,7 @@ route("GET", "/workshops", (c) => {
   }
   const rows = db.workshops
     .filter((w) => w.status === "active")
-    .filter((w) => !q || w.name.toLowerCase().includes(q))
+    .filter((w) => !q || textOf(w.name).includes(q))
     .filter((w) => !c.query.get("city") || w.cityId === c.query.get("city"))
     .filter((w) => !service || w.services.some((s) => s.templateId === service))
     .filter((w) => c.query.get("verified") !== "true" || w.verified)
@@ -110,7 +111,7 @@ route("GET", "/mechanics", (c) => {
   }
   const rows = db.mechanics
     .filter((m) => m.status === "active")
-    .filter((m) => !q || m.name.toLowerCase().includes(q))
+    .filter((m) => !q || textOf(m.name).includes(q))
     .filter(
       (m) =>
         !c.query.get("city") ||
@@ -162,6 +163,9 @@ route("PATCH", "/me/business", async (c) => {
     slug: _sl,
     ...allowed
   } = patch
+  // The form posts one string per field; it is stored in both languages (stub for translate-on-save).
+  for (const key of ["name", "description", "bio"])
+    if (typeof allowed[key] === "string") allowed[key] = both(allowed[key])
   Object.assign(biz.row, allowed)
   const schema =
     biz.type === "dealership"

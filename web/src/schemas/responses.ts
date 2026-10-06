@@ -71,7 +71,7 @@ export type AdminStats = z.infer<typeof adminStatsSchema>
 export const mapPointSchema = z.object({
   id: idSchema,
   kind: z.enum(["vehicle", "dealership", "workshop", "mechanic"]),
-  title: z.string(),
+  title: bilingualSchema,
   slug: z.string(),
   location: geoSchema,
   price: z.number().int().nullable(),
@@ -123,7 +123,7 @@ export const activityItemSchema = z.object({
     "payment_submitted",
     "report_filed",
   ]),
-  label: z.string(), // listing title, business name or payment reference
+  label: bilingualSchema, // listing title, business name or payment reference
   href: z.string(), // admin path of the matching screen with the item selected
   createdAt: z.string(),
 })
@@ -131,7 +131,7 @@ export const activitySchema = z.object({ items: z.array(activityItemSchema) }) /
 
 const searchHit = z.object({
   id: idSchema,
-  label: z.string(),
+  label: bilingualSchema,
   detail: z.string().nullable(),
   href: z.string(),
 })

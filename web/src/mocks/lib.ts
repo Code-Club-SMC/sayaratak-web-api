@@ -5,6 +5,8 @@ import { fail, pageParams, type Ctx } from "./http"
 import type { Promotion } from "@/schemas/billing"
 import type { ListingRow, UserRow } from "./types"
 
+// Both languages as one lowercase string, for `q` matching.
+export const textOf = (b: Bilingual) => `${b.ar} ${b.en}`.toLowerCase()
 export const DAY_MS = 86_400_000
 export const nowIso = () => new Date().toISOString()
 export const dayKey = (d: Date | number = new Date()) =>

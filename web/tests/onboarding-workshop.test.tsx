@@ -202,7 +202,7 @@ describe("workshop plan step and finish", () => {
       () => expect(router.state.location.href).toBe("/en/workshop?welcome=1"),
       { timeout: 12_000 }
     )
-    const made = db.workshops.find((w) => w.name === "Nile Garage")!
+    const made = db.workshops.find((w) => w.name.en === "Nile Garage")!
     expect(made).toMatchObject({
       status: "active",
       verified: false,
@@ -215,8 +215,8 @@ describe("workshop plan step and finish", () => {
     expect(sub.subscription.planId).toBe("plan-workshop-basic")
     expect(sub.subscription.price).toBe(0)
     const listed = await (await fetch("/api/workshops?q=Nile")).json()
-    expect(listed.items.map((w: { name: string }) => w.name)).toContain(
-      "Nile Garage"
-    )
+    expect(
+      listed.items.map((w: { name: { en: string } }) => w.name.en)
+    ).toContain("Nile Garage")
   })
 })

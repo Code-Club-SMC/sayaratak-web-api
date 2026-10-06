@@ -1,5 +1,6 @@
 import { searchParamsSchema } from "@/features/search/schemas"
 import { mapResponseSchema, type MapPoint } from "@/schemas/responses"
+import { both } from "@/mocks/seed/util"
 
 import { db } from "../db"
 import { queryObject, route } from "../http"
@@ -41,7 +42,7 @@ route("GET", "/map", (c) => {
         points.push({
           id: l.id,
           kind: "vehicle",
-          title: l.title,
+          title: both(l.title),
           slug: l.slug,
           location: own
             ? l.location

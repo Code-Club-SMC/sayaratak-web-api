@@ -1,21 +1,28 @@
 import { z } from "zod"
 
-import { geoSchema, idSchema, phoneSchema, weeklyHoursSchema } from "./fields"
+import {
+  bilingualSchema,
+  geoSchema,
+  idSchema,
+  phoneSchema,
+  weeklyHoursSchema,
+} from "./fields"
 import { mediaSchema } from "./listing"
 import { ratingSchema } from "./review"
 
 export const profileStatusSchema = z.enum(["active", "suspended"])
 export type ProfileStatus = z.infer<typeof profileStatusSchema>
 
+// Name, description and bio are stored in both languages: the owner types one, the server translates it on save, and each visitor reads their own.
 // A map pin is optional when a business signs up, and so is a WhatsApp number.
 export const dealershipSchema = z.object({
   id: idSchema,
   slug: z.string(),
   ownerId: idSchema,
-  name: z.string(),
+  name: bilingualSchema,
   logoUrl: z.string(),
   coverUrl: z.string(),
-  description: z.string(),
+  description: bilingualSchema,
   cityId: z.string(),
   districtId: z.string(),
   address: z.string(),
@@ -35,10 +42,10 @@ export const workshopSchema = z.object({
   id: idSchema,
   slug: z.string(),
   ownerId: idSchema,
-  name: z.string(),
+  name: bilingualSchema,
   logoUrl: z.string(),
   coverUrl: z.string().optional(),
-  description: z.string(),
+  description: bilingualSchema,
   cityId: z.string(),
   districtId: z.string(),
   address: z.string(),
@@ -68,9 +75,9 @@ export const mechanicSchema = z.object({
   id: idSchema,
   slug: z.string(),
   ownerId: idSchema,
-  name: z.string(),
+  name: bilingualSchema,
   photoUrl: z.string(),
-  bio: z.string(),
+  bio: bilingualSchema,
   cityId: z.string(),
   servedCityIds: z.array(z.string()),
   yearsOfExperience: z.number().int(),

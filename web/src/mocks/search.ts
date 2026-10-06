@@ -31,7 +31,7 @@ const names = (id: string | null) => {
   return m ? `${m.name.ar} ${m.name.en}` : ""
 }
 const text = (l: ListingRow) =>
-  `${l.title} ${l.description} ${names(l.makeId)} ${names(l.modelId)}`.toLowerCase()
+  `${l.title} ${l.description.ar} ${l.description.en} ${names(l.makeId)} ${names(l.modelId)}`.toLowerCase()
 
 // Anyone sees an approved listing unless its owner is banned or its business is suspended.
 export const isPublic = (l: ListingRow) =>

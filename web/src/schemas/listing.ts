@@ -1,6 +1,12 @@
 import { z } from "zod"
 
-import { geoSchema, idSchema, pageOf, phoneSchema } from "./fields"
+import {
+  bilingualSchema,
+  geoSchema,
+  idSchema,
+  pageOf,
+  phoneSchema,
+} from "./fields"
 
 export const vehicleTypeSchema = z.enum([
   "car",
@@ -65,7 +71,8 @@ export const listingSchema = z.object({
   intent: intentSchema,
   vehicleType: vehicleTypeSchema.nullable(),
   title: z.string(),
-  description: z.string(),
+  // Typed in one language, stored in both (the server translates on save).
+  description: bilingualSchema,
   price: z.number().int(),
   negotiable: z.boolean(),
   rentPeriod: z.enum(["day", "week", "month"]).nullable(),
@@ -100,7 +107,7 @@ export const listingSchema = z.object({
   owner: z.object({
     id: idSchema,
     type: z.enum(["user", "dealership"]),
-    name: z.string(),
+    name: bilingualSchema,
     avatarUrl: z.string().nullable(),
     verified: z.boolean(),
     memberSince: z.string(),

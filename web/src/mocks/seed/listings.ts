@@ -22,6 +22,7 @@ import {
   HOUR,
   ago,
   ahead,
+  bilingualName,
   chance,
   int,
   jitter,
@@ -35,7 +36,9 @@ import {
   descOpen,
   descOpenEn,
   descPartOpen,
+  descPartOpenEn,
   descRentOpen,
+  descRentOpenEn,
   traits,
 } from "./words"
 
@@ -131,7 +134,7 @@ export function seedListings(ctx: Ctx) {
     let gear: Transmission | null = null
     let price = 0
     let title = ""
-    let desc = ""
+    let desc = { ar: "", en: "" }
     let partCategoryId: string | null = null
     let partMake: CatalogModel | undefined
     const used = !chance(0.06)
@@ -184,12 +187,13 @@ export function seedListings(ctx: Ctx) {
         lang === "en"
           ? `${item[1]} for ${partMake.en}`
           : `${item[0]} لـ ${partMake.ar}`
-      desc =
-        (lang === "en"
-          ? `${item[1]} in good condition.`
-          : fill(pick(descPartOpen), { part: item[0] })) +
-        " " +
-        (lang === "en" ? pick(descCloseEn) : pick(descClose))
+      // The same index picks both languages' sentences, so they say the same thing. The draws match the old per-language picks, which keeps the seeded data stable.
+      const open = lang === "ar" ? int(0, descPartOpen.length - 1) : 0
+      const close = int(0, descClose.length - 1)
+      desc = {
+        ar: `${fill(descPartOpen[open] ?? "", { part: item[0] })} ${descClose[close]}`,
+        en: `${fill(descPartOpenEn[open] ?? "", { part: item[1] })} ${descCloseEn[close]}`,
+      }
     }
     const rentPeriod =
       intent === "rent" ? pick(["day", "day", "week", "month"] as const) : null
@@ -199,9 +203,9 @@ export function seedListings(ctx: Ctx) {
         rentPeriod === "day" ? day : rentPeriod === "week" ? day * 6 : day * 22
     }
     if (model && year) {
+      const makeNames = taxonomy.makes.find((m) => m.id === model.makeId)?.name
       const v = {
-        make:
-          taxonomy.makes.find((m) => m.id === model.makeId)?.name[lang] ?? "",
+        make: makeNames?.[lang] ?? "",
         model: lang === "en" ? model.en : model.ar,
         year,
       }
@@ -209,10 +213,13 @@ export function seedListings(ctx: Ctx) {
         lang === "en"
           ? `${fill("{make} {model} {year}", v)} - ${trait[1]}`
           : `${intent === "rent" ? "إيجار " : ""}${fill("{make} {model} {year}", v)} ${trait[0]}`
-      desc =
-        lang === "en"
-          ? `${fill(pick(descOpenEn), v)} ${pick(descCloseEn)}`
-          : `${fill(pick(intent === "rent" ? descRentOpen : descOpen), v)} ${mileage ? `قطعت ${mileage} كم فقط.` : ""} ${pick(descClose)}`
+      const rent = intent === "rent"
+      const open = int(0, (rent ? descRentOpen : descOpen).length - 1)
+      const close = int(0, descClose.length - 1)
+      desc = {
+        ar: `${fill((rent ? descRentOpen : descOpen)[open] ?? "", { ...v, make: makeNames?.ar ?? "", model: model.ar })} ${mileage ? `قطعت ${mileage} كم فقط.` : ""} ${descClose[close]}`,
+        en: `${fill((rent ? descRentOpenEn : descOpenEn)[open] ?? "", { ...v, make: makeNames?.en ?? "", model: model.en })} ${mileage ? `Only ${mileage} km driven.` : ""} ${descCloseEn[close]}`,
+      }
     }
 
     const approved = moderation === "approved"
@@ -264,7 +271,10 @@ export function seedListings(ctx: Ctx) {
       intent,
       vehicleType: type,
       title,
-      description: desc.replace(/\s+/g, " ").trim(),
+      description: {
+        ar: desc.ar.replace(/\s+/g, " ").trim(),
+        en: desc.en.replace(/\s+/g, " ").trim(),
+      },
       price,
       negotiable: chance(0.7),
       rentPeriod,
@@ -309,7 +319,7 @@ export function seedListings(ctx: Ctx) {
         : {
             id: person?.id ?? "u-omar",
             type: "user",
-            name: person?.fullName ?? "",
+            name: bilingualName(person?.fullName ?? ""),
             avatarUrl: null,
             verified: Boolean(person?.verifiedPhone),
             memberSince: person?.createdAt ?? ago(DAY),
@@ -331,7 +341,7 @@ export function seedListings(ctx: Ctx) {
       updatedAt: ago(Math.max(0, created - int(0, 2 * DAY))),
       expiresAt: ahead(30 * DAY - created),
     }
-    if (makeName && !row.description) row.description = makeName.name.ar
+    if (makeName && !row.description.ar) row.description = makeName.name
     if (approved) {
       const age = Math.max(1, created / DAY)
       row.stats = {

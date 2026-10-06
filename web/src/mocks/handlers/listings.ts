@@ -8,6 +8,7 @@ import {
 import { listingPageSchema, listingSchema } from "@/schemas/listing"
 import { taxonomySchema } from "@/schemas/taxonomy"
 import { makeListingSlug, parseListingId } from "@/lib/slug"
+import { bilingualName, both } from "@/mocks/seed/util"
 
 import { db, find, insert, newListingId, paginate, remove } from "../db"
 import {
@@ -130,7 +131,7 @@ route("POST", "/listings", async (c) => {
     intent: input.intent ?? "sale",
     vehicleType: input.vehicleType ?? null,
     title: input.title,
-    description: input.description ?? "",
+    description: both(input.description ?? ""),
     price: input.price,
     negotiable: input.negotiable ?? false,
     rentPeriod: input.rentPeriod ?? null,
@@ -169,7 +170,7 @@ route("POST", "/listings", async (c) => {
       : {
           id: user.id,
           type: "user",
-          name: user.fullName,
+          name: bilingualName(user.fullName),
           avatarUrl: user.avatarUrl ?? null,
           verified: user.verifiedPhone,
           memberSince: user.createdAt,
@@ -200,8 +201,9 @@ route("PATCH", "/listings/:id", async (c) => {
   const { submit, moderation, ...patch } = await c.body(listingPatchSchema)
   if (moderation && user.role !== "admin") throw fail(403, "forbidden")
   if (patch.contact) row.contact = { ...row.contact, ...patch.contact }
-  const { contact: _contact, ...fields } = patch
+  const { contact: _contact, description, ...fields } = patch
   Object.assign(row, fields)
+  if (description !== undefined) row.description = both(description)
   if (patch.title || patch.cityId)
     row.slug = makeListingSlug(row.title, row.cityId, row.id)
   if (moderation) row.moderation = moderation

@@ -168,7 +168,7 @@ describe("OnboardingStepPage", () => {
       expect(router.state.location.href).toBe("/en/dealer?welcome=1")
     )
     expect(db.users.find((u) => u.id === id)?.role).toBe("dealership")
-    expect(db.dealerships.some((d) => d.name === "Desert Motors")).toBe(true)
+    expect(db.dealerships.some((d) => d.name.en === "Desert Motors")).toBe(true)
   })
 
   it("the last required step shows the finish label and finishes", async () => {
@@ -182,7 +182,7 @@ describe("OnboardingStepPage", () => {
     await waitFor(() =>
       expect(router.state.location.pathname).toBe("/en/dealer")
     )
-    expect(db.dealerships.some((d) => d.name === "Finish Co")).toBe(true)
+    expect(db.dealerships.some((d) => d.name.en === "Finish Co")).toBe(true)
   })
 })
 
@@ -225,7 +225,7 @@ describe("redirect target", () => {
       screen.getByRole("button", { name: "Create my dealership" })
     )
     await waitFor(() => expect(router.state.location.href).toBe("/en/post"))
-    expect(db.dealerships.some((d) => d.name === "Finish Co")).toBe(true)
+    expect(db.dealerships.some((d) => d.name.en === "Finish Co")).toBe(true)
   })
 })
 

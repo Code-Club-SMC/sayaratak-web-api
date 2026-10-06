@@ -28,6 +28,20 @@ export type FilterDraft = {
   includeSold: boolean
 }
 
+// The blocks of the filter form. A page that owns some filters (a profile's inventory) shows only the groups it can write to its URL.
+export const filterGroups = [
+  "category",
+  "price",
+  "make",
+  "year",
+  "mileage",
+  "fuel",
+  "condition",
+  "location",
+  "more",
+] as const
+export type FilterGroup = (typeof filterGroups)[number]
+
 export const filterKeys = [
   "type",
   "partCategory",

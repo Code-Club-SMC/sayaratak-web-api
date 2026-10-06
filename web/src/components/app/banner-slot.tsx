@@ -25,6 +25,7 @@ export function BannerSlot({
   if (isPending)
     return delayed ? (
       <Skeleton
+        role="status"
         aria-label={t("nav.loading_advertisement")}
         className={cn(
           "w-full",

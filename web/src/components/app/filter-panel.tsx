@@ -1,4 +1,5 @@
 import { useT } from "@/lib/i18n/use-t"
+import type { FilterGroup } from "@/features/search/filters"
 import type { SearchParams } from "@/features/search/schemas"
 import type { ListingPage } from "@/schemas/listing"
 import { FilterForm } from "./filter-form"
@@ -7,11 +8,13 @@ import { FilterForm } from "./filter-form"
 export function FilterPanel({
   params,
   facets,
+  groups,
   onApply,
   className = "hidden lg:block",
 }: {
   params: SearchParams
   facets?: ListingPage["facets"]
+  groups?: readonly FilterGroup[]
   onApply: (next: SearchParams) => void
   className?: string
 }) {
@@ -25,6 +28,7 @@ export function FilterPanel({
         variant="panel"
         params={params}
         facets={facets}
+        groups={groups}
         onApply={onApply}
       />
     </aside>

@@ -8,23 +8,26 @@ export const resultsHeadingId = "results-heading"
 export function ResultsHeader({
   title,
   total,
+  as: Heading = "h1",
   children,
 }: {
   title: string
   total?: number
+  // A profile tab has its own h1 above, so its results heading is an h2.
+  as?: "h1" | "h2"
   children?: ReactNode
 }) {
   const { t } = useT()
   return (
     <div className="flex flex-wrap items-end justify-between gap-3">
       <div>
-        <h1
+        <Heading
           id={resultsHeadingId}
           tabIndex={-1}
-          className="text-page font-semibold outline-none"
+          className={`${Heading === "h1" ? "text-page" : "text-title"} font-semibold outline-none`}
         >
           {title}
-        </h1>
+        </Heading>
         <p aria-live="polite" className="text-ui text-muted-foreground num">
           {total === undefined
             ? ""

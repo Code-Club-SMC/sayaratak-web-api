@@ -8,7 +8,8 @@ import {
 } from "@/schemas/listing"
 
 // Bad URL values are dropped, never crash the page.
-const optional = <T extends z.ZodTypeAny>(s: T) => s.optional().catch(undefined)
+export const optional = <T extends z.ZodTypeAny>(s: T) =>
+  s.optional().catch(undefined)
 
 export const searchParamsSchema = z.object({
   kind: z.enum(["vehicle", "part"]).default("vehicle").catch("vehicle"),

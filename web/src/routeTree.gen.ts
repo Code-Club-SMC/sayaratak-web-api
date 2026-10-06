@@ -23,6 +23,8 @@ import { Route as LocaleAuthForgotRouteImport } from './routes/$locale/auth/forg
 import { Route as LocaleAuthResetRouteImport } from './routes/$locale/auth/reset'
 import { Route as LocaleOnboardingIndexRouteImport } from './routes/$locale/onboarding/index'
 import { Route as LocaleOnboardingRoleRouteImport } from './routes/$locale/onboarding/role'
+import { Route as LocalePublicDealershipsIndexRouteImport } from './routes/$locale/_public/dealerships/index'
+import { Route as LocalePublicDealershipsSlugRouteImport } from './routes/$locale/_public/dealerships/$slug'
 import { Route as LocalePublicDevGuardedRouteImport } from './routes/$locale/_public/dev.guarded'
 import { Route as LocalePublicDevSharedRouteImport } from './routes/$locale/_public/dev.shared'
 import { Route as LocalePublicListingSlugRouteImport } from './routes/$locale/_public/listing/$slug'
@@ -98,6 +100,18 @@ const LocaleOnboardingRoleRoute = LocaleOnboardingRoleRouteImport.update({
   path: '/onboarding/role',
   getParentRoute: () => LocaleRouteRoute,
 } as any)
+const LocalePublicDealershipsIndexRoute =
+  LocalePublicDealershipsIndexRouteImport.update({
+    id: '/dealerships/',
+    path: '/dealerships/',
+    getParentRoute: () => LocalePublicRouteRoute,
+  } as any)
+const LocalePublicDealershipsSlugRoute =
+  LocalePublicDealershipsSlugRouteImport.update({
+    id: '/dealerships/$slug',
+    path: '/dealerships/$slug',
+    getParentRoute: () => LocalePublicRouteRoute,
+  } as any)
 const LocalePublicDevGuardedRoute = LocalePublicDevGuardedRouteImport.update({
   id: '/dev/guarded',
   path: '/dev/guarded',
@@ -140,10 +154,12 @@ export interface FileRoutesByFullPath {
   '/$locale/': typeof LocalePublicIndexRoute
   '/$locale/auth/': typeof LocaleAuthIndexRoute
   '/$locale/onboarding/': typeof LocaleOnboardingIndexRoute
+  '/$locale/dealerships/$slug': typeof LocalePublicDealershipsSlugRoute
   '/$locale/dev/guarded': typeof LocalePublicDevGuardedRoute
   '/$locale/dev/shared': typeof LocalePublicDevSharedRoute
   '/$locale/listing/$slug': typeof LocalePublicListingSlugRoute
   '/$locale/onboarding/$role/$step': typeof LocaleOnboardingRoleStepRoute
+  '/$locale/dealerships/': typeof LocalePublicDealershipsIndexRoute
   '/$locale/vehicles/$type/$intent/{-$city}': typeof LocalePublicVehiclesTypeIntentChar123CityChar125Route
 }
 export interface FileRoutesByTo {
@@ -159,10 +175,12 @@ export interface FileRoutesByTo {
   '/$locale/onboarding/role': typeof LocaleOnboardingRoleRoute
   '/$locale/auth': typeof LocaleAuthIndexRoute
   '/$locale/onboarding': typeof LocaleOnboardingIndexRoute
+  '/$locale/dealerships/$slug': typeof LocalePublicDealershipsSlugRoute
   '/$locale/dev/guarded': typeof LocalePublicDevGuardedRoute
   '/$locale/dev/shared': typeof LocalePublicDevSharedRoute
   '/$locale/listing/$slug': typeof LocalePublicListingSlugRoute
   '/$locale/onboarding/$role/$step': typeof LocaleOnboardingRoleStepRoute
+  '/$locale/dealerships': typeof LocalePublicDealershipsIndexRoute
   '/$locale/vehicles/$type/$intent/{-$city}': typeof LocalePublicVehiclesTypeIntentChar123CityChar125Route
 }
 export interface FileRoutesById {
@@ -181,10 +199,12 @@ export interface FileRoutesById {
   '/$locale/_public/': typeof LocalePublicIndexRoute
   '/$locale/auth/': typeof LocaleAuthIndexRoute
   '/$locale/onboarding/': typeof LocaleOnboardingIndexRoute
+  '/$locale/_public/dealerships/$slug': typeof LocalePublicDealershipsSlugRoute
   '/$locale/_public/dev/guarded': typeof LocalePublicDevGuardedRoute
   '/$locale/_public/dev/shared': typeof LocalePublicDevSharedRoute
   '/$locale/_public/listing/$slug': typeof LocalePublicListingSlugRoute
   '/$locale/onboarding/$role/$step': typeof LocaleOnboardingRoleStepRoute
+  '/$locale/_public/dealerships/': typeof LocalePublicDealershipsIndexRoute
   '/$locale/_public/vehicles/$type/$intent/{-$city}': typeof LocalePublicVehiclesTypeIntentChar123CityChar125Route
 }
 export interface FileRouteTypes {
@@ -203,10 +223,12 @@ export interface FileRouteTypes {
     | '/$locale/'
     | '/$locale/auth/'
     | '/$locale/onboarding/'
+    | '/$locale/dealerships/$slug'
     | '/$locale/dev/guarded'
     | '/$locale/dev/shared'
     | '/$locale/listing/$slug'
     | '/$locale/onboarding/$role/$step'
+    | '/$locale/dealerships/'
     | '/$locale/vehicles/$type/$intent/{-$city}'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -222,10 +244,12 @@ export interface FileRouteTypes {
     | '/$locale/onboarding/role'
     | '/$locale/auth'
     | '/$locale/onboarding'
+    | '/$locale/dealerships/$slug'
     | '/$locale/dev/guarded'
     | '/$locale/dev/shared'
     | '/$locale/listing/$slug'
     | '/$locale/onboarding/$role/$step'
+    | '/$locale/dealerships'
     | '/$locale/vehicles/$type/$intent/{-$city}'
   id:
     | '__root__'
@@ -243,10 +267,12 @@ export interface FileRouteTypes {
     | '/$locale/_public/'
     | '/$locale/auth/'
     | '/$locale/onboarding/'
+    | '/$locale/_public/dealerships/$slug'
     | '/$locale/_public/dev/guarded'
     | '/$locale/_public/dev/shared'
     | '/$locale/_public/listing/$slug'
     | '/$locale/onboarding/$role/$step'
+    | '/$locale/_public/dealerships/'
     | '/$locale/_public/vehicles/$type/$intent/{-$city}'
   fileRoutesById: FileRoutesById
 }
@@ -356,6 +382,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LocaleOnboardingRoleRouteImport
       parentRoute: typeof LocaleRouteRoute
     }
+    '/$locale/_public/dealerships/': {
+      id: '/$locale/_public/dealerships/'
+      path: '/dealerships'
+      fullPath: '/$locale/dealerships/'
+      preLoaderRoute: typeof LocalePublicDealershipsIndexRouteImport
+      parentRoute: typeof LocalePublicRouteRoute
+    }
+    '/$locale/_public/dealerships/$slug': {
+      id: '/$locale/_public/dealerships/$slug'
+      path: '/dealerships/$slug'
+      fullPath: '/$locale/dealerships/$slug'
+      preLoaderRoute: typeof LocalePublicDealershipsSlugRouteImport
+      parentRoute: typeof LocalePublicRouteRoute
+    }
     '/$locale/_public/dev/guarded': {
       id: '/$locale/_public/dev/guarded'
       path: '/dev/guarded'
@@ -400,9 +440,11 @@ interface LocalePublicRouteRouteChildren {
   LocalePublicSearchRoute: typeof LocalePublicSearchRoute
   LocalePublicSuspendedRoute: typeof LocalePublicSuspendedRoute
   LocalePublicIndexRoute: typeof LocalePublicIndexRoute
+  LocalePublicDealershipsSlugRoute: typeof LocalePublicDealershipsSlugRoute
   LocalePublicDevGuardedRoute: typeof LocalePublicDevGuardedRoute
   LocalePublicDevSharedRoute: typeof LocalePublicDevSharedRoute
   LocalePublicListingSlugRoute: typeof LocalePublicListingSlugRoute
+  LocalePublicDealershipsIndexRoute: typeof LocalePublicDealershipsIndexRoute
   LocalePublicVehiclesTypeIntentChar123CityChar125Route: typeof LocalePublicVehiclesTypeIntentChar123CityChar125Route
 }
 
@@ -412,9 +454,11 @@ const LocalePublicRouteRouteChildren: LocalePublicRouteRouteChildren = {
   LocalePublicSearchRoute: LocalePublicSearchRoute,
   LocalePublicSuspendedRoute: LocalePublicSuspendedRoute,
   LocalePublicIndexRoute: LocalePublicIndexRoute,
+  LocalePublicDealershipsSlugRoute: LocalePublicDealershipsSlugRoute,
   LocalePublicDevGuardedRoute: LocalePublicDevGuardedRoute,
   LocalePublicDevSharedRoute: LocalePublicDevSharedRoute,
   LocalePublicListingSlugRoute: LocalePublicListingSlugRoute,
+  LocalePublicDealershipsIndexRoute: LocalePublicDealershipsIndexRoute,
   LocalePublicVehiclesTypeIntentChar123CityChar125Route:
     LocalePublicVehiclesTypeIntentChar123CityChar125Route,
 }

@@ -1,6 +1,6 @@
 import { useState } from "react"
 
-import { filterKeys } from "@/features/search/filters"
+import { filterKeys, type FilterGroup } from "@/features/search/filters"
 import type { SearchParams } from "@/features/search/schemas"
 import { useT } from "@/lib/i18n/use-t"
 import type { ListingPage } from "@/schemas/listing"
@@ -18,10 +18,12 @@ import { FilterForm } from "./filter-form"
 export function FilterSheet({
   params,
   facets,
+  groups,
   onApply,
 }: {
   params: SearchParams
   facets?: ListingPage["facets"]
+  groups?: readonly FilterGroup[]
   onApply: (next: SearchParams) => void
 }) {
   const { t } = useT()
@@ -48,6 +50,7 @@ export function FilterSheet({
           variant="sheet"
           params={params}
           facets={facets}
+          groups={groups}
           onApply={(next) => {
             onApply(next)
             setOpen(false)

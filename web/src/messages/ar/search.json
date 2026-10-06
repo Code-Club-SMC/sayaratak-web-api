@@ -76,5 +76,8 @@
   "search.featured_only": "مميزة",
   "search.suggest_remove": "إزالة {{label}} ({{n}})",
   "search.load_error": "تعذر تحميل الإعلانات.",
-  "search.fits_type": "تناسب نوع المركبة"
+  "search.fits_type": "تناسب نوع المركبة",
+  "search.sort_rating": "الأعلى تقييمًا",
+  "search.sort_listings": "الأكثر سيارات",
+  "search.group_year_only": "السنة"
 }

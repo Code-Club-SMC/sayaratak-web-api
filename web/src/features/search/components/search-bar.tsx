@@ -2,12 +2,12 @@ import { useState, type FormEvent } from "react"
 import { SearchIcon } from "lucide-react"
 
 import { useT } from "@/lib/i18n/use-t"
-import { intentSchema } from "@/schemas/listing"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 import { clearFilters } from "../filters"
 import type { SearchParams } from "../schemas"
+import { IntentToggle } from "./intent-toggle"
 
 // The home search card, compact: vehicles or parts, buy or rent, and the keyword. City, make and price live in the filter panel.
 export function SearchBar({
@@ -59,23 +59,10 @@ export function SearchBar({
         <ToggleGroupItem value="part">{t("home.tab_parts")}</ToggleGroupItem>
       </ToggleGroup>
       {search.kind === "vehicle" && (
-        <ToggleGroup
-          aria-label={t("home.intent")}
-          variant="outline"
-          spacing={0}
-          value={search.intent ? [search.intent] : []}
-          onValueChange={(next) =>
-            // Pressing the chosen one again shows both.
-            onChange({
-              ...search,
-              intent: intentSchema.safeParse(next[0]).data,
-              page: 1,
-            })
-          }
-        >
-          <ToggleGroupItem value="sale">{t("home.buy")}</ToggleGroupItem>
-          <ToggleGroupItem value="rent">{t("home.rent")}</ToggleGroupItem>
-        </ToggleGroup>
+        <IntentToggle
+          value={search.intent}
+          onChange={(intent) => onChange({ ...search, intent, page: 1 })}
+        />
       )}
       <div className="flex min-w-60 flex-1 items-center gap-2">
         <Input

@@ -1,4 +1,5 @@
 import { formatWeekday } from "@/lib/format"
+import { SAT_FIRST } from "@/lib/hours"
 import { useT } from "@/lib/i18n/use-t"
 import type { WeeklyHours } from "@/schemas/fields"
 import { Button } from "@/components/ui/button"
@@ -6,9 +7,6 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { FieldError } from "./field-error"
-
-// Sudan's week starts on Saturday. `day` is 0 for Sunday, as in `isOpenNow`.
-const SAT_FIRST = [6, 0, 1, 2, 3, 4, 5]
 
 const preset = (open: string, close: string, closedDay?: number): WeeklyHours =>
   Array.from({ length: 7 }, (_, day) => ({

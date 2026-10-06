@@ -72,5 +72,8 @@
   "search.featured_only": "Featured",
   "search.suggest_remove": "Remove {{label}} ({{n}})",
   "search.load_error": "Could not load the listings.",
-  "search.fits_type": "Fits vehicle type"
+  "search.fits_type": "Fits vehicle type",
+  "search.sort_rating": "Top rated",
+  "search.sort_listings": "Most vehicles",
+  "search.group_year_only": "Year"
 }

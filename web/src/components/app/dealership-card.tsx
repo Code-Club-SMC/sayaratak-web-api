@@ -3,7 +3,13 @@ import type { Dealership } from "@/schemas/profile"
 import { OpenNowBadge } from "./open-now-badge"
 import { ProviderCard } from "./provider-card"
 
-export function DealershipCard({ dealership: d }: { dealership: Dealership }) {
+export function DealershipCard({
+  dealership: d,
+  headingAs,
+}: {
+  dealership: Dealership
+  headingAs?: "h2" | "h3"
+}) {
   const { locale } = useT()
   return (
     <ProviderCard
@@ -15,6 +21,7 @@ export function DealershipCard({ dealership: d }: { dealership: Dealership }) {
       cityId={d.cityId}
       summary={d.description[locale]}
       badge={<OpenNowBadge hours={d.hours} />}
+      headingAs={headingAs}
     />
   )
 }

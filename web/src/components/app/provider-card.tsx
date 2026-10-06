@@ -19,6 +19,7 @@ export function ProviderCard({
   cityId,
   summary,
   badge,
+  headingAs: Heading = "h3",
 }: {
   path: string
   image: string
@@ -29,6 +30,8 @@ export function ProviderCard({
   cityId: string
   summary: string
   badge: ReactNode
+  // h2 on a directory page (the h1 is above), h3 under a home section heading.
+  headingAs?: "h2" | "h3"
 }) {
   const { locale } = useT()
   const city = useCityName(cityId)
@@ -43,14 +46,14 @@ export function ProviderCard({
       />
       <div className="flex min-w-0 flex-1 flex-col gap-1">
         <div className="flex items-center gap-2">
-          <h3 className="min-w-0 text-ui font-medium">
+          <Heading className="min-w-0 text-ui font-medium">
             <a
               href={localeHref(path, locale)}
               className="block truncate group-hover:underline after:absolute after:inset-0"
             >
               <bdi>{name}</bdi>
             </a>
-          </h3>
+          </Heading>
           {verified && <VerifiedBadge />}
         </div>
         <RatingSummary avg={rating.avg} count={rating.count} />

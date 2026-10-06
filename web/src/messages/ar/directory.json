@@ -13,5 +13,21 @@
   "directory.histogram_row_two": "نجمتان: {{reviews}}",
   "directory.histogram_row_few": "{{count}} نجوم: {{reviews}}",
   "directory.histogram_row_many": "{{count}} نجمة: {{reviews}}",
-  "directory.histogram_row_other": "{{count}} نجمة: {{reviews}}"
+  "directory.histogram_row_other": "{{count}} نجمة: {{reviews}}",
+  "directory.dealerships_description": "تصفح معارض السيارات الموثقة في السودان، واطلع على سياراتها وأوقات عملها وتقييماتها.",
+  "directory.search_name": "اسم المعرض",
+  "directory.search_placeholder": "ابحث بالاسم",
+  "directory.verified_only": "الموثقة فقط",
+  "directory.load_error": "تعذر تحميل المعارض",
+  "directory.dealerships_empty_title": "لا توجد معارض",
+  "directory.dealerships_empty_body": "جرّب اسمًا أو مدينة أخرى، أو امسح الفلاتر.",
+  "directory.profile_sections": "أقسام الصفحة",
+  "directory.tab_inventory": "السيارات",
+  "directory.tab_about": "عن المعرض",
+  "directory.tab_reviews": "المراجعات",
+  "directory.inventory_title": "سيارات للبيع والإيجار",
+  "directory.about_title": "عن المعرض",
+  "directory.address_title": "العنوان",
+  "directory.hours_title": "أوقات العمل",
+  "directory.phones_title": "أرقام الهاتف"
 }

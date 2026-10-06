@@ -5,5 +5,21 @@
   "directory.no_reviews": "No reviews yet",
   "directory.unavailable": "Unavailable",
   "directory.histogram_row_one": "{{count}} star: {{reviews}}",
-  "directory.histogram_row_other": "{{count}} stars: {{reviews}}"
+  "directory.histogram_row_other": "{{count}} stars: {{reviews}}",
+  "directory.dealerships_description": "Browse verified car dealerships in Sudan, see their vehicles, opening hours and reviews.",
+  "directory.search_name": "Dealership name",
+  "directory.search_placeholder": "Search by name",
+  "directory.verified_only": "Verified only",
+  "directory.load_error": "Could not load dealerships",
+  "directory.dealerships_empty_title": "No dealerships found",
+  "directory.dealerships_empty_body": "Try another name or city, or clear the filters.",
+  "directory.profile_sections": "Profile sections",
+  "directory.tab_inventory": "Vehicles",
+  "directory.tab_about": "About",
+  "directory.tab_reviews": "Reviews",
+  "directory.inventory_title": "Vehicles for sale and rent",
+  "directory.about_title": "About",
+  "directory.address_title": "Address",
+  "directory.hours_title": "Opening hours",
+  "directory.phones_title": "Phone numbers"
 }

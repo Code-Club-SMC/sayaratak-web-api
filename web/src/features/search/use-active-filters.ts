@@ -104,6 +104,7 @@ export function useActiveFilters(params: SearchParams): ActiveFilter[] {
   if (params.verifiedOnly)
     add("verifiedOnly", t("search.verified_only"), "verifiedOnly")
   if (params.hasVideo) add("hasVideo", t("search.has_video"), "hasVideo")
+  if (params.featured) add("featured", t("search.featured_only"), "featured")
   if (params.includeSold) {
     const next = { ...params, page: 1, includeSold: false }
     out.push({ id: "includeSold", label: t("search.include_sold"), next })

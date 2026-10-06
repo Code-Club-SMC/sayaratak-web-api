@@ -3,7 +3,7 @@ import type { SearchParams } from "@/features/search/schemas"
 import type { ListingPage } from "@/schemas/listing"
 import { FilterForm } from "./filter-form"
 
-// Desktop aside. Keyed by the URL params so the draft resets whenever the URL changes (applying, clearing, back button).
+// Desktop aside. The form follows the URL (chips, clearing, back button) and writes to it as the draft settles.
 export function FilterPanel({
   params,
   facets,
@@ -22,7 +22,6 @@ export function FilterPanel({
         {t("search.filters_title")}
       </h2>
       <FilterForm
-        key={JSON.stringify(params)}
         variant="panel"
         params={params}
         facets={facets}

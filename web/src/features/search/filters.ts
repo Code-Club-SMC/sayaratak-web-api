@@ -21,6 +21,8 @@ export type FilterDraft = {
   city: string
   district: string | null
   radius: number | null
+  // Where the radius counts from when no city gives it: the position in the URL, or the one the browser just reported.
+  origin: Geo | null
   verifiedOnly: boolean
   hasVideo: boolean
   includeSold: boolean
@@ -65,6 +67,10 @@ export const toDraft = (p: SearchParams): FilterDraft => ({
   city: p.city ?? "",
   district: p.district ?? null,
   radius: p.radius ?? null,
+  origin:
+    p.lat !== undefined && p.lng !== undefined
+      ? { lat: p.lat, lng: p.lng }
+      : null,
   verifiedOnly: p.verifiedOnly ?? false,
   hasVideo: p.hasVideo ?? false,
   includeSold: p.includeSold,
@@ -75,7 +81,7 @@ const list = <T>(v: T[]) => (v.length ? v : undefined)
 const ordered = (a: number | null, b: number | null) =>
   a !== null && b !== null && a > b ? [b, a] : [a, b]
 
-// Draft back to URL params: empty values leave the URL, a reversed range is swapped, the page resets. A radius needs an origin: the chosen city's center, or the lat/lng already in the URL.
+// Draft back to URL params: empty values leave the URL, a reversed range is swapped, the page resets. A radius needs an origin: the chosen city's center, else the draft's position.
 export function applyDraft(
   base: SearchParams,
   d: FilterDraft,
@@ -83,11 +89,7 @@ export function applyDraft(
 ): SearchParams {
   const [minPrice, maxPrice] = ordered(d.minPrice, d.maxPrice)
   const [minYear, maxYear] = ordered(d.minYear, d.maxYear)
-  const origin =
-    center ??
-    (base.lat !== undefined && base.lng !== undefined
-      ? { lat: base.lat, lng: base.lng }
-      : undefined)
+  const origin = center ?? d.origin ?? undefined
   const radius = origin ? some(d.radius) : undefined
   return {
     ...base,

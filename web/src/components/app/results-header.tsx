@@ -11,7 +11,7 @@ export function ResultsHeader({
   children,
 }: {
   title: string
-  total: number
+  total?: number
   children?: ReactNode
 }) {
   const { t } = useT()
@@ -26,7 +26,9 @@ export function ResultsHeader({
           {title}
         </h1>
         <p aria-live="polite" className="text-ui text-muted-foreground num">
-          {t("search.results_count", { count: total })}
+          {total === undefined
+            ? ""
+            : t("search.results_count", { count: total })}
         </p>
       </div>
       <div className="flex flex-wrap items-center gap-2">{children}</div>

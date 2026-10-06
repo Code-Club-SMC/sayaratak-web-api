@@ -41,13 +41,17 @@ export const isPublic = (l: ListingRow) =>
     (b) => b.ownerId === l.ownerUserId && b.status === "suspended"
   )
 
+// A vehicle has one type; a part fits one or more.
+const typesOf = (l: ListingRow) =>
+  l.kind === "part" ? l.compatibleTypes : l.vehicleType ? [l.vehicleType] : []
+
 export function matches(l: ListingRow, p: SearchParams, skip: string[] = []) {
   const on = (key: string) => !skip.includes(key)
   if (!isPublic(l) || l.kind !== p.kind) return false
   if (!p.includeSold && (l.status === "sold" || l.status === "rented"))
     return false
   if (p.intent && l.intent !== p.intent) return false
-  if (on("type") && p.type && l.vehicleType !== p.type) return false
+  if (on("type") && p.type && !typesOf(l).includes(p.type)) return false
   if (on("city") && p.city && l.cityId !== p.city) return false
   if (on("district") && p.district && l.districtId !== p.district) return false
   if (on("make") && p.make && l.makeId !== p.make) return false
@@ -139,13 +143,12 @@ export function sortListings(rows: ListingRow[], p: SearchParams) {
 
 const countBy = (
   rows: ListingRow[],
-  value: (l: ListingRow) => string | null
+  value: (l: ListingRow) => string | string[] | null
 ) => {
   const counts = new Map<string, number>()
-  for (const l of rows) {
-    const v = value(l)
-    if (v) counts.set(v, (counts.get(v) ?? 0) + 1)
-  }
+  for (const l of rows)
+    for (const v of [value(l)].flat())
+      if (v) counts.set(v, (counts.get(v) ?? 0) + 1)
   return [...counts]
     .map(([v, count]) => ({ value: v, count }))
     .sort((a, b) => b.count - a.count || a.value.localeCompare(b.value))
@@ -156,7 +159,7 @@ export function facets(p: SearchParams) {
   const rows = (key: Skip) =>
     db.listings.filter((l) => matches(l, p, skips[key]))
   return {
-    type: countBy(rows("type"), (l) => l.vehicleType),
+    type: countBy(rows("type"), typesOf),
     make: countBy(rows("make"), (l) => l.makeId),
     fuel: countBy(rows("fuel"), (l) => l.fuel),
     transmission: countBy(rows("transmission"), (l) => l.transmission),

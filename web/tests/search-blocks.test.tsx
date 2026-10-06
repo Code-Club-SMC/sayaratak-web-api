@@ -85,15 +85,20 @@ function Harness({ start }: { start: SearchParams }) {
 const out = () => JSON.parse(screen.getByRole("status").textContent)
 
 describe("search blocks", () => {
-  it("apply writes the draft, chips remove one filter, clear all resets", async () => {
+  it("the panel writes the draft once it settles, chips remove one filter, clear all resets", async () => {
     await renderShell(<Harness start={{ ...base, page: 4 }} />)
     fireEvent.change(await screen.findByLabelText("Lowest price"), {
       target: { value: "5000" },
     })
     fireEvent.click(screen.getByLabelText("Petrol"))
-    fireEvent.click(screen.getByRole("button", { name: "Apply filters" }))
-    await waitFor(() =>
-      expect(out()).toMatchObject({ minPrice: 5000, fuel: ["petrol"], page: 1 })
+    await waitFor(
+      () =>
+        expect(out()).toMatchObject({
+          minPrice: 5000,
+          fuel: ["petrol"],
+          page: 1,
+        }),
+      { timeout: 3000 }
     )
     const chip = (
       await screen.findAllByRole("button", { name: "Remove Petrol" })

@@ -53,3 +53,32 @@ export const searchParamsSchema = z.object({
   page: z.coerce.number().int().min(1).default(1).catch(1),
 })
 export type SearchParams = z.infer<typeof searchParamsSchema>
+
+const defaults = searchParamsSchema.parse({})
+
+// Params without the defaults the schema fills in, so URLs stay short and a default never counts as a filter.
+export function compact(p: SearchParams): Partial<SearchParams> {
+  const out: Partial<SearchParams> = { ...p }
+  for (const k of ["kind", "sort", "includeSold", "page"] as const)
+    if (out[k] === defaults[k]) delete out[k]
+  return out
+}
+
+// What the routes validate with. The router writes a route's validated search back into the URL, so a schema that fills in defaults would redirect `/search` to `/search?kind=vehicle&sort=relevance&...`. These leave defaults out; a page reads the full set with `fullSearch`. A default is an explicit undefined, not a missing key: the router merges the validated search over the raw one, and only an explicit undefined removes `?sort=bogus` from the address.
+const withoutDefaults = (p: SearchParams): Partial<SearchParams> => ({
+  kind: undefined,
+  sort: undefined,
+  includeSold: undefined,
+  page: undefined,
+  ...compact(p),
+})
+export const routeSearchSchema = searchParamsSchema.transform(withoutDefaults)
+// /parts: the path holds the kind, so a `kind` in the URL is ignored.
+export const partsRouteSchema = searchParamsSchema.transform((s) =>
+  withoutDefaults({ ...s, kind: "vehicle" })
+)
+
+export const fullSearch = (
+  sparse: Partial<SearchParams>,
+  kind: SearchParams["kind"] = "vehicle"
+) => searchParamsSchema.parse({ ...sparse, kind: sparse.kind ?? kind })

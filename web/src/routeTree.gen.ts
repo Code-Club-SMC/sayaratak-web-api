@@ -15,6 +15,8 @@ import { Route as LocalePublicRouteRouteImport } from './routes/$locale/_public/
 import { Route as ApiSplatRouteImport } from './routes/api/$'
 import { Route as LocalePublicIndexRouteImport } from './routes/$locale/_public/index'
 import { Route as LocalePublicSplatRouteImport } from './routes/$locale/_public/$'
+import { Route as LocalePublicPartsRouteImport } from './routes/$locale/_public/parts'
+import { Route as LocalePublicSearchRouteImport } from './routes/$locale/_public/search'
 import { Route as LocalePublicSuspendedRouteImport } from './routes/$locale/_public/suspended'
 import { Route as LocaleAuthIndexRouteImport } from './routes/$locale/auth/index'
 import { Route as LocaleAuthForgotRouteImport } from './routes/$locale/auth/forgot'
@@ -24,6 +26,7 @@ import { Route as LocaleOnboardingRoleRouteImport } from './routes/$locale/onboa
 import { Route as LocalePublicDevGuardedRouteImport } from './routes/$locale/_public/dev.guarded'
 import { Route as LocalePublicDevSharedRouteImport } from './routes/$locale/_public/dev.shared'
 import { Route as LocaleOnboardingRoleStepRouteImport } from './routes/$locale/onboarding/$role/$step'
+import { Route as LocalePublicVehiclesTypeIntentChar123CityChar125RouteImport } from './routes/$locale/_public/vehicles/$type/$intent/{-$city}'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -52,6 +55,16 @@ const LocalePublicIndexRoute = LocalePublicIndexRouteImport.update({
 const LocalePublicSplatRoute = LocalePublicSplatRouteImport.update({
   id: '/$',
   path: '/$',
+  getParentRoute: () => LocalePublicRouteRoute,
+} as any)
+const LocalePublicPartsRoute = LocalePublicPartsRouteImport.update({
+  id: '/parts',
+  path: '/parts',
+  getParentRoute: () => LocalePublicRouteRoute,
+} as any)
+const LocalePublicSearchRoute = LocalePublicSearchRouteImport.update({
+  id: '/search',
+  path: '/search',
   getParentRoute: () => LocalePublicRouteRoute,
 } as any)
 const LocalePublicSuspendedRoute = LocalePublicSuspendedRouteImport.update({
@@ -100,12 +113,20 @@ const LocaleOnboardingRoleStepRoute =
     path: '/onboarding/$role/$step',
     getParentRoute: () => LocaleRouteRoute,
   } as any)
+const LocalePublicVehiclesTypeIntentChar123CityChar125Route =
+  LocalePublicVehiclesTypeIntentChar123CityChar125RouteImport.update({
+    id: '/vehicles/$type/$intent/{-$city}',
+    path: '/vehicles/$type/$intent/{-$city}',
+    getParentRoute: () => LocalePublicRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/$locale': typeof LocaleRouteRouteWithChildren
   '/api/$': typeof ApiSplatRoute
   '/$locale/$': typeof LocalePublicSplatRoute
+  '/$locale/parts': typeof LocalePublicPartsRoute
+  '/$locale/search': typeof LocalePublicSearchRoute
   '/$locale/suspended': typeof LocalePublicSuspendedRoute
   '/$locale/auth/forgot': typeof LocaleAuthForgotRoute
   '/$locale/auth/reset': typeof LocaleAuthResetRoute
@@ -116,12 +137,15 @@ export interface FileRoutesByFullPath {
   '/$locale/dev/guarded': typeof LocalePublicDevGuardedRoute
   '/$locale/dev/shared': typeof LocalePublicDevSharedRoute
   '/$locale/onboarding/$role/$step': typeof LocaleOnboardingRoleStepRoute
+  '/$locale/vehicles/$type/$intent/{-$city}': typeof LocalePublicVehiclesTypeIntentChar123CityChar125Route
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/$locale': typeof LocalePublicIndexRoute
   '/api/$': typeof ApiSplatRoute
   '/$locale/$': typeof LocalePublicSplatRoute
+  '/$locale/parts': typeof LocalePublicPartsRoute
+  '/$locale/search': typeof LocalePublicSearchRoute
   '/$locale/suspended': typeof LocalePublicSuspendedRoute
   '/$locale/auth/forgot': typeof LocaleAuthForgotRoute
   '/$locale/auth/reset': typeof LocaleAuthResetRoute
@@ -131,6 +155,7 @@ export interface FileRoutesByTo {
   '/$locale/dev/guarded': typeof LocalePublicDevGuardedRoute
   '/$locale/dev/shared': typeof LocalePublicDevSharedRoute
   '/$locale/onboarding/$role/$step': typeof LocaleOnboardingRoleStepRoute
+  '/$locale/vehicles/$type/$intent/{-$city}': typeof LocalePublicVehiclesTypeIntentChar123CityChar125Route
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -139,6 +164,8 @@ export interface FileRoutesById {
   '/$locale/_public': typeof LocalePublicRouteRouteWithChildren
   '/api/$': typeof ApiSplatRoute
   '/$locale/_public/$': typeof LocalePublicSplatRoute
+  '/$locale/_public/parts': typeof LocalePublicPartsRoute
+  '/$locale/_public/search': typeof LocalePublicSearchRoute
   '/$locale/_public/suspended': typeof LocalePublicSuspendedRoute
   '/$locale/auth/forgot': typeof LocaleAuthForgotRoute
   '/$locale/auth/reset': typeof LocaleAuthResetRoute
@@ -149,6 +176,7 @@ export interface FileRoutesById {
   '/$locale/_public/dev/guarded': typeof LocalePublicDevGuardedRoute
   '/$locale/_public/dev/shared': typeof LocalePublicDevSharedRoute
   '/$locale/onboarding/$role/$step': typeof LocaleOnboardingRoleStepRoute
+  '/$locale/_public/vehicles/$type/$intent/{-$city}': typeof LocalePublicVehiclesTypeIntentChar123CityChar125Route
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -157,6 +185,8 @@ export interface FileRouteTypes {
     | '/$locale'
     | '/api/$'
     | '/$locale/$'
+    | '/$locale/parts'
+    | '/$locale/search'
     | '/$locale/suspended'
     | '/$locale/auth/forgot'
     | '/$locale/auth/reset'
@@ -167,12 +197,15 @@ export interface FileRouteTypes {
     | '/$locale/dev/guarded'
     | '/$locale/dev/shared'
     | '/$locale/onboarding/$role/$step'
+    | '/$locale/vehicles/$type/$intent/{-$city}'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/$locale'
     | '/api/$'
     | '/$locale/$'
+    | '/$locale/parts'
+    | '/$locale/search'
     | '/$locale/suspended'
     | '/$locale/auth/forgot'
     | '/$locale/auth/reset'
@@ -182,6 +215,7 @@ export interface FileRouteTypes {
     | '/$locale/dev/guarded'
     | '/$locale/dev/shared'
     | '/$locale/onboarding/$role/$step'
+    | '/$locale/vehicles/$type/$intent/{-$city}'
   id:
     | '__root__'
     | '/'
@@ -189,6 +223,8 @@ export interface FileRouteTypes {
     | '/$locale/_public'
     | '/api/$'
     | '/$locale/_public/$'
+    | '/$locale/_public/parts'
+    | '/$locale/_public/search'
     | '/$locale/_public/suspended'
     | '/$locale/auth/forgot'
     | '/$locale/auth/reset'
@@ -199,6 +235,7 @@ export interface FileRouteTypes {
     | '/$locale/_public/dev/guarded'
     | '/$locale/_public/dev/shared'
     | '/$locale/onboarding/$role/$step'
+    | '/$locale/_public/vehicles/$type/$intent/{-$city}'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -249,6 +286,20 @@ declare module '@tanstack/react-router' {
       path: '/$'
       fullPath: '/$locale/$'
       preLoaderRoute: typeof LocalePublicSplatRouteImport
+      parentRoute: typeof LocalePublicRouteRoute
+    }
+    '/$locale/_public/parts': {
+      id: '/$locale/_public/parts'
+      path: '/parts'
+      fullPath: '/$locale/parts'
+      preLoaderRoute: typeof LocalePublicPartsRouteImport
+      parentRoute: typeof LocalePublicRouteRoute
+    }
+    '/$locale/_public/search': {
+      id: '/$locale/_public/search'
+      path: '/search'
+      fullPath: '/$locale/search'
+      preLoaderRoute: typeof LocalePublicSearchRouteImport
       parentRoute: typeof LocalePublicRouteRoute
     }
     '/$locale/_public/suspended': {
@@ -314,23 +365,37 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LocaleOnboardingRoleStepRouteImport
       parentRoute: typeof LocaleRouteRoute
     }
+    '/$locale/_public/vehicles/$type/$intent/{-$city}': {
+      id: '/$locale/_public/vehicles/$type/$intent/{-$city}'
+      path: '/vehicles/$type/$intent/{-$city}'
+      fullPath: '/$locale/vehicles/$type/$intent/{-$city}'
+      preLoaderRoute: typeof LocalePublicVehiclesTypeIntentChar123CityChar125RouteImport
+      parentRoute: typeof LocalePublicRouteRoute
+    }
   }
 }
 
 interface LocalePublicRouteRouteChildren {
   LocalePublicSplatRoute: typeof LocalePublicSplatRoute
+  LocalePublicPartsRoute: typeof LocalePublicPartsRoute
+  LocalePublicSearchRoute: typeof LocalePublicSearchRoute
   LocalePublicSuspendedRoute: typeof LocalePublicSuspendedRoute
   LocalePublicIndexRoute: typeof LocalePublicIndexRoute
   LocalePublicDevGuardedRoute: typeof LocalePublicDevGuardedRoute
   LocalePublicDevSharedRoute: typeof LocalePublicDevSharedRoute
+  LocalePublicVehiclesTypeIntentChar123CityChar125Route: typeof LocalePublicVehiclesTypeIntentChar123CityChar125Route
 }
 
 const LocalePublicRouteRouteChildren: LocalePublicRouteRouteChildren = {
   LocalePublicSplatRoute: LocalePublicSplatRoute,
+  LocalePublicPartsRoute: LocalePublicPartsRoute,
+  LocalePublicSearchRoute: LocalePublicSearchRoute,
   LocalePublicSuspendedRoute: LocalePublicSuspendedRoute,
   LocalePublicIndexRoute: LocalePublicIndexRoute,
   LocalePublicDevGuardedRoute: LocalePublicDevGuardedRoute,
   LocalePublicDevSharedRoute: LocalePublicDevSharedRoute,
+  LocalePublicVehiclesTypeIntentChar123CityChar125Route:
+    LocalePublicVehiclesTypeIntentChar123CityChar125Route,
 }
 
 const LocalePublicRouteRouteWithChildren =

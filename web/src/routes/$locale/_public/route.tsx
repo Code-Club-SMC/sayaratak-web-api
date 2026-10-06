@@ -17,6 +17,8 @@ export const Route = createFileRoute("/$locale/_public")({
     ])
     return { ...copy, path: location.pathname, locale: context.locale }
   },
-  head: ({ loaderData }) => (loaderData ? buildHead(loaderData) : {}),
+  // Meta only: head tags of the matched routes are all kept, so a layout canonical next to a page's own would give two. Every page route sets its own canonical and hreflang.
+  head: ({ loaderData }) =>
+    loaderData ? { meta: buildHead(loaderData).meta } : {},
   component: PublicLayout,
 })

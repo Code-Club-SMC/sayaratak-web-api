@@ -512,6 +512,25 @@ describe("trust, content, map, uploads, analytics", () => {
       (await call("GET", "/banners?placement=home_top")).body
     ).toHaveLength(1)
   })
+  it("contact stores the message, a bad one is a 422 with key errors", async () => {
+    const body = {
+      name: "Omar",
+      contact: "a@b.co",
+      subject: "business",
+      message: "Do you list dealerships?",
+    }
+    expect((await call("POST", "/contact", { body })).status).toBe(200)
+    expect(db.contacts[0]).toMatchObject(body)
+    const bad = await call("POST", "/contact", {
+      body: { ...body, contact: "nope", message: "short" },
+    })
+    expect(bad.status).toBe(422)
+    expect(bad.body.fields).toMatchObject({
+      contact: "validation.identifier",
+      message: "validation.message_min",
+    })
+    expect(db.contacts).toHaveLength(1)
+  })
   it("map is capped at 300 points and respects the bbox", async () => {
     // `layers` repeats like every array param.
     const all = await call(

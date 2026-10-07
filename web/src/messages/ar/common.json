@@ -178,5 +178,20 @@
   "color.grey": "رمادي",
   "color.blue": "أزرق",
   "color.red": "أحمر",
-  "color.gold": "ذهبي"
+  "color.gold": "ذهبي",
+  "pages.contact_form_title": "أرسل لنا رسالة",
+  "pages.contact_name": "اسمك",
+  "pages.contact_identifier": "الهاتف أو البريد الإلكتروني",
+  "pages.contact_identifier_hint": "لنتمكن من الرد عليك",
+  "pages.contact_subject": "الموضوع",
+  "pages.subject_general": "سؤال عام",
+  "pages.subject_listing_help": "مساعدة في إعلان",
+  "pages.subject_business": "نشاط تجاري أو معرض",
+  "pages.subject_report_problem": "الإبلاغ عن مشكلة",
+  "pages.contact_message": "الرسالة",
+  "pages.contact_send": "إرسال الرسالة",
+  "pages.contact_sent_title": "تم إرسال الرسالة",
+  "pages.contact_sent_body": "شكرا لك. سنرد عليك بالهاتف أو البريد الإلكتروني.",
+  "pages.contact_send_another": "إرسال رسالة أخرى",
+  "pages.contact_details": "بيانات التواصل"
 }

@@ -15,10 +15,14 @@ import { Route as LocalePublicRouteRouteImport } from './routes/$locale/_public/
 import { Route as ApiSplatRouteImport } from './routes/api/$'
 import { Route as LocalePublicIndexRouteImport } from './routes/$locale/_public/index'
 import { Route as LocalePublicSplatRouteImport } from './routes/$locale/_public/$'
+import { Route as LocalePublicAboutRouteImport } from './routes/$locale/_public/about'
+import { Route as LocalePublicContactRouteImport } from './routes/$locale/_public/contact'
 import { Route as LocalePublicMapRouteImport } from './routes/$locale/_public/map'
 import { Route as LocalePublicPartsRouteImport } from './routes/$locale/_public/parts'
+import { Route as LocalePublicPrivacyRouteImport } from './routes/$locale/_public/privacy'
 import { Route as LocalePublicSearchRouteImport } from './routes/$locale/_public/search'
 import { Route as LocalePublicSuspendedRouteImport } from './routes/$locale/_public/suspended'
+import { Route as LocalePublicTermsRouteImport } from './routes/$locale/_public/terms'
 import { Route as LocaleAuthIndexRouteImport } from './routes/$locale/auth/index'
 import { Route as LocaleAuthForgotRouteImport } from './routes/$locale/auth/forgot'
 import { Route as LocaleAuthResetRouteImport } from './routes/$locale/auth/reset'
@@ -65,6 +69,16 @@ const LocalePublicSplatRoute = LocalePublicSplatRouteImport.update({
   path: '/$',
   getParentRoute: () => LocalePublicRouteRoute,
 } as any)
+const LocalePublicAboutRoute = LocalePublicAboutRouteImport.update({
+  id: '/about',
+  path: '/about',
+  getParentRoute: () => LocalePublicRouteRoute,
+} as any)
+const LocalePublicContactRoute = LocalePublicContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
+  getParentRoute: () => LocalePublicRouteRoute,
+} as any)
 const LocalePublicMapRoute = LocalePublicMapRouteImport.update({
   id: '/map',
   path: '/map',
@@ -75,6 +89,11 @@ const LocalePublicPartsRoute = LocalePublicPartsRouteImport.update({
   path: '/parts',
   getParentRoute: () => LocalePublicRouteRoute,
 } as any)
+const LocalePublicPrivacyRoute = LocalePublicPrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
+  getParentRoute: () => LocalePublicRouteRoute,
+} as any)
 const LocalePublicSearchRoute = LocalePublicSearchRouteImport.update({
   id: '/search',
   path: '/search',
@@ -83,6 +102,11 @@ const LocalePublicSearchRoute = LocalePublicSearchRouteImport.update({
 const LocalePublicSuspendedRoute = LocalePublicSuspendedRouteImport.update({
   id: '/suspended',
   path: '/suspended',
+  getParentRoute: () => LocalePublicRouteRoute,
+} as any)
+const LocalePublicTermsRoute = LocalePublicTermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
   getParentRoute: () => LocalePublicRouteRoute,
 } as any)
 const LocaleAuthIndexRoute = LocaleAuthIndexRouteImport.update({
@@ -179,10 +203,14 @@ export interface FileRoutesByFullPath {
   '/$locale': typeof LocaleRouteRouteWithChildren
   '/api/$': typeof ApiSplatRoute
   '/$locale/$': typeof LocalePublicSplatRoute
+  '/$locale/about': typeof LocalePublicAboutRoute
+  '/$locale/contact': typeof LocalePublicContactRoute
   '/$locale/map': typeof LocalePublicMapRoute
   '/$locale/parts': typeof LocalePublicPartsRoute
+  '/$locale/privacy': typeof LocalePublicPrivacyRoute
   '/$locale/search': typeof LocalePublicSearchRoute
   '/$locale/suspended': typeof LocalePublicSuspendedRoute
+  '/$locale/terms': typeof LocalePublicTermsRoute
   '/$locale/auth/forgot': typeof LocaleAuthForgotRoute
   '/$locale/auth/reset': typeof LocaleAuthResetRoute
   '/$locale/onboarding/role': typeof LocaleOnboardingRoleRoute
@@ -206,10 +234,14 @@ export interface FileRoutesByTo {
   '/$locale': typeof LocalePublicIndexRoute
   '/api/$': typeof ApiSplatRoute
   '/$locale/$': typeof LocalePublicSplatRoute
+  '/$locale/about': typeof LocalePublicAboutRoute
+  '/$locale/contact': typeof LocalePublicContactRoute
   '/$locale/map': typeof LocalePublicMapRoute
   '/$locale/parts': typeof LocalePublicPartsRoute
+  '/$locale/privacy': typeof LocalePublicPrivacyRoute
   '/$locale/search': typeof LocalePublicSearchRoute
   '/$locale/suspended': typeof LocalePublicSuspendedRoute
+  '/$locale/terms': typeof LocalePublicTermsRoute
   '/$locale/auth/forgot': typeof LocaleAuthForgotRoute
   '/$locale/auth/reset': typeof LocaleAuthResetRoute
   '/$locale/onboarding/role': typeof LocaleOnboardingRoleRoute
@@ -234,10 +266,14 @@ export interface FileRoutesById {
   '/$locale/_public': typeof LocalePublicRouteRouteWithChildren
   '/api/$': typeof ApiSplatRoute
   '/$locale/_public/$': typeof LocalePublicSplatRoute
+  '/$locale/_public/about': typeof LocalePublicAboutRoute
+  '/$locale/_public/contact': typeof LocalePublicContactRoute
   '/$locale/_public/map': typeof LocalePublicMapRoute
   '/$locale/_public/parts': typeof LocalePublicPartsRoute
+  '/$locale/_public/privacy': typeof LocalePublicPrivacyRoute
   '/$locale/_public/search': typeof LocalePublicSearchRoute
   '/$locale/_public/suspended': typeof LocalePublicSuspendedRoute
+  '/$locale/_public/terms': typeof LocalePublicTermsRoute
   '/$locale/auth/forgot': typeof LocaleAuthForgotRoute
   '/$locale/auth/reset': typeof LocaleAuthResetRoute
   '/$locale/onboarding/role': typeof LocaleOnboardingRoleRoute
@@ -263,10 +299,14 @@ export interface FileRouteTypes {
     | '/$locale'
     | '/api/$'
     | '/$locale/$'
+    | '/$locale/about'
+    | '/$locale/contact'
     | '/$locale/map'
     | '/$locale/parts'
+    | '/$locale/privacy'
     | '/$locale/search'
     | '/$locale/suspended'
+    | '/$locale/terms'
     | '/$locale/auth/forgot'
     | '/$locale/auth/reset'
     | '/$locale/onboarding/role'
@@ -290,10 +330,14 @@ export interface FileRouteTypes {
     | '/$locale'
     | '/api/$'
     | '/$locale/$'
+    | '/$locale/about'
+    | '/$locale/contact'
     | '/$locale/map'
     | '/$locale/parts'
+    | '/$locale/privacy'
     | '/$locale/search'
     | '/$locale/suspended'
+    | '/$locale/terms'
     | '/$locale/auth/forgot'
     | '/$locale/auth/reset'
     | '/$locale/onboarding/role'
@@ -317,10 +361,14 @@ export interface FileRouteTypes {
     | '/$locale/_public'
     | '/api/$'
     | '/$locale/_public/$'
+    | '/$locale/_public/about'
+    | '/$locale/_public/contact'
     | '/$locale/_public/map'
     | '/$locale/_public/parts'
+    | '/$locale/_public/privacy'
     | '/$locale/_public/search'
     | '/$locale/_public/suspended'
+    | '/$locale/_public/terms'
     | '/$locale/auth/forgot'
     | '/$locale/auth/reset'
     | '/$locale/onboarding/role'
@@ -390,6 +438,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LocalePublicSplatRouteImport
       parentRoute: typeof LocalePublicRouteRoute
     }
+    '/$locale/_public/about': {
+      id: '/$locale/_public/about'
+      path: '/about'
+      fullPath: '/$locale/about'
+      preLoaderRoute: typeof LocalePublicAboutRouteImport
+      parentRoute: typeof LocalePublicRouteRoute
+    }
+    '/$locale/_public/contact': {
+      id: '/$locale/_public/contact'
+      path: '/contact'
+      fullPath: '/$locale/contact'
+      preLoaderRoute: typeof LocalePublicContactRouteImport
+      parentRoute: typeof LocalePublicRouteRoute
+    }
     '/$locale/_public/map': {
       id: '/$locale/_public/map'
       path: '/map'
@@ -404,6 +466,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LocalePublicPartsRouteImport
       parentRoute: typeof LocalePublicRouteRoute
     }
+    '/$locale/_public/privacy': {
+      id: '/$locale/_public/privacy'
+      path: '/privacy'
+      fullPath: '/$locale/privacy'
+      preLoaderRoute: typeof LocalePublicPrivacyRouteImport
+      parentRoute: typeof LocalePublicRouteRoute
+    }
     '/$locale/_public/search': {
       id: '/$locale/_public/search'
       path: '/search'
@@ -416,6 +485,13 @@ declare module '@tanstack/react-router' {
       path: '/suspended'
       fullPath: '/$locale/suspended'
       preLoaderRoute: typeof LocalePublicSuspendedRouteImport
+      parentRoute: typeof LocalePublicRouteRoute
+    }
+    '/$locale/_public/terms': {
+      id: '/$locale/_public/terms'
+      path: '/terms'
+      fullPath: '/$locale/terms'
+      preLoaderRoute: typeof LocalePublicTermsRouteImport
       parentRoute: typeof LocalePublicRouteRoute
     }
     '/$locale/auth/': {
@@ -535,10 +611,14 @@ declare module '@tanstack/react-router' {
 
 interface LocalePublicRouteRouteChildren {
   LocalePublicSplatRoute: typeof LocalePublicSplatRoute
+  LocalePublicAboutRoute: typeof LocalePublicAboutRoute
+  LocalePublicContactRoute: typeof LocalePublicContactRoute
   LocalePublicMapRoute: typeof LocalePublicMapRoute
   LocalePublicPartsRoute: typeof LocalePublicPartsRoute
+  LocalePublicPrivacyRoute: typeof LocalePublicPrivacyRoute
   LocalePublicSearchRoute: typeof LocalePublicSearchRoute
   LocalePublicSuspendedRoute: typeof LocalePublicSuspendedRoute
+  LocalePublicTermsRoute: typeof LocalePublicTermsRoute
   LocalePublicIndexRoute: typeof LocalePublicIndexRoute
   LocalePublicDealershipsSlugRoute: typeof LocalePublicDealershipsSlugRoute
   LocalePublicDevGuardedRoute: typeof LocalePublicDevGuardedRoute
@@ -554,10 +634,14 @@ interface LocalePublicRouteRouteChildren {
 
 const LocalePublicRouteRouteChildren: LocalePublicRouteRouteChildren = {
   LocalePublicSplatRoute: LocalePublicSplatRoute,
+  LocalePublicAboutRoute: LocalePublicAboutRoute,
+  LocalePublicContactRoute: LocalePublicContactRoute,
   LocalePublicMapRoute: LocalePublicMapRoute,
   LocalePublicPartsRoute: LocalePublicPartsRoute,
+  LocalePublicPrivacyRoute: LocalePublicPrivacyRoute,
   LocalePublicSearchRoute: LocalePublicSearchRoute,
   LocalePublicSuspendedRoute: LocalePublicSuspendedRoute,
+  LocalePublicTermsRoute: LocalePublicTermsRoute,
   LocalePublicIndexRoute: LocalePublicIndexRoute,
   LocalePublicDealershipsSlugRoute: LocalePublicDealershipsSlugRoute,
   LocalePublicDevGuardedRoute: LocalePublicDevGuardedRoute,

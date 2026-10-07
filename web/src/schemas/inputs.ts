@@ -212,14 +212,21 @@ export const verificationInputSchema = z.object({
     .min(1, "validation.media_min"),
   note: z.string().max(500, "validation.too_long").optional(),
 })
+export const contactSubjects = [
+  "general",
+  "listing_help",
+  "business",
+  "report_problem",
+] as const
 export const contactInputSchema = z.object({
   name: nameSchema,
-  email: emailSchema,
+  contact: identifierSchema,
+  subject: z.enum(contactSubjects),
   message: z
     .string()
     .trim()
     .min(10, "validation.message_min")
-    .max(2000, "validation.too_long"),
+    .max(1000, "validation.too_long"),
 })
 export const eventInputSchema = z.object({
   type: z.enum([

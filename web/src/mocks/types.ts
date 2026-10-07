@@ -8,6 +8,7 @@ import type {
 } from "@/schemas/admin"
 import type { EventType, NotificationPrefs } from "@/schemas/api"
 import type { Bilingual, Locale } from "@/schemas/fields"
+import type { contactSubjects } from "@/schemas/inputs"
 import type { Listing } from "@/schemas/listing"
 import type { Message, Notification } from "@/schemas/messaging"
 import type {
@@ -61,7 +62,8 @@ export type EventRow = {
 export type ContactRow = {
   id: string
   name: string
-  email: string
+  contact: string
+  subject: (typeof contactSubjects)[number]
   message: string
   createdAt: string
 }

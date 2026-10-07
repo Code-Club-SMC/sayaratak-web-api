@@ -6,10 +6,11 @@ import { buttonVariants } from "@/components/ui/button"
 import { siteQuery } from "@/features/pages/queries"
 import { getCopy } from "@/lib/i18n/server"
 import { useT } from "@/lib/i18n/use-t"
+import { localeHref } from "@/lib/navigation"
 import { toWhatsappUrl } from "@/lib/phone"
 import { buildHead } from "@/lib/seo"
 
-// Where a signed-in banned account lands (see `$locale/route.tsx`). Step 6.8 adds the other static pages.
+// Where a signed-in banned account lands (see `$locale/route.tsx`). The contact page is open to a banned account too.
 export const Route = createFileRoute("/$locale/_public/suspended")({
   loader: async ({ context }) => {
     const [title = "", description = ""] = await getCopy({
@@ -28,7 +29,7 @@ export const Route = createFileRoute("/$locale/_public/suspended")({
 })
 
 function Suspended() {
-  const { t } = useT()
+  const { t, locale } = useT()
   const contact = useQuery(siteQuery).data?.contact
   const link = buttonVariants({ variant: "outline" })
   return (
@@ -36,6 +37,9 @@ function Suspended() {
       title={t("auth.suspended_title")}
       body={t("auth.account_suspended")}
     >
+      <a href={localeHref("/contact", locale)} className={buttonVariants()}>
+        {t("auth.contact_support")}
+      </a>
       {contact?.email && (
         <a href={`mailto:${contact.email}`} className={link}>
           <bdi>{contact.email}</bdi>

@@ -38,6 +38,16 @@ const variants = {
       </div>
     </div>
   ),
+  text: (
+    <>
+      <Skeleton className="h-8 w-1/3 max-w-xs" />
+      <div className="flex max-w-[65ch] flex-col gap-3">
+        <Skeleton className="h-6 w-full" />
+        <Skeleton className="h-6 w-full" />
+        <Skeleton className="h-6 w-2/3" />
+      </div>
+    </>
+  ),
   table: (
     <>
       <Skeleton className="h-8 w-1/3 max-w-xs" />

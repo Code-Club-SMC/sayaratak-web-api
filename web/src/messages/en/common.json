@@ -170,5 +170,20 @@
   "color.grey": "Grey",
   "color.blue": "Blue",
   "color.red": "Red",
-  "color.gold": "Gold"
+  "color.gold": "Gold",
+  "pages.contact_form_title": "Send us a message",
+  "pages.contact_name": "Your name",
+  "pages.contact_identifier": "Phone or email",
+  "pages.contact_identifier_hint": "Where we can answer you",
+  "pages.contact_subject": "Subject",
+  "pages.subject_general": "General question",
+  "pages.subject_listing_help": "Help with a listing",
+  "pages.subject_business": "Business or dealership",
+  "pages.subject_report_problem": "Report a problem",
+  "pages.contact_message": "Message",
+  "pages.contact_send": "Send message",
+  "pages.contact_sent_title": "Message sent",
+  "pages.contact_sent_body": "Thank you. We will answer by phone or email.",
+  "pages.contact_send_another": "Send another",
+  "pages.contact_details": "Contact details"
 }

@@ -56,15 +56,15 @@ export const pages = (): SitePageRow[] => [
     "privacy",
     "سياسة الخصوصية",
     "Privacy policy",
-    "نحتفظ ببياناتك لتشغيل الخدمة فقط ولا نبيعها لأي جهة.",
-    "We keep your data only to run the service and never sell it."
+    "نحتفظ ببياناتك لتشغيل الخدمة فقط ولا نبيعها لأي جهة.\n\n# ما الذي نجمعه\n- الاسم ورقم الهاتف أو البريد الإلكتروني\n- الإعلانات والرسائل التي ترسلها عبر الموقع\n\n# حقوقك\nيمكنك طلب حذف حسابك وبياناتك في أي وقت عبر صفحة اتصل بنا.",
+    "We keep your data only to run the service and never sell it.\n\n# What we collect\n- Your name and your phone number or email\n- The listings and messages you send through the site\n\n# Your rights\nYou can ask us to delete your account and data at any time from the contact page."
   ),
   page(
     "terms",
     "الشروط والأحكام",
     "Terms",
-    "باستخدامك الموقع فأنت توافق على نشر معلومات صحيحة والالتزام بقواعد المجتمع.",
-    "By using the site you agree to post accurate information and follow the community rules."
+    "باستخدامك الموقع فأنت توافق على نشر معلومات صحيحة والالتزام بقواعد المجتمع.\n\n# قواعد النشر\n- انشر مركبات وخدمات حقيقية فقط\n- اذكر السعر الصحيح بالجنيه السوداني\n- لا تنشر إعلانا مكررا\n\n# الإيقاف\nقد نوقف الإعلانات أو الحسابات المخالفة.",
+    "By using the site you agree to post accurate information and follow the community rules.\n\n# Posting rules\n- Post real vehicles and services only\n- State the correct price in Sudanese pounds\n- Do not post the same listing twice\n\n# Suspension\nWe may suspend listings or accounts that break these rules."
   ),
 ]
 

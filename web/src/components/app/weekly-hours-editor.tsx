@@ -60,7 +60,7 @@ export function WeeklyHoursEditor({
             className="flex flex-wrap items-center gap-x-3 gap-y-2"
           >
             <span className="w-24 text-ui font-medium">{name}</span>
-            <Label className="min-h-11 font-normal">
+            <Label className="min-h-(--row-h) font-normal">
               <Checkbox
                 checked={row.closed}
                 onCheckedChange={(closed) => patch(day, { closed })}

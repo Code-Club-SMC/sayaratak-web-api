@@ -5,7 +5,7 @@ import { FocusedTopBar } from "@/components/app/focused-top-bar"
 import { useT } from "@/lib/i18n/use-t"
 import { WizardStepIndicator } from "./wizard-step-indicator"
 
-// One 640 column: indicator on the page, the step in a card (padding 24; edge to edge on phones). The sticky footer of the step lines up with the column, so the page keeps room under it.
+// One column, 640 below `lg` and 880 from `lg` (long steps lay fields in a grid): indicator on the page, the step in a card (padding 24; edge to edge on phones). The sticky footer of the step lines up with the column, so the page keeps room under it.
 export function WizardLayout({
   context,
   editing,
@@ -37,7 +37,7 @@ export function WizardLayout({
         }
         action={{ label: t("post.save_exit"), onClick: onExit }}
       />
-      <div className="mx-auto w-full max-w-160 md:px-4">
+      <div className="mx-auto w-full max-w-160 md:px-4 lg:max-w-220">
         <div className="px-4 pt-2 md:px-0">
           <WizardStepIndicator {...indicator} />
         </div>

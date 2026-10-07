@@ -12,6 +12,7 @@ export function CheckboxGroup({
   onChange,
   error,
   disabled = [],
+  row = false,
 }: {
   legend: string
   options: ChipOption[]
@@ -20,25 +21,29 @@ export function CheckboxGroup({
   error?: string
   // Values that stay visible but cannot be changed.
   disabled?: string[]
+  // Lay the options in one wrapping line instead of a column.
+  row?: boolean
 }) {
   return (
     <FieldSet>
       <FieldLegend variant="label">{legend}</FieldLegend>
-      {options.map((o) => (
-        <Label key={o.value} className="min-h-11 font-normal">
-          <Checkbox
-            checked={value.includes(o.value)}
-            disabled={disabled.includes(o.value)}
-            aria-invalid={Boolean(error)}
-            onCheckedChange={(on) =>
-              onChange(
-                on ? [...value, o.value] : value.filter((x) => x !== o.value)
-              )
-            }
-          />
-          {o.label}
-        </Label>
-      ))}
+      <div className={row ? "flex flex-wrap gap-x-6" : "contents"}>
+        {options.map((o) => (
+          <Label key={o.value} className="min-h-(--row-h) font-normal">
+            <Checkbox
+              checked={value.includes(o.value)}
+              disabled={disabled.includes(o.value)}
+              aria-invalid={Boolean(error)}
+              onCheckedChange={(on) =>
+                onChange(
+                  on ? [...value, o.value] : value.filter((x) => x !== o.value)
+                )
+              }
+            />
+            {o.label}
+          </Label>
+        ))}
+      </div>
       <FieldError message={error} />
     </FieldSet>
   )

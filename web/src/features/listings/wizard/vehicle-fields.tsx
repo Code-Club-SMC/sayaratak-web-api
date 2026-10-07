@@ -1,3 +1,4 @@
+import { FieldGrid } from "@/components/app/field-grid"
 import { FormField } from "@/components/app/form-field"
 import { NumberField } from "@/components/app/number-field"
 import { SelectInput } from "@/components/app/select-input"
@@ -10,7 +11,6 @@ import { useStepFields } from "./use-step-fields"
 
 const firstYear = 1970
 const engineTypes = ["motorcycle", "tuk_tuk", "rickshaw"]
-const row = "grid gap-4 sm:grid-cols-2"
 
 // Details of a vehicle. Each vehicle type shows only the fields that mean something for it.
 export function VehicleFields() {
@@ -24,7 +24,7 @@ export function VehicleFields() {
   return (
     <>
       <DetailsMakeModel vehicleType={values.vehicleType} />
-      <div className={row}>
+      <FieldGrid cols={3}>
         <FormField label={t("form.year")} error={error("year")}>
           {(control) => (
             <SelectInput
@@ -50,7 +50,7 @@ export function VehicleFields() {
             />
           )}
         </FormField>
-      </div>
+      </FieldGrid>
       <ConditionField />
       {values.condition === "used" && (
         <FormField label={t("form.mileage")} error={error("mileageKm")}>
@@ -65,7 +65,7 @@ export function VehicleFields() {
           )}
         </FormField>
       )}
-      <div className={row}>
+      <FieldGrid cols={3}>
         {(type === "car" || type === "truck") && (
           <FormField
             label={t("form.transmission")}
@@ -134,7 +134,7 @@ export function VehicleFields() {
             )}
           </FormField>
         )}
-      </div>
+      </FieldGrid>
     </>
   )
 }

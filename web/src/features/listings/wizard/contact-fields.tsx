@@ -2,6 +2,7 @@ import { useEffect, useState } from "react"
 import { useFormContext } from "react-hook-form"
 
 import { CheckboxGroup } from "@/components/app/checkbox-group"
+import { FieldGrid } from "@/components/app/field-grid"
 import { FilterSwitch } from "@/components/app/filter-switch"
 import { FormField } from "@/components/app/form-field"
 import { PhoneInput } from "@/components/app/phone-input"
@@ -24,20 +25,22 @@ export function PhoneFields() {
       set("whatsapp", values.phone || null)
   }, [same, values.phone, values.whatsapp])
   return (
-    <>
-      <FormField label={t("form.phone")} error={error("phone")}>
-        {(c) => (
-          <PhoneInput
-            {...c}
-            value={values.phone ?? ""}
-            onChange={(v) => set("phone", v)}
-          />
-        )}
-      </FormField>
-      <Label className="min-h-11 font-normal">
-        <Checkbox checked={same} onCheckedChange={setSame} />
-        {t("post.same_whatsapp")}
-      </Label>
+    <FieldGrid>
+      <div className="flex flex-col gap-2">
+        <FormField label={t("form.phone")} error={error("phone")}>
+          {(c) => (
+            <PhoneInput
+              {...c}
+              value={values.phone ?? ""}
+              onChange={(v) => set("phone", v)}
+            />
+          )}
+        </FormField>
+        <Label className="min-h-(--row-h) font-normal">
+          <Checkbox checked={same} onCheckedChange={setSame} />
+          {t("post.same_whatsapp")}
+        </Label>
+      </div>
       {!same && (
         <FormField label={t("form.whatsapp")} error={error("whatsapp")}>
           {(c) => (
@@ -49,7 +52,7 @@ export function PhoneFields() {
           )}
         </FormField>
       )}
-    </>
+    </FieldGrid>
   )
 }
 
@@ -76,6 +79,7 @@ export function MethodFields() {
         ]}
         value={methods}
         disabled={showPhone ? [] : ["call"]}
+        row
         onChange={(next) => set("methods", next)}
         error={error("methods")}
       />

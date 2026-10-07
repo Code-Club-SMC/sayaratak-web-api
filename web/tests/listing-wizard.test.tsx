@@ -108,6 +108,12 @@ describe("wizard config", () => {
 })
 
 describe("ListingWizard", () => {
+  it("does not reserve a blank error line under each field (long forms stay short)", async () => {
+    await open()
+    await name()
+    expect(document.querySelector("[data-reserve-errors]")).toBeNull()
+  })
+
   it("keeps values across refresh, Back and a step jump", async () => {
     const error = vi.spyOn(console, "error")
     const first = await open()

@@ -36,7 +36,7 @@ export function PriceFields({
           </div>
         )}
       </FormField>
-      <Label className="min-h-11 font-normal">
+      <Label className="min-h-(--row-h) font-normal">
         <Checkbox
           checked={value.negotiable}
           onCheckedChange={(negotiable) => onChange({ ...value, negotiable })}

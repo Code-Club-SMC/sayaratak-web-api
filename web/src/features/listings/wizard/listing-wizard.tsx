@@ -120,7 +120,6 @@ export function ListingWizard({
         <form
           ref={formRef}
           noValidate
-          data-reserve-errors
           className="flex flex-col gap-4"
           onSubmit={submit}
         >
@@ -132,7 +131,7 @@ export function ListingWizard({
             {restored && <step.Component />}
           </div>
           <StickyFooter
-            width="max-w-160"
+            width="max-w-152 lg:max-w-212"
             onBack={() => (prev ? go(prev.id) : leave())}
           >
             <SubmitButton size="lg" pending={form.formState.isSubmitting}>

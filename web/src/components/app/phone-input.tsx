@@ -19,7 +19,7 @@ export function PhoneInput({ value, onChange, onBlur, ...props }: Props) {
   const prefixed = value.startsWith(PREFIX)
   return (
     <div dir="ltr" className="flex gap-2">
-      <span className="flex h-11 items-center rounded-lg bg-muted px-3 text-ui md:h-10">
+      <span className="flex h-(--control-h) items-center rounded-lg bg-muted px-3 text-ui">
         {PREFIX}
       </span>
       <Input

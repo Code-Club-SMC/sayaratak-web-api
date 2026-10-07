@@ -151,6 +151,15 @@
   --dur-sheet: 220ms;
   /* Hero carousel: the time one slide stays. It is the length of the active dot's fill, which is the autoplay timer, so reduced motion leaves it alone (autoplay is off then, see `carousel-fill`). */
   --dur-carousel: 6s;
+  /* Form control and list-row heights (A5): 44 for touch below md, denser from md. Controls are inputs, selects, buttons, chips; rows are checkbox and radio lines. */
+  --control-h: 2.75rem;
+  --row-h: 2.75rem;
+}
+@media (min-width: 48rem) {
+  :root {
+    --control-h: 2.25rem;
+    --row-h: 2rem;
+  }
 }
 @media (prefers-reduced-motion: reduce) {
   :root {

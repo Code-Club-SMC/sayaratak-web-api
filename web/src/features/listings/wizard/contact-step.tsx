@@ -37,7 +37,7 @@ export function ContactStep() {
     <>
       {own && (
         <div className="flex flex-col gap-2">
-          <Label className="min-h-11 font-normal">
+          <Label className="min-h-(--row-h) font-normal">
             <Checkbox checked={collapsed} onCheckedChange={useDealer} />
             {t("post.use_dealer_contact")}
           </Label>

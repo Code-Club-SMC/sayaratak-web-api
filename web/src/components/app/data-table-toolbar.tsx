@@ -66,7 +66,7 @@ export function DataTableToolbar({
                 key={c.id}
                 checked={c.visible}
                 onCheckedChange={c.toggle}
-                className="min-h-11 md:min-h-10"
+                className="min-h-(--control-h)"
               >
                 {c.label}
               </DropdownMenuCheckboxItem>

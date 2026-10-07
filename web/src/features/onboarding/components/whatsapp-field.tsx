@@ -41,7 +41,7 @@ export function WhatsappField({ first }: { first: string }) {
           </FormField>
         )}
       />
-      <Label className="min-h-11 font-normal">
+      <Label className="min-h-(--row-h) font-normal">
         <Checkbox checked={same} onCheckedChange={setChoice} />
         {t("form.same_as_phone")}
       </Label>

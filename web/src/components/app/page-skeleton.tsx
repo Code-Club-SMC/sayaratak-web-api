@@ -33,8 +33,8 @@ const variants = {
         <Skeleton className="h-8 w-2/5" />
         <Skeleton className="h-6 w-full" />
         <Skeleton className="h-6 w-2/3" />
-        <Skeleton className="mt-3 h-11 w-full md:h-10" />
-        <Skeleton className="h-11 w-full md:h-10" />
+        <Skeleton className="mt-3 h-(--control-h) w-full" />
+        <Skeleton className="h-(--control-h) w-full" />
       </div>
     </div>
   ),

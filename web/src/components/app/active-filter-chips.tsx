@@ -28,7 +28,7 @@ export function ActiveFilterChips({
             type="button"
             aria-label={t("search.remove_filter", { label: c.label })}
             onClick={() => onChange(c.next)}
-            className="flex min-h-11 items-center gap-2 rounded-full bg-muted ps-4 pe-3 text-ui md:min-h-10"
+            className="flex min-h-(--control-h) items-center gap-2 rounded-full bg-muted ps-4 pe-3 text-ui"
           >
             <bdi>{c.label}</bdi>
             <XIcon aria-hidden className="size-4" />

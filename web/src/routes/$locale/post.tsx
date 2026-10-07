@@ -3,6 +3,7 @@ import { createFileRoute } from "@tanstack/react-router"
 import { useQuery } from "@tanstack/react-query"
 
 import { listingQueries, taxonomyQuery } from "@/features/listings/queries"
+import { DoneStep } from "@/features/listings/wizard/done-step"
 import { ListingWizard } from "@/features/listings/wizard/listing-wizard"
 import { listingToValues } from "@/features/listings/wizard/to-listing-input"
 import { useListingLimit } from "@/features/listings/wizard/use-listing-limit"
@@ -28,7 +29,7 @@ export const Route = createFileRoute("/$locale/post")({
       ? buildHead({ ...loaderData, path: "/post", noindex: true })
       : {},
   component: function Post() {
-    const { step, edit } = Route.useSearch()
+    const { step, edit, listing: savedId } = Route.useSearch()
     const { locale } = Route.useRouteContext()
     const navigate = Route.useNavigate()
     const listing = useQuery({
@@ -50,6 +51,9 @@ export const Route = createFileRoute("/$locale/post")({
         void navigate({ search: { step: "done", listing: saved.id } }),
     })
     const { reached } = useListingLimit(!!edit)
+    // `done` is not a wizard step: it shows the listing that was just saved, and nothing without one.
+    if (step === "done")
+      return <DoneStep context="public" listingId={savedId} />
     return (
       <ListingWizard
         context="public"

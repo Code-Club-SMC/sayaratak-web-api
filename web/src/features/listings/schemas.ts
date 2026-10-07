@@ -13,6 +13,7 @@ import {
   fuelSchema,
   intentSchema,
   mediaSchema,
+  promotionTypeSchema,
   transmissionSchema,
   vehicleTypeSchema,
   type VehicleType,
@@ -222,4 +223,11 @@ export type ListingInput = z.infer<typeof listingInputSchema>
 export const reviewProfileSchema = z.object({
   profileName: nameSchema,
   profileCityId: z.string().min(1, "validation.required"),
+})
+
+// The offer on the done step. Nothing is chosen until the owner picks a row.
+export const promotionChoiceSchema = z.object({
+  promotion: z.enum(promotionTypeSchema.options, {
+    error: "post.promo_required",
+  }),
 })

@@ -15,8 +15,9 @@ export function WizardLayout({
 }: {
   context: "public" | "dealer"
   editing: boolean
-  onExit: () => void
-  indicator: ComponentProps<typeof WizardStepIndicator>
+  // The done step has neither a draft to save nor steps to show.
+  onExit?: () => void
+  indicator?: ComponentProps<typeof WizardStepIndicator>
   children: ReactNode
 }) {
   const { t } = useT()
@@ -35,12 +36,14 @@ export function WizardLayout({
             />
           ) : undefined
         }
-        action={{ label: t("post.save_exit"), onClick: onExit }}
+        action={onExit && { label: t("post.save_exit"), onClick: onExit }}
       />
       <div className="mx-auto w-full max-w-160 md:px-4 lg:max-w-220">
-        <div className="px-4 pt-2 md:px-0">
-          <WizardStepIndicator {...indicator} />
-        </div>
+        {indicator && (
+          <div className="px-4 pt-2 md:px-0">
+            <WizardStepIndicator {...indicator} />
+          </div>
+        )}
         <main className="mt-4 flex flex-col gap-6 px-4 pt-2 md:px-0">
           {children}
         </main>

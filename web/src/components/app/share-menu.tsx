@@ -20,14 +20,18 @@ const canShare = () => typeof navigator.share === "function"
 export function ShareMenu({
   targetId,
   title,
+  url: given,
   className,
 }: {
   targetId: string
   title: string
+  // The address to share; the current page when left out.
+  url?: string
   className?: string
 }) {
   const { t } = useT()
-  const url = usePageUrl()
+  const page = usePageUrl()
+  const url = given ?? page
   const native = useSyncExternalStore(noop, canShare, () => false)
   const { mutate: track } = useTrackEvent()
   const enc = encodeURIComponent

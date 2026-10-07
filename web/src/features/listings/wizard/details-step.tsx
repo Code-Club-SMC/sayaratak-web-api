@@ -67,9 +67,7 @@ function Custom({ item }: { item: Custom }) {
           <DetailsMakeModel />
         </FieldSet>
       ) : (
-        <div className="col-span-full">
-          <DetailsMakeModel vehicleType={values.vehicleType} />
-        </div>
+        <DetailsMakeModel vehicleType={values.vehicleType} inGrid />
       )
     case "condition":
       return <ConditionField />

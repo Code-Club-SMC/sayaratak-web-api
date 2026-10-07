@@ -24,6 +24,7 @@ export function MakeModelFields({
   makeError,
   modelError,
   search = false,
+  alwaysModel = false,
   className = "grid gap-4 sm:grid-cols-2",
 }: {
   value: MakeModelValue
@@ -33,6 +34,8 @@ export function MakeModelFields({
   modelError?: string
   // Search forms: no "Other", and the model select is always there, disabled until a make is picked.
   search?: boolean
+  // Show the model field (disabled until a make is chosen) so a parent grid does not shift when it appears.
+  alwaysModel?: boolean
   className?: string
 }) {
   const { t, locale } = useT()
@@ -97,7 +100,7 @@ export function MakeModelFields({
       </FormField>
       {makeIsOther && text(t("form.make_name"), "makeOther", makeError)}
       {makeIsOther && text(t("form.model_name"), "modelOther", modelError)}
-      {(value.makeId || search) && (
+      {(value.makeId || search || alwaysModel) && (
         <FormField
           label={t("form.model")}
           error={modelIsOther ? undefined : modelError}

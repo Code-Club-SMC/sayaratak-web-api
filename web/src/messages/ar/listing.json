@@ -122,5 +122,17 @@
   "post.publish": "نشر",
   "post.inventory": "المخزون",
   "post.new_listing": "إعلان جديد",
-  "post.edit_listing": "تعديل الإعلان"
+  "post.edit_listing": "تعديل الإعلان",
+  "post.type_title": "ما نوع إعلانك؟",
+  "post.type_car": "سيارة",
+  "post.type_truck": "شاحنة",
+  "post.type_motorcycle": "دراجة نارية",
+  "post.type_tuk_tuk": "توك توك",
+  "post.type_rickshaw": "ركشة",
+  "post.type_part": "قطعة غيار",
+  "post.intent_legend": "هل الإعلان للبيع أم للإيجار؟",
+  "post.fits": "تناسب",
+  "post.change_type_title": "تغيير النوع؟",
+  "post.change_type_body": "تغيير النوع يمسح الحقول التي لا تنطبق عليه.",
+  "post.change_type_confirm": "تغيير النوع"
 }

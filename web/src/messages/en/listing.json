@@ -122,5 +122,17 @@
   "post.publish": "Publish",
   "post.inventory": "Inventory",
   "post.new_listing": "New listing",
-  "post.edit_listing": "Edit listing"
+  "post.edit_listing": "Edit listing",
+  "post.type_title": "What are you posting?",
+  "post.type_car": "Car",
+  "post.type_truck": "Truck",
+  "post.type_motorcycle": "Motorcycle",
+  "post.type_tuk_tuk": "Tuk-tuk",
+  "post.type_rickshaw": "Rickshaw",
+  "post.type_part": "Spare part",
+  "post.intent_legend": "Is it for sale or for rent?",
+  "post.fits": "Fits",
+  "post.change_type_title": "Change the type?",
+  "post.change_type_body": "Changing the type clears fields that do not apply.",
+  "post.change_type_confirm": "Change type"
 }

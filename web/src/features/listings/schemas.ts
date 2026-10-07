@@ -1,5 +1,7 @@
 import { z } from "zod"
 
+import { intentSchema, vehicleTypeSchema } from "@/schemas/listing"
+
 export const reportReasons = [
   "scam",
   "wrong_category",
@@ -22,3 +24,31 @@ export const reportSchema = z
     }
   )
 export type ReportForm = z.infer<typeof reportSchema>
+
+// Step `type` of the post wizard.
+export const typeStepSchema = z
+  .object({
+    kind: z.enum(["vehicle", "part"]),
+    vehicleType: vehicleTypeSchema.nullable(),
+    intent: intentSchema,
+    partCategoryId: z.string().nullable(),
+    compatibleTypes: z.array(vehicleTypeSchema),
+  })
+  .superRefine((v, ctx) => {
+    const need = (
+      ok: boolean,
+      path: string,
+      message = "validation.required"
+    ) => {
+      if (!ok) ctx.addIssue({ code: "custom", path: [path], message })
+    }
+    if (v.kind === "vehicle") need(v.vehicleType !== null, "vehicleType")
+    if (v.kind === "part") {
+      need(v.partCategoryId !== null, "partCategoryId")
+      need(
+        v.compatibleTypes.length > 0,
+        "compatibleTypes",
+        "validation.select_min"
+      )
+    }
+  })

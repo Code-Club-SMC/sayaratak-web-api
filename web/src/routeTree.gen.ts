@@ -28,6 +28,7 @@ import { Route as LocalePublicTermsRouteImport } from './routes/$locale/_public/
 import { Route as LocaleAuthIndexRouteImport } from './routes/$locale/auth/index'
 import { Route as LocaleAuthForgotRouteImport } from './routes/$locale/auth/forgot'
 import { Route as LocaleAuthResetRouteImport } from './routes/$locale/auth/reset'
+import { Route as LocaleDevPostRouteImport } from './routes/$locale/dev/post'
 import { Route as LocaleOnboardingIndexRouteImport } from './routes/$locale/onboarding/index'
 import { Route as LocaleOnboardingRoleRouteImport } from './routes/$locale/onboarding/role'
 import { Route as LocalePublicDealershipsIndexRouteImport } from './routes/$locale/_public/dealerships/index'
@@ -136,6 +137,11 @@ const LocaleAuthResetRoute = LocaleAuthResetRouteImport.update({
   path: '/auth/reset',
   getParentRoute: () => LocaleRouteRoute,
 } as any)
+const LocaleDevPostRoute = LocaleDevPostRouteImport.update({
+  id: '/dev/post',
+  path: '/dev/post',
+  getParentRoute: () => LocaleRouteRoute,
+} as any)
 const LocaleOnboardingIndexRoute = LocaleOnboardingIndexRouteImport.update({
   id: '/onboarding/',
   path: '/onboarding/',
@@ -227,6 +233,7 @@ export interface FileRoutesByFullPath {
   '/$locale/terms': typeof LocalePublicTermsRoute
   '/$locale/auth/forgot': typeof LocaleAuthForgotRoute
   '/$locale/auth/reset': typeof LocaleAuthResetRoute
+  '/$locale/dev/post': typeof LocaleDevPostRoute
   '/$locale/onboarding/role': typeof LocaleOnboardingRoleRoute
   '/$locale/': typeof LocalePublicIndexRoute
   '/$locale/auth/': typeof LocaleAuthIndexRoute
@@ -260,6 +267,7 @@ export interface FileRoutesByTo {
   '/$locale/terms': typeof LocalePublicTermsRoute
   '/$locale/auth/forgot': typeof LocaleAuthForgotRoute
   '/$locale/auth/reset': typeof LocaleAuthResetRoute
+  '/$locale/dev/post': typeof LocaleDevPostRoute
   '/$locale/onboarding/role': typeof LocaleOnboardingRoleRoute
   '/$locale/auth': typeof LocaleAuthIndexRoute
   '/$locale/onboarding': typeof LocaleOnboardingIndexRoute
@@ -294,6 +302,7 @@ export interface FileRoutesById {
   '/$locale/_public/terms': typeof LocalePublicTermsRoute
   '/$locale/auth/forgot': typeof LocaleAuthForgotRoute
   '/$locale/auth/reset': typeof LocaleAuthResetRoute
+  '/$locale/dev/post': typeof LocaleDevPostRoute
   '/$locale/onboarding/role': typeof LocaleOnboardingRoleRoute
   '/$locale/_public/': typeof LocalePublicIndexRoute
   '/$locale/auth/': typeof LocaleAuthIndexRoute
@@ -329,6 +338,7 @@ export interface FileRouteTypes {
     | '/$locale/terms'
     | '/$locale/auth/forgot'
     | '/$locale/auth/reset'
+    | '/$locale/dev/post'
     | '/$locale/onboarding/role'
     | '/$locale/'
     | '/$locale/auth/'
@@ -362,6 +372,7 @@ export interface FileRouteTypes {
     | '/$locale/terms'
     | '/$locale/auth/forgot'
     | '/$locale/auth/reset'
+    | '/$locale/dev/post'
     | '/$locale/onboarding/role'
     | '/$locale/auth'
     | '/$locale/onboarding'
@@ -395,6 +406,7 @@ export interface FileRouteTypes {
     | '/$locale/_public/terms'
     | '/$locale/auth/forgot'
     | '/$locale/auth/reset'
+    | '/$locale/dev/post'
     | '/$locale/onboarding/role'
     | '/$locale/_public/'
     | '/$locale/auth/'
@@ -555,6 +567,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LocaleAuthResetRouteImport
       parentRoute: typeof LocaleRouteRoute
     }
+    '/$locale/dev/post': {
+      id: '/$locale/dev/post'
+      path: '/dev/post'
+      fullPath: '/$locale/dev/post'
+      preLoaderRoute: typeof LocaleDevPostRouteImport
+      parentRoute: typeof LocaleRouteRoute
+    }
     '/$locale/onboarding/': {
       id: '/$locale/onboarding/'
       path: '/onboarding'
@@ -703,6 +722,7 @@ interface LocaleRouteRouteChildren {
   LocalePublicRouteRoute: typeof LocalePublicRouteRouteWithChildren
   LocaleAuthForgotRoute: typeof LocaleAuthForgotRoute
   LocaleAuthResetRoute: typeof LocaleAuthResetRoute
+  LocaleDevPostRoute: typeof LocaleDevPostRoute
   LocaleOnboardingRoleRoute: typeof LocaleOnboardingRoleRoute
   LocaleAuthIndexRoute: typeof LocaleAuthIndexRoute
   LocaleOnboardingIndexRoute: typeof LocaleOnboardingIndexRoute
@@ -713,6 +733,7 @@ const LocaleRouteRouteChildren: LocaleRouteRouteChildren = {
   LocalePublicRouteRoute: LocalePublicRouteRouteWithChildren,
   LocaleAuthForgotRoute: LocaleAuthForgotRoute,
   LocaleAuthResetRoute: LocaleAuthResetRoute,
+  LocaleDevPostRoute: LocaleDevPostRoute,
   LocaleOnboardingRoleRoute: LocaleOnboardingRoleRoute,
   LocaleAuthIndexRoute: LocaleAuthIndexRoute,
   LocaleOnboardingIndexRoute: LocaleOnboardingIndexRoute,

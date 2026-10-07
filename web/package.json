@@ -17,7 +17,7 @@
     "size": "bun scripts/check-size.ts",
     "i18n:check": "bun scripts/check-i18n.ts",
     "i18n:literals": "echo \"i18n:literals: not built yet\"",
-    "seo:check": "echo \"seo:check: not built yet\"",
+    "seo:check": "bun scripts/check-seo.ts",
     "audit:design": "echo \"audit:design: not built yet\"",
     "shots": "echo \"shots: not built yet\"",
     "banners": "bun scripts/make-banners.ts"

@@ -143,6 +143,16 @@ describe("searchHead", () => {
     expect(robots(filtered)).toMatchObject({ content: "noindex, follow" })
     expect(canonical(filtered)).toBe("/en/vehicles/cars/sale")
   })
+  it("a landing built by the route (city key set to undefined) is indexed", () => {
+    const s = landingSearch({ type: "cars", intent: "sale" }, find({}))!
+    const head = searchHead(data, s, "/vehicles/cars/sale", [
+      "kind",
+      "type",
+      "intent",
+    ])
+    expect(robots(head)).toBeUndefined()
+    expect(canonical(head)).toBe("/en/vehicles/cars/sale")
+  })
 })
 
 function Nav({ search }: { search: SearchParams }) {

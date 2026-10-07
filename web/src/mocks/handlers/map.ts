@@ -1,4 +1,4 @@
-import { searchParamsSchema } from "@/features/search/schemas"
+import { arrayKeys, searchParamsSchema } from "@/features/search/schemas"
 import { mapResponseSchema, type MapPoint } from "@/schemas/responses"
 import { both } from "@/mocks/seed/util"
 
@@ -29,7 +29,7 @@ route("GET", "/map", (c) => {
   const points: MapPoint[] = []
   if (layers.has("vehicles")) {
     const filters = searchParamsSchema.parse({
-      ...queryObject(c.query, ["fuel", "transmission"]),
+      ...queryObject(c.query, arrayKeys),
       kind: "vehicle",
     })
     const listings = db.listings

@@ -152,7 +152,7 @@ export function seedSpecs(
     axles: heavy ? from(n, 34, [2, 2, 3, 4]) : null,
     grossWeightTons: heavy ? from(n, 35, [7, 12, 18, 26]) : null,
     cabType: heavy ? from(n, 36, specOptions.cabType) : null,
-    previousOwners: s.used ? 1 + (hash(n, 37) % 3) : null,
+    previousOwners: s.used ? hash(n, 37) % 4 : null,
     accidentFree: s.used
       ? share(n, 38, 0.7)
         ? true

@@ -49,6 +49,12 @@ export type Section = {
 }
 
 // A key may not end in a plural suffix (`_other`), so "other" is stored as `misc`.
+const snake = (name: string) =>
+  name.replace(/[A-Z]/g, (c) => `_${c.toLowerCase()}`)
+// Label key of a field: its own, or `form.<name in snake case>`.
+export const labelKey = (def: FieldDef) =>
+  def.label ?? `form.${snake(def.name)}`
+
 const spec = (prefix: string) => (value: string) =>
   `spec.${prefix}_${value === "other" ? "misc" : value}`
 const pick = (

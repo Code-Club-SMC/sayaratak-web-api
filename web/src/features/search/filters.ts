@@ -1,6 +1,6 @@
 import type { Geo } from "@/schemas/fields"
 import type { Fuel, Transmission, VehicleType } from "@/schemas/listing"
-import type { SearchParams } from "./schemas"
+import { flagKeys, type FlagKey, type SearchParams } from "./schemas"
 
 export const radii = [5, 10, 25, 50, 100] as const
 
@@ -26,6 +26,16 @@ export type FilterDraft = {
   verifiedOnly: boolean
   hasVideo: boolean
   includeSold: boolean
+  // Step 7.9 fields: the yes-only filters that are on, the multi-choice lists, and two numbers.
+  flags: FlagKey[]
+  body: string[]
+  drive: string[]
+  madeIn: string[]
+  driver: string[]
+  partType: string[]
+  features: string[]
+  seatsMin: number | null
+  fitsYear: number | null
 }
 
 // The blocks of the filter form. A page that owns some filters (a profile's inventory) shows only the groups it can write to its URL.
@@ -38,6 +48,7 @@ export const filterGroups = [
   "fuel",
   "condition",
   "location",
+  "spec",
   "more",
 ] as const
 export type FilterGroup = (typeof filterGroups)[number]
@@ -63,6 +74,15 @@ export const filterKeys = [
   "verifiedOnly",
   "hasVideo",
   "includeSold",
+  "body",
+  "drive",
+  "madeIn",
+  "driver",
+  "partType",
+  "features",
+  "seatsMin",
+  "fitsYear",
+  ...flagKeys,
 ] as const satisfies readonly (keyof SearchParams)[]
 
 export const toDraft = (p: SearchParams): FilterDraft => ({
@@ -88,6 +108,15 @@ export const toDraft = (p: SearchParams): FilterDraft => ({
   verifiedOnly: p.verifiedOnly ?? false,
   hasVideo: p.hasVideo ?? false,
   includeSold: p.includeSold,
+  flags: flagKeys.filter((k) => p[k]),
+  body: p.body ?? [],
+  drive: p.drive ?? [],
+  madeIn: p.madeIn ?? [],
+  driver: p.driver ?? [],
+  partType: p.partType ?? [],
+  features: p.features ?? [],
+  seatsMin: p.seatsMin ?? null,
+  fitsYear: p.fitsYear ?? null,
 })
 
 const some = <T>(v: T | null | "") => (v === null || v === "" ? undefined : v)
@@ -127,6 +156,17 @@ export function applyDraft(
     verifiedOnly: d.verifiedOnly || undefined,
     hasVideo: d.hasVideo || undefined,
     includeSold: d.includeSold,
+    ...Object.fromEntries(
+      flagKeys.map((k) => [k, d.flags.includes(k) || undefined])
+    ),
+    body: list(d.body),
+    drive: list(d.drive),
+    madeIn: list(d.madeIn),
+    driver: list(d.driver),
+    partType: list(d.partType),
+    features: list(d.features),
+    seatsMin: some(d.seatsMin),
+    fitsYear: some(d.fitsYear),
     page: 1,
   }
 }

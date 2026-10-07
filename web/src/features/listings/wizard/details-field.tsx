@@ -9,11 +9,9 @@ import { YesNoField } from "@/components/app/yes-no-field"
 import { Input } from "@/components/ui/input"
 import { formatPrice } from "@/lib/format"
 import { useT } from "@/lib/i18n/use-t"
-import type { FieldDef } from "./details-sections"
+import { labelKey, type FieldDef } from "./details-sections"
 import { useStepFields } from "./use-step-fields"
 
-const snake = (name: string) =>
-  name.replace(/[A-Z]/g, (c) => `_${c.toLowerCase()}`)
 const firstYear = 1970
 // Local calendar day <-> "YYYY-MM-DD", so no time zone moves the date.
 const toDate = (iso: string | null) =>
@@ -31,7 +29,7 @@ export function DetailField({
 }) {
   const { t, locale } = useT()
   const { values, error, set } = useStepFields()
-  const label = t(def.label ?? `form.${snake(def.name)}`)
+  const label = t(labelKey(def))
   const value = values[def.name]
   const options =
     typeof def.options === "function" ? def.options(values) : def.options

@@ -155,6 +155,73 @@ describe("listings", () => {
       )
     ).toBe(true)
   })
+  it("narrows by the step 7.9 filters: repeated keys are lists, flags are yes-only, features need all", async () => {
+    const total = (q: string) =>
+      call("GET", `/listings?pageSize=100&${q}`).then((r) => r.body)
+    const one = await total("body=sedan")
+    const two = await total("body=sedan&body=suv")
+    expect(one.items.length).toBeGreaterThan(0)
+    expect(two.total).toBeGreaterThan(one.total)
+    for (const l of two.items) expect(["sedan", "suv"]).toContain(l.bodyType)
+    const owners = await total("firstOwner=true")
+    for (const l of owners.items) expect(l.previousOwners).toBe(0)
+    const abs = (await total("features=abs")).total
+    const absSun = await total("features=abs&features=sunroof")
+    expect(absSun.total).toBeLessThanOrEqual(abs)
+    for (const l of absSun.items)
+      expect(l.features).toEqual(expect.arrayContaining(["abs", "sunroof"]))
+    expect(
+      (await total("seatsMin=7")).items.every(
+        (l: { seats: number }) => l.seats >= 7
+      )
+    ).toBe(true)
+    // the map pins use the same filters
+    const pins = await call("GET", "/map?body=sedan&body=suv")
+    expect(pins.status).toBe(200)
+  })
+  it("saves and returns every step 7.9 field, empty ones as null or []", async () => {
+    const created = await call("POST", "/listings", {
+      as: "u-1",
+      body: {
+        ...car,
+        bodyType: "sedan",
+        doors: 4,
+        accidentFree: true,
+        warranty: "dealer",
+        warrantyMonths: 12,
+        features: ["abs", "sunroof"],
+        licenseValidUntil: "2027-03-15",
+      },
+    })
+    expect(created.status).toBe(200)
+    expect(created.body).toMatchObject({
+      bodyType: "sedan",
+      doors: 4,
+      accidentFree: true,
+      warranty: "dealer",
+      warrantyMonths: 12,
+      features: ["abs", "sunroof"],
+      licenseValidUntil: "2027-03-15",
+      seats: null,
+      deposit: null,
+      compatibleMakeIds: [],
+      partNumber: null,
+    })
+    const patched = await call("PATCH", `/listings/${created.body.id}`, {
+      as: "u-1",
+      body: { seats: 5, features: ["abs"] },
+    })
+    expect(patched.body).toMatchObject({
+      seats: 5,
+      features: ["abs"],
+      doors: 4,
+    })
+    const bad = await call("PATCH", `/listings/${created.body.id}`, {
+      as: "u-1",
+      body: { doors: 9 },
+    })
+    expect(bad.status).toBe(422)
+  })
   it("creates a pending listing, enforces the free limit, hides it until approved", async () => {
     const created = await call("POST", "/listings", { as: "u-1", body: car })
     expect(created.status).toBe(200)

@@ -94,5 +94,22 @@
   "map.open": "Open",
   "map.empty": "Nothing in this area. Zoom out or change the filters.",
   "map.load_error": "Could not load the map.",
-  "search.too_many_on_map": "Zoom in to see all {{count}}"
+  "search.too_many_on_map": "Zoom in to see all {{count}}",
+  "search.group_spec": "More filters",
+  "search.group_spec_flags": "Only show",
+  "search.min_seats": "Minimum seats",
+  "search.fits_year": "Fits year",
+  "search.chip_seats": "{{seats}}+ seats",
+  "search.chip_fits_year": "Fits {{year}}",
+  "search.flag_customs": "Customs paid",
+  "search.flag_accident_free": "No accidents",
+  "search.flag_registered": "Registered",
+  "search.flag_first_owner": "First owner",
+  "search.flag_full_service": "Full service history",
+  "search.flag_warranty": "Has a warranty",
+  "search.flag_exchange": "Open to exchange",
+  "search.flag_financing": "Installments available",
+  "search.flag_insurance_included": "Insurance included",
+  "search.flag_delivery": "Delivery available",
+  "search.flag_installation": "Installation available"
 }

@@ -8,6 +8,13 @@ const availability = {
   rented: "SoldOut",
 } as const
 
+const driveConfig = {
+  fwd: "FrontWheelDriveConfiguration",
+  rwd: "RearWheelDriveConfiguration",
+  awd: "AllWheelDriveConfiguration",
+  four_wd: "FourWheelDriveConfiguration",
+} as const
+
 type Names = { make?: string; model?: string }
 
 // schema.org Vehicle for vehicles and Product for parts, each with an Offer. `url` is absolute.
@@ -65,6 +72,22 @@ export function listingJsonLd(
         "@type": "QuantitativeValue",
         value: l.mileageKm,
         unitCode: "KMT",
+      },
+    }),
+    ...(l.bodyType && { bodyType: l.bodyType }),
+    ...(l.doors != null && { numberOfDoors: l.doors }),
+    ...(l.seats != null && { vehicleSeatingCapacity: l.seats }),
+    ...(l.driveType && {
+      driveWheelConfiguration: `https://schema.org/${driveConfig[l.driveType]}`,
+    }),
+    ...(l.engineCc != null && {
+      vehicleEngine: {
+        "@type": "EngineSpecification",
+        engineDisplacement: {
+          "@type": "QuantitativeValue",
+          value: l.engineCc,
+          unitCode: "CMQ",
+        },
       },
     }),
     ...(l.fuel && { fuelType: l.fuel }),

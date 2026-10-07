@@ -1,4 +1,8 @@
-import type { SearchParams } from "@/features/search/schemas"
+import {
+  flagKeys,
+  type FlagKey,
+  type SearchParams,
+} from "@/features/search/schemas"
 import { db } from "./db"
 import type { ListingRow } from "./types"
 
@@ -45,6 +49,24 @@ export const isPublic = (l: ListingRow) =>
 const typesOf = (l: ListingRow) =>
   l.kind === "part" ? l.compatibleTypes : l.vehicleType ? [l.vehicleType] : []
 
+// A yes-only filter keeps listings whose own field says yes.
+const flagTests: Record<FlagKey, (l: ListingRow) => boolean> = {
+  customs: (l) => l.customsCleared === true,
+  accidentFree: (l) => l.accidentFree === true,
+  registered: (l) => l.registered === true,
+  firstOwner: (l) => l.previousOwners === 0,
+  fullService: (l) => l.serviceHistory === "full",
+  warranty: (l) => !!l.warranty && l.warranty !== "none",
+  exchange: (l) => l.exchange === true,
+  financing: (l) => l.financing === true,
+  insuranceIncluded: (l) => l.insuranceIncluded === true,
+  delivery: (l) => l.delivery === true,
+  installation: (l) => l.installation === true,
+}
+// An empty list is no filter; otherwise the listing's value must be one of them.
+const oneOf = (list: string[] | undefined, value: string | null) =>
+  !list?.length || (value !== null && list.includes(value))
+
 export function matches(l: ListingRow, p: SearchParams, skip: string[] = []) {
   const on = (key: string) => !skip.includes(key)
   if (!isPublic(l) || l.kind !== p.kind) return false
@@ -74,6 +96,23 @@ export function matches(l: ListingRow, p: SearchParams, skip: string[] = []) {
   if (p.partCategory && l.partCategoryId !== p.partCategory) return false
   if (p.verifiedOnly && !l.owner.verified) return false
   if (p.hasVideo && !l.media.some((m) => m.type === "video")) return false
+  if (
+    !oneOf(p.body, l.bodyType) ||
+    !oneOf(p.drive, l.driveType) ||
+    !oneOf(p.madeIn, l.origin) ||
+    !oneOf(p.driver, l.driver) ||
+    !oneOf(p.partType, l.partType)
+  )
+    return false
+  const equipment: string[] = l.features
+  if (p.features?.some((f) => !equipment.includes(f))) return false
+  if (p.seatsMin !== undefined && (l.seats ?? 0) < p.seatsMin) return false
+  if (
+    p.fitsYear !== undefined &&
+    ((l.fitsYearFrom ?? 0) > p.fitsYear || (l.fitsYearTo ?? 9999) < p.fitsYear)
+  )
+    return false
+  if (flagKeys.some((k) => p[k] && !flagTests[k](l))) return false
   if (
     p.featured &&
     !activePromotions(l).some(

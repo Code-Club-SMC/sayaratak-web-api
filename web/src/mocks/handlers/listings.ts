@@ -1,4 +1,4 @@
-import { searchParamsSchema } from "@/features/search/schemas"
+import { arrayKeys, searchParamsSchema } from "@/features/search/schemas"
 import { listingAnalyticsSchema } from "@/schemas/api"
 import {
   listingCreateSchema,
@@ -52,9 +52,7 @@ route("GET", "/taxonomy", () => taxonomySchema.parse(db.taxonomy))
 
 // `limit` (1 to 24) and `exclude` serve the rails; they are not search params of a page.
 route("GET", "/listings", (c) => {
-  const params = searchParamsSchema.parse(
-    queryObject(c.query, ["fuel", "transmission"])
-  )
+  const params = searchParamsSchema.parse(queryObject(c.query, arrayKeys))
   const exclude = c.query.get("exclude")
   const rows = sortListings(
     db.listings.filter((l) => l.id !== exclude && matches(l, params)),

@@ -324,5 +324,12 @@
   "feature.disc_brakes": "Disc brakes",
   "feature.luggage_box": "Luggage box",
   "feature.windshield": "Windshield",
-  "feature.led_lights": "LED lights"
+  "feature.led_lights": "LED lights",
+  "listing.first_owner": "First owner",
+  "listing.rent_day_one": "{{count}} day",
+  "listing.rent_day_other": "{{count}} days",
+  "listing.rent_week_one": "{{count}} week",
+  "listing.rent_week_other": "{{count}} weeks",
+  "listing.rent_month_one": "{{count}} month",
+  "listing.rent_month_other": "{{count}} months"
 }

@@ -20,6 +20,7 @@ import { ChipSingleSelect } from "./chip-single-select"
 import { CheckboxGroup } from "./checkbox-group"
 import { CityDistrictFields } from "./city-district-fields"
 import { FormField } from "./form-field"
+import { FilterSpecFields } from "./filter-spec-fields"
 import { FilterVehicleFields } from "./filter-vehicle-fields"
 import { FormSection } from "./form-section"
 import { NumberField } from "./number-field"
@@ -254,6 +255,9 @@ export function FilterForm({
               </div>
             )}
           </FormSection>
+        )}
+        {show("spec") && (
+          <FilterSpecFields part={isPart} intent={params.intent} />
         )}
         {show("more") && (
           <FormSection title={t("search.group_more")}>

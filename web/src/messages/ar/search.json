@@ -98,5 +98,22 @@
   "map.open": "افتح",
   "map.empty": "لا يوجد شيء في هذه المنطقة. صغّر الخريطة أو غيّر التصفية.",
   "map.load_error": "تعذر تحميل الخريطة.",
-  "search.too_many_on_map": "قرّب الخريطة لترى كل {{count}}"
+  "search.too_many_on_map": "قرّب الخريطة لترى كل {{count}}",
+  "search.group_spec": "فلاتر إضافية",
+  "search.group_spec_flags": "اعرض فقط",
+  "search.min_seats": "أقل عدد مقاعد",
+  "search.fits_year": "تناسب سنة",
+  "search.chip_seats": "{{seats}}+ مقاعد",
+  "search.chip_fits_year": "تناسب {{year}}",
+  "search.flag_customs": "الجمارك مدفوعة",
+  "search.flag_accident_free": "بدون حوادث",
+  "search.flag_registered": "مسجلة",
+  "search.flag_first_owner": "المالك الأول",
+  "search.flag_full_service": "سجل صيانة كامل",
+  "search.flag_warranty": "مع ضمان",
+  "search.flag_exchange": "قابلة للمبادلة",
+  "search.flag_financing": "التقسيط متاح",
+  "search.flag_insurance_included": "التأمين مشمول",
+  "search.flag_delivery": "التوصيل متاح",
+  "search.flag_installation": "التركيب متاح"
 }

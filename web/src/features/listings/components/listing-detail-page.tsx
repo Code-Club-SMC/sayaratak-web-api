@@ -16,6 +16,8 @@ import { SafetyTips } from "@/components/app/safety-tips"
 import { SpecsList } from "@/components/app/specs-list"
 import { listingQueries, taxonomyQuery } from "../queries"
 import { useListingFacts } from "../use-listing-facts"
+import { useSpecGroups } from "../use-spec-groups"
+import { FeatureList } from "./feature-list"
 import { useViewEvent } from "../use-view-event"
 import { Description } from "./description"
 import { KeyFacts } from "./key-facts"
@@ -38,6 +40,7 @@ export function ListingDetailPage({ slug }: { slug: string }) {
   const city = useCityName(listing.cityId)
   const district = useDistrictName(listing.districtId)
   const { facts, specs } = useListingFacts(listing)
+  const { groups, features } = useSpecGroups(listing, specs)
   useViewEvent(listing.id)
 
   const own = me?.id === listing.owner.id
@@ -102,14 +105,31 @@ export function ListingDetailPage({ slug }: { slug: string }) {
             <KeyFacts items={facts} />
           </div>
           {own && <div className="lg:hidden">{panel(false)}</div>}
-          {(specs.length > 0 || text) && (
+          {(groups.length > 0 || features.length > 0 || text) && (
             <div className={`${card} flex flex-col gap-8`}>
-              {specs.length > 0 && (
-                <section className="flex flex-col gap-4">
+              {groups.length > 0 && (
+                <section className="flex flex-col gap-6">
                   <h2 className="text-title font-semibold">
                     {t("listing.specs_title")}
                   </h2>
-                  <SpecsList items={specs} />
+                  {groups.map((g) => (
+                    <div key={g.id} className="flex flex-col gap-3">
+                      {groups.length > 1 && (
+                        <h3 className="text-ui font-medium text-muted-foreground">
+                          {g.title}
+                        </h3>
+                      )}
+                      <SpecsList items={g.items} />
+                    </div>
+                  ))}
+                </section>
+              )}
+              {features.length > 0 && (
+                <section className="flex flex-col gap-4">
+                  <h2 className="text-title font-semibold">
+                    {t("post.section_features")}
+                  </h2>
+                  <FeatureList groups={features} />
                 </section>
               )}
               {text && (

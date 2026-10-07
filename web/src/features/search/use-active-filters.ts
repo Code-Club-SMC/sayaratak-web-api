@@ -3,7 +3,18 @@ import { useQuery } from "@tanstack/react-query"
 import { taxonomyQuery } from "@/features/listings/queries"
 import { formatMileage, formatPrice } from "@/lib/format"
 import { useT } from "@/lib/i18n/use-t"
-import type { SearchParams } from "./schemas"
+import {
+  flagKeys,
+  flagLabel,
+  listKeys,
+  listPrefix,
+  type SearchParams,
+} from "./schemas"
+
+const dropOne = (list: string[] | undefined, value: string) => {
+  const rest = (list ?? []).filter((x) => x !== value)
+  return rest.length ? rest : undefined
+}
 
 export type ActiveFilter = { id: string; label: string; next: SearchParams }
 
@@ -101,6 +112,37 @@ export function useActiveFilters(params: SearchParams): ActiveFilter[] {
       "lat",
       "lng"
     )
+  // Step 7.9 filters: one chip per chosen value of a list, one per yes-only flag, one each for the two numbers.
+  for (const key of listKeys)
+    for (const v of params[key] ?? [])
+      out.push({
+        id: `${key}-${v}`,
+        label: t(`spec.${listPrefix[key]}_${v === "other" ? "misc" : v}`),
+        next: { ...params, page: 1, [key]: dropOne(params[key], v) },
+      })
+  for (const f of params.features ?? [])
+    out.push({
+      id: `features-${f}`,
+      label: t(`feature.${f}`),
+      next: {
+        ...params,
+        page: 1,
+        features: dropOne(params.features, f),
+      },
+    })
+  if (params.seatsMin !== undefined)
+    add(
+      "seatsMin",
+      t("search.chip_seats", { seats: params.seatsMin }),
+      "seatsMin"
+    )
+  if (params.fitsYear !== undefined)
+    add(
+      "fitsYear",
+      t("search.chip_fits_year", { year: params.fitsYear }),
+      "fitsYear"
+    )
+  for (const k of flagKeys) if (params[k]) add(k, t(flagLabel[k]), k)
   if (params.verifiedOnly)
     add("verifiedOnly", t("search.verified_only"), "verifiedOnly")
   if (params.hasVideo) add("hasVideo", t("search.has_video"), "hasVideo")

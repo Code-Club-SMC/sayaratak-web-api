@@ -1,9 +1,10 @@
-import { detailsSchema, typeStepSchema } from "../schemas"
+import { detailsSchema, photosStepSchema, typeStepSchema } from "../schemas"
 import { DetailsStep } from "./details-step"
+import { PhotosStep } from "./photos-step"
 import { TypeStep } from "./type-step"
 import type { WizardStep } from "./wizard-config"
 
-// The steps built so far, in order. 7.4 to 7.6 add photos, contact and review.
+// The steps built so far, in order. 7.5 and 7.6 add contact and review.
 export const wizardSteps: WizardStep[] = [
   {
     id: "type",
@@ -19,5 +20,12 @@ export const wizardSteps: WizardStep[] = [
     Component: DetailsStep,
     schema: ({ kind, vehicleType, intent }) =>
       detailsSchema({ kind, vehicleType, intent }),
+  },
+  {
+    id: "photos",
+    labelKey: "post.step_photos",
+    titleKey: "post.photos_title",
+    Component: PhotosStep,
+    schema: () => photosStepSchema,
   },
 ]

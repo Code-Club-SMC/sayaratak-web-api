@@ -136,5 +136,16 @@
   "post.change_type_body": "تغيير النوع يمسح الحقول التي لا تنطبق عليه.",
   "post.change_type_confirm": "تغيير النوع",
   "post.details_title": "أضف التفاصيل",
-  "post.part_make_legend": "الماركة والموديل الذي تناسبه القطعة"
+  "post.part_make_legend": "الماركة والموديل الذي تناسبه القطعة",
+  "post.photos_title": "أضف الصور",
+  "post.photos_label": "الصور",
+  "post.video_label": "فيديو (اختياري)",
+  "post.tips_title": "نصائح لصور جيدة",
+  "post.tip_front": "واجهة المركبة في ضوء النهار",
+  "post.tip_back": "الخلف والجانبان",
+  "post.tip_interior": "المقاعد ولوحة القيادة",
+  "post.tip_odometer": "عداد المسافة يظهر الكيلومترات",
+  "post.tip_part_whole": "القطعة كاملة من عدة جهات",
+  "post.tip_part_label": "أي ملصق أو رقم للقطعة",
+  "post.tip_part_wear": "أي تآكل أو صدأ أو تلف"
 }

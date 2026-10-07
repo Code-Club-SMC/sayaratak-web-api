@@ -30,7 +30,10 @@ export const detailsDefaults = {
   partNumber: "",
 } satisfies FieldValues
 
+export const photosDefaults = { media: [] } satisfies FieldValues
+
 export const wizardDefaults: FieldValues = {
   ...typeDefaults,
   ...detailsDefaults,
+  ...photosDefaults,
 }

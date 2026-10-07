@@ -44,7 +44,9 @@ const open = async (draft: object) => {
 const field = (name: RegExp | string) => screen.queryByLabelText(name)
 const select = (name: RegExp) => screen.getByRole("combobox", { name })
 const submit = () =>
-  fireEvent.click(screen.getByRole("button", { name: "Publish" }))
+  fireEvent.click(screen.getByRole("button", { name: "Next" }))
+const step = (shell: Awaited<ReturnType<typeof open>>) =>
+  new URLSearchParams(shell.router.state.location.searchStr).get("step")
 const type = (el: HTMLElement, value: string) =>
   fireEvent.change(el, { target: { value } })
 const valid = {
@@ -151,8 +153,8 @@ describe("DetailsStep", () => {
     expect((field(/^Mileage/) as HTMLInputElement).value).toBe("")
   })
 
-  it("Next on an empty step shows translated errors, focuses the first and does not publish", async () => {
-    await open(car)
+  it("Next on an empty step shows translated errors, focuses the first and stays", async () => {
+    const shell = await open(car)
     submit()
     expect(await screen.findByText("Write a longer title")).toBeTruthy()
     expect(screen.getByText("Write a longer description")).toBeTruthy()
@@ -160,23 +162,22 @@ describe("DetailsStep", () => {
       screen.getAllByText("This field is required").length
     ).toBeGreaterThan(3)
     expect(document.activeElement).toBe(select(/^Make/))
-    expect(publish).not.toHaveBeenCalled()
+    expect(step(shell)).toBe("details")
   })
 
   it("a rent listing asks for the period and shows it in the three words", async () => {
-    await open({ ...valid, intent: "rent" })
+    const shell = await open({ ...valid, intent: "rent" })
     submit()
     expect(await screen.findByText("This field is required")).toBeTruthy()
     await pick(select(/^Price per day/), "per week")
     submit()
-    await waitFor(() => expect(publish).toHaveBeenCalled())
-    expect(publish.mock.calls[0]).toBeTruthy()
+    await waitFor(() => expect(step(shell)).toBe("photos"))
   })
 
   it("a complete step passes", async () => {
-    await open(valid)
+    const shell = await open(valid)
     submit()
-    await waitFor(() => expect(publish).toHaveBeenCalledOnce())
+    await waitFor(() => expect(step(shell)).toBe("photos"))
   })
 
   it("the title follows make, model and year until it is edited", async () => {

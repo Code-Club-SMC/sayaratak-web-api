@@ -4,6 +4,7 @@ import { optionalInt, priceSchema, yearSchema } from "@/schemas/fields"
 import {
   fuelSchema,
   intentSchema,
+  mediaSchema,
   transmissionSchema,
   vehicleTypeSchema,
   type VehicleType,
@@ -145,3 +146,16 @@ export const detailsSchema = (ctx: {
       detailsBaseSchema
     )
 }
+
+// Step `photos` of the post wizard: photos first and at most one video last, so the cover is always a photo.
+export const photosStepSchema = z
+  .object({ media: z.array(mediaSchema) })
+  .superRefine((v, ctx) => {
+    const images = v.media.filter((m) => m.type === "image").length
+    const videos = v.media.length - images
+    const bad = (message: string) =>
+      ctx.addIssue({ code: "custom", path: ["media"], message })
+    if (images < 3) bad("validation.media_min")
+    if (images > 20) bad("validation.media_max")
+    if (videos > 1) bad("validation.video_max")
+  })

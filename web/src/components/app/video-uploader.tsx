@@ -68,12 +68,14 @@ export function VideoUploader({
       {label && <span className="text-ui font-medium">{label}</span>}
       {value && state.status === "idle" ? (
         <>
-          <GallerySlide
-            media={value}
-            alt={label ?? ""}
-            sizes="384px"
-            className="aspect-video w-full"
-          />
+          <div className="w-full">
+            <GallerySlide
+              media={value}
+              alt={label ?? ""}
+              sizes="384px"
+              className="aspect-video w-full"
+            />
+          </div>
           <Button variant="ghost" onClick={() => onChange(null)}>
             {t("common.remove")}
           </Button>

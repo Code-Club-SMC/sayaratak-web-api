@@ -136,5 +136,16 @@
   "post.change_type_body": "Changing the type clears fields that do not apply.",
   "post.change_type_confirm": "Change type",
   "post.details_title": "Add the details",
-  "post.part_make_legend": "Make and model it comes from or fits"
+  "post.part_make_legend": "Make and model it comes from or fits",
+  "post.photos_title": "Add photos",
+  "post.photos_label": "Photos",
+  "post.video_label": "Video (optional)",
+  "post.tips_title": "Tips for good photos",
+  "post.tip_front": "The front of the vehicle in daylight",
+  "post.tip_back": "The back, and each side",
+  "post.tip_interior": "The seats and dashboard",
+  "post.tip_odometer": "The odometer showing the mileage",
+  "post.tip_part_whole": "The whole part, from a few sides",
+  "post.tip_part_label": "Any label or part number",
+  "post.tip_part_wear": "Any wear, rust or damage"
 }

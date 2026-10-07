@@ -65,7 +65,7 @@ describe("seed counts (A9)", () => {
     expect(db.threads).toHaveLength(25)
     expect(db.reports).toHaveLength(6)
     expect(db.verifications).toHaveLength(6)
-    expect(db.banners).toHaveLength(4)
+    expect(db.banners).toHaveLength(7)
     expect(db.pages).toHaveLength(4)
     expect(db.backups).toHaveLength(5)
     expect(

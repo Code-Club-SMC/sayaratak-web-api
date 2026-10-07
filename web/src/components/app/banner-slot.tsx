@@ -7,9 +7,10 @@ import type { Banner } from "@/schemas/admin"
 import { bannersQuery } from "@/features/pages/queries"
 import { Skeleton } from "@/components/ui/skeleton"
 import { BannerItem } from "./banner-item"
+import { HeroBanners } from "./hero-banners"
 import { SectionError } from "./section-error"
 
-// `variant="hero"` shows only the first banner, tall, at the top of the home page.
+// `variant="hero"` is the home carousel: every banner of the slot, tall, at the top of the home page.
 export function BannerSlot({
   placement,
   variant = "strip",
@@ -45,10 +46,11 @@ export function BannerSlot({
       />
     )
   if (!data.length) return null
+  if (variant === "hero") return <HeroBanners banners={data} />
   return (
     <aside aria-label={t("nav.advertisement")} className="space-y-4">
-      {(variant === "hero" ? data.slice(0, 1) : data).map((banner) => (
-        <BannerItem key={banner.id} banner={banner} variant={variant} />
+      {data.map((banner) => (
+        <BannerItem key={banner.id} banner={banner} />
       ))}
     </aside>
   )

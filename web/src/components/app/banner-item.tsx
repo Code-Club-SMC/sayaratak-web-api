@@ -7,18 +7,10 @@ import type { Banner } from "@/schemas/admin"
 import { useTrackEvent } from "@/features/listings/events"
 import { BannerCopy } from "./banner-copy"
 
-// "hero" is the tall home banner (3:1, 2:1 on a phone, shown first); "strip" is the banner of every other slot. A banner with `copy` is a photo with real text (see `BannerCopy`); one without is a finished image (the older form): 1800 x 600 for the hero and 1200 x 200 for a strip, with its text and subject inside the middle 1200 px so the phone crop never cuts them.
-export function BannerItem({
-  banner,
-  variant = "strip",
-}: {
-  banner: Banner
-  variant?: "strip" | "hero"
-}) {
-  const hero = variant === "hero"
+// The banner of every slot but the home hero (that is `HeroCarousel`). A banner with `copy` is a photo with real text (see `BannerCopy`); one without is a finished image (the older form), 1200 x 200 with its text and subject inside the middle 1200 px so the phone crop never cuts them.
+export function BannerItem({ banner }: { banner: Banner }) {
   const { t, locale } = useT()
   const copy = banner.copy?.[locale]
-  const shape = hero ? "aspect-[2/1] md:aspect-[3/1]" : "aspect-[6/1]"
   const link = useRef<HTMLAnchorElement>(null)
   const image = useRef<HTMLImageElement>(null)
   const tracked = useRef(false)
@@ -57,37 +49,25 @@ export function BannerItem({
         copy
           ? "bg-deep text-deep-foreground motion-fade active:opacity-90"
           : "bg-muted",
-        copy && hero && shape,
-        hero ? "rounded-xl md:rounded-2xl" : "rounded-xl"
+        "rounded-xl"
       )}
     >
       {copy ? (
-        <BannerCopy
-          banner={banner}
-          copy={copy}
-          src={banner.imageUrl[locale]}
-          hero={hero}
-        />
+        <BannerCopy banner={banner} copy={copy} src={banner.imageUrl[locale]} />
       ) : !missing ? (
         <img
           ref={image}
           src={banner.imageUrl[locale]}
-          width={hero ? 1800 : 1200}
-          height={hero ? 600 : 200}
-          loading={hero ? "eager" : "lazy"}
-          fetchPriority={hero ? "high" : undefined}
+          width={1200}
+          height={200}
+          loading="lazy"
           decoding="async"
           alt=""
           onError={() => setMissing(true)}
-          className={cn("w-full object-cover", shape)}
+          className="aspect-[6/1] w-full object-cover"
         />
       ) : (
-        <span
-          className={cn(
-            "flex min-h-11 items-center justify-center p-4 text-ui text-muted-foreground",
-            shape
-          )}
-        >
+        <span className="flex aspect-[6/1] min-h-11 items-center justify-center p-4 text-ui text-muted-foreground">
           {t("nav.advertisement")}
         </span>
       )}

@@ -124,3 +124,21 @@ it("offers retry after a failed banner request and recovers", async () => {
     await screen.findByRole("link", { name: /Summer offers on cars/ })
   ).toBeTruthy()
 })
+
+it("shows every home banner as one carousel slide and counts a view after a second and a click", async () => {
+  const banner = db.banners.find((row) => row.placement === "home_top")
+  if (!banner) throw new Error("Expected seeded home banner")
+  const views = banner.impressions
+  const clicks = banner.clicks
+  await renderShell(<BannerSlot placement="home_top" variant="hero" />)
+  const link = await screen.findByRole("link", { name: /Browse cars/ })
+  expect(document.querySelectorAll("[data-dot]")).toHaveLength(
+    db.banners.filter((row) => row.placement === "home_top").length
+  )
+  expect(banner.impressions).toBe(views)
+  await waitFor(() => expect(banner.impressions).toBe(views + 1), {
+    timeout: 3000,
+  })
+  fireEvent.click(link)
+  await waitFor(() => expect(banner.clicks).toBe(clicks + 1))
+})

@@ -149,6 +149,8 @@
   --dur-fast: 120ms;
   --dur-base: 160ms;
   --dur-sheet: 220ms;
+  /* Hero carousel: the time one slide stays. It is the length of the active dot's fill, which is the autoplay timer, so reduced motion leaves it alone (autoplay is off then, see `carousel-fill`). */
+  --dur-carousel: 6s;
 }
 @media (prefers-reduced-motion: reduce) {
   :root {
@@ -210,6 +212,30 @@
   font-size: var(--text-hero);
   line-height: var(--leading-hero);
   text-wrap: balance;
+}
+
+/* The active carousel dot's fill. Its `animationend` moves to the next slide, so it is the only timer; a `data-paused` ancestor (hover, focus, hidden tab, the pause button) holds it. Under reduced motion the global rule below zeroes every animation, which would end this one at once, so it keeps its duration and the carousel starts paused. */
+@keyframes carousel-fill {
+  from {
+    inline-size: 0;
+  }
+  to {
+    inline-size: 100%;
+  }
+}
+@utility carousel-fill {
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: 0;
+  border-radius: inherit;
+  background: currentColor;
+  animation: carousel-fill var(--dur-carousel) linear forwards;
+  [data-paused] & {
+    animation-play-state: paused;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    animation-duration: var(--dur-carousel) !important;
+  }
 }
 
 @utility num {
@@ -309,32 +335,6 @@
     outline: 2px solid var(--ring);
     outline-offset: 2px;
   }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  *,
-  ::before,
-  ::after {
-    transition-duration: 0s !important;
-    transition-delay: 0s !important;
-    animation-duration: 0s !important;
-    animation-delay: 0s !important;
-    scroll-behavior: auto !important;
-  }
-}
-
-/* Images fade in from their placeholder color once the file loads. The hidden state needs the `js` class that the root head script adds before first paint, so without JavaScript every image shows. */
-img[data-fade] {
-  transition: opacity var(--dur-base) var(--ease-standard);
-}
-.js img[data-fade]:not([data-loaded]) {
-  opacity: 0;
-}
-
-/* Route change: the page content cross fades. Header, footer and tab bar carry their own view-transition-name, so they stay still. */
-::view-transition-old(root),
-::view-transition-new(root) {
-  animation-duration: var(--dur-base);
 
   /* One scrollbar for every scroller (the page, sheets, menus, lists): thin, a rounded thumb in a tint of the text color, no track. Firefox takes the standard properties; Chrome, Edge and Safari take the pseudo-elements, which also give the hover and the gap around the thumb (Chrome ignores them once the standard properties are set, hence the split). A scroller that hides its bar on purpose says so with its own class and wins on specificity. */
   @supports not selector(::-webkit-scrollbar) {
@@ -363,6 +363,32 @@ img[data-fade] {
       background-color: color-mix(in oklab, var(--foreground) 48%, transparent);
     }
   }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    transition-duration: 0s !important;
+    transition-delay: 0s !important;
+    animation-duration: 0s !important;
+    animation-delay: 0s !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Images fade in from their placeholder color once the file loads. The hidden state needs the `js` class that the root head script adds before first paint, so without JavaScript every image shows. */
+img[data-fade] {
+  transition: opacity var(--dur-base) var(--ease-standard);
+}
+.js img[data-fade]:not([data-loaded]) {
+  opacity: 0;
+}
+
+/* Route change: the page content cross fades. Header, footer and tab bar carry their own view-transition-name, so they stay still. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: var(--dur-base);
   animation-timing-function: var(--ease-standard);
 }
 ::view-transition-group(listing-cover) {

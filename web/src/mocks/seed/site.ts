@@ -77,16 +77,22 @@ export const backups = (): Backup[] =>
     status: "ready",
   }))
 
-// One photo per banner (`public/mock/banner-N.webp`, made by `bun run banners`) with real text in both languages on top. The trucks banner stands in for a paid one, so it carries the "Ad" chip.
+// One photo per banner (`public/mock/banner-N.webp`, made by `bun run banners`, or a category photo) with real text in both languages on top. The home hero is a carousel of four (cars, trucks, workshops, mechanics); the two trucks banners stand in for paid ones, so they carry the "Ad" chip.
 const text = (eyebrow: string, heading: string, body: string, cta: string) => ({
   eyebrow,
   heading,
   body,
   cta,
 })
-const bannerRows = [
+type BannerRow = Pick<
+  Banner,
+  "title" | "placement" | "href" | "focus" | "copy"
+> & { photo: string; sponsored?: boolean }
+const bannerRows: BannerRow[] = [
   {
     title: "عروض الصيف",
+    placement: "home_top",
+    photo: "/mock/banner-1.webp",
     href: "/search?type=car",
     focus: 50,
     copy: {
@@ -106,6 +112,8 @@ const bannerRows = [
   },
   {
     title: "اشحن سيارتك",
+    placement: "home_middle",
+    photo: "/mock/banner-2.webp",
     href: "/search?type=truck",
     focus: 54,
     sponsored: true,
@@ -126,6 +134,8 @@ const bannerRows = [
   },
   {
     title: "ابحث بسهولة",
+    placement: "search_top",
+    photo: "/mock/banner-3.webp",
     href: "/search?kind=part",
     focus: 33,
     copy: {
@@ -145,6 +155,8 @@ const bannerRows = [
   },
   {
     title: "سجّل نشاطك",
+    placement: "directory_top",
+    photo: "/mock/banner-4.webp",
     href: "/onboarding",
     focus: 4,
     copy: {
@@ -162,29 +174,88 @@ const bannerRows = [
       ),
     },
   },
+  {
+    title: "شاحنات للعمل",
+    placement: "home_top",
+    photo: "/images/categories/trucks-640.webp",
+    href: "/vehicles/trucks/sale",
+    focus: 50,
+    sponsored: true,
+    copy: {
+      en: text(
+        "Trucks",
+        "Trucks and pickups ready to work",
+        "Compare trucks from dealers across Sudan",
+        "Browse trucks"
+      ),
+      ar: text(
+        "شاحنات",
+        "شاحنات وبيك أب جاهزة للعمل",
+        "قارن شاحنات من معارض في كل أنحاء السودان",
+        "تصفح الشاحنات"
+      ),
+    },
+  },
+  {
+    title: "ورش موثوقة",
+    placement: "home_top",
+    photo: "/images/categories/workshops-640.webp",
+    href: "/workshops",
+    focus: 50,
+    copy: {
+      en: text(
+        "Workshops",
+        "Book a workshop you can trust",
+        "Compare ratings, prices and opening hours",
+        "Find a workshop"
+      ),
+      ar: text(
+        "ورش",
+        "احجز في ورشة تثق بها",
+        "قارن التقييمات والأسعار وساعات العمل",
+        "ابحث عن ورشة"
+      ),
+    },
+  },
+  {
+    title: "ميكانيكي قريب",
+    placement: "home_top",
+    photo: "/images/categories/mechanics-640.webp",
+    href: "/mechanics",
+    focus: 40,
+    copy: {
+      en: text(
+        "Mechanics",
+        "A mechanic near you, when you need one",
+        "Call or message a verified mechanic in your city",
+        "Find a mechanic"
+      ),
+      ar: text(
+        "ميكانيكيون",
+        "ميكانيكي قريب منك وقت الحاجة",
+        "اتصل أو راسل ميكانيكيًا موثقًا في مدينتك",
+        "ابحث عن ميكانيكي"
+      ),
+    },
+  },
 ]
 export const banners = (): Banner[] =>
-  (["home_top", "home_middle", "search_top", "directory_top"] as const).map(
-    (placement, i) => ({
-      id: `bn-${i + 1}`,
-      title: bannerRows[i]?.title ?? "",
-      imageUrl: {
-        ar: `/mock/banner-${i + 1}.webp`,
-        en: `/mock/banner-${i + 1}.webp`,
-      },
-      copy: bannerRows[i]?.copy,
-      sponsored: bannerRows[i]?.sponsored ?? false,
-      focus: bannerRows[i]?.focus ?? 50,
-      href: bannerRows[i]?.href ?? "/search",
-      placement,
-      startsAt: ago(10 * DAY),
-      endsAt: ahead(60 * DAY),
-      active: true,
-      sortOrder: i,
-      impressions: int(1000, 9000),
-      clicks: int(40, 400),
-    })
-  )
+  bannerRows.map((row, i) => ({
+    id: `bn-${i + 1}`,
+    title: row.title,
+    imageUrl: { ar: row.photo, en: row.photo },
+    copy: row.copy,
+    sponsored: row.sponsored ?? false,
+    focus: row.focus,
+    href: row.href,
+    placement: row.placement,
+    startsAt: ago(10 * DAY),
+    endsAt: ahead(60 * DAY),
+    active: true,
+    sortOrder: i,
+    impressions: int(1000, 9000),
+    clicks: int(40, 400),
+  }))
 
 export function seedReports(
   listings: ListingRow[],

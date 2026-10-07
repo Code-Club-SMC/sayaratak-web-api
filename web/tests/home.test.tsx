@@ -107,7 +107,7 @@ describe("HomePage", () => {
   it("leads with the banner, then the search card that carries the heading", async () => {
     await renderShell(page())
     const [banner] = await screen.findAllByRole("link", {
-      name: /Summer offers on cars/,
+      name: /Browse cars/,
     })
     const form = screen
       .getByRole("heading", { level: 1 })

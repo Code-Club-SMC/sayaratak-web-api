@@ -510,7 +510,7 @@ describe("trust, content, map, uploads, analytics", () => {
     expect((await call("GET", "/pages/unknown")).status).toBe(404)
     expect(
       (await call("GET", "/banners?placement=home_top")).body
-    ).toHaveLength(1)
+    ).toHaveLength(4)
   })
   it("contact stores the message, a bad one is a 422 with key errors", async () => {
     const body = {

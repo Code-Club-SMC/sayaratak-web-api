@@ -18,6 +18,7 @@ import {
 import { meQuery } from "@/features/auth/me-query"
 import { useEnterKeyHints } from "@/hooks/use-enter-key-hints"
 import { MOBILE_BREAKPOINT } from "@/hooks/use-mobile"
+import { focusFirstInvalid } from "@/lib/focus-invalid"
 import { useT } from "@/lib/i18n/use-t"
 import { dashboardPath, localeHref } from "@/lib/navigation"
 import { useCompleteOnboarding } from "../queries"
@@ -119,23 +120,12 @@ export function OnboardingStepPage({
       save.mutate(draftWith(form.getValues()))
     go("/")
   }
-  // A field whose ref RHF cannot reach (a custom control) still gets the focus. The errors render a frame or two later, so look again for a few frames.
-  const focusInvalid = (frames = 10) =>
-    requestAnimationFrame(() => {
-      const invalid = [
-        ...(formRef.current?.querySelectorAll<HTMLElement>(
-          "[aria-invalid=true]"
-        ) ?? []),
-      ].find((el) => el.tabIndex >= 0)
-      if (invalid) invalid.focus()
-      else if (frames > 0) focusInvalid(frames - 1)
-    })
   const submit = form.handleSubmit(
     (values) =>
       save.mutate(draftWith(values), {
         onSuccess: (saved) => advance(saved.data),
       }),
-    () => focusInvalid()
+    () => focusFirstInvalid(formRef.current)
   )
   const preview =
     role === "user" ? null : (

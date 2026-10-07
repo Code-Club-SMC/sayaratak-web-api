@@ -111,5 +111,16 @@
   "listing.stat_views": "المشاهدات",
   "listing.stat_favorites": "المفضلة",
   "listing.stat_phone": "نقرات الاتصال",
-  "listing.stat_whatsapp": "نقرات واتساب"
+  "listing.stat_whatsapp": "نقرات واتساب",
+  "post.steps_label": "الخطوات",
+  "post.step_type": "النوع",
+  "post.step_details": "التفاصيل",
+  "post.step_photos": "الصور",
+  "post.step_contact": "التواصل",
+  "post.step_review": "المراجعة",
+  "post.save_exit": "حفظ المسودة وخروج",
+  "post.publish": "نشر",
+  "post.inventory": "المخزون",
+  "post.new_listing": "إعلان جديد",
+  "post.edit_listing": "تعديل الإعلان"
 }

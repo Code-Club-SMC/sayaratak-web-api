@@ -175,6 +175,42 @@ describe("listings", () => {
       (await call("POST", "/listings", { as: "u-workshop", body: car })).status
     ).toBe(403)
   })
+  it("an edit that changes title, description, photos or type sends an approved listing back to review; price never does", async () => {
+    const created = await call("POST", "/listings", { as: "u-1", body: car })
+    const row = db.listings.find((l) => l.id === created.body.id)!
+    const photo = {
+      id: "m-1",
+      type: "image",
+      url: "/x.webp",
+      width: 4,
+      height: 3,
+      placeholderColor: "#ccc",
+      posterUrl: null,
+    }
+    const edit = async (body: object) => {
+      row.moderation = "approved"
+      return (await call("PATCH", `/listings/${row.id}`, { as: "u-1", body }))
+        .body.moderation
+    }
+    expect(await edit({ price: 1 })).toBe("approved")
+    expect(await edit({ title: row.title })).toBe("approved")
+    expect(await edit({ title: "Toyota Corolla 2019" })).toBe("pending")
+    expect(await edit({ description: "New text" })).toBe("pending")
+    expect(await edit({ media: [photo] })).toBe("pending")
+    expect(await edit({ vehicleType: "truck" })).toBe("pending")
+  })
+  it("an auto-approved dealer keeps an approved listing live after an edit", async () => {
+    db.settings.autoApproveVerifiedDealers = true
+    const row = db.listings.find(
+      (l) => l.ownerUserId === "u-dealer" && l.moderation === "approved"
+    )!
+    const res = await call("PATCH", `/listings/${row.id}`, {
+      as: "u-dealer",
+      body: { title: "A new title for the listing" },
+    })
+    expect(res.status).toBe(200)
+    expect(res.body.moderation).toBe("approved")
+  })
 })
 
 describe("directory", () => {

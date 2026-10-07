@@ -111,5 +111,16 @@
   "listing.stat_views": "Views",
   "listing.stat_favorites": "Favorites",
   "listing.stat_phone": "Phone clicks",
-  "listing.stat_whatsapp": "WhatsApp clicks"
+  "listing.stat_whatsapp": "WhatsApp clicks",
+  "post.steps_label": "Steps",
+  "post.step_type": "Type",
+  "post.step_details": "Details",
+  "post.step_photos": "Photos",
+  "post.step_contact": "Contact",
+  "post.step_review": "Review",
+  "post.save_exit": "Save draft and exit",
+  "post.publish": "Publish",
+  "post.inventory": "Inventory",
+  "post.new_listing": "New listing",
+  "post.edit_listing": "Edit listing"
 }

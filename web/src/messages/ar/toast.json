@@ -10,5 +10,6 @@
   "toast.review_saved": "تم حفظ التقييم",
   "toast.tiktok_copied": "تم نسخ الرابط. افتح تيك توك والصقه في منشورك أو رسالتك.",
   "toast.password_changed": "تم تغيير كلمة المرور",
-  "toast.status_updated": "تم تحديث الحالة"
+  "toast.status_updated": "تم تحديث الحالة",
+  "toast.draft_saved": "تم حفظ المسودة"
 }

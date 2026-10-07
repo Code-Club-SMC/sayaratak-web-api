@@ -112,6 +112,16 @@ const publishState = (
     : "pending"
 }
 
+const reviewedFields = (l: ListingRow) =>
+  JSON.stringify([
+    l.title,
+    l.description,
+    l.media,
+    l.kind,
+    l.vehicleType,
+    l.partCategoryId,
+  ])
+
 route("POST", "/listings", async (c) => {
   const user = needRole(c, "user", "dealership")
   const input = await c.body(listingCreateSchema)
@@ -200,6 +210,7 @@ route("PATCH", "/listings/:id", async (c) => {
   canEditListing(user, row)
   const { submit, moderation, ...patch } = await c.body(listingPatchSchema)
   if (moderation && user.role !== "admin") throw fail(403, "forbidden")
+  const reviewed = reviewedFields(row)
   if (patch.contact) row.contact = { ...row.contact, ...patch.contact }
   const { contact: _contact, description, ...fields } = patch
   Object.assign(row, fields)
@@ -207,6 +218,13 @@ route("PATCH", "/listings/:id", async (c) => {
   if (patch.title || patch.cityId)
     row.slug = makeListingSlug(row.title, row.cityId, row.id)
   if (moderation) row.moderation = moderation
+  // Changing what a buyer judges the listing by sends an approved one back to review, unless the owner is auto-approved. Price and status never do.
+  else if (
+    row.moderation === "approved" &&
+    user.role !== "admin" &&
+    reviewedFields(row) !== reviewed
+  )
+    row.moderation = publishState(user, true)
   if (submit && (row.moderation === "draft" || row.moderation === "rejected")) {
     const limit = listingLimit(row.ownerUserId)
     if (limit !== null && listingUsage(row.ownerUserId) >= limit)

@@ -8,10 +8,13 @@ import { Button } from "@/components/ui/button"
 export function StickyFooter({
   onBack,
   skip,
+  width = "max-w-xl",
   children,
 }: {
   onBack?: () => void
   skip?: ReactNode
+  // Max width class of the buttons row, so it lines up with the page column.
+  width?: string
   children: ReactNode
 }) {
   const { t } = useT()
@@ -22,7 +25,7 @@ export function StickyFooter({
       <div
         className={`fixed inset-x-0 bottom-0 z-30 border-t bg-card p-4 pb-[max(1rem,env(safe-area-inset-bottom))] motion-color ${contentBelow ? "border-border" : "border-transparent"}`}
       >
-        <div className="mx-auto flex w-full max-w-xl items-center gap-3">
+        <div className={`mx-auto flex w-full ${width} items-center gap-3`}>
           {onBack && (
             <Button type="button" variant="ghost" onClick={onBack}>
               {t("common.back")}

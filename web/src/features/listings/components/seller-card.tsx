@@ -1,4 +1,4 @@
-import { formatMonthYear } from "@/lib/format"
+import { formatMonthYear, initials } from "@/lib/format"
 import { useT } from "@/lib/i18n/use-t"
 import { localeHref } from "@/lib/navigation"
 import type { Listing } from "@/schemas/listing"
@@ -6,13 +6,6 @@ import { ContactActions } from "@/components/app/contact-actions"
 import { VerifiedBadge } from "@/components/app/verified-badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { sellerHref } from "../links"
-
-const initials = (name: string) =>
-  name
-    .split(/\s+/)
-    .slice(0, 2)
-    .map((word) => word[0])
-    .join("")
 
 // Who sells it and how to reach them. Below lg the contact buttons live in the fixed bar, so only the identity shows here.
 export function SellerCard({

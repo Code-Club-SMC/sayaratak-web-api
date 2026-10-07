@@ -1,6 +1,7 @@
 import { redirect } from "@tanstack/react-router"
 
 import { dashboardPath, localeHref, personalHref } from "@/lib/navigation"
+import { withRedirect } from "./destination"
 import type { Locale } from "@/schemas/locale"
 import type { User } from "@/schemas/user"
 
@@ -18,9 +19,16 @@ export function requireUser({ context, location }: Guard) {
   return context.me
 }
 
-// Another role goes to its own dashboard.
+// An unfinished account goes to onboarding and returns here. Another role goes to its own dashboard.
 export const requireRole = (role: User["role"]) => (guard: Guard) => {
   const me = requireUser(guard)
+  if (!me.onboardingDone)
+    throw redirect({
+      href: localeHref(
+        withRedirect("/onboarding/role", guard.location.href),
+        guard.context.locale
+      ),
+    })
   if (me.role !== role)
     throw redirect({
       href: localeHref(dashboardPath(me.role), guard.context.locale),

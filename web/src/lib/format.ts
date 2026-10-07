@@ -69,3 +69,10 @@ export const formatShortDate = (iso: string, locale: Locale) =>
     day: "numeric",
     month: "short",
   }).format(new Date(iso))
+
+export const initials = (name: string) =>
+  name
+    .split(/\s+/)
+    .slice(0, 2)
+    .map((word) => word[0])
+    .join("")

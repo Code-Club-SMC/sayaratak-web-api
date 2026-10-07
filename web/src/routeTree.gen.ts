@@ -14,7 +14,12 @@ import { Route as LocaleRouteRouteImport } from './routes/$locale/route'
 import { Route as RobotsDottxtRouteImport } from './routes/robots[.]txt'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as LocalePublicRouteRouteImport } from './routes/$locale/_public/route'
+import { Route as LocaleAccountRouteRouteImport } from './routes/$locale/account/route'
+import { Route as LocaleAdminRouteRouteImport } from './routes/$locale/admin/route'
+import { Route as LocaleDealerRouteRouteImport } from './routes/$locale/dealer/route'
+import { Route as LocaleMechanicRouteRouteImport } from './routes/$locale/mechanic/route'
 import { Route as LocalePostRouteImport } from './routes/$locale/post'
+import { Route as LocaleWorkshopRouteRouteImport } from './routes/$locale/workshop/route'
 import { Route as ApiSplatRouteImport } from './routes/api/$'
 import { Route as LocalePublicIndexRouteImport } from './routes/$locale/_public/index'
 import { Route as LocalePublicSplatRouteImport } from './routes/$locale/_public/$'
@@ -26,14 +31,18 @@ import { Route as LocalePublicPrivacyRouteImport } from './routes/$locale/_publi
 import { Route as LocalePublicSearchRouteImport } from './routes/$locale/_public/search'
 import { Route as LocalePublicSuspendedRouteImport } from './routes/$locale/_public/suspended'
 import { Route as LocalePublicTermsRouteImport } from './routes/$locale/_public/terms'
+import { Route as LocaleAccountIndexRouteImport } from './routes/$locale/account/index'
+import { Route as LocaleAdminIndexRouteImport } from './routes/$locale/admin/index'
 import { Route as LocaleAuthIndexRouteImport } from './routes/$locale/auth/index'
 import { Route as LocaleAuthForgotRouteImport } from './routes/$locale/auth/forgot'
 import { Route as LocaleAuthResetRouteImport } from './routes/$locale/auth/reset'
+import { Route as LocaleDealerIndexRouteImport } from './routes/$locale/dealer/index'
+import { Route as LocaleMechanicIndexRouteImport } from './routes/$locale/mechanic/index'
 import { Route as LocaleOnboardingIndexRouteImport } from './routes/$locale/onboarding/index'
 import { Route as LocaleOnboardingRoleRouteImport } from './routes/$locale/onboarding/role'
+import { Route as LocaleWorkshopIndexRouteImport } from './routes/$locale/workshop/index'
 import { Route as LocalePublicDealershipsIndexRouteImport } from './routes/$locale/_public/dealerships/index'
 import { Route as LocalePublicDealershipsSlugRouteImport } from './routes/$locale/_public/dealerships/$slug'
-import { Route as LocalePublicDevGuardedRouteImport } from './routes/$locale/_public/dev.guarded'
 import { Route as LocalePublicDevSharedRouteImport } from './routes/$locale/_public/dev.shared'
 import { Route as LocalePublicListingSlugRouteImport } from './routes/$locale/_public/listing/$slug'
 import { Route as LocalePublicMechanicsIndexRouteImport } from './routes/$locale/_public/mechanics/index'
@@ -67,9 +76,34 @@ const LocalePublicRouteRoute = LocalePublicRouteRouteImport.update({
   id: '/_public',
   getParentRoute: () => LocaleRouteRoute,
 } as any)
+const LocaleAccountRouteRoute = LocaleAccountRouteRouteImport.update({
+  id: '/account',
+  path: '/account',
+  getParentRoute: () => LocaleRouteRoute,
+} as any)
+const LocaleAdminRouteRoute = LocaleAdminRouteRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => LocaleRouteRoute,
+} as any)
+const LocaleDealerRouteRoute = LocaleDealerRouteRouteImport.update({
+  id: '/dealer',
+  path: '/dealer',
+  getParentRoute: () => LocaleRouteRoute,
+} as any)
+const LocaleMechanicRouteRoute = LocaleMechanicRouteRouteImport.update({
+  id: '/mechanic',
+  path: '/mechanic',
+  getParentRoute: () => LocaleRouteRoute,
+} as any)
 const LocalePostRoute = LocalePostRouteImport.update({
   id: '/post',
   path: '/post',
+  getParentRoute: () => LocaleRouteRoute,
+} as any)
+const LocaleWorkshopRouteRoute = LocaleWorkshopRouteRouteImport.update({
+  id: '/workshop',
+  path: '/workshop',
   getParentRoute: () => LocaleRouteRoute,
 } as any)
 const ApiSplatRoute = ApiSplatRouteImport.update({
@@ -127,6 +161,16 @@ const LocalePublicTermsRoute = LocalePublicTermsRouteImport.update({
   path: '/terms',
   getParentRoute: () => LocalePublicRouteRoute,
 } as any)
+const LocaleAccountIndexRoute = LocaleAccountIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => LocaleAccountRouteRoute,
+} as any)
+const LocaleAdminIndexRoute = LocaleAdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => LocaleAdminRouteRoute,
+} as any)
 const LocaleAuthIndexRoute = LocaleAuthIndexRouteImport.update({
   id: '/auth/',
   path: '/auth/',
@@ -142,6 +186,16 @@ const LocaleAuthResetRoute = LocaleAuthResetRouteImport.update({
   path: '/auth/reset',
   getParentRoute: () => LocaleRouteRoute,
 } as any)
+const LocaleDealerIndexRoute = LocaleDealerIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => LocaleDealerRouteRoute,
+} as any)
+const LocaleMechanicIndexRoute = LocaleMechanicIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => LocaleMechanicRouteRoute,
+} as any)
 const LocaleOnboardingIndexRoute = LocaleOnboardingIndexRouteImport.update({
   id: '/onboarding/',
   path: '/onboarding/',
@@ -151,6 +205,11 @@ const LocaleOnboardingRoleRoute = LocaleOnboardingRoleRouteImport.update({
   id: '/onboarding/role',
   path: '/onboarding/role',
   getParentRoute: () => LocaleRouteRoute,
+} as any)
+const LocaleWorkshopIndexRoute = LocaleWorkshopIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => LocaleWorkshopRouteRoute,
 } as any)
 const LocalePublicDealershipsIndexRoute =
   LocalePublicDealershipsIndexRouteImport.update({
@@ -164,11 +223,6 @@ const LocalePublicDealershipsSlugRoute =
     path: '/dealerships/$slug',
     getParentRoute: () => LocalePublicRouteRoute,
   } as any)
-const LocalePublicDevGuardedRoute = LocalePublicDevGuardedRouteImport.update({
-  id: '/dev/guarded',
-  path: '/dev/guarded',
-  getParentRoute: () => LocalePublicRouteRoute,
-} as any)
 const LocalePublicDevSharedRoute = LocalePublicDevSharedRouteImport.update({
   id: '/dev/shared',
   path: '/dev/shared',
@@ -221,6 +275,11 @@ export interface FileRoutesByFullPath {
   '/$locale': typeof LocaleRouteRouteWithChildren
   '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/$locale/account': typeof LocaleAccountRouteRouteWithChildren
+  '/$locale/admin': typeof LocaleAdminRouteRouteWithChildren
+  '/$locale/dealer': typeof LocaleDealerRouteRouteWithChildren
+  '/$locale/mechanic': typeof LocaleMechanicRouteRouteWithChildren
+  '/$locale/workshop': typeof LocaleWorkshopRouteRouteWithChildren
   '/$locale/post': typeof LocalePostRoute
   '/api/$': typeof ApiSplatRoute
   '/$locale/$': typeof LocalePublicSplatRoute
@@ -236,10 +295,14 @@ export interface FileRoutesByFullPath {
   '/$locale/auth/reset': typeof LocaleAuthResetRoute
   '/$locale/onboarding/role': typeof LocaleOnboardingRoleRoute
   '/$locale/': typeof LocalePublicIndexRoute
+  '/$locale/account/': typeof LocaleAccountIndexRoute
+  '/$locale/admin/': typeof LocaleAdminIndexRoute
   '/$locale/auth/': typeof LocaleAuthIndexRoute
+  '/$locale/dealer/': typeof LocaleDealerIndexRoute
+  '/$locale/mechanic/': typeof LocaleMechanicIndexRoute
   '/$locale/onboarding/': typeof LocaleOnboardingIndexRoute
+  '/$locale/workshop/': typeof LocaleWorkshopIndexRoute
   '/$locale/dealerships/$slug': typeof LocalePublicDealershipsSlugRoute
-  '/$locale/dev/guarded': typeof LocalePublicDevGuardedRoute
   '/$locale/dev/shared': typeof LocalePublicDevSharedRoute
   '/$locale/listing/$slug': typeof LocalePublicListingSlugRoute
   '/$locale/mechanics/$slug': typeof LocalePublicMechanicsSlugRoute
@@ -269,10 +332,14 @@ export interface FileRoutesByTo {
   '/$locale/auth/forgot': typeof LocaleAuthForgotRoute
   '/$locale/auth/reset': typeof LocaleAuthResetRoute
   '/$locale/onboarding/role': typeof LocaleOnboardingRoleRoute
+  '/$locale/account': typeof LocaleAccountIndexRoute
+  '/$locale/admin': typeof LocaleAdminIndexRoute
   '/$locale/auth': typeof LocaleAuthIndexRoute
+  '/$locale/dealer': typeof LocaleDealerIndexRoute
+  '/$locale/mechanic': typeof LocaleMechanicIndexRoute
   '/$locale/onboarding': typeof LocaleOnboardingIndexRoute
+  '/$locale/workshop': typeof LocaleWorkshopIndexRoute
   '/$locale/dealerships/$slug': typeof LocalePublicDealershipsSlugRoute
-  '/$locale/dev/guarded': typeof LocalePublicDevGuardedRoute
   '/$locale/dev/shared': typeof LocalePublicDevSharedRoute
   '/$locale/listing/$slug': typeof LocalePublicListingSlugRoute
   '/$locale/mechanics/$slug': typeof LocalePublicMechanicsSlugRoute
@@ -290,6 +357,11 @@ export interface FileRoutesById {
   '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/$locale/_public': typeof LocalePublicRouteRouteWithChildren
+  '/$locale/account': typeof LocaleAccountRouteRouteWithChildren
+  '/$locale/admin': typeof LocaleAdminRouteRouteWithChildren
+  '/$locale/dealer': typeof LocaleDealerRouteRouteWithChildren
+  '/$locale/mechanic': typeof LocaleMechanicRouteRouteWithChildren
+  '/$locale/workshop': typeof LocaleWorkshopRouteRouteWithChildren
   '/$locale/post': typeof LocalePostRoute
   '/api/$': typeof ApiSplatRoute
   '/$locale/_public/$': typeof LocalePublicSplatRoute
@@ -305,10 +377,14 @@ export interface FileRoutesById {
   '/$locale/auth/reset': typeof LocaleAuthResetRoute
   '/$locale/onboarding/role': typeof LocaleOnboardingRoleRoute
   '/$locale/_public/': typeof LocalePublicIndexRoute
+  '/$locale/account/': typeof LocaleAccountIndexRoute
+  '/$locale/admin/': typeof LocaleAdminIndexRoute
   '/$locale/auth/': typeof LocaleAuthIndexRoute
+  '/$locale/dealer/': typeof LocaleDealerIndexRoute
+  '/$locale/mechanic/': typeof LocaleMechanicIndexRoute
   '/$locale/onboarding/': typeof LocaleOnboardingIndexRoute
+  '/$locale/workshop/': typeof LocaleWorkshopIndexRoute
   '/$locale/_public/dealerships/$slug': typeof LocalePublicDealershipsSlugRoute
-  '/$locale/_public/dev/guarded': typeof LocalePublicDevGuardedRoute
   '/$locale/_public/dev/shared': typeof LocalePublicDevSharedRoute
   '/$locale/_public/listing/$slug': typeof LocalePublicListingSlugRoute
   '/$locale/_public/mechanics/$slug': typeof LocalePublicMechanicsSlugRoute
@@ -326,6 +402,11 @@ export interface FileRouteTypes {
     | '/$locale'
     | '/robots.txt'
     | '/sitemap.xml'
+    | '/$locale/account'
+    | '/$locale/admin'
+    | '/$locale/dealer'
+    | '/$locale/mechanic'
+    | '/$locale/workshop'
     | '/$locale/post'
     | '/api/$'
     | '/$locale/$'
@@ -341,10 +422,14 @@ export interface FileRouteTypes {
     | '/$locale/auth/reset'
     | '/$locale/onboarding/role'
     | '/$locale/'
+    | '/$locale/account/'
+    | '/$locale/admin/'
     | '/$locale/auth/'
+    | '/$locale/dealer/'
+    | '/$locale/mechanic/'
     | '/$locale/onboarding/'
+    | '/$locale/workshop/'
     | '/$locale/dealerships/$slug'
-    | '/$locale/dev/guarded'
     | '/$locale/dev/shared'
     | '/$locale/listing/$slug'
     | '/$locale/mechanics/$slug'
@@ -374,10 +459,14 @@ export interface FileRouteTypes {
     | '/$locale/auth/forgot'
     | '/$locale/auth/reset'
     | '/$locale/onboarding/role'
+    | '/$locale/account'
+    | '/$locale/admin'
     | '/$locale/auth'
+    | '/$locale/dealer'
+    | '/$locale/mechanic'
     | '/$locale/onboarding'
+    | '/$locale/workshop'
     | '/$locale/dealerships/$slug'
-    | '/$locale/dev/guarded'
     | '/$locale/dev/shared'
     | '/$locale/listing/$slug'
     | '/$locale/mechanics/$slug'
@@ -394,6 +483,11 @@ export interface FileRouteTypes {
     | '/robots.txt'
     | '/sitemap.xml'
     | '/$locale/_public'
+    | '/$locale/account'
+    | '/$locale/admin'
+    | '/$locale/dealer'
+    | '/$locale/mechanic'
+    | '/$locale/workshop'
     | '/$locale/post'
     | '/api/$'
     | '/$locale/_public/$'
@@ -409,10 +503,14 @@ export interface FileRouteTypes {
     | '/$locale/auth/reset'
     | '/$locale/onboarding/role'
     | '/$locale/_public/'
+    | '/$locale/account/'
+    | '/$locale/admin/'
     | '/$locale/auth/'
+    | '/$locale/dealer/'
+    | '/$locale/mechanic/'
     | '/$locale/onboarding/'
+    | '/$locale/workshop/'
     | '/$locale/_public/dealerships/$slug'
-    | '/$locale/_public/dev/guarded'
     | '/$locale/_public/dev/shared'
     | '/$locale/_public/listing/$slug'
     | '/$locale/_public/mechanics/$slug'
@@ -469,11 +567,46 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LocalePublicRouteRouteImport
       parentRoute: typeof LocaleRouteRoute
     }
+    '/$locale/account': {
+      id: '/$locale/account'
+      path: '/account'
+      fullPath: '/$locale/account'
+      preLoaderRoute: typeof LocaleAccountRouteRouteImport
+      parentRoute: typeof LocaleRouteRoute
+    }
+    '/$locale/admin': {
+      id: '/$locale/admin'
+      path: '/admin'
+      fullPath: '/$locale/admin'
+      preLoaderRoute: typeof LocaleAdminRouteRouteImport
+      parentRoute: typeof LocaleRouteRoute
+    }
+    '/$locale/dealer': {
+      id: '/$locale/dealer'
+      path: '/dealer'
+      fullPath: '/$locale/dealer'
+      preLoaderRoute: typeof LocaleDealerRouteRouteImport
+      parentRoute: typeof LocaleRouteRoute
+    }
+    '/$locale/mechanic': {
+      id: '/$locale/mechanic'
+      path: '/mechanic'
+      fullPath: '/$locale/mechanic'
+      preLoaderRoute: typeof LocaleMechanicRouteRouteImport
+      parentRoute: typeof LocaleRouteRoute
+    }
     '/$locale/post': {
       id: '/$locale/post'
       path: '/post'
       fullPath: '/$locale/post'
       preLoaderRoute: typeof LocalePostRouteImport
+      parentRoute: typeof LocaleRouteRoute
+    }
+    '/$locale/workshop': {
+      id: '/$locale/workshop'
+      path: '/workshop'
+      fullPath: '/$locale/workshop'
+      preLoaderRoute: typeof LocaleWorkshopRouteRouteImport
       parentRoute: typeof LocaleRouteRoute
     }
     '/api/$': {
@@ -553,6 +686,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LocalePublicTermsRouteImport
       parentRoute: typeof LocalePublicRouteRoute
     }
+    '/$locale/account/': {
+      id: '/$locale/account/'
+      path: '/'
+      fullPath: '/$locale/account/'
+      preLoaderRoute: typeof LocaleAccountIndexRouteImport
+      parentRoute: typeof LocaleAccountRouteRoute
+    }
+    '/$locale/admin/': {
+      id: '/$locale/admin/'
+      path: '/'
+      fullPath: '/$locale/admin/'
+      preLoaderRoute: typeof LocaleAdminIndexRouteImport
+      parentRoute: typeof LocaleAdminRouteRoute
+    }
     '/$locale/auth/': {
       id: '/$locale/auth/'
       path: '/auth'
@@ -574,6 +721,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LocaleAuthResetRouteImport
       parentRoute: typeof LocaleRouteRoute
     }
+    '/$locale/dealer/': {
+      id: '/$locale/dealer/'
+      path: '/'
+      fullPath: '/$locale/dealer/'
+      preLoaderRoute: typeof LocaleDealerIndexRouteImport
+      parentRoute: typeof LocaleDealerRouteRoute
+    }
+    '/$locale/mechanic/': {
+      id: '/$locale/mechanic/'
+      path: '/'
+      fullPath: '/$locale/mechanic/'
+      preLoaderRoute: typeof LocaleMechanicIndexRouteImport
+      parentRoute: typeof LocaleMechanicRouteRoute
+    }
     '/$locale/onboarding/': {
       id: '/$locale/onboarding/'
       path: '/onboarding'
@@ -588,6 +749,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LocaleOnboardingRoleRouteImport
       parentRoute: typeof LocaleRouteRoute
     }
+    '/$locale/workshop/': {
+      id: '/$locale/workshop/'
+      path: '/'
+      fullPath: '/$locale/workshop/'
+      preLoaderRoute: typeof LocaleWorkshopIndexRouteImport
+      parentRoute: typeof LocaleWorkshopRouteRoute
+    }
     '/$locale/_public/dealerships/': {
       id: '/$locale/_public/dealerships/'
       path: '/dealerships'
@@ -600,13 +768,6 @@ declare module '@tanstack/react-router' {
       path: '/dealerships/$slug'
       fullPath: '/$locale/dealerships/$slug'
       preLoaderRoute: typeof LocalePublicDealershipsSlugRouteImport
-      parentRoute: typeof LocalePublicRouteRoute
-    }
-    '/$locale/_public/dev/guarded': {
-      id: '/$locale/_public/dev/guarded'
-      path: '/dev/guarded'
-      fullPath: '/$locale/dev/guarded'
-      preLoaderRoute: typeof LocalePublicDevGuardedRouteImport
       parentRoute: typeof LocalePublicRouteRoute
     }
     '/$locale/_public/dev/shared': {
@@ -680,7 +841,6 @@ interface LocalePublicRouteRouteChildren {
   LocalePublicTermsRoute: typeof LocalePublicTermsRoute
   LocalePublicIndexRoute: typeof LocalePublicIndexRoute
   LocalePublicDealershipsSlugRoute: typeof LocalePublicDealershipsSlugRoute
-  LocalePublicDevGuardedRoute: typeof LocalePublicDevGuardedRoute
   LocalePublicDevSharedRoute: typeof LocalePublicDevSharedRoute
   LocalePublicListingSlugRoute: typeof LocalePublicListingSlugRoute
   LocalePublicMechanicsSlugRoute: typeof LocalePublicMechanicsSlugRoute
@@ -703,7 +863,6 @@ const LocalePublicRouteRouteChildren: LocalePublicRouteRouteChildren = {
   LocalePublicTermsRoute: LocalePublicTermsRoute,
   LocalePublicIndexRoute: LocalePublicIndexRoute,
   LocalePublicDealershipsSlugRoute: LocalePublicDealershipsSlugRoute,
-  LocalePublicDevGuardedRoute: LocalePublicDevGuardedRoute,
   LocalePublicDevSharedRoute: LocalePublicDevSharedRoute,
   LocalePublicListingSlugRoute: LocalePublicListingSlugRoute,
   LocalePublicMechanicsSlugRoute: LocalePublicMechanicsSlugRoute,
@@ -718,8 +877,68 @@ const LocalePublicRouteRouteChildren: LocalePublicRouteRouteChildren = {
 const LocalePublicRouteRouteWithChildren =
   LocalePublicRouteRoute._addFileChildren(LocalePublicRouteRouteChildren)
 
+interface LocaleAccountRouteRouteChildren {
+  LocaleAccountIndexRoute: typeof LocaleAccountIndexRoute
+}
+
+const LocaleAccountRouteRouteChildren: LocaleAccountRouteRouteChildren = {
+  LocaleAccountIndexRoute: LocaleAccountIndexRoute,
+}
+
+const LocaleAccountRouteRouteWithChildren =
+  LocaleAccountRouteRoute._addFileChildren(LocaleAccountRouteRouteChildren)
+
+interface LocaleAdminRouteRouteChildren {
+  LocaleAdminIndexRoute: typeof LocaleAdminIndexRoute
+}
+
+const LocaleAdminRouteRouteChildren: LocaleAdminRouteRouteChildren = {
+  LocaleAdminIndexRoute: LocaleAdminIndexRoute,
+}
+
+const LocaleAdminRouteRouteWithChildren =
+  LocaleAdminRouteRoute._addFileChildren(LocaleAdminRouteRouteChildren)
+
+interface LocaleDealerRouteRouteChildren {
+  LocaleDealerIndexRoute: typeof LocaleDealerIndexRoute
+}
+
+const LocaleDealerRouteRouteChildren: LocaleDealerRouteRouteChildren = {
+  LocaleDealerIndexRoute: LocaleDealerIndexRoute,
+}
+
+const LocaleDealerRouteRouteWithChildren =
+  LocaleDealerRouteRoute._addFileChildren(LocaleDealerRouteRouteChildren)
+
+interface LocaleMechanicRouteRouteChildren {
+  LocaleMechanicIndexRoute: typeof LocaleMechanicIndexRoute
+}
+
+const LocaleMechanicRouteRouteChildren: LocaleMechanicRouteRouteChildren = {
+  LocaleMechanicIndexRoute: LocaleMechanicIndexRoute,
+}
+
+const LocaleMechanicRouteRouteWithChildren =
+  LocaleMechanicRouteRoute._addFileChildren(LocaleMechanicRouteRouteChildren)
+
+interface LocaleWorkshopRouteRouteChildren {
+  LocaleWorkshopIndexRoute: typeof LocaleWorkshopIndexRoute
+}
+
+const LocaleWorkshopRouteRouteChildren: LocaleWorkshopRouteRouteChildren = {
+  LocaleWorkshopIndexRoute: LocaleWorkshopIndexRoute,
+}
+
+const LocaleWorkshopRouteRouteWithChildren =
+  LocaleWorkshopRouteRoute._addFileChildren(LocaleWorkshopRouteRouteChildren)
+
 interface LocaleRouteRouteChildren {
   LocalePublicRouteRoute: typeof LocalePublicRouteRouteWithChildren
+  LocaleAccountRouteRoute: typeof LocaleAccountRouteRouteWithChildren
+  LocaleAdminRouteRoute: typeof LocaleAdminRouteRouteWithChildren
+  LocaleDealerRouteRoute: typeof LocaleDealerRouteRouteWithChildren
+  LocaleMechanicRouteRoute: typeof LocaleMechanicRouteRouteWithChildren
+  LocaleWorkshopRouteRoute: typeof LocaleWorkshopRouteRouteWithChildren
   LocalePostRoute: typeof LocalePostRoute
   LocaleAuthForgotRoute: typeof LocaleAuthForgotRoute
   LocaleAuthResetRoute: typeof LocaleAuthResetRoute
@@ -731,6 +950,11 @@ interface LocaleRouteRouteChildren {
 
 const LocaleRouteRouteChildren: LocaleRouteRouteChildren = {
   LocalePublicRouteRoute: LocalePublicRouteRouteWithChildren,
+  LocaleAccountRouteRoute: LocaleAccountRouteRouteWithChildren,
+  LocaleAdminRouteRoute: LocaleAdminRouteRouteWithChildren,
+  LocaleDealerRouteRoute: LocaleDealerRouteRouteWithChildren,
+  LocaleMechanicRouteRoute: LocaleMechanicRouteRouteWithChildren,
+  LocaleWorkshopRouteRoute: LocaleWorkshopRouteRouteWithChildren,
   LocalePostRoute: LocalePostRoute,
   LocaleAuthForgotRoute: LocaleAuthForgotRoute,
   LocaleAuthResetRoute: LocaleAuthResetRoute,

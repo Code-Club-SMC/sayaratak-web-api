@@ -23,11 +23,11 @@ Settled decisions (override anything in the plan that says otherwise)
 Package manager: Bun only. No pnpm or npm. The "packageManager": "pnpm" line in web/.cta.json is stale scaffold output; ignore it.
 Import alias is @/ (tsconfig.json, components.json). implementation.md writes ~/; read that as @/.
 Fonts: IBM Plex Sans + IBM Plex Sans Arabic (A5). The template's Inter is to be replaced.
-shadcn runs on Base UI (style: base-nova, @base-ui/react, "rtl": true). The plan's Radix wording (DirectionProvider, shadcn migrate rtl) must be checked against the installed Base UI components before use.
+shadcn runs on Base UI (style: base-nova, @base-ui/react, "rtl": true). The plan's Radix wording (DirectionProvider, shadcn migrate rtl) must be checked against the installed Base UI components before use. Use `render` instead of `asChild`, and style navigation links with buttonVariants instead of wrapping a Link in Button.
 
 Current state
 
-Steps 0 to 4.1 are done. Next step is 4.2 (Listing and provider cards; it also builds FavoriteButton, RelativeTime and OpenNowBadge). Open "Resume here" in web/plan/progress.md and start there. Adapt the existing web/ app; never re-scaffold (no create/init).
+Phases 0 to 5 are done. Next step is 6.0 (Interaction foundation, new in the fourth audit), then the rest of Phase 6 in order. Open "Resume here" in web/plan/progress.md and start there.
 
 Commands (run from web/)
 
@@ -60,7 +60,7 @@ No hard-coded UI strings: each needs ar and en keys. Zod messages are i18n keys,
 Numeric form fields use requiredInt, optionalInt, latSchema, lngSchema (A7), not z.coerce.number(). z.coerce is only for URL search params.
 No any. as only right after a Zod parse at the API boundary. Money is whole SDG pounds, no currency field anywhere. Dates are ISO strings, formatted only via lib/format.ts; time-dependent text uses useNow() to stay hydration-safe.
 Do not edit components/ui for looks; restyle via tokens (only the RTL/token fixes in step 1.4 are allowed).
-Visual system (A5): asphalt text, Nile green primary, amber (--signal) only for paid promotion. Cards have no border or shadow; shadows only on floating layers. Spacing scale 4/8/12/16/20/24/32/48. No gradients, hover lifts, entrance animations or illustrations.
+Visual system (A5): asphalt text, Nile green primary, amber (--signal) only for paid promotion. Cards have no border or shadow; shadows only on floating layers. Spacing scale 4/8/12/16/20/24/32/48. No gradients, hover lifts, entrance animations or illustrations. Motion and feedback follow A5b only: token durations (80 to 220 ms), opacity, transform and colors, every press answered within 100 ms.
 Type roles (text-caption, text-ui, text-body, text-lead, text-title, text-page, text-hero) are custom utilities in src/styles.css. cn() reads them as text colors, so never merge a role and a text color in one cn() call (cn("text-ui", "text-muted-foreground") drops text-ui). Put them in one literal class string or on separate elements.
 Files kebab-case, one component per file, named exports, type over interface, files under ~200 lines.
 One commit per step, message step 6.3: listing detail page. Never commit with failing typecheck. Each UI step must pass the ten gates G1 to G10 (A1b) before being marked [x] in progress.md.

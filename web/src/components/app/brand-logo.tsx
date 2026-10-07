@@ -4,6 +4,7 @@ import { Link } from "@tanstack/react-router"
 import { useT } from "@/lib/i18n/use-t"
 import { usePrefs } from "@/lib/prefs"
 
+// The logo file is a 250 x 250 canvas with the artwork in a band about twice as wide as it is tall, so a 2:1 box with `object-cover` shows just the artwork.
 export function BrandLogo() {
   const { t, locale } = useT()
   const { dataSaver } = usePrefs()
@@ -27,11 +28,11 @@ export function BrandLogo() {
       </span>
       <img
         ref={image}
-        src="/brand/logo.svg"
+        src="/sayaratak-logo.svg"
         width={96}
         height={48}
         alt=""
-        className={`absolute inset-0 h-full w-full bg-card object-contain ${loaded ? "" : "invisible"}`}
+        className={`absolute inset-0 h-full w-full bg-card object-cover ${loaded ? "" : "invisible"}`}
         onLoad={() => setLoaded(true)}
         onError={() => setLoaded(false)}
       />

@@ -72,6 +72,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
           rel: "stylesheet",
           href: appCss,
         },
+        { rel: "icon", href: "/sayaratak-logo.svg", type: "image/svg+xml" },
+        { rel: "icon", href: "/favicon.ico", sizes: "16x16 32x32 48x48" },
         ...(loaderData ? fontPreloads(loaderData.locale) : []),
       ],
     }),

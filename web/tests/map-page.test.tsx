@@ -168,6 +168,27 @@ describe("MapPage", () => {
     expect(await screen.findByTestId("map")).toBeTruthy()
   })
 
+  it("Filters opens a dialog from md up and a bottom sheet below", async () => {
+    const width = window.innerWidth
+    try {
+      for (const [w, slot] of [
+        [1024, "dialog-content"],
+        [500, "sheet-content"],
+      ] as const) {
+        window.innerWidth = w
+        const { unmount } = await renderShell(
+          <Harness start={{ layers: ["workshops"] }} />
+        )
+        fireEvent.click(screen.getByText("Filters", { selector: "button" }))
+        const dialog = await screen.findByRole("dialog")
+        expect(dialog.getAttribute("data-slot")).toBe(slot)
+        unmount()
+      }
+    } finally {
+      window.innerWidth = width
+    }
+  })
+
   it("the intent toggle writes to the URL", async () => {
     await renderShell(<Harness />)
     fireEvent.click(await screen.findByRole("button", { name: "Rent" }))

@@ -2,19 +2,25 @@ import { useState } from "react"
 
 import { filterKeys, type FilterGroup } from "@/features/search/filters"
 import type { SearchParams } from "@/features/search/schemas"
+import { useIsMobile } from "@/hooks/use-mobile"
 import { useT } from "@/lib/i18n/use-t"
 import type { ListingPage } from "@/schemas/listing"
 import { Button } from "@/components/ui/button"
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
 import {
   Sheet,
   SheetContent,
   SheetHeader,
   SheetTitle,
-  SheetTrigger,
 } from "@/components/ui/sheet"
 import { FilterForm } from "./filter-form"
 
-// Mobile full-height sheet around the same form. Applying closes it.
+// The same form in a full-height bottom sheet below md and in a dialog from md up. Applying closes it.
 export function FilterSheet({
   params,
   facets,
@@ -39,29 +45,49 @@ export function FilterSheet({
         k !== "includeSold" &&
         params[k] !== undefined
     ).length + (params.includeSold ? 1 : 0)
+  const mobile = useIsMobile()
+  const form = (
+    <FilterForm
+      variant="sheet"
+      params={params}
+      facets={facets}
+      groups={groups}
+      onApply={(next) => {
+        onApply(next)
+        setOpen(false)
+      }}
+    />
+  )
   return (
-    <Sheet open={open} onOpenChange={setOpen}>
-      <SheetTrigger
-        render={<Button variant="outline" className={triggerClassName} />}
+    <>
+      <Button
+        type="button"
+        variant="outline"
+        className={triggerClassName}
+        onClick={() => setOpen(true)}
       >
         {t("common.filters")}
         {active > 0 && <span className="num">({active})</span>}
-      </SheetTrigger>
-      <SheetContent side="bottom" className="h-dvh overflow-y-auto px-4">
-        <SheetHeader>
-          <SheetTitle>{t("search.filters_title")}</SheetTitle>
-        </SheetHeader>
-        <FilterForm
-          variant="sheet"
-          params={params}
-          facets={facets}
-          groups={groups}
-          onApply={(next) => {
-            onApply(next)
-            setOpen(false)
-          }}
-        />
-      </SheetContent>
-    </Sheet>
+      </Button>
+      {mobile ? (
+        <Sheet open={open} onOpenChange={setOpen}>
+          <SheetContent side="bottom" className="h-dvh overflow-y-auto px-4">
+            <SheetHeader>
+              <SheetTitle>{t("search.filters_title")}</SheetTitle>
+            </SheetHeader>
+            {form}
+          </SheetContent>
+        </Sheet>
+      ) : (
+        <Dialog open={open} onOpenChange={setOpen}>
+          <DialogContent className="max-h-[85dvh] overflow-y-auto sm:max-w-lg">
+            <DialogHeader>
+              <DialogTitle>{t("search.filters_title")}</DialogTitle>
+            </DialogHeader>
+            {form}
+          </DialogContent>
+        </Dialog>
+      )}
+    </>
   )
 }

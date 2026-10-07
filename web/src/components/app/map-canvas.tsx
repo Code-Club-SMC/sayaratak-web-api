@@ -35,6 +35,8 @@ export type MapCanvasProps = {
   selectedId?: string | null
   onSelect?: (id: string | null) => void
   popup?: ReactNode
+  // The map is the point of the page (the map search), so it loads at once even with data saver on.
+  eager?: boolean
   label: string
   className?: string
 }
@@ -47,8 +49,8 @@ const Impl = lazy(() =>
 export function MapCanvas(props: MapCanvasProps) {
   const { t } = useT()
   const { dataSaver } = usePrefs()
-  // With data saver on, no tile is requested until the person asks for the map.
-  const [armed, setArmed] = useState(!dataSaver)
+  // With data saver on, no tile is requested until the person asks for the map, unless the page is the map.
+  const [armed, setArmed] = useState(props.eager || !dataSaver)
   // `isolate` keeps Leaflet's own z-indexes (400 to 1000) inside the map, below the header, sheets and menus.
   const box = cn(
     "relative isolate w-full overflow-hidden rounded-lg bg-muted",

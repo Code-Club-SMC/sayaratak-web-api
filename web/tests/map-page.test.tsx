@@ -155,17 +155,13 @@ describe("MapPage", () => {
     expect(await screen.findByRole("link", { name: "Open" })).toBeTruthy()
   })
 
-  it("with data saver on the list loads first and the map waits behind a button", async () => {
+  it("with data saver on the map still loads at once, with no button first", async () => {
     await renderShell(<Harness start={{ layers: ["dealerships"] }} />, {
       prefs: { dataSaver: true, listingView: "grid" },
     })
-    const rows = await within(
-      await screen.findByRole("complementary")
-    ).findAllByRole("button")
-    expect(rows.length).toBeGreaterThan(0)
-    expect(screen.queryByTestId("map")).toBeNull()
-    fireEvent.click(screen.getByRole("button", { name: "Load map" }))
     expect(await screen.findByTestId("map")).toBeTruthy()
+    expect(screen.queryByRole("button", { name: "Load map" })).toBeNull()
+    await waitFor(() => expect(pins().length).toBeGreaterThan(0))
   })
 
   it("Filters opens a dialog from md up and a bottom sheet below", async () => {

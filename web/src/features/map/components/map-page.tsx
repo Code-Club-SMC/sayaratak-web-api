@@ -6,7 +6,6 @@ import { taxonomyQuery } from "@/features/listings/queries"
 import { useDebounced } from "@/hooks/use-debounced"
 import { useT } from "@/lib/i18n/use-t"
 import { defaultCenter } from "@/lib/map"
-import { usePrefs } from "@/lib/prefs"
 import type { MapPoint } from "@/schemas/responses"
 import {
   MapCanvas,
@@ -45,7 +44,6 @@ export function MapPage({
   onChange: (next: MapSearch) => void
 }) {
   const { t, locale } = useT()
-  const { dataSaver } = usePrefs()
   const { data: tax } = useQuery(taxonomyQuery)
   const layers = search.layers ?? MAP_LAYERS
   const cityCenter = (id?: string) =>
@@ -62,7 +60,7 @@ export function MapPage({
   const [listOpen, setListOpen] = useState(false)
   const [place, setPlace] = useState<Place>("idle")
 
-  // Pins are fetched 300 ms after the map stops moving; before the first view is known, only a data-saver visitor (whose map waits behind a button) gets the unbounded list.
+  // Pins are fetched 300 ms after the map stops moving, and not before the first view is known.
   const settled = useDebounced(view)
   const bbox = settled
     ? [
@@ -80,7 +78,7 @@ export function MapPage({
       layers: [...layers],
       bbox,
     }),
-    enabled: Boolean(bbox) || dataSaver,
+    enabled: Boolean(bbox),
   })
   const items = list.data?.items
   const total = list.data?.total ?? 0
@@ -179,6 +177,7 @@ export function MapPage({
           center={target}
           zoom={target.zoom}
           cluster
+          eager
           markers={markers}
           selectedId={selected?.id ?? null}
           onSelect={(id) =>

@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { useQuery } from "@tanstack/react-query"
-import { useFormContext, useWatch } from "react-hook-form"
+import { useFormContext } from "react-hook-form"
 
 import { ChipMultiSelect } from "@/components/app/chip-multi-select"
 import { ChipSingleSelect } from "@/components/app/chip-single-select"
@@ -15,23 +15,16 @@ import {
   type Tile,
 } from "./type-change"
 import { TypeTiles } from "./type-tiles"
+import { useStepFields } from "./use-step-fields"
 
 // Step `type`: what is being posted, then the one follow-up that type needs.
 export function TypeStep() {
   const { t, locale } = useT()
-  const { control, getValues, setValue, formState } = useFormContext()
+  const { getValues } = useFormContext()
+  const { values, error, set } = useStepFields()
   const { data: tax } = useQuery(taxonomyQuery)
-  const values = useWatch({ control })
   const [asked, setAsked] = useState<Tile | null>(null)
   const current = tileOf(values)
-  const { errors } = formState
-  const error = (field: string) => {
-    const message = errors[field]?.message
-    return typeof message === "string" ? message : undefined
-  }
-  // A field that already shows an error is checked again as it changes, so the error goes as soon as it is fixed.
-  const set = (field: string, value: unknown) =>
-    setValue(field, value, { shouldValidate: field in errors })
 
   const apply = (tile: Tile) => {
     const before = getValues()
@@ -67,7 +60,10 @@ export function TypeStep() {
             { value: "rent", label: t("listing.rent") },
           ]}
           value={values.intent}
-          onChange={(v) => set("intent", v)}
+          onChange={(v) => {
+            set("intent", v)
+            if (v === "sale") set("rentPeriod", null)
+          }}
         />
       )}
       {values.kind === "part" && (

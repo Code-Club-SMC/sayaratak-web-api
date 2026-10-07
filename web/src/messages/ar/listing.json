@@ -134,5 +134,7 @@
   "post.fits": "تناسب",
   "post.change_type_title": "تغيير النوع؟",
   "post.change_type_body": "تغيير النوع يمسح الحقول التي لا تنطبق عليه.",
-  "post.change_type_confirm": "تغيير النوع"
+  "post.change_type_confirm": "تغيير النوع",
+  "post.details_title": "أضف التفاصيل",
+  "post.part_make_legend": "الماركة والموديل الذي تناسبه القطعة"
 }

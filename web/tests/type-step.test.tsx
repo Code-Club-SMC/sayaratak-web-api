@@ -5,16 +5,9 @@ import { beforeEach, describe, expect, it, vi } from "vitest"
 import { ListingWizard } from "@/features/listings/wizard/listing-wizard"
 import { wizardDefaults } from "@/features/listings/wizard/wizard-defaults"
 import { wizardSteps } from "@/features/listings/wizard/wizard-steps"
-import type { WizardStep } from "@/features/listings/wizard/wizard-config"
 import { db, resetDb } from "@/mocks/db"
 import { renderShell } from "./shell-render"
 
-const details: WizardStep = {
-  id: "details",
-  labelKey: "post.step_details",
-  titleKey: "post.step_details",
-  Component: () => <p>Details body</p>,
-}
 function Harness() {
   const stepId = useRouterState({
     select: (s) =>
@@ -24,7 +17,7 @@ function Harness() {
     <ListingWizard
       context="public"
       stepId={stepId}
-      steps={[...wizardSteps, details]}
+      steps={wizardSteps}
       defaultValues={wizardDefaults}
       onPublish={() => Promise.resolve()}
     />

@@ -134,5 +134,7 @@
   "post.fits": "Fits",
   "post.change_type_title": "Change the type?",
   "post.change_type_body": "Changing the type clears fields that do not apply.",
-  "post.change_type_confirm": "Change type"
+  "post.change_type_confirm": "Change type",
+  "post.details_title": "Add the details",
+  "post.part_make_legend": "Make and model it comes from or fits"
 }

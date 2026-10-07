@@ -7,7 +7,7 @@ import { NumberField } from "./number-field"
 
 export type PriceValue = { price: number | null; negotiable: boolean }
 
-// The rent period select is added by step 7.3.
+// The price and the negotiable box. A rent listing adds RentPeriodSelect next to it.
 export function PriceFields({
   value,
   onChange,

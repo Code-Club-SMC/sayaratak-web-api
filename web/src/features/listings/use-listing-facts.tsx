@@ -5,8 +5,10 @@ import { useT } from "@/lib/i18n/use-t"
 import type { Listing } from "@/schemas/listing"
 import type { Spec } from "@/components/app/specs-list"
 import { taxonomyQuery } from "./queries"
+import { listingColors } from "./schemas"
 
-const knownColors = ["white", "black", "silver", "grey", "blue", "red", "gold"]
+// `gold` is not in the post form, but older listings use it.
+const knownColors: string[] = [...listingColors, "gold"]
 
 // The few facts shown above the fold (`facts`) and the full list (`specs`), both without the empty ones.
 export function useListingFacts(l: Listing) {

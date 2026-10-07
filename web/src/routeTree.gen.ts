@@ -14,6 +14,7 @@ import { Route as LocaleRouteRouteImport } from './routes/$locale/route'
 import { Route as RobotsDottxtRouteImport } from './routes/robots[.]txt'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as LocalePublicRouteRouteImport } from './routes/$locale/_public/route'
+import { Route as LocalePostRouteImport } from './routes/$locale/post'
 import { Route as ApiSplatRouteImport } from './routes/api/$'
 import { Route as LocalePublicIndexRouteImport } from './routes/$locale/_public/index'
 import { Route as LocalePublicSplatRouteImport } from './routes/$locale/_public/$'
@@ -28,7 +29,6 @@ import { Route as LocalePublicTermsRouteImport } from './routes/$locale/_public/
 import { Route as LocaleAuthIndexRouteImport } from './routes/$locale/auth/index'
 import { Route as LocaleAuthForgotRouteImport } from './routes/$locale/auth/forgot'
 import { Route as LocaleAuthResetRouteImport } from './routes/$locale/auth/reset'
-import { Route as LocaleDevPostRouteImport } from './routes/$locale/dev/post'
 import { Route as LocaleOnboardingIndexRouteImport } from './routes/$locale/onboarding/index'
 import { Route as LocaleOnboardingRoleRouteImport } from './routes/$locale/onboarding/role'
 import { Route as LocalePublicDealershipsIndexRouteImport } from './routes/$locale/_public/dealerships/index'
@@ -65,6 +65,11 @@ const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
 } as any)
 const LocalePublicRouteRoute = LocalePublicRouteRouteImport.update({
   id: '/_public',
+  getParentRoute: () => LocaleRouteRoute,
+} as any)
+const LocalePostRoute = LocalePostRouteImport.update({
+  id: '/post',
+  path: '/post',
   getParentRoute: () => LocaleRouteRoute,
 } as any)
 const ApiSplatRoute = ApiSplatRouteImport.update({
@@ -135,11 +140,6 @@ const LocaleAuthForgotRoute = LocaleAuthForgotRouteImport.update({
 const LocaleAuthResetRoute = LocaleAuthResetRouteImport.update({
   id: '/auth/reset',
   path: '/auth/reset',
-  getParentRoute: () => LocaleRouteRoute,
-} as any)
-const LocaleDevPostRoute = LocaleDevPostRouteImport.update({
-  id: '/dev/post',
-  path: '/dev/post',
   getParentRoute: () => LocaleRouteRoute,
 } as any)
 const LocaleOnboardingIndexRoute = LocaleOnboardingIndexRouteImport.update({
@@ -221,6 +221,7 @@ export interface FileRoutesByFullPath {
   '/$locale': typeof LocaleRouteRouteWithChildren
   '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/$locale/post': typeof LocalePostRoute
   '/api/$': typeof ApiSplatRoute
   '/$locale/$': typeof LocalePublicSplatRoute
   '/$locale/about': typeof LocalePublicAboutRoute
@@ -233,7 +234,6 @@ export interface FileRoutesByFullPath {
   '/$locale/terms': typeof LocalePublicTermsRoute
   '/$locale/auth/forgot': typeof LocaleAuthForgotRoute
   '/$locale/auth/reset': typeof LocaleAuthResetRoute
-  '/$locale/dev/post': typeof LocaleDevPostRoute
   '/$locale/onboarding/role': typeof LocaleOnboardingRoleRoute
   '/$locale/': typeof LocalePublicIndexRoute
   '/$locale/auth/': typeof LocaleAuthIndexRoute
@@ -255,6 +255,7 @@ export interface FileRoutesByTo {
   '/$locale': typeof LocalePublicIndexRoute
   '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/$locale/post': typeof LocalePostRoute
   '/api/$': typeof ApiSplatRoute
   '/$locale/$': typeof LocalePublicSplatRoute
   '/$locale/about': typeof LocalePublicAboutRoute
@@ -267,7 +268,6 @@ export interface FileRoutesByTo {
   '/$locale/terms': typeof LocalePublicTermsRoute
   '/$locale/auth/forgot': typeof LocaleAuthForgotRoute
   '/$locale/auth/reset': typeof LocaleAuthResetRoute
-  '/$locale/dev/post': typeof LocaleDevPostRoute
   '/$locale/onboarding/role': typeof LocaleOnboardingRoleRoute
   '/$locale/auth': typeof LocaleAuthIndexRoute
   '/$locale/onboarding': typeof LocaleOnboardingIndexRoute
@@ -290,6 +290,7 @@ export interface FileRoutesById {
   '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/$locale/_public': typeof LocalePublicRouteRouteWithChildren
+  '/$locale/post': typeof LocalePostRoute
   '/api/$': typeof ApiSplatRoute
   '/$locale/_public/$': typeof LocalePublicSplatRoute
   '/$locale/_public/about': typeof LocalePublicAboutRoute
@@ -302,7 +303,6 @@ export interface FileRoutesById {
   '/$locale/_public/terms': typeof LocalePublicTermsRoute
   '/$locale/auth/forgot': typeof LocaleAuthForgotRoute
   '/$locale/auth/reset': typeof LocaleAuthResetRoute
-  '/$locale/dev/post': typeof LocaleDevPostRoute
   '/$locale/onboarding/role': typeof LocaleOnboardingRoleRoute
   '/$locale/_public/': typeof LocalePublicIndexRoute
   '/$locale/auth/': typeof LocaleAuthIndexRoute
@@ -326,6 +326,7 @@ export interface FileRouteTypes {
     | '/$locale'
     | '/robots.txt'
     | '/sitemap.xml'
+    | '/$locale/post'
     | '/api/$'
     | '/$locale/$'
     | '/$locale/about'
@@ -338,7 +339,6 @@ export interface FileRouteTypes {
     | '/$locale/terms'
     | '/$locale/auth/forgot'
     | '/$locale/auth/reset'
-    | '/$locale/dev/post'
     | '/$locale/onboarding/role'
     | '/$locale/'
     | '/$locale/auth/'
@@ -360,6 +360,7 @@ export interface FileRouteTypes {
     | '/$locale'
     | '/robots.txt'
     | '/sitemap.xml'
+    | '/$locale/post'
     | '/api/$'
     | '/$locale/$'
     | '/$locale/about'
@@ -372,7 +373,6 @@ export interface FileRouteTypes {
     | '/$locale/terms'
     | '/$locale/auth/forgot'
     | '/$locale/auth/reset'
-    | '/$locale/dev/post'
     | '/$locale/onboarding/role'
     | '/$locale/auth'
     | '/$locale/onboarding'
@@ -394,6 +394,7 @@ export interface FileRouteTypes {
     | '/robots.txt'
     | '/sitemap.xml'
     | '/$locale/_public'
+    | '/$locale/post'
     | '/api/$'
     | '/$locale/_public/$'
     | '/$locale/_public/about'
@@ -406,7 +407,6 @@ export interface FileRouteTypes {
     | '/$locale/_public/terms'
     | '/$locale/auth/forgot'
     | '/$locale/auth/reset'
-    | '/$locale/dev/post'
     | '/$locale/onboarding/role'
     | '/$locale/_public/'
     | '/$locale/auth/'
@@ -467,6 +467,13 @@ declare module '@tanstack/react-router' {
       path: ''
       fullPath: '/$locale'
       preLoaderRoute: typeof LocalePublicRouteRouteImport
+      parentRoute: typeof LocaleRouteRoute
+    }
+    '/$locale/post': {
+      id: '/$locale/post'
+      path: '/post'
+      fullPath: '/$locale/post'
+      preLoaderRoute: typeof LocalePostRouteImport
       parentRoute: typeof LocaleRouteRoute
     }
     '/api/$': {
@@ -565,13 +572,6 @@ declare module '@tanstack/react-router' {
       path: '/auth/reset'
       fullPath: '/$locale/auth/reset'
       preLoaderRoute: typeof LocaleAuthResetRouteImport
-      parentRoute: typeof LocaleRouteRoute
-    }
-    '/$locale/dev/post': {
-      id: '/$locale/dev/post'
-      path: '/dev/post'
-      fullPath: '/$locale/dev/post'
-      preLoaderRoute: typeof LocaleDevPostRouteImport
       parentRoute: typeof LocaleRouteRoute
     }
     '/$locale/onboarding/': {
@@ -720,9 +720,9 @@ const LocalePublicRouteRouteWithChildren =
 
 interface LocaleRouteRouteChildren {
   LocalePublicRouteRoute: typeof LocalePublicRouteRouteWithChildren
+  LocalePostRoute: typeof LocalePostRoute
   LocaleAuthForgotRoute: typeof LocaleAuthForgotRoute
   LocaleAuthResetRoute: typeof LocaleAuthResetRoute
-  LocaleDevPostRoute: typeof LocaleDevPostRoute
   LocaleOnboardingRoleRoute: typeof LocaleOnboardingRoleRoute
   LocaleAuthIndexRoute: typeof LocaleAuthIndexRoute
   LocaleOnboardingIndexRoute: typeof LocaleOnboardingIndexRoute
@@ -731,9 +731,9 @@ interface LocaleRouteRouteChildren {
 
 const LocaleRouteRouteChildren: LocaleRouteRouteChildren = {
   LocalePublicRouteRoute: LocalePublicRouteRouteWithChildren,
+  LocalePostRoute: LocalePostRoute,
   LocaleAuthForgotRoute: LocaleAuthForgotRoute,
   LocaleAuthResetRoute: LocaleAuthResetRoute,
-  LocaleDevPostRoute: LocaleDevPostRoute,
   LocaleOnboardingRoleRoute: LocaleOnboardingRoleRoute,
   LocaleAuthIndexRoute: LocaleAuthIndexRoute,
   LocaleOnboardingIndexRoute: LocaleOnboardingIndexRoute,

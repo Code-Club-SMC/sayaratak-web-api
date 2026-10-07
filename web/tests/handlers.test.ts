@@ -2,6 +2,8 @@
 import { beforeEach, describe, expect, it } from "vitest"
 import { z } from "zod"
 
+import { toListingInput } from "@/features/listings/wizard/to-listing-input"
+import { wizardDefaults } from "@/features/listings/wizard/wizard-defaults"
 import { db, resetDb } from "@/mocks/db"
 import { handleMock } from "@/mocks/router"
 
@@ -24,17 +26,37 @@ async function call(method: string, path: string, o: Opts = {}) {
     : null
   return { status: res.status, body, res, raw }
 }
-const car = {
-  title: "Toyota Corolla 2018",
-  price: 12_000_000,
-  cityId: "khartoum",
+const photo = (id: string) => ({
+  id,
+  type: "image",
+  url: `/mock/${id}-{w}.webp`,
+  width: 1280,
+  height: 853,
+  placeholderColor: "#b8c4c0",
+  posterUrl: null,
+})
+// What the post wizard sends for a car: every field, built by the client's own mapper.
+const carValues = {
+  ...wizardDefaults,
   kind: "vehicle",
-  intent: "sale",
   vehicleType: "car",
+  intent: "sale",
+  title: "Toyota Corolla 2018",
+  description: "Clean car, one owner, full service history.",
+  price: 12_000_000,
   makeId: "toyota",
   modelId: "toyota-corolla",
-  submit: true,
+  year: 2018,
+  fuel: "petrol",
+  transmission: "automatic",
+  mileageKm: 90_000,
+  media: [..."abc"].map(photo),
+  cityId: "khartoum",
+  districtId: "khartoum-riyadh",
+  phone: "+249912345678",
+  methods: ["call", "chat"],
 }
+const car = toListingInput(carValues)
 const file = (name: string, size: number, type = "image/png") =>
   new File([new Uint8Array(size)], name, { type })
 
@@ -242,10 +264,33 @@ describe("listings", () => {
       (await call("POST", "/listings", { as: "u-workshop", body: car })).status
     ).toBe(403)
   })
+  it("a submitted listing has to pass the wizard's rules: 422 with the field keys; a draft may be incomplete", async () => {
+    const bad = await call("POST", "/listings", {
+      as: "u-1",
+      body: toListingInput({ ...carValues, media: [photo("a")], year: null }),
+    })
+    expect(bad.status).toBe(422)
+    expect(bad.body.fields).toMatchObject({
+      media: "validation.media_min",
+      year: "validation.required",
+    })
+    const draft = await call("POST", "/listings", {
+      as: "u-1",
+      body: { title: "Half done", price: 1000, cityId: "khartoum" },
+    })
+    expect(draft.status).toBe(200)
+    expect(draft.body.moderation).toBe("draft")
+    const edited = await call("PATCH", `/listings/${draft.body.id}`, {
+      as: "u-1",
+      body: toListingInput({ ...carValues, year: null }),
+    })
+    expect(edited.status).toBe(422)
+    expect(edited.body.fields.year).toBe("validation.required")
+  })
   it("an edit that changes title, description, photos or type sends an approved listing back to review; price never does", async () => {
     const created = await call("POST", "/listings", { as: "u-1", body: car })
     const row = db.listings.find((l) => l.id === created.body.id)!
-    const photo = {
+    const newPhoto = {
       id: "m-1",
       type: "image",
       url: "/x.webp",
@@ -263,7 +308,7 @@ describe("listings", () => {
     expect(await edit({ title: row.title })).toBe("approved")
     expect(await edit({ title: "Toyota Corolla 2019" })).toBe("pending")
     expect(await edit({ description: "New text" })).toBe("pending")
-    expect(await edit({ media: [photo] })).toBe("pending")
+    expect(await edit({ media: [newPhoto] })).toBe("pending")
     expect(await edit({ vehicleType: "truck" })).toBe("pending")
   })
   it("an auto-approved dealer keeps an approved listing live after an edit", async () => {

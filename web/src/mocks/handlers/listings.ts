@@ -1,3 +1,12 @@
+import type { z } from "zod"
+
+import {
+  contactStepSchema,
+  detailsSchema,
+  listingInputSchema,
+  photosStepSchema,
+  typeStepSchema,
+} from "@/features/listings/schemas"
 import { arrayKeys, searchParamsSchema } from "@/features/search/schemas"
 import { listingAnalyticsSchema } from "@/schemas/api"
 import {
@@ -18,6 +27,7 @@ import {
   pageParams,
   queryObject,
   route,
+  zodFields,
 } from "../http"
 import {
   DAY_MS,
@@ -121,12 +131,33 @@ const reviewedFields = (l: ListingRow) =>
     l.partCategoryId,
   ])
 
+// A listing sent for review has to pass what the wizard checked: the flat payload, then the rules of each step. A draft may be incomplete.
+function checkSubmitted(body: z.input<typeof listingPatchSchema>) {
+  const flat = listingInputSchema.safeParse({ ...body, ...body.contact })
+  if (!flat.success) throw fail(422, "validation", zodFields(flat.error))
+  // The details step holds an empty part number as "", the payload as null.
+  const values = { ...flat.data, partNumber: flat.data.partNumber ?? "" }
+  const rules = [
+    typeStepSchema,
+    detailsSchema(values),
+    photosStepSchema,
+    contactStepSchema,
+  ]
+  const fields = rules.map((rule) => {
+    const result = rule.safeParse(values)
+    return result.success ? {} : zodFields(result.error)
+  })
+  if (fields.some((f) => Object.keys(f).length > 0))
+    throw fail(422, "validation", Object.assign({}, ...fields))
+}
+
 route("POST", "/listings", async (c) => {
   const user = needRole(c, "user", "dealership")
   const input = await c.body(listingCreateSchema)
   const limit = listingLimit(user.id)
   if (input.submit && limit !== null && listingUsage(user.id) >= limit)
     throw fail(403, "limit_reached")
+  if (input.submit) checkSubmitted(input)
   const city = db.taxonomy.cities.find((x) => x.id === input.cityId)
   if (!city) throw fail(422, "validation", { cityId: "validation.required" })
   const dealer = db.dealerships.find((d) => d.ownerId === user.id)
@@ -211,6 +242,8 @@ route("PATCH", "/listings/:id", async (c) => {
   canEditListing(user, row)
   const { submit, moderation, ...patch } = await c.body(listingPatchSchema)
   if (moderation && user.role !== "admin") throw fail(403, "forbidden")
+  // The wizard sends the whole listing (it always has `kind`); a partial patch such as a status change is not re-checked.
+  if (submit && patch.kind !== undefined) checkSubmitted({ ...patch, submit })
   const reviewed = reviewedFields(row)
   if (patch.contact) row.contact = { ...row.contact, ...patch.contact }
   const { contact: _contact, description, ...fields } = patch

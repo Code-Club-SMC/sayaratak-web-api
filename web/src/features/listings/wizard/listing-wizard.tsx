@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useRouter, useRouterState } from "@tanstack/react-router"
+import { useRouter } from "@tanstack/react-router"
 import { FormProvider, useForm, type FieldValues } from "react-hook-form"
 import { z } from "zod"
 
@@ -13,6 +13,7 @@ import { useEnterKeyHints } from "@/hooks/use-enter-key-hints"
 import { focusFirstInvalid } from "@/lib/focus-invalid"
 import { useT } from "@/lib/i18n/use-t"
 import { localeHref } from "@/lib/navigation"
+import { useStepHref } from "./use-step-href"
 import { useWizardDraft, type WizardBase } from "./use-wizard-draft"
 import { WizardLayout } from "./wizard-layout"
 import {
@@ -31,6 +32,7 @@ export function ListingWizard({
   editId,
   base,
   defaultValues = {},
+  publishDisabled = false,
   onPublish,
 }: {
   context: "public" | "dealer"
@@ -40,12 +42,14 @@ export function ListingWizard({
   // The listing being edited as form values. Leave it out for a new listing; while an edit loads, `editId` is set and `base` is not.
   base?: WizardBase
   defaultValues?: FieldValues
-  // Runs on Publish after the last step is valid. It shows its own errors.
+  // Publish stays off, for example while the free limit is used up.
+  publishDisabled?: boolean
+  // Runs on Publish after the last step is valid. It shows its own errors, and resolves `true` once the listing is saved: the wizard then drops its draft.
   onPublish: (values: FieldValues) => Promise<unknown>
 }) {
   const { t, locale } = useT()
   const router = useRouter()
-  const location = useRouterState({ select: (s) => s.location })
+  const href = useStepHref()
   const index = steps.findIndex((s) => s.id === stepId)
   const step = steps[index]
   const form = useForm<FieldValues>({
@@ -53,7 +57,7 @@ export function ListingWizard({
     resolver: (values, ctx, options) =>
       zodResolver(step?.schema?.(values) ?? noRules)(values, ctx, options),
   })
-  const { restored, saveNow } = useWizardDraft({
+  const { restored, saveNow, clear } = useWizardDraft({
     form,
     draftKey: wizardDraftKey(editId),
     base: editId && !base ? undefined : (base ?? null),
@@ -62,11 +66,6 @@ export function ListingWizard({
   const last = index === steps.length - 1
   useEnterKeyHints(formRef, last ? "done" : "next")
 
-  const href = (id: string) => {
-    const params = new URLSearchParams(location.searchStr)
-    params.set("step", id)
-    return `${location.pathname}?${params}`
-  }
   // A step opens only when every earlier step is valid; otherwise the first invalid one opens.
   const reachable = restored ? firstInvalidIndex(steps, form.getValues()) : 0
   useEffect(() => {
@@ -93,7 +92,10 @@ export function ListingWizard({
   const prev = steps[index - 1]
   const next = steps[index + 1]
   const submit = form.handleSubmit(
-    () => (next ? go(next.id) : onPublish(form.getValues())),
+    async () => {
+      if (next) return go(next.id)
+      if ((await onPublish(form.getValues())) === true) clear()
+    },
     () => focusFirstInvalid(formRef.current)
   )
 
@@ -130,13 +132,17 @@ export function ListingWizard({
               aria-busy={!restored}
               className="flex min-h-80 flex-col gap-4 transition-opacity duration-(--dur-fast) ease-(--ease-standard) starting:opacity-0"
             >
-              {restored && <step.Component />}
+              {restored && <step.Component editing={!!editId} />}
             </div>
             <StickyFooter
               width="max-w-152 lg:max-w-212"
               onBack={() => (prev ? go(prev.id) : leave())}
             >
-              <SubmitButton size="lg" pending={form.formState.isSubmitting}>
+              <SubmitButton
+                size="lg"
+                pending={form.formState.isSubmitting}
+                disabled={last && publishDisabled}
+              >
                 {last ? t("post.publish") : t("common.next")}
               </SubmitButton>
             </StickyFooter>

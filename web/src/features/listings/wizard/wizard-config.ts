@@ -27,7 +27,7 @@ export type WizardStep = {
   labelKey: string
   titleKey: string
   helperKey?: string
-  Component: ComponentType
+  Component: ComponentType<{ editing: boolean }>
   // Built from all values, because the details rules depend on the type chosen earlier. A step without rules (review) always passes.
   schema?: (values: FieldValues) => z.ZodType<FieldValues, FieldValues>
 }

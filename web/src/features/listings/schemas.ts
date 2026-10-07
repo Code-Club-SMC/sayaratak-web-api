@@ -2,6 +2,7 @@ import { z } from "zod"
 
 import {
   geoSchema,
+  nameSchema,
   optionalInt,
   phoneSchema,
   priceSchema,
@@ -196,3 +197,29 @@ export const contactStepSchema = z
     message: "validation.required",
     when: () => true,
   })
+
+// The whole wizard payload, flat: the four steps merged, every field present and `null` (or `[]`) when empty. `toListingInput` builds it; the mock checks a submitted listing against it and then against each step's own rules.
+export const listingInputSchema = z.object({
+  kind: z.enum(["vehicle", "part"]),
+  vehicleType: vehicleTypeSchema.nullable(),
+  intent: intentSchema,
+  partCategoryId: z.string().nullable(),
+  compatibleTypes: z.array(vehicleTypeSchema),
+  ...detailsBaseSchema.shape,
+  partNumber: z.string().trim().max(40, "validation.too_long").nullable(),
+  media: z.array(mediaSchema),
+  cityId: z.string(),
+  districtId: z.string(),
+  location: geoSchema.nullable(),
+  phone: phoneSchema,
+  whatsapp: phoneSchema.nullable(),
+  showPhone: z.boolean(),
+  methods: z.array(z.enum(["call", "whatsapp", "chat"])).min(1),
+})
+export type ListingInput = z.infer<typeof listingInputSchema>
+
+// Step `review`: nothing to check, except the name and city of an account that has none yet. Those fields are in the form only while the step shows them.
+export const reviewProfileSchema = z.object({
+  profileName: nameSchema,
+  profileCityId: z.string().min(1, "validation.required"),
+})

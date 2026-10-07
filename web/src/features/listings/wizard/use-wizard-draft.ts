@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { useQuery } from "@tanstack/react-query"
 import type { FieldValues, UseFormReturn } from "react-hook-form"
 import { z } from "zod"
@@ -58,6 +58,8 @@ export function useWizardDraft({
   const server = useQuery({ ...draftQuery(draftKey), enabled: !!me })
   const save = useSaveDraft(draftKey)
   const [restored, setRestored] = useState(false)
+  // Set once the listing is saved: nothing writes the draft again after that.
+  const closed = useRef(false)
   const ready = base !== undefined && (!me || !server.isPending)
 
   useEffect(() => {
@@ -82,7 +84,7 @@ export function useWizardDraft({
     let changed = false
     const flush = (toServer: boolean) => {
       clearTimeout(timer)
-      if (!changed) return
+      if (!changed || closed.current) return
       changed = false
       const draft = snapshot(form.getValues())
       writeSession(draftKey, draft)
@@ -112,5 +114,16 @@ export function useWizardDraft({
     if (me) save.mutate(draft)
   }
 
-  return { restored, saveNow }
+  // After a successful publish: both copies of the draft go, and the form stops saving.
+  const clear = () => {
+    closed.current = true
+    try {
+      sessionStorage.removeItem(sessionKey(draftKey))
+    } catch {
+      // Storage is blocked; there is nothing stored to remove.
+    }
+    if (me) saveDraftOnExit(draftKey, {})
+  }
+
+  return { restored, saveNow, clear }
 }

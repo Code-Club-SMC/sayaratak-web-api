@@ -76,8 +76,13 @@ const open = async (draft: object = contact, role?: User["role"]) => {
   await screen.findByRole("heading", { name: "Location and contact" })
   return shell
 }
-const publishNow = () =>
+const next = () => fireEvent.click(screen.getByRole("button", { name: "Next" }))
+// Contact is followed by the review, whose Publish sends everything.
+const publishNow = async () => {
+  next()
+  await screen.findByRole("heading", { name: "Review and publish" })
   fireEvent.click(screen.getByRole("button", { name: "Publish" }))
+}
 const sent = async () => {
   await waitFor(() => expect(publish).toHaveBeenCalled())
   return publish.mock.calls[0]![0]
@@ -128,7 +133,7 @@ describe("contactStepSchema", () => {
 describe("ContactStep", () => {
   it("Next with an empty step shows the errors and stays", async () => {
     await open({})
-    publishNow()
+    next()
     expect(await screen.findAllByText("This field is required")).toHaveLength(2)
     expect(publish).not.toHaveBeenCalled()
   })
@@ -145,9 +150,9 @@ describe("ContactStep", () => {
     expect(screen.queryByRole("option", { name: "Mahdia" })).toBeNull()
   })
 
-  it("the pin is optional: Publish sends a null location", async () => {
+  it("the pin is optional: the listing is sent with a null location", async () => {
     await open()
-    publishNow()
+    await publishNow()
     expect((await sent()).location).toBeNull()
   })
 
@@ -155,7 +160,7 @@ describe("ContactStep", () => {
     await open()
     fireEvent.change(phone(), { target: { value: "912000111" } })
     fireEvent.blur(phone())
-    publishNow()
+    await publishNow()
     const values = await sent()
     expect(values.phone).toBe("+249912000111")
     expect(values.whatsapp).toBe("+249912000111")
@@ -166,11 +171,11 @@ describe("ContactStep", () => {
     fireEvent.click(box("Use the same number on WhatsApp"))
     const whatsapp = await screen.findByLabelText(/^WhatsApp number/)
     fireEvent.change(whatsapp, { target: { value: "" } })
-    publishNow()
+    next()
     expect(await screen.findAllByText("This field is required")).toHaveLength(1)
     fireEvent.change(whatsapp, { target: { value: "923000222" } })
     fireEvent.blur(whatsapp)
-    publishNow()
+    await publishNow()
     expect((await sent()).whatsapp).toBe("+249923000222")
   })
 
@@ -187,7 +192,7 @@ describe("ContactStep", () => {
     expect(
       screen.getByText("Buyers who use WhatsApp will see your number there")
     ).toBeTruthy()
-    publishNow()
+    await publishNow()
     const values = await sent()
     expect(values.showPhone).toBe(false)
     expect(values.methods).toEqual(["whatsapp", "chat"])
@@ -198,14 +203,14 @@ describe("ContactStep", () => {
     fireEvent.click(
       screen.getByRole("switch", { name: "Show my phone number" })
     )
-    publishNow()
+    await publishNow()
     expect((await sent()).methods).toEqual(["chat"])
   })
 
   it("unchecking every method is an error", async () => {
     await open({ ...contact, methods: ["chat"] })
     fireEvent.click(box("Message"))
-    publishNow()
+    next()
     expect(await screen.findByText("Choose at least one option")).toBeTruthy()
     expect(publish).not.toHaveBeenCalled()
   })
@@ -238,11 +243,12 @@ describe("ContactStep", () => {
     )
     expect(screen.queryByLabelText(/^Phone number/)).toBeNull()
     const own = db.dealerships.find((d) => d.ownerId === "u-dealer")!
-    publishNow()
+    // Opening the fields changes nothing: the dealership's details are still what is sent.
+    fireEvent.click(same())
+    expect(await screen.findByLabelText(/^Phone number/)).toBeTruthy()
+    await publishNow()
     const values = await sent()
     expect(values.phone).toBe(own.phones[0])
     expect(values.districtId).toBe(own.districtId)
-    fireEvent.click(same())
-    expect(await screen.findByLabelText(/^Phone number/)).toBeTruthy()
   })
 })

@@ -83,10 +83,12 @@ const input = (accept: string) =>
 const choose = (accept: string, ...files: File[]) =>
   fireEvent.change(input(accept), { target: { files } })
 const next = () => fireEvent.click(screen.getByRole("button", { name: "Next" }))
-// Photos are the second to last step: Next moves to contact, whose Publish sends everything.
+// Photos come before contact and review: Next twice, then the review's Publish sends everything.
 const publishNow = async () => {
   next()
   await screen.findByRole("heading", { name: "Location and contact" })
+  next()
+  await screen.findByRole("heading", { name: "Review and publish" })
   fireEvent.click(screen.getByRole("button", { name: "Publish" }))
 }
 const sent = () => ids(publish.mock.calls[0]![0].media as Media[])

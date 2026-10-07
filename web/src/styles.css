@@ -103,7 +103,7 @@
   --warning: oklch(0.48 0.09 65);
   --destructive: oklch(0.53 0.2 27);
   --border: oklch(0.915 0.005 150);
-  --input: oklch(0.62 0.012 160);
+  --input: oklch(0.64 0.012 160);
   --ring: oklch(0.43 0.085 163);
   --chart-1: var(--primary);
   --chart-2: var(--signal);

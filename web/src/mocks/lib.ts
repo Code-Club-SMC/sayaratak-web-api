@@ -1,9 +1,19 @@
+import { z } from "zod"
+
 import type { Bilingual } from "@/schemas/fields"
+import { extraDefaults, extraFields } from "@/schemas/listing-fields"
 import type { Notification } from "@/schemas/messaging"
 import { db, find, newId, paginate } from "./db"
 import { fail, pageParams, type Ctx } from "./http"
 import type { Promotion } from "@/schemas/billing"
 import type { ListingRow, UserRow } from "./types"
+
+// The step 7.9 fields of a listing input: what it sent, the rest empty. Parsing keeps only these keys.
+const extrasInput = z.object(extraFields).partial()
+export const extrasOf = (input: object) => ({
+  ...extraDefaults,
+  ...extrasInput.parse(input),
+})
 
 // Both languages as one lowercase string, for `q` matching.
 export const textOf = (b: Bilingual) => `${b.ar} ${b.en}`.toLowerCase()

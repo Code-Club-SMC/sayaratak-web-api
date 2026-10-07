@@ -41,5 +41,8 @@
   "validation.video_max": "أضف فيديو واحدًا فقط",
   "validation.video_size": "حجم الفيديو أكبر من 30 ميغابايت",
   "validation.video_length": "مدة الفيديو أطول من 60 ثانية",
-  "validation.video_type": "اختر ملف فيديو"
+  "validation.video_type": "اختر ملف فيديو",
+  "validation.date": "أدخل تاريخًا صحيحًا",
+  "validation.chassis": "استخدم من 5 إلى 25 حرفًا أو رقمًا أو شرطة",
+  "validation.year_order": "يجب ألا تكون السنة الأولى بعد الأخيرة"
 }

@@ -29,6 +29,7 @@ import {
   listingUsage,
   nowIso,
   rangeDays,
+  extrasOf,
 } from "../lib"
 import { facets, isPublic, matches, sortListings } from "../search"
 import type { ListingRow, UserRow } from "../types"
@@ -157,6 +158,8 @@ route("POST", "/listings", async (c) => {
     color: input.color ?? null,
     engineCc: input.engineCc ?? null,
     payloadTons: input.payloadTons ?? null,
+    partNumber: input.partNumber ?? null,
+    ...extrasOf(input),
     partCategoryId: input.partCategoryId ?? null,
     compatibleTypes: input.compatibleTypes ?? [],
     media: input.media ?? [],

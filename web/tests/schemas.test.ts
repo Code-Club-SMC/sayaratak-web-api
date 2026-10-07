@@ -1,3 +1,4 @@
+import { extraDefaults } from "@/schemas/listing-fields"
 import { expect, it } from "vitest"
 import type { z } from "zod"
 
@@ -84,6 +85,8 @@ const listing = {
   color: null,
   engineCc: null,
   payloadTons: null,
+  partNumber: null,
+  ...extraDefaults,
   partCategoryId: null,
   compatibleTypes: [],
   media: [media],

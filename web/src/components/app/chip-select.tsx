@@ -1,4 +1,4 @@
-import { useId } from "react"
+import { useId, type ReactNode } from "react"
 
 import { FieldLegend, FieldSet } from "@/components/ui/field"
 import { FieldError } from "./field-error"
@@ -13,6 +13,7 @@ export function ChipSelect({
   isOn,
   onToggle,
   error,
+  action,
 }: {
   type: "radio" | "checkbox"
   legend: string
@@ -20,6 +21,8 @@ export function ChipSelect({
   isOn: (value: string) => boolean
   onToggle: (value: string) => void
   error?: string
+  // Follows the last chip, such as a "Clear" button.
+  action?: ReactNode
 }) {
   const name = useId()
   return (
@@ -42,6 +45,7 @@ export function ChipSelect({
             {o.label}
           </label>
         ))}
+        {action}
       </div>
       <FieldError message={error} />
     </FieldSet>

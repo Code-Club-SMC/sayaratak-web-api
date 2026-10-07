@@ -1,5 +1,7 @@
 import type { FieldValues } from "react-hook-form"
 
+import { extraDefaults } from "@/schemas/listing-fields"
+
 // What the form holds before anyone typed. The details values are compared with these to tell whether that step was touched.
 export const typeDefaults = {
   kind: "vehicle",
@@ -28,6 +30,7 @@ export const detailsDefaults = {
   engineCc: null,
   payloadTons: null,
   partNumber: "",
+  ...extraDefaults,
 } satisfies FieldValues
 
 export const photosDefaults = { media: [] } satisfies FieldValues

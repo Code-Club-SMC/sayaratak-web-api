@@ -15,6 +15,7 @@ import type { Taxonomy } from "@/schemas/taxonomy"
 import { faker } from "@faker-js/faker"
 import type { ListingRow, UserRow } from "../types"
 import { pickMockPhoto } from "./photos"
+import { seedSpecs } from "./specs"
 import type { CatalogModel } from "./taxonomy"
 import { partCatalog } from "./taxonomy"
 import {
@@ -292,6 +293,17 @@ export function seedListings(ctx: Ctx) {
       payloadTons: model?.type === "truck" ? model.size : null,
       partCategoryId,
       compatibleTypes: kind === "part" ? ["car"] : [],
+      ...seedSpecs({
+        n,
+        kind,
+        type,
+        intent,
+        used,
+        year,
+        cityId: city,
+        makeId,
+        engineCc: model && model.type !== "truck" ? model.size : null,
+      }),
       media,
       cityId: city,
       districtId: district.id,

@@ -1,3 +1,5 @@
+import type { ReactNode } from "react"
+
 import { ChipSelect, type ChipOption } from "./chip-select"
 
 export function ChipSingleSelect({
@@ -6,12 +8,14 @@ export function ChipSingleSelect({
   value,
   onChange,
   error,
+  action,
 }: {
   legend: string
   options: ChipOption[]
   value: string | null
   onChange: (value: string) => void
   error?: string
+  action?: ReactNode
 }) {
   return (
     <ChipSelect
@@ -21,6 +25,7 @@ export function ChipSingleSelect({
       isOn={(v) => v === value}
       onToggle={onChange}
       error={error}
+      action={action}
     />
   )
 }

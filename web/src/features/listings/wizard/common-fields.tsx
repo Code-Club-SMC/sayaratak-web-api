@@ -8,17 +8,35 @@ import { DescriptionField } from "@/features/onboarding/components/description-f
 import { useT } from "@/lib/i18n/use-t"
 import { useStepFields } from "./use-step-fields"
 
-// Title, description and price: what every listing has, vehicle or part, for sale or for rent.
-export function CommonFields() {
+// Title, description and price: what every listing has, vehicle or part, for sale or for rent. Each is a cell of the section's grid.
+export function TitleField() {
   const { t } = useT()
   const { register } = useFormContext()
+  const { error } = useStepFields()
+  return (
+    <FormField
+      label={t("form.title")}
+      error={error("title")}
+      className="col-span-full"
+    >
+      {(control) => <Input {...control} {...register("title")} dir="auto" />}
+    </FormField>
+  )
+}
+
+export function DescriptionBlock() {
+  const { t } = useT()
+  return (
+    <div className="col-span-full">
+      <DescriptionField label={t("form.description")} max={2000} />
+    </div>
+  )
+}
+
+export function PriceBlock() {
   const { values, error, set } = useStepFields()
   return (
     <>
-      <FormField label={t("form.title")} error={error("title")}>
-        {(control) => <Input {...control} {...register("title")} dir="auto" />}
-      </FormField>
-      <DescriptionField label={t("form.description")} max={2000} />
       <PriceFields
         value={{ price: values.price, negotiable: values.negotiable }}
         onChange={(next) => {

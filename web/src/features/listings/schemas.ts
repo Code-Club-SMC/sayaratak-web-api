@@ -7,6 +7,7 @@ import {
   priceSchema,
   yearSchema,
 } from "@/schemas/fields"
+import { extraFields } from "@/schemas/listing-fields"
 import {
   fuelSchema,
   intentSchema,
@@ -115,6 +116,7 @@ export const detailsBaseSchema = z.object({
     .max(100, "validation.too_large")
     .nullable(),
   partNumber: z.string().trim().max(40, "validation.too_long").optional(),
+  ...extraFields,
 })
 
 type Details = z.infer<typeof detailsBaseSchema>
@@ -127,7 +129,8 @@ export const detailsSchema = (ctx: {
 }) => {
   const vehicle = ctx.kind === "vehicle"
   const gearbox = ctx.vehicleType === "car" || ctx.vehicleType === "truck"
-  const rules: [boolean, (v: Details) => boolean, string][] = [
+  const part = ctx.kind === "part"
+  const rules: [boolean, (v: Details) => boolean, string, string?][] = [
     [vehicle, (v) => !!(v.makeId || v.makeOther), "makeId"],
     [vehicle, (v) => !!(v.modelId || v.modelOther), "modelId"],
     [vehicle, (v) => v.year !== null, "year"],
@@ -139,14 +142,23 @@ export const detailsSchema = (ctx: {
       "mileageKm",
     ],
     [ctx.intent === "rent", (v) => v.rentPeriod !== null, "rentPeriod"],
+    [
+      part,
+      (v) =>
+        v.fitsYearFrom === null ||
+        v.fitsYearTo === null ||
+        v.fitsYearFrom <= v.fitsYearTo,
+      "fitsYearTo",
+      "validation.year_order",
+    ],
   ]
   return rules
     .filter(([applies]) => applies)
     .reduce(
-      (schema, [, ok, path]) =>
+      (schema, [, ok, path, message]) =>
         schema.refine(ok, {
           path: [path],
-          message: "validation.required",
+          message: message ?? "validation.required",
           when: () => true,
         }),
       detailsBaseSchema

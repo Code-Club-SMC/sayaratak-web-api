@@ -2,7 +2,7 @@ import { ChipSingleSelect } from "@/components/app/chip-single-select"
 import { useT } from "@/lib/i18n/use-t"
 import { useStepFields } from "./use-step-fields"
 
-// New or used. A new vehicle has no mileage, so choosing New empties it.
+// New or used. Choosing New empties the used-only fields (mileage, history), through the field rules.
 export function ConditionField() {
   const { t } = useT()
   const { values, set } = useStepFields()
@@ -14,10 +14,7 @@ export function ConditionField() {
         label: t(`condition.${c}`),
       }))}
       value={values.condition}
-      onChange={(v) => {
-        set("condition", v)
-        if (v === "new") set("mileageKm", null)
-      }}
+      onChange={(v) => set("condition", v)}
     />
   )
 }

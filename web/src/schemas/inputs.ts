@@ -26,6 +26,7 @@ import {
   vehicleTypeSchema,
 } from "./listing"
 import { bannerCopySchema } from "./admin"
+import { extraFields } from "./listing-fields"
 import { targetTypeSchema } from "./review"
 import { interestSchema } from "./user"
 import { searchParamsSchema } from "@/features/search/schemas"
@@ -109,6 +110,8 @@ const listingFields = z.object({
   color: z.string().nullable(),
   engineCc: z.number().nullable(),
   payloadTons: z.number().nullable(),
+  partNumber: z.string().nullable(),
+  ...extraFields,
   partCategoryId: z.string().nullable(),
   compatibleTypes: z.array(vehicleTypeSchema),
   media: z.array(mediaSchema),

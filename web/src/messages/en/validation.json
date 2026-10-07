@@ -41,5 +41,8 @@
   "validation.video_max": "Add only one video",
   "validation.video_size": "The video is larger than 30 MB",
   "validation.video_length": "The video is longer than 60 seconds",
-  "validation.video_type": "Choose a video file"
+  "validation.video_type": "Choose a video file",
+  "validation.date": "Enter a valid date",
+  "validation.chassis": "Use 5 to 25 letters, digits or dashes",
+  "validation.year_order": "The first year must not be after the last"
 }

@@ -120,10 +120,22 @@ describe("detailsSchema", () => {
 
 describe("DetailsStep", () => {
   it.each([
-    ["car", ["Transmission"], ["Engine size", "Payload"]],
-    ["truck", ["Transmission", "Payload"], ["Engine size"]],
-    ["motorcycle", ["Engine size"], ["Transmission", "Payload"]],
-    ["rickshaw", ["Engine size"], ["Transmission", "Payload"]],
+    ["car", ["Transmission", "Engine size", "Doors"], ["Payload", "Axles"]],
+    [
+      "truck",
+      ["Transmission", "Payload", "Engine size", "Axles"],
+      ["Doors", "Strokes"],
+    ],
+    [
+      "motorcycle",
+      ["Engine size", "Cylinders", "Engine strokes"],
+      ["Transmission", "Payload", "Doors"],
+    ],
+    [
+      "rickshaw",
+      ["Engine size", "Seats"],
+      ["Transmission", "Payload", "Cylinders", "Doors"],
+    ],
   ])("%s shows its fields only", async (vehicleType, shown, hidden) => {
     await open({ ...car, vehicleType })
     for (const name of shown) expect(field(new RegExp(`^${name}`))).toBeTruthy()

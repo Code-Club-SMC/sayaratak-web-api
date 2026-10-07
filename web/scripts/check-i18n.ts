@@ -29,6 +29,8 @@ const fileOf: Record<string, string[]> = {
   map: ["search"],
   listing: ["listing"],
   post: ["listing"],
+  spec: ["listing"],
+  feature: ["listing"],
   reviews: ["listing", "error"],
   directory: ["directory"],
   auth: ["auth"],

@@ -35,7 +35,11 @@ export function WorkshopsPage({
         count={list.data && formatNumber(list.data.total, locale)}
         headingId={resultsHeadingId}
       />
-      <WorkshopToolbar search={search} onChange={onChange} />
+      <WorkshopToolbar
+        search={search}
+        onChange={onChange}
+        resultCount={list.data?.total}
+      />
       <DirectoryResults
         list={list}
         renderItem={(w) => <WorkshopCard workshop={w} headingAs="h2" />}

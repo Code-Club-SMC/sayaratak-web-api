@@ -1,6 +1,7 @@
 import type { QueryClient } from "@tanstack/react-query"
 
 import { listingQueries, taxonomyQuery } from "@/features/listings/queries"
+import { bannersQuery } from "@/features/pages/queries"
 import { getCopy } from "@/lib/i18n/server"
 import type { Locale } from "@/schemas/locale"
 import type { SearchParams } from "./schemas"
@@ -23,6 +24,7 @@ export async function searchLoader(
   const [tax, copy] = await Promise.all([
     queryClient.ensureQueryData(taxonomyQuery),
     getCopy({ data: { locale, keys: [...titleKeys] } }),
+    queryClient.prefetchQuery(bannersQuery("search_top")),
     first,
   ])
   const messages = Object.fromEntries(

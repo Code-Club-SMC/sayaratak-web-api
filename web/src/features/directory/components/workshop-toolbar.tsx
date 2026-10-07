@@ -19,9 +19,11 @@ const round = (n: number) => Math.round(n * 1e4) / 1e4
 export function WorkshopToolbar({
   search,
   onChange,
+  resultCount,
 }: {
   search: WorkshopSearch
   onChange: (next: WorkshopSearch) => void
+  resultCount: number | undefined
 }) {
   const { t, locale } = useT()
   const { data: tax } = useQuery(taxonomyQuery)
@@ -61,9 +63,19 @@ export function WorkshopToolbar({
       q={search.q}
       nameLabel={t("directory.workshop_search_name")}
       onSearch={(q) => onChange({ ...search, q, page: 1 })}
+      activeCount={
+        [
+          search.city,
+          search.service,
+          search.verified,
+          search.openNow,
+          located,
+        ].filter(Boolean).length
+      }
+      resultCount={resultCount}
       fields={
         <>
-          <div className="w-full sm:w-56">
+          <div className="w-full md:w-56">
             <CitySelect
               value={search.city ?? ""}
               onChange={(city) =>
@@ -71,7 +83,7 @@ export function WorkshopToolbar({
               }
             />
           </div>
-          <div className="w-full sm:w-56">
+          <div className="w-full md:w-56">
             <FormField label={t("directory.service")}>
               {(c) => (
                 <SelectInput
@@ -95,59 +107,64 @@ export function WorkshopToolbar({
           </div>
         </>
       }
-    >
-      <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
-        <FilterSwitch
-          label={t("directory.verified_only")}
-          checked={search.verified ?? false}
-          onChange={(on) =>
-            onChange({ ...search, verified: on || undefined, page: 1 })
-          }
-        />
-        <FilterSwitch
-          label={t("directory.open_now_only")}
-          checked={search.openNow ?? false}
-          onChange={(on) =>
-            onChange({ ...search, openNow: on || undefined, page: 1 })
-          }
-        />
-        <Button
-          type="button"
-          variant="outline"
-          disabled={place === "asking"}
-          onClick={located ? clear : locate}
-        >
-          {located ? (
-            <LocateOffIcon data-icon="inline-start" />
-          ) : (
-            <LocateFixedIcon data-icon="inline-start" />
-          )}
-          {t(
+      switches={
+        <>
+          <FilterSwitch
+            label={t("directory.verified_only")}
+            checked={search.verified ?? false}
+            onChange={(on) =>
+              onChange({ ...search, verified: on || undefined, page: 1 })
+            }
+          />
+          <FilterSwitch
+            label={t("directory.open_now_only")}
+            checked={search.openNow ?? false}
+            onChange={(on) =>
+              onChange({ ...search, openNow: on || undefined, page: 1 })
+            }
+          />
+          <Button
+            type="button"
+            variant="outline"
+            disabled={place === "asking"}
+            onClick={located ? clear : locate}
+          >
+            {located ? (
+              <LocateOffIcon data-icon="inline-start" />
+            ) : (
+              <LocateFixedIcon data-icon="inline-start" />
+            )}
+            {t(
+              located
+                ? "directory.clear_location"
+                : place === "asking"
+                  ? "form.locating"
+                  : "search.use_location"
+            )}
+          </Button>
+          <p
+            role="status"
+            className="text-caption text-muted-foreground empty:hidden"
+          >
+            {place === "denied"
+              ? t("form.location_denied")
+              : place === "failed"
+                ? t("form.location_failed")
+                : null}
+          </p>
+        </>
+      }
+      sort={
+        <SortSelect
+          value={search.sort}
+          options={
             located
-              ? "directory.clear_location"
-              : place === "asking"
-                ? "form.locating"
-                : "search.use_location"
-          )}
-        </Button>
-        <p
-          role="status"
-          className="text-caption text-muted-foreground empty:hidden"
-        >
-          {place === "denied"
-            ? t("form.location_denied")
-            : place === "failed"
-              ? t("form.location_failed")
-              : null}
-        </p>
-      </div>
-      <SortSelect
-        value={search.sort}
-        options={
-          located ? workshopSorts : workshopSorts.filter((s) => s !== "nearest")
-        }
-        onChange={(sort) => onChange({ ...search, sort, page: 1 })}
-      />
-    </DirectoryToolbar>
+              ? workshopSorts
+              : workshopSorts.filter((s) => s !== "nearest")
+          }
+          onChange={(sort) => onChange({ ...search, sort, page: 1 })}
+        />
+      }
+    />
   )
 }

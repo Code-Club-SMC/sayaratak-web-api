@@ -5,8 +5,9 @@ import { bannerHref } from "@/lib/navigation"
 import { cn } from "@/lib/utils"
 import type { Banner } from "@/schemas/admin"
 import { useTrackEvent } from "@/features/listings/events"
+import { BannerCopy } from "./banner-copy"
 
-// "hero" is the tall home banner (1800 x 600, 3:1, 2:1 on mobile, shown first and loaded at once); "strip" is the 1200 x 200 banner of every other slot. Art keeps its text and subject inside the middle 1200 px, so the mobile crop never cuts them.
+// "hero" is the tall home banner (3:1, 2:1 on a phone, shown first); "strip" is the banner of every other slot. A banner with `copy` is a photo with real text (see `BannerCopy`); one without is a finished image (the older form): 1800 x 600 for the hero and 1200 x 200 for a strip, with its text and subject inside the middle 1200 px so the phone crop never cuts them.
 export function BannerItem({
   banner,
   variant = "strip",
@@ -15,8 +16,9 @@ export function BannerItem({
   variant?: "strip" | "hero"
 }) {
   const hero = variant === "hero"
-  const shape = hero ? "aspect-[2/1] md:aspect-[3/1]" : "aspect-[6/1]"
   const { t, locale } = useT()
+  const copy = banner.copy?.[locale]
+  const shape = hero ? "aspect-[2/1] md:aspect-[3/1]" : "aspect-[6/1]"
   const link = useRef<HTMLAnchorElement>(null)
   const image = useRef<HTMLImageElement>(null)
   const tracked = useRef(false)
@@ -48,14 +50,25 @@ export function BannerItem({
     <a
       ref={link}
       href={href}
-      aria-label={t("nav.view_advertisement")}
+      aria-label={copy ? undefined : t("nav.view_advertisement")}
       onClick={() => mutate({ type: "banner_click", targetId: banner.id })}
       className={cn(
-        "relative block min-h-11 overflow-hidden bg-muted",
-        hero ? "rounded-xl md:rounded-2xl" : "rounded-lg"
+        "group relative block min-h-11 overflow-hidden",
+        copy
+          ? "bg-deep text-deep-foreground motion-fade active:opacity-90"
+          : "bg-muted",
+        copy && hero && shape,
+        hero ? "rounded-xl md:rounded-2xl" : "rounded-xl"
       )}
     >
-      {!missing ? (
+      {copy ? (
+        <BannerCopy
+          banner={banner}
+          copy={copy}
+          src={banner.imageUrl[locale]}
+          hero={hero}
+        />
+      ) : !missing ? (
         <img
           ref={image}
           src={banner.imageUrl[locale]}

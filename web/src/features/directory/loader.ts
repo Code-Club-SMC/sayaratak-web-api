@@ -6,6 +6,7 @@ import type {
 import { notFound } from "@tanstack/react-router"
 
 import { listingQueries, taxonomyQuery } from "@/features/listings/queries"
+import { bannersQuery } from "@/features/pages/queries"
 import { reviewQueries } from "@/features/reviews/queries"
 import { ApiError } from "@/lib/api/client"
 import { getCopy } from "@/lib/i18n/server"
@@ -47,11 +48,14 @@ export async function dealershipsLoader(
       keys: ["nav.dealerships", "directory.dealerships_description"],
     },
   })
-  await firstLoad(
-    queryClient,
-    directoryQueries.dealerships.list(dealershipFilters(search)),
-    cause
-  )
+  await Promise.all([
+    queryClient.prefetchQuery(bannersQuery("directory_top")),
+    firstLoad(
+      queryClient,
+      directoryQueries.dealerships.list(dealershipFilters(search)),
+      cause
+    ),
+  ])
   return { locale, title: title ?? "", description: description ?? "" }
 }
 

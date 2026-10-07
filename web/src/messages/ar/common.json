@@ -80,6 +80,7 @@
   "nav.contact_error": "تعذّر تحميل بيانات الاتصال. حاول مرة أخرى.",
   "nav.loading_contact": "جارٍ تحميل بيانات الاتصال",
   "nav.advertisement": "إعلان مدفوع",
+  "nav.ad_badge": "إعلان",
   "nav.view_advertisement": "عرض الإعلان المدفوع",
   "nav.loading_advertisement": "جارٍ تحميل الإعلان المدفوع",
   "nav.banner_error": "تعذّر تحميل الإعلانات المدفوعة. حاول مرة أخرى.",

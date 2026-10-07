@@ -36,8 +36,10 @@ it("logs one visible impression and a separate click through the real event hand
   const clicks = banner.clicks
   await renderShell(<BannerSlot placement="home_top" />)
   const requests = vi.spyOn(globalThis, "fetch")
-  const link = await screen.findByRole("link", { name: "View advertisement" })
-  expect(link.getAttribute("href")).toBe("/en/search")
+  const link = await screen.findByRole("link", {
+    name: /Summer offers on cars/,
+  })
+  expect(link.getAttribute("href")).toBe("/en/search?type=car")
   expect(banner.impressions).toBe(views)
   act(() => {
     for (const observer of observers) observer([{ isIntersecting: false }])
@@ -72,11 +74,34 @@ it("delays the loading skeleton and replaces it with the banner", async () => {
   expect(screen.queryByLabelText("Loading advertisement")).toBeNull()
   expect(await screen.findByLabelText("Loading advertisement")).toBeTruthy()
   expect(
-    await screen.findByRole("link", { name: "View advertisement" })
+    await screen.findByRole("link", { name: /Summer offers on cars/ })
   ).toBeTruthy()
 })
 
-it("keeps a translated fallback and destination when the mock image is absent", async () => {
+it("shows real text in the page language and an Ad chip only on a paid banner", async () => {
+  await renderShell(<BannerSlot placement="home_middle" />)
+  const link = await screen.findByRole("link", {
+    name: /Move more with the right truck/,
+  })
+  expect(link.textContent).toContain("See trucks")
+  expect(screen.getByText("Ad")).toBeTruthy()
+  expect(link.querySelector("img")?.getAttribute("alt")).toBe("")
+})
+
+it("shows the Arabic text and no Ad chip on a house banner", async () => {
+  await renderShell(<BannerSlot placement="directory_top" />, { locale: "ar" })
+  const link = await screen.findByRole("link", {
+    name: /سجّل معرضك أو ورشتك مجانًا/,
+  })
+  expect(link.getAttribute("href")).toBe("/ar/onboarding")
+  expect(screen.queryByText("إعلان")).toBeNull()
+})
+
+it("keeps a translated fallback and destination for an image-only banner when the file is absent", async () => {
+  const banner = db.banners.find((row) => row.placement === "home_top")
+  if (!banner) throw new Error("Expected seeded home banner")
+  banner.copy = undefined
+  banner.imageUrl = { ar: "/mock/old-ar.webp", en: "/mock/old-en.webp" }
   await renderShell(<BannerSlot placement="home_top" />, { locale: "ar" })
   const link = await screen.findByRole("link", { name: "عرض الإعلان المدفوع" })
   const image = link.querySelector("img")
@@ -84,7 +109,7 @@ it("keeps a translated fallback and destination when the mock image is absent", 
   expect(image.getAttribute("src")).toContain("-ar.webp")
   fireEvent.error(image)
   expect(screen.getByText("إعلان مدفوع")).toBeTruthy()
-  expect(link.getAttribute("href")).toBe("/ar/search")
+  expect(link.getAttribute("href")).toBe("/ar/search?type=car")
 })
 
 it("offers retry after a failed banner request and recovers", async () => {
@@ -96,6 +121,6 @@ it("offers retry after a failed banner request and recovers", async () => {
   setFailMode("none")
   fireEvent.click(screen.getByRole("button", { name: "Try again" }))
   expect(
-    await screen.findByRole("link", { name: "View advertisement" })
+    await screen.findByRole("link", { name: /Summer offers on cars/ })
   ).toBeTruthy()
 })

@@ -1,5 +1,6 @@
 import { Outlet, createFileRoute, notFound } from "@tanstack/react-router"
 
+import { ClientLinks } from "@/components/app/client-links"
 import { redirectBanned } from "@/features/auth/guards"
 import { localeSchema } from "@/schemas/locale"
 
@@ -15,5 +16,14 @@ export const Route = createFileRoute("/$locale")({
     })
     return { locale: locale.data }
   },
-  component: Outlet,
+  component: LocaleLayout,
 })
+
+function LocaleLayout() {
+  return (
+    <>
+      <ClientLinks locale={Route.useRouteContext().locale} />
+      <Outlet />
+    </>
+  )
+}

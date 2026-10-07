@@ -3,10 +3,20 @@ import { z } from "zod"
 import { bilingualSchema, idSchema, localeSchema } from "./fields"
 import { targetTypeSchema } from "./review"
 
+// A banner is a photo with real text on top, one set of text per language (so it reads on a phone, to a screen reader and in the admin form). `focus` is the photo's vertical focal point in percent: the crop keeps it in view. A banner without `copy` is a finished image (the older form) and shows as is.
+export const bannerCopySchema = z.object({
+  eyebrow: z.string(),
+  heading: z.string(),
+  body: z.string(),
+  cta: z.string(),
+})
 export const bannerSchema = z.object({
   id: idSchema,
   title: z.string(),
   imageUrl: bilingualSchema,
+  copy: z.object({ ar: bannerCopySchema, en: bannerCopySchema }).optional(),
+  sponsored: z.boolean().default(false),
+  focus: z.number().min(0).max(100).default(50),
   href: z.string(),
   placement: z.enum([
     "home_top",

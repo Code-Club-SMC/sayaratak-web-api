@@ -171,6 +171,24 @@ describe("WorkshopsPage", () => {
     )
     await waitFor(() => expect(cards()).toBe(Math.min(offered, 12)))
   })
+  it("the Filters button opens a sheet with the filters and shows the result count", async () => {
+    await renderShell(
+      <NowProvider serverNow={NOW}>
+        <Directory start={workshopSearchSchema.parse({ verified: true })} />
+      </NowProvider>
+    )
+    const open = await screen.findByRole("button", { name: /^Filters/ })
+    fireEvent.click(open)
+    const sheet = await screen.findByRole("dialog")
+    expect(within(sheet).getByRole("switch", { name: "Open now" })).toBeTruthy()
+    await waitFor(() =>
+      expect(
+        within(sheet).getByRole("button", { name: /^Show \d+ results$/ })
+      ).toBeTruthy()
+    )
+    fireEvent.click(within(sheet).getByRole("button", { name: /^Show / }))
+    await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull())
+  })
   it("Use my location sets the position and the nearest sort, clearing drops both", async () => {
     const getCurrentPosition = vi.fn((ok: PositionCallback) =>
       ok({

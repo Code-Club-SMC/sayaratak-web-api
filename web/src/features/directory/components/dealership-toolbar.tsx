@@ -9,9 +9,11 @@ import { DirectoryToolbar } from "./directory-toolbar"
 export function DealershipToolbar({
   search,
   onChange,
+  resultCount,
 }: {
   search: DealershipSearch
   onChange: (next: DealershipSearch) => void
+  resultCount: number | undefined
 }) {
   const { t } = useT()
   return (
@@ -19,8 +21,12 @@ export function DealershipToolbar({
       q={search.q}
       nameLabel={t("directory.search_name")}
       onSearch={(q) => onChange({ ...search, q, page: 1 })}
+      activeCount={
+        Number(Boolean(search.city)) + Number(Boolean(search.verified))
+      }
+      resultCount={resultCount}
       fields={
-        <div className="w-full sm:w-56">
+        <div className="w-full md:w-56">
           <CitySelect
             value={search.city ?? ""}
             onChange={(city) =>
@@ -29,19 +35,22 @@ export function DealershipToolbar({
           />
         </div>
       }
-    >
-      <FilterSwitch
-        label={t("directory.verified_only")}
-        checked={search.verified ?? false}
-        onChange={(on) =>
-          onChange({ ...search, verified: on || undefined, page: 1 })
-        }
-      />
-      <SortSelect
-        value={search.sort}
-        options={dealershipSorts}
-        onChange={(sort) => onChange({ ...search, sort, page: 1 })}
-      />
-    </DirectoryToolbar>
+      switches={
+        <FilterSwitch
+          label={t("directory.verified_only")}
+          checked={search.verified ?? false}
+          onChange={(on) =>
+            onChange({ ...search, verified: on || undefined, page: 1 })
+          }
+        />
+      }
+      sort={
+        <SortSelect
+          value={search.sort}
+          options={dealershipSorts}
+          onChange={(sort) => onChange({ ...search, sort, page: 1 })}
+        />
+      }
+    />
   )
 }

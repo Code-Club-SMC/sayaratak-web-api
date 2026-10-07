@@ -35,7 +35,11 @@ export function DealershipsPage({
         count={list.data && formatNumber(list.data.total, locale)}
         headingId={resultsHeadingId}
       />
-      <DealershipToolbar search={search} onChange={onChange} />
+      <DealershipToolbar
+        search={search}
+        onChange={onChange}
+        resultCount={list.data?.total}
+      />
       <DirectoryResults
         list={list}
         renderItem={(d) => <DealershipCard dealership={d} headingAs="h2" />}

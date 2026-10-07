@@ -77,17 +77,105 @@ export const backups = (): Backup[] =>
     status: "ready",
   }))
 
+// One photo per banner (`public/mock/banner-N.webp`, made by `bun run banners`) with real text in both languages on top. The trucks banner stands in for a paid one, so it carries the "Ad" chip.
+const text = (eyebrow: string, heading: string, body: string, cta: string) => ({
+  eyebrow,
+  heading,
+  body,
+  cta,
+})
+const bannerRows = [
+  {
+    title: "عروض الصيف",
+    href: "/search?type=car",
+    focus: 50,
+    copy: {
+      en: text(
+        "Cars",
+        "Summer offers on cars",
+        "Browse verified listings across Sudan",
+        "Browse cars"
+      ),
+      ar: text(
+        "سيارات",
+        "عروض الصيف على السيارات",
+        "تصفح إعلانات موثقة في كل أنحاء السودان",
+        "تصفح السيارات"
+      ),
+    },
+  },
+  {
+    title: "اشحن سيارتك",
+    href: "/search?type=truck",
+    focus: 54,
+    sponsored: true,
+    copy: {
+      en: text(
+        "Trucks",
+        "Move more with the right truck",
+        "Trucks and pickups from dealers near you",
+        "See trucks"
+      ),
+      ar: text(
+        "شاحنات",
+        "انقل أكثر بالشاحنة المناسبة",
+        "شاحنات وبيك أب من معارض قريبة منك",
+        "عرض الشاحنات"
+      ),
+    },
+  },
+  {
+    title: "ابحث بسهولة",
+    href: "/search?kind=part",
+    focus: 33,
+    copy: {
+      en: text(
+        "Parts",
+        "Find the part, fast",
+        "Brakes, filters, spark plugs and more",
+        "Browse parts"
+      ),
+      ar: text(
+        "قطع غيار",
+        "اعثر على القطعة بسرعة",
+        "فرامل وفلاتر وشمعات وأكثر",
+        "تصفح القطع"
+      ),
+    },
+  },
+  {
+    title: "سجّل نشاطك",
+    href: "/onboarding",
+    focus: 4,
+    copy: {
+      en: text(
+        "For businesses",
+        "List your dealership, workshop or garage",
+        "Reach buyers across Sudan. Set up in minutes.",
+        "Get started"
+      ),
+      ar: text(
+        "للأعمال",
+        "سجّل معرضك أو ورشتك مجانًا",
+        "اوصل إلى مشترين في كل أنحاء السودان. التسجيل في دقائق.",
+        "ابدأ الآن"
+      ),
+    },
+  },
+]
 export const banners = (): Banner[] =>
   (["home_top", "home_middle", "search_top", "directory_top"] as const).map(
     (placement, i) => ({
       id: `bn-${i + 1}`,
-      title:
-        ["عروض الصيف", "اشحن سيارتك", "ابحث بسهولة", "ورش موثوقة"][i] ?? "",
+      title: bannerRows[i]?.title ?? "",
       imageUrl: {
-        ar: `/mock/banner-${i + 1}-ar.webp`,
-        en: `/mock/banner-${i + 1}-en.webp`,
+        ar: `/mock/banner-${i + 1}.webp`,
+        en: `/mock/banner-${i + 1}.webp`,
       },
-      href: "/search",
+      copy: bannerRows[i]?.copy,
+      sponsored: bannerRows[i]?.sponsored ?? false,
+      focus: bannerRows[i]?.focus ?? 50,
+      href: bannerRows[i]?.href ?? "/search",
       placement,
       startsAt: ago(10 * DAY),
       endsAt: ahead(60 * DAY),

@@ -21,6 +21,9 @@
   --color-sidebar-primary: var(--sidebar-primary);
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar: var(--sidebar);
+  --color-deep-accent: var(--deep-accent);
+  --color-deep-foreground: var(--deep-foreground);
+  --color-deep: var(--deep);
   --color-signal-foreground: var(--signal-foreground);
   --color-signal: var(--signal);
   --color-success: var(--success);
@@ -92,6 +95,10 @@
   --accent-foreground: oklch(0.32 0.07 163);
   --signal: oklch(0.82 0.16 82);
   --signal-foreground: oklch(0.26 0.05 80);
+  /* Deep Nile green: the banner surface and its text. */
+  --deep: oklch(0.27 0.05 163);
+  --deep-foreground: oklch(0.99 0.004 150);
+  --deep-accent: oklch(0.8 0.09 160);
   --success: oklch(0.5 0.13 150);
   --warning: oklch(0.48 0.09 65);
   --destructive: oklch(0.53 0.2 27);

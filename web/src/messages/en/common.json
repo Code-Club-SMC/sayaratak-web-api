@@ -76,6 +76,7 @@
   "nav.contact_error": "Could not load contact details. Try again.",
   "nav.loading_contact": "Loading contact details",
   "nav.advertisement": "Advertisement",
+  "nav.ad_badge": "Ad",
   "nav.view_advertisement": "View advertisement",
   "nav.loading_advertisement": "Loading advertisement",
   "nav.banner_error": "Could not load advertisements. Try again.",

@@ -31,7 +31,7 @@ export function BannerSlot({
           "w-full",
           variant === "hero"
             ? "aspect-[2/1] rounded-xl md:aspect-[3/1] md:rounded-2xl"
-            : "aspect-[6/1] rounded-lg"
+            : "h-24 rounded-xl md:h-36"
         )}
       />
     ) : null

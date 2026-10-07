@@ -19,7 +19,8 @@
     "i18n:literals": "echo \"i18n:literals: not built yet\"",
     "seo:check": "echo \"seo:check: not built yet\"",
     "audit:design": "echo \"audit:design: not built yet\"",
-    "shots": "echo \"shots: not built yet\""
+    "shots": "echo \"shots: not built yet\"",
+    "banners": "bun scripts/make-banners.ts"
   },
   "dependencies": {
     "@base-ui/react": "^1.8.0",

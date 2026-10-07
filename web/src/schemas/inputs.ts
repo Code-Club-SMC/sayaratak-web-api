@@ -25,6 +25,7 @@ import {
   transmissionSchema,
   vehicleTypeSchema,
 } from "./listing"
+import { bannerCopySchema } from "./admin"
 import { targetTypeSchema } from "./review"
 import { interestSchema } from "./user"
 import { searchParamsSchema } from "@/features/search/schemas"
@@ -294,6 +295,9 @@ export const taxonomyInputSchema = z.record(z.string(), z.unknown())
 export const bannerInputSchema = z.object({
   title: requiredText(80),
   imageUrl: z.object({ ar: z.string(), en: z.string() }),
+  copy: z.object({ ar: bannerCopySchema, en: bannerCopySchema }).optional(),
+  sponsored: z.boolean().default(false),
+  focus: z.number().min(0).max(100).default(50),
   href: z.string().min(1, "validation.path"),
   placement: z.enum([
     "home_top",

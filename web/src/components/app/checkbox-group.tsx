@@ -11,12 +11,15 @@ export function CheckboxGroup({
   value,
   onChange,
   error,
+  disabled = [],
 }: {
   legend: string
   options: ChipOption[]
   value: string[]
   onChange: (value: string[]) => void
   error?: string
+  // Values that stay visible but cannot be changed.
+  disabled?: string[]
 }) {
   return (
     <FieldSet>
@@ -25,6 +28,7 @@ export function CheckboxGroup({
         <Label key={o.value} className="min-h-11 font-normal">
           <Checkbox
             checked={value.includes(o.value)}
+            disabled={disabled.includes(o.value)}
             aria-invalid={Boolean(error)}
             onCheckedChange={(on) =>
               onChange(

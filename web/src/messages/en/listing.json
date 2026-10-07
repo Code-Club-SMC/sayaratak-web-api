@@ -147,5 +147,14 @@
   "post.tip_odometer": "The odometer showing the mileage",
   "post.tip_part_whole": "The whole part, from a few sides",
   "post.tip_part_label": "Any label or part number",
-  "post.tip_part_wear": "Any wear, rust or damage"
+  "post.tip_part_wear": "Any wear, rust or damage",
+  "post.contact_title": "Location and contact",
+  "post.where_title": "Where is it?",
+  "post.reach_title": "How can buyers reach you?",
+  "post.location_hint": "Buyers see the district and an area of about 1 km, never the exact pin. The pin is used for nearby search.",
+  "post.same_whatsapp": "Use the same number on WhatsApp",
+  "post.methods_legend": "Contact methods",
+  "post.show_phone": "Show my phone number",
+  "post.use_dealer_contact": "Use dealership contact details",
+  "listing.whatsapp_shows_number": "Buyers who use WhatsApp will see your number there"
 }

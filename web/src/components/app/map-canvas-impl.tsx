@@ -13,6 +13,7 @@ import {
   useMapEvents,
 } from "react-leaflet"
 
+import { useT } from "@/lib/i18n/use-t"
 import { tileAttribution, tileUrl } from "@/lib/map"
 import type { MapCanvasProps, MapShape } from "./map-canvas"
 
@@ -167,6 +168,7 @@ export function MapCanvasImpl({
   popup,
   label,
 }: MapCanvasProps) {
+  const { t } = useT()
   return (
     <MapContainer
       center={[center.lat, center.lng]}
@@ -188,6 +190,7 @@ export function MapCanvasImpl({
         <Marker
           position={[pin.lat, pin.lng]}
           icon={icon}
+          title={t("form.pin_label")}
           draggable
           eventHandlers={{
             dragend: (e) => {

@@ -1,6 +1,12 @@
 import { z } from "zod"
 
-import { optionalInt, priceSchema, yearSchema } from "@/schemas/fields"
+import {
+  geoSchema,
+  optionalInt,
+  phoneSchema,
+  priceSchema,
+  yearSchema,
+} from "@/schemas/fields"
 import {
   fuelSchema,
   intentSchema,
@@ -158,4 +164,23 @@ export const photosStepSchema = z
     if (images < 3) bad("validation.media_min")
     if (images > 20) bad("validation.media_max")
     if (videos > 1) bad("validation.video_max")
+  })
+
+// Step `contact` of the post wizard. `when` keeps the WhatsApp rule running beside a phone error, so one press of Next lists every problem.
+export const contactStepSchema = z
+  .object({
+    cityId: z.string().min(1, "validation.required"),
+    districtId: z.string().min(1, "validation.required"),
+    location: geoSchema.nullable(),
+    phone: phoneSchema,
+    whatsapp: phoneSchema.nullable(),
+    showPhone: z.boolean(),
+    methods: z
+      .array(z.enum(["call", "whatsapp", "chat"]))
+      .min(1, "validation.select_min"),
+  })
+  .refine((v) => !v.methods.includes("whatsapp") || v.whatsapp !== null, {
+    path: ["whatsapp"],
+    message: "validation.required",
+    when: () => true,
   })

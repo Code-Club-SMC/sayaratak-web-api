@@ -213,5 +213,6 @@
   "color.brown": "Brown",
   "color.yellow": "Yellow",
   "color.orange": "Orange",
-  "color.other": "Other"
+  "color.other": "Other",
+  "form.pin_label": "Location pin"
 }

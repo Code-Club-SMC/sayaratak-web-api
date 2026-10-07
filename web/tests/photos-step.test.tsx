@@ -16,6 +16,9 @@ import { renderShell } from "./shell-render"
 vi.mock("@/lib/image-process", () => ({ processImage: vi.fn() }))
 vi.mock("@/lib/video-process", () => ({ processVideo: vi.fn() }))
 vi.mock("@/lib/api/upload", () => ({ uploadMedia: vi.fn() }))
+vi.mock("@/components/app/map-canvas-impl", () => ({
+  MapCanvasImpl: () => null,
+}))
 
 const media = (id: string, type: Media["type"] = "image"): Media => ({
   id,
@@ -58,6 +61,10 @@ const valid = {
   title: "Toyota Corolla 2018",
   description: "Clean car, one owner, full service history.",
   price: 12_000_000,
+  cityId: "khartoum",
+  districtId: "khartoum-riyadh",
+  phone: "+249912345678",
+  whatsapp: "+249912345678",
 }
 const open = async (draft: object = {}) => {
   sessionStorage.setItem(
@@ -75,8 +82,13 @@ const input = (accept: string) =>
   document.querySelector(`input[accept="${accept}"]`) as HTMLElement
 const choose = (accept: string, ...files: File[]) =>
   fireEvent.change(input(accept), { target: { files } })
-const publishNow = () =>
+const next = () => fireEvent.click(screen.getByRole("button", { name: "Next" }))
+// Photos are the second to last step: Next moves to contact, whose Publish sends everything.
+const publishNow = async () => {
+  next()
+  await screen.findByRole("heading", { name: "Location and contact" })
   fireEvent.click(screen.getByRole("button", { name: "Publish" }))
+}
 const sent = () => ids(publish.mock.calls[0]![0].media as Media[])
 
 beforeEach(() => {
@@ -120,7 +132,7 @@ describe("photosStepSchema", () => {
 describe("PhotosStep", () => {
   it("Next with fewer than three photos shows the error and stays", async () => {
     await open({ media: [media("a"), media("b")] })
-    publishNow()
+    next()
     expect(await screen.findByText("Add at least 3 photos")).toBeTruthy()
     expect(publish).not.toHaveBeenCalled()
   })
@@ -131,7 +143,7 @@ describe("PhotosStep", () => {
     choose("image/*", new File(["x"], "c.jpg", { type: "image/jpeg" }))
     await waitFor(() => expect(uploadMedia).toHaveBeenCalled())
     await screen.findByText("3 of 20")
-    publishNow()
+    await publishNow()
     await waitFor(() => expect(publish).toHaveBeenCalled())
     expect(sent()).toEqual(["a", "b", "c", "v"])
   })
@@ -150,7 +162,7 @@ describe("PhotosStep", () => {
     await waitFor(() => expect(uploadMedia).toHaveBeenCalled())
     await screen.findByRole("button", { name: "Play video" })
     expect(screen.getByText("3 of 20")).toBeTruthy()
-    publishNow()
+    await publishNow()
     await waitFor(() => expect(publish).toHaveBeenCalled())
     expect(sent()).toEqual(["a", "b", "c", "v"])
   })
@@ -158,7 +170,7 @@ describe("PhotosStep", () => {
   it("Set as cover moves a photo first and the video stays last", async () => {
     await open({ media: [...photos, media("v", "video")] })
     fireEvent.click(screen.getAllByRole("button", { name: "Set as cover" })[1]!)
-    publishNow()
+    await publishNow()
     await waitFor(() => expect(publish).toHaveBeenCalled())
     expect(sent()).toEqual(["c", "a", "b", "v"])
   })
@@ -166,7 +178,7 @@ describe("PhotosStep", () => {
   it("removing the video leaves the photos", async () => {
     await open({ media: [...photos, media("v", "video")] })
     fireEvent.click(screen.getAllByRole("button", { name: "Remove" }).at(-1)!)
-    publishNow()
+    await publishNow()
     await waitFor(() => expect(publish).toHaveBeenCalled())
     expect(sent()).toEqual(["a", "b", "c"])
   })

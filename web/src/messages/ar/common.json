@@ -221,5 +221,6 @@
   "color.brown": "بني",
   "color.yellow": "أصفر",
   "color.orange": "برتقالي",
-  "color.other": "آخر"
+  "color.other": "آخر",
+  "form.pin_label": "دبوس الموقع"
 }

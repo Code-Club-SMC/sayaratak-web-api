@@ -32,8 +32,19 @@ export const detailsDefaults = {
 
 export const photosDefaults = { media: [] } satisfies FieldValues
 
+export const contactDefaults = {
+  cityId: "",
+  districtId: "",
+  location: null,
+  phone: "",
+  whatsapp: null,
+  showPhone: true,
+  methods: ["call", "whatsapp", "chat"],
+} satisfies FieldValues
+
 export const wizardDefaults: FieldValues = {
   ...typeDefaults,
   ...detailsDefaults,
   ...photosDefaults,
+  ...contactDefaults,
 }

@@ -147,5 +147,14 @@
   "post.tip_odometer": "عداد المسافة يظهر الكيلومترات",
   "post.tip_part_whole": "القطعة كاملة من عدة جهات",
   "post.tip_part_label": "أي ملصق أو رقم للقطعة",
-  "post.tip_part_wear": "أي تآكل أو صدأ أو تلف"
+  "post.tip_part_wear": "أي تآكل أو صدأ أو تلف",
+  "post.contact_title": "الموقع والتواصل",
+  "post.where_title": "أين يوجد؟",
+  "post.reach_title": "كيف يتواصل معك المشترون؟",
+  "post.location_hint": "يرى المشترون الحي ومنطقة بنحو كيلومتر واحد، ولا يرون موقع الدبوس بدقة. يُستخدم الدبوس في البحث عن القريب.",
+  "post.same_whatsapp": "استخدم الرقم نفسه في واتساب",
+  "post.methods_legend": "طرق التواصل",
+  "post.show_phone": "إظهار رقم هاتفي",
+  "post.use_dealer_contact": "استخدام بيانات التواصل الخاصة بالمعرض",
+  "listing.whatsapp_shows_number": "سيرى المشترون الذين يستخدمون واتساب رقمك هناك"
 }

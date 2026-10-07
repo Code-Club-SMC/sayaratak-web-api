@@ -79,5 +79,6 @@
   "search.fits_type": "تناسب نوع المركبة",
   "search.sort_rating": "الأعلى تقييمًا",
   "search.sort_listings": "الأكثر سيارات",
-  "search.group_year_only": "السنة"
+  "search.group_year_only": "السنة",
+  "search.sort_experience": "الأكثر خبرة"
 }

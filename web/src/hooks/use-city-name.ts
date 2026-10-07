@@ -9,3 +9,13 @@ export function useCityName(cityId: string) {
   const { data } = useQuery(taxonomyQuery)
   return data?.cities.find((city) => city.id === cityId)?.name[locale] ?? ""
 }
+
+// The same for a list, in the order given.
+export function useCityNames(cityIds: string[]) {
+  const { locale } = useT()
+  const { data } = useQuery(taxonomyQuery)
+  return cityIds.flatMap((id) => {
+    const name = data?.cities.find((city) => city.id === id)?.name[locale]
+    return name ? [name] : []
+  })
+}

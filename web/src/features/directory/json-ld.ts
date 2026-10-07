@@ -1,7 +1,7 @@
 import { mediaSrc } from "@/lib/media"
 import type { Geo, WeeklyHours } from "@/schemas/fields"
 import type { Rating } from "@/schemas/review"
-import type { Dealership, Workshop } from "@/schemas/profile"
+import type { Dealership, Mechanic, Workshop } from "@/schemas/profile"
 
 const days = [
   "Sunday",
@@ -93,3 +93,47 @@ export const workshopJsonLd = (w: Workshop, opts: Opts) =>
     },
     opts
   )
+
+// A mechanic is a person, not a place: no street address or opening hours. schema.org has no rating on a Person, so there is none here.
+export const mechanicJsonLd = (
+  m: Mechanic,
+  {
+    name,
+    description,
+    jobTitle,
+    city,
+    served,
+    url,
+    origin,
+  }: {
+    name: string
+    description: string
+    jobTitle: string
+    city?: string
+    served: string[]
+    url: string
+    origin: string
+  }
+) => {
+  const image = mediaSrc(m.photoUrl, 640)
+  return {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    name,
+    jobTitle,
+    ...(description && { description }),
+    url,
+    ...(m.photoUrl && {
+      image: image.startsWith("/") ? origin + image : image,
+    }),
+    telephone: m.phone,
+    address: {
+      "@type": "PostalAddress",
+      ...(city && { addressLocality: city }),
+      addressCountry: "SD",
+    },
+    ...(served.length > 0 && {
+      areaServed: served.map((c) => ({ "@type": "City", name: c })),
+    }),
+  }
+}

@@ -9,6 +9,8 @@ import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog"
 import { useDirection } from "@/components/ui/direction"
 import { GallerySlide } from "./gallery-slide"
 
+export type Captioned = Media & { caption?: string }
+
 export function GalleryLightbox({
   items,
   alt,
@@ -16,7 +18,7 @@ export function GalleryLightbox({
   onIndex,
   onClose,
 }: {
-  items: Media[]
+  items: Captioned[]
   alt: string
   index: number
   onIndex: (index: number) => void
@@ -74,6 +76,11 @@ export function GalleryLightbox({
         >
           <ChevronRightIcon className="rtl:-scale-x-100" />
         </Button>
+        {item?.caption && (
+          <p className="absolute inset-x-0 bottom-12 px-16 text-center text-body">
+            {item.caption}
+          </p>
+        )}
         <p
           className="absolute inset-x-0 bottom-4 text-center text-ui"
           aria-live="polite"

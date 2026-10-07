@@ -75,5 +75,6 @@
   "search.fits_type": "Fits vehicle type",
   "search.sort_rating": "Top rated",
   "search.sort_listings": "Most vehicles",
-  "search.group_year_only": "Year"
+  "search.group_year_only": "Year",
+  "search.sort_experience": "Most experienced"
 }

@@ -28,6 +28,8 @@ import { Route as LocalePublicDealershipsSlugRouteImport } from './routes/$local
 import { Route as LocalePublicDevGuardedRouteImport } from './routes/$locale/_public/dev.guarded'
 import { Route as LocalePublicDevSharedRouteImport } from './routes/$locale/_public/dev.shared'
 import { Route as LocalePublicListingSlugRouteImport } from './routes/$locale/_public/listing/$slug'
+import { Route as LocalePublicMechanicsIndexRouteImport } from './routes/$locale/_public/mechanics/index'
+import { Route as LocalePublicMechanicsSlugRouteImport } from './routes/$locale/_public/mechanics/$slug'
 import { Route as LocalePublicWorkshopsIndexRouteImport } from './routes/$locale/_public/workshops/index'
 import { Route as LocalePublicWorkshopsSlugRouteImport } from './routes/$locale/_public/workshops/$slug'
 import { Route as LocaleOnboardingRoleStepRouteImport } from './routes/$locale/onboarding/$role/$step'
@@ -129,6 +131,18 @@ const LocalePublicListingSlugRoute = LocalePublicListingSlugRouteImport.update({
   path: '/listing/$slug',
   getParentRoute: () => LocalePublicRouteRoute,
 } as any)
+const LocalePublicMechanicsIndexRoute =
+  LocalePublicMechanicsIndexRouteImport.update({
+    id: '/mechanics/',
+    path: '/mechanics/',
+    getParentRoute: () => LocalePublicRouteRoute,
+  } as any)
+const LocalePublicMechanicsSlugRoute =
+  LocalePublicMechanicsSlugRouteImport.update({
+    id: '/mechanics/$slug',
+    path: '/mechanics/$slug',
+    getParentRoute: () => LocalePublicRouteRoute,
+  } as any)
 const LocalePublicWorkshopsIndexRoute =
   LocalePublicWorkshopsIndexRouteImport.update({
     id: '/workshops/',
@@ -172,9 +186,11 @@ export interface FileRoutesByFullPath {
   '/$locale/dev/guarded': typeof LocalePublicDevGuardedRoute
   '/$locale/dev/shared': typeof LocalePublicDevSharedRoute
   '/$locale/listing/$slug': typeof LocalePublicListingSlugRoute
+  '/$locale/mechanics/$slug': typeof LocalePublicMechanicsSlugRoute
   '/$locale/workshops/$slug': typeof LocalePublicWorkshopsSlugRoute
   '/$locale/onboarding/$role/$step': typeof LocaleOnboardingRoleStepRoute
   '/$locale/dealerships/': typeof LocalePublicDealershipsIndexRoute
+  '/$locale/mechanics/': typeof LocalePublicMechanicsIndexRoute
   '/$locale/workshops/': typeof LocalePublicWorkshopsIndexRoute
   '/$locale/vehicles/$type/$intent/{-$city}': typeof LocalePublicVehiclesTypeIntentChar123CityChar125Route
 }
@@ -195,9 +211,11 @@ export interface FileRoutesByTo {
   '/$locale/dev/guarded': typeof LocalePublicDevGuardedRoute
   '/$locale/dev/shared': typeof LocalePublicDevSharedRoute
   '/$locale/listing/$slug': typeof LocalePublicListingSlugRoute
+  '/$locale/mechanics/$slug': typeof LocalePublicMechanicsSlugRoute
   '/$locale/workshops/$slug': typeof LocalePublicWorkshopsSlugRoute
   '/$locale/onboarding/$role/$step': typeof LocaleOnboardingRoleStepRoute
   '/$locale/dealerships': typeof LocalePublicDealershipsIndexRoute
+  '/$locale/mechanics': typeof LocalePublicMechanicsIndexRoute
   '/$locale/workshops': typeof LocalePublicWorkshopsIndexRoute
   '/$locale/vehicles/$type/$intent/{-$city}': typeof LocalePublicVehiclesTypeIntentChar123CityChar125Route
 }
@@ -221,9 +239,11 @@ export interface FileRoutesById {
   '/$locale/_public/dev/guarded': typeof LocalePublicDevGuardedRoute
   '/$locale/_public/dev/shared': typeof LocalePublicDevSharedRoute
   '/$locale/_public/listing/$slug': typeof LocalePublicListingSlugRoute
+  '/$locale/_public/mechanics/$slug': typeof LocalePublicMechanicsSlugRoute
   '/$locale/_public/workshops/$slug': typeof LocalePublicWorkshopsSlugRoute
   '/$locale/onboarding/$role/$step': typeof LocaleOnboardingRoleStepRoute
   '/$locale/_public/dealerships/': typeof LocalePublicDealershipsIndexRoute
+  '/$locale/_public/mechanics/': typeof LocalePublicMechanicsIndexRoute
   '/$locale/_public/workshops/': typeof LocalePublicWorkshopsIndexRoute
   '/$locale/_public/vehicles/$type/$intent/{-$city}': typeof LocalePublicVehiclesTypeIntentChar123CityChar125Route
 }
@@ -247,9 +267,11 @@ export interface FileRouteTypes {
     | '/$locale/dev/guarded'
     | '/$locale/dev/shared'
     | '/$locale/listing/$slug'
+    | '/$locale/mechanics/$slug'
     | '/$locale/workshops/$slug'
     | '/$locale/onboarding/$role/$step'
     | '/$locale/dealerships/'
+    | '/$locale/mechanics/'
     | '/$locale/workshops/'
     | '/$locale/vehicles/$type/$intent/{-$city}'
   fileRoutesByTo: FileRoutesByTo
@@ -270,9 +292,11 @@ export interface FileRouteTypes {
     | '/$locale/dev/guarded'
     | '/$locale/dev/shared'
     | '/$locale/listing/$slug'
+    | '/$locale/mechanics/$slug'
     | '/$locale/workshops/$slug'
     | '/$locale/onboarding/$role/$step'
     | '/$locale/dealerships'
+    | '/$locale/mechanics'
     | '/$locale/workshops'
     | '/$locale/vehicles/$type/$intent/{-$city}'
   id:
@@ -295,9 +319,11 @@ export interface FileRouteTypes {
     | '/$locale/_public/dev/guarded'
     | '/$locale/_public/dev/shared'
     | '/$locale/_public/listing/$slug'
+    | '/$locale/_public/mechanics/$slug'
     | '/$locale/_public/workshops/$slug'
     | '/$locale/onboarding/$role/$step'
     | '/$locale/_public/dealerships/'
+    | '/$locale/_public/mechanics/'
     | '/$locale/_public/workshops/'
     | '/$locale/_public/vehicles/$type/$intent/{-$city}'
   fileRoutesById: FileRoutesById
@@ -443,6 +469,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LocalePublicListingSlugRouteImport
       parentRoute: typeof LocalePublicRouteRoute
     }
+    '/$locale/_public/mechanics/': {
+      id: '/$locale/_public/mechanics/'
+      path: '/mechanics'
+      fullPath: '/$locale/mechanics/'
+      preLoaderRoute: typeof LocalePublicMechanicsIndexRouteImport
+      parentRoute: typeof LocalePublicRouteRoute
+    }
+    '/$locale/_public/mechanics/$slug': {
+      id: '/$locale/_public/mechanics/$slug'
+      path: '/mechanics/$slug'
+      fullPath: '/$locale/mechanics/$slug'
+      preLoaderRoute: typeof LocalePublicMechanicsSlugRouteImport
+      parentRoute: typeof LocalePublicRouteRoute
+    }
     '/$locale/_public/workshops/': {
       id: '/$locale/_public/workshops/'
       path: '/workshops'
@@ -484,8 +524,10 @@ interface LocalePublicRouteRouteChildren {
   LocalePublicDevGuardedRoute: typeof LocalePublicDevGuardedRoute
   LocalePublicDevSharedRoute: typeof LocalePublicDevSharedRoute
   LocalePublicListingSlugRoute: typeof LocalePublicListingSlugRoute
+  LocalePublicMechanicsSlugRoute: typeof LocalePublicMechanicsSlugRoute
   LocalePublicWorkshopsSlugRoute: typeof LocalePublicWorkshopsSlugRoute
   LocalePublicDealershipsIndexRoute: typeof LocalePublicDealershipsIndexRoute
+  LocalePublicMechanicsIndexRoute: typeof LocalePublicMechanicsIndexRoute
   LocalePublicWorkshopsIndexRoute: typeof LocalePublicWorkshopsIndexRoute
   LocalePublicVehiclesTypeIntentChar123CityChar125Route: typeof LocalePublicVehiclesTypeIntentChar123CityChar125Route
 }
@@ -500,8 +542,10 @@ const LocalePublicRouteRouteChildren: LocalePublicRouteRouteChildren = {
   LocalePublicDevGuardedRoute: LocalePublicDevGuardedRoute,
   LocalePublicDevSharedRoute: LocalePublicDevSharedRoute,
   LocalePublicListingSlugRoute: LocalePublicListingSlugRoute,
+  LocalePublicMechanicsSlugRoute: LocalePublicMechanicsSlugRoute,
   LocalePublicWorkshopsSlugRoute: LocalePublicWorkshopsSlugRoute,
   LocalePublicDealershipsIndexRoute: LocalePublicDealershipsIndexRoute,
+  LocalePublicMechanicsIndexRoute: LocalePublicMechanicsIndexRoute,
   LocalePublicWorkshopsIndexRoute: LocalePublicWorkshopsIndexRoute,
   LocalePublicVehiclesTypeIntentChar123CityChar125Route:
     LocalePublicVehiclesTypeIntentChar123CityChar125Route,

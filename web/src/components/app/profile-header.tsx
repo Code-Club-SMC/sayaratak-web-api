@@ -6,7 +6,7 @@ import { MediaImage } from "./media-image"
 import { RatingSummary } from "./rating-summary"
 import { VerifiedBadge } from "./verified-badge"
 
-// Cover, the logo overlapping its bottom start corner, then name, badges and the page's own actions (the contact buttons from lg). The workshop and mechanic profiles reuse it; a profile without a cover starts at the logo.
+// Cover, the logo overlapping its bottom start corner, then name, badges and the page's own actions (the contact buttons from lg). The workshop and mechanic profiles reuse it; a profile without a cover starts at the logo. A mechanic's photo is `round` and 96 px; `details` is a line of its own under the badges.
 export function ProfileHeader({
   name,
   logoUrl,
@@ -15,6 +15,8 @@ export function ProfileHeader({
   rating,
   cityId,
   badge,
+  details,
+  round = false,
   actions,
 }: {
   name: string
@@ -24,6 +26,8 @@ export function ProfileHeader({
   rating: Rating
   cityId: string
   badge?: ReactNode
+  details?: ReactNode
+  round?: boolean
   actions?: ReactNode
 }) {
   const city = useCityName(cityId)
@@ -42,9 +46,9 @@ export function ProfileHeader({
         <MediaImage
           src={logoUrl}
           alt=""
-          sizes="72px"
-          fit="contain"
-          className={`size-18 shrink-0 rounded-xl bg-card ${coverUrl ? "-mt-9" : "mt-4 md:mt-5"}`}
+          sizes={round ? "96px" : "72px"}
+          fit={round ? "cover" : "contain"}
+          className={`shrink-0 bg-card ${round ? "size-24 rounded-full" : "size-18 rounded-xl"} ${coverUrl ? (round ? "-mt-12" : "-mt-9") : "mt-4 md:mt-5"}`}
         />
         <div className="flex min-w-0 flex-1 basis-48 flex-col gap-1 pt-3">
           <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
@@ -61,6 +65,11 @@ export function ProfileHeader({
             <span>{city}</span>
             {badge}
           </div>
+          {details && (
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-caption text-muted-foreground">
+              {details}
+            </div>
+          )}
         </div>
         {actions && (
           <div className="hidden w-full max-w-sm pt-3 lg:block">{actions}</div>

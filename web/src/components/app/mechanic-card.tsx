@@ -4,7 +4,13 @@ import { Badge } from "@/components/ui/badge"
 import { ProviderCard } from "./provider-card"
 
 // Mechanics have no opening hours, so the badge shows the availability switch instead.
-export function MechanicCard({ mechanic: m }: { mechanic: Mechanic }) {
+export function MechanicCard({
+  mechanic: m,
+  headingAs,
+}: {
+  mechanic: Mechanic
+  headingAs?: "h2" | "h3"
+}) {
   const { t, locale } = useT()
   return (
     <ProviderCard
@@ -21,6 +27,7 @@ export function MechanicCard({ mechanic: m }: { mechanic: Mechanic }) {
           {t(m.available ? "status.available" : "directory.unavailable")}
         </Badge>
       }
+      headingAs={headingAs}
     />
   )
 }

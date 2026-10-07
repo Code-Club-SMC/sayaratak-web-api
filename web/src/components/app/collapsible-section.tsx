@@ -15,7 +15,7 @@ export function CollapsibleSection({
 }) {
   return (
     <details open={defaultOpen} className="group">
-      <summary className="flex min-h-(--control-h) cursor-pointer list-none items-center gap-2 rounded-lg bg-muted px-3 text-ui font-medium focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring has-focus-visible:ring-2 [&::-webkit-details-marker]:hidden">
+      <summary className="flex min-h-(--control-h) cursor-pointer list-none items-center gap-2 rounded-lg bg-(--field) px-3 text-ui font-medium focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring has-focus-visible:ring-2 [&::-webkit-details-marker]:hidden">
         <ChevronDownIcon
           aria-hidden="true"
           className="size-4 shrink-0 group-open:rotate-180"

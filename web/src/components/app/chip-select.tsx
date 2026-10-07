@@ -32,7 +32,7 @@ export function ChipSelect({
         {options.map((o) => (
           <label
             key={o.value}
-            className="relative flex min-h-(--control-h) cursor-pointer items-center rounded-full bg-muted px-4 text-ui has-checked:bg-primary has-checked:text-primary-foreground has-focus-visible:ring-2 has-focus-visible:ring-ring"
+            className="relative flex min-h-(--control-h) cursor-pointer items-center rounded-full bg-(--field) px-4 text-ui has-checked:bg-primary has-checked:text-primary-foreground has-focus-visible:ring-2 has-focus-visible:ring-ring"
           >
             <input
               type={type}

@@ -38,7 +38,7 @@ export function DatePicker({
             {...control}
             type="button"
             variant="outline"
-            className="w-full justify-start"
+            className="w-full justify-start bg-(--field)"
           />
         }
       >

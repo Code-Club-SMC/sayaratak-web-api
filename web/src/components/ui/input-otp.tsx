@@ -52,7 +52,7 @@ function InputOTPSlot({
       data-slot="input-otp-slot"
       data-active={isActive}
       className={cn(
-        "relative flex size-(--control-h) items-center justify-center border-y border-e border-input bg-card text-base md:text-ui motion-color first:rounded-s-lg first:border-s last:rounded-e-lg aria-invalid:border-destructive data-[active=true]:z-10 data-[active=true]:border-ring data-[active=true]:aria-invalid:border-destructive",
+        "relative flex size-(--control-h) items-center justify-center border-y border-e border-input bg-(--field) text-base md:text-ui motion-color first:rounded-s-lg first:border-s last:rounded-e-lg aria-invalid:border-destructive data-[active=true]:z-10 data-[active=true]:border-ring data-[active=true]:aria-invalid:border-destructive",
         className
       )}
       {...props}

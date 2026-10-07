@@ -14,7 +14,7 @@ function Input({
       type={type}
       data-slot="input"
       className={cn(
-        "w-full min-w-0 rounded-lg border border-input bg-card px-3 py-1 text-base md:text-ui field-surface file:inline-flex file:h-6 file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive",
+        "w-full min-w-0 rounded-lg border border-input bg-(--field) px-3 py-1 text-base md:text-ui field-surface file:inline-flex file:h-6 file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive",
         size === "lg" ? "h-12" : "h-(--control-h)",
         className
       )}

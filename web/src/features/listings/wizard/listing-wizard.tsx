@@ -4,6 +4,7 @@ import { useRouter, useRouterState } from "@tanstack/react-router"
 import { FormProvider, useForm, type FieldValues } from "react-hook-form"
 import { z } from "zod"
 
+import { FieldMarks } from "@/components/app/form-field"
 import { StepHeader } from "@/components/app/step-header"
 import { StickyFooter } from "@/components/app/sticky-footer"
 import { SubmitButton } from "@/components/app/submit-button"
@@ -98,48 +99,50 @@ export function ListingWizard({
 
   return (
     <FormProvider {...form}>
-      <WizardLayout
-        context={context}
-        editing={!!editId}
-        onExit={() => {
-          leave()
-          toast.add({ title: t("toast.draft_saved") })
-        }}
-        indicator={{
-          steps: steps.map((s) => ({ id: s.id, label: t(s.labelKey) })),
-          current: index,
-          reachable,
-          href,
-        }}
-      >
-        <StepHeader
-          title={t(step.titleKey)}
-          helper={step.helperKey && t(step.helperKey)}
-          step={step.id}
-        />
-        <form
-          ref={formRef}
-          noValidate
-          className="flex flex-col gap-4"
-          onSubmit={submit}
+      <FieldMarks value="required">
+        <WizardLayout
+          context={context}
+          editing={!!editId}
+          onExit={() => {
+            leave()
+            toast.add({ title: t("toast.draft_saved") })
+          }}
+          indicator={{
+            steps: steps.map((s) => ({ id: s.id, label: t(s.labelKey) })),
+            current: index,
+            reachable,
+            href,
+          }}
         >
-          <div
-            key={step.id}
-            aria-busy={!restored}
-            className="flex min-h-80 flex-col gap-4 transition-opacity duration-(--dur-fast) ease-(--ease-standard) starting:opacity-0"
+          <StepHeader
+            title={t(step.titleKey)}
+            helper={step.helperKey && t(step.helperKey)}
+            step={step.id}
+          />
+          <form
+            ref={formRef}
+            noValidate
+            className="flex flex-col gap-4"
+            onSubmit={submit}
           >
-            {restored && <step.Component />}
-          </div>
-          <StickyFooter
-            width="max-w-152 lg:max-w-212"
-            onBack={() => (prev ? go(prev.id) : leave())}
-          >
-            <SubmitButton size="lg" pending={form.formState.isSubmitting}>
-              {last ? t("post.publish") : t("common.next")}
-            </SubmitButton>
-          </StickyFooter>
-        </form>
-      </WizardLayout>
+            <div
+              key={step.id}
+              aria-busy={!restored}
+              className="flex min-h-80 flex-col gap-4 transition-opacity duration-(--dur-fast) ease-(--ease-standard) starting:opacity-0"
+            >
+              {restored && <step.Component />}
+            </div>
+            <StickyFooter
+              width="max-w-152 lg:max-w-212"
+              onBack={() => (prev ? go(prev.id) : leave())}
+            >
+              <SubmitButton size="lg" pending={form.formState.isSubmitting}>
+                {last ? t("post.publish") : t("common.next")}
+              </SubmitButton>
+            </StickyFooter>
+          </form>
+        </WizardLayout>
+      </FieldMarks>
     </FormProvider>
   )
 }

@@ -1,4 +1,4 @@
-import { useId, type ReactNode } from "react"
+import { createContext, useContext, useId, type ReactNode } from "react"
 
 import { useT } from "@/lib/i18n/use-t"
 import { Field, FieldDescription, FieldLabel } from "@/components/ui/field"
@@ -8,7 +8,11 @@ export type ControlProps = {
   id: string
   "aria-invalid": boolean
   "aria-describedby": string | undefined
+  "aria-required": true | undefined
 }
+
+// How a form marks its fields. "optional" (the default) writes "(Optional)" on the few optional ones; "required" writes an asterisk on the required ones and no text on the rest. A form where most fields are optional picks "required".
+export const FieldMarks = createContext<"optional" | "required">("optional")
 
 // Label, control, hint and translated error wired together with ids. The control comes in as a render prop.
 export function FormField({
@@ -28,6 +32,8 @@ export function FormField({
 }) {
   const { t } = useT()
   const id = useId()
+  const marks = useContext(FieldMarks)
+  const required = marks === "required" && !optional
   const describedBy =
     [error && `${id}-error`, description && `${id}-hint`]
       .filter(Boolean)
@@ -36,16 +42,19 @@ export function FormField({
     <Field data-invalid={Boolean(error)} className={className}>
       <FieldLabel htmlFor={id}>
         {label}
-        {optional && (
-          <span className="font-normal text-muted-foreground">
-            ({t("form.optional")})
-          </span>
-        )}
+        {marks === "optional"
+          ? optional && (
+              <span className="font-normal text-muted-foreground">
+                ({t("form.optional")})
+              </span>
+            )
+          : required && <span aria-hidden="true"> *</span>}
       </FieldLabel>
       {children({
         id,
         "aria-invalid": Boolean(error),
         "aria-describedby": describedBy,
+        "aria-required": required || undefined,
       })}
       {description && (
         <FieldDescription id={`${id}-hint`}>{description}</FieldDescription>

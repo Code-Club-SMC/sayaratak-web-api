@@ -38,7 +38,7 @@ const open = async (draft: object) => {
   const shell = await renderShell(<Harness />, {
     path: "/en/post?step=details",
   })
-  await screen.findByLabelText("Title")
+  await screen.findByLabelText(/^Title/)
   return shell
 }
 const field = (name: RegExp | string) => screen.queryByLabelText(name)
@@ -199,7 +199,7 @@ describe("DetailsStep", () => {
     await pick(select(/^Make/), make.name.en)
     await pick(select(/^Model/), model.name.en)
     await pick(select(/^Year/), "2018")
-    const title = screen.getByLabelText<HTMLInputElement>("Title")
+    const title = screen.getByLabelText<HTMLInputElement>(/^Title/)
     await waitFor(() =>
       expect(title.value).toBe(`${make.name.en} ${model.name.en} 2018`)
     )

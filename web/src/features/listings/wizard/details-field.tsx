@@ -20,13 +20,7 @@ const toIso = (d: Date) =>
   `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`
 
 // One field of the details step, drawn from its definition. `optional` adds the "(Optional)" mark to the label.
-export function DetailField({
-  def,
-  optional,
-}: {
-  def: FieldDef
-  optional: boolean
-}) {
+export function DetailField({ def }: { def: FieldDef }) {
   const { t, locale } = useT()
   const { values, error, set } = useStepFields()
   const label = t(labelKey(def))
@@ -37,7 +31,7 @@ export function DetailField({
   const field = (control: (c: ControlProps) => ReactNode) => (
     <FormField
       label={label}
-      optional={optional && !def.required}
+      optional={!def.required}
       error={error(def.name)}
       description={def.hint && t(def.hint)}
       className={wrap}
@@ -62,7 +56,7 @@ export function DetailField({
       return (
         <CitySelect
           label={label}
-          optional={optional}
+          optional={!def.required}
           value={value ?? ""}
           onChange={(id) => set(def.name, id)}
           error={error(def.name)}

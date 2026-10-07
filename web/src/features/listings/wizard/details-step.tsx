@@ -127,11 +127,7 @@ function SectionBlock({ section }: { section: Section }) {
       <FieldGrid cols={3}>
         {items.map((item) =>
           isDef(item) ? (
-            <DetailField
-              key={item.name}
-              def={item}
-              optional={!section.optional}
-            />
+            <DetailField key={item.name} def={item} />
           ) : (
             <Custom key={item} item={item} />
           )
@@ -156,15 +152,14 @@ export function DetailsStep() {
   }
   return (
     <div ref={root} className="flex flex-col gap-4">
-      <Button
-        type="button"
-        variant="ghost"
-        size="sm"
-        className="self-end"
-        onClick={toggle}
-      >
-        {t(expanded ? "post.collapse_all" : "post.expand_all")}
-      </Button>
+      <div className="flex items-center justify-between gap-2">
+        <p aria-hidden="true" className="text-caption text-muted-foreground">
+          {t("form.required_note")}
+        </p>
+        <Button type="button" variant="ghost" size="sm" onClick={toggle}>
+          {t(expanded ? "post.collapse_all" : "post.expand_all")}
+        </Button>
+      </div>
       {(values.kind === "part" ? partSections : vehicleSections).map((s) => (
         <SectionBlock key={s.id} section={s} />
       ))}

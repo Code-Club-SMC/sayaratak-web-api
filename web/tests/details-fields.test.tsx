@@ -53,7 +53,7 @@ const open = async (draft: object = valid) => {
   const shell = await renderShell(<Harness />, {
     path: "/en/post?step=details",
   })
-  await screen.findByLabelText("Title")
+  await screen.findByLabelText(/^Title/)
   return shell
 }
 const step = (shell: Awaited<ReturnType<typeof open>>) =>
@@ -155,6 +155,21 @@ describe("listing fields schema", () => {
     expect(r.error?.issues.map((i) => i.message)).toContain(
       "validation.year_order"
     )
+  })
+})
+
+describe("required marks", () => {
+  it("the wizard marks required fields with an asterisk and writes no (Optional)", async () => {
+    await open()
+    const year = screen.getByRole("combobox", { name: /^Year/ })
+    expect(year.getAttribute("aria-required")).toBe("true")
+    expect(document.querySelector(`label[for="${year.id}"]`)?.textContent).toBe(
+      "Year *"
+    )
+    const trim = screen.getByLabelText("Trim or version")
+    expect(trim.getAttribute("aria-required")).toBeNull()
+    expect(screen.queryByText("(Optional)")).toBeNull()
+    expect(screen.getByText("* Required")).toBeTruthy()
   })
 })
 

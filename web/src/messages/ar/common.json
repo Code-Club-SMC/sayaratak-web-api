@@ -277,5 +277,6 @@
   "form.dimensions": "الأبعاد",
   "form.weight_kg": "الوزن (كجم)",
   "form.installation": "التركيب متاح",
-  "form.returns": "الاسترجاع مقبول"
+  "form.returns": "الاسترجاع مقبول",
+  "form.required_note": "* مطلوب"
 }

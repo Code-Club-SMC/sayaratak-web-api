@@ -83,7 +83,7 @@ const sent = async () => {
   return publish.mock.calls[0]![0]
 }
 const box = (name: string) => screen.getByRole("checkbox", { name })
-const phone = () => screen.getByLabelText<HTMLInputElement>("Phone number")
+const phone = () => screen.getByLabelText<HTMLInputElement>(/^Phone number/)
 
 beforeEach(() => {
   resetDb()
@@ -164,7 +164,7 @@ describe("ContactStep", () => {
   it("another WhatsApp number can be typed; leaving it empty is an error", async () => {
     await open()
     fireEvent.click(box("Use the same number on WhatsApp"))
-    const whatsapp = await screen.findByLabelText("WhatsApp number")
+    const whatsapp = await screen.findByLabelText(/^WhatsApp number/)
     fireEvent.change(whatsapp, { target: { value: "" } })
     publishNow()
     expect(await screen.findAllByText("This field is required")).toHaveLength(1)
@@ -236,13 +236,13 @@ describe("ContactStep", () => {
     await waitFor(() =>
       expect(same().getAttribute("aria-checked")).toBe("true")
     )
-    expect(screen.queryByLabelText("Phone number")).toBeNull()
+    expect(screen.queryByLabelText(/^Phone number/)).toBeNull()
     const own = db.dealerships.find((d) => d.ownerId === "u-dealer")!
     publishNow()
     const values = await sent()
     expect(values.phone).toBe(own.phones[0])
     expect(values.districtId).toBe(own.districtId)
     fireEvent.click(same())
-    expect(await screen.findByLabelText("Phone number")).toBeTruthy()
+    expect(await screen.findByLabelText(/^Phone number/)).toBeTruthy()
   })
 })

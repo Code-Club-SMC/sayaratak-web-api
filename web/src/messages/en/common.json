@@ -269,5 +269,6 @@
   "form.dimensions": "Dimensions",
   "form.weight_kg": "Weight (kg)",
   "form.installation": "Installation available",
-  "form.returns": "Returns accepted"
+  "form.returns": "Returns accepted",
+  "form.required_note": "* Required"
 }

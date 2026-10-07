@@ -5,15 +5,11 @@ import { apiFetch } from "@/lib/api/client"
 import { useApiMutation } from "@/lib/api/mutation"
 import { keys } from "@/lib/api/query-keys"
 import { okSchema } from "@/schemas/api"
-import { mapResponseSchema } from "@/schemas/responses"
 import type {
   savedSearchInputSchema,
   savedSearchPatchSchema,
 } from "@/schemas/inputs"
 import { savedSearchSchema } from "@/schemas/saved-search"
-
-// `layers` repeats in the query string like every array param.
-type MapFilters = { layers?: string[]; bbox?: string }
 
 export const savedSearchQueries = {
   list: queryOptions({
@@ -26,18 +22,6 @@ export const savedSearchQueries = {
     staleTime: 30_000,
   }),
 }
-export const mapQuery = (filters: MapFilters) =>
-  queryOptions({
-    queryKey: keys.map(filters),
-    queryFn: ({ signal }) =>
-      apiFetch("/map", {
-        query: filters,
-        schema: mapResponseSchema,
-        signal,
-      }),
-    staleTime: 60_000,
-  })
-
 export const useCreateSavedSearch = () =>
   useApiMutation(
     (body: z.input<typeof savedSearchInputSchema>) =>

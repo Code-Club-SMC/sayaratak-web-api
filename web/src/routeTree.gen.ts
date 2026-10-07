@@ -15,6 +15,7 @@ import { Route as LocalePublicRouteRouteImport } from './routes/$locale/_public/
 import { Route as ApiSplatRouteImport } from './routes/api/$'
 import { Route as LocalePublicIndexRouteImport } from './routes/$locale/_public/index'
 import { Route as LocalePublicSplatRouteImport } from './routes/$locale/_public/$'
+import { Route as LocalePublicMapRouteImport } from './routes/$locale/_public/map'
 import { Route as LocalePublicPartsRouteImport } from './routes/$locale/_public/parts'
 import { Route as LocalePublicSearchRouteImport } from './routes/$locale/_public/search'
 import { Route as LocalePublicSuspendedRouteImport } from './routes/$locale/_public/suspended'
@@ -62,6 +63,11 @@ const LocalePublicIndexRoute = LocalePublicIndexRouteImport.update({
 const LocalePublicSplatRoute = LocalePublicSplatRouteImport.update({
   id: '/$',
   path: '/$',
+  getParentRoute: () => LocalePublicRouteRoute,
+} as any)
+const LocalePublicMapRoute = LocalePublicMapRouteImport.update({
+  id: '/map',
+  path: '/map',
   getParentRoute: () => LocalePublicRouteRoute,
 } as any)
 const LocalePublicPartsRoute = LocalePublicPartsRouteImport.update({
@@ -173,6 +179,7 @@ export interface FileRoutesByFullPath {
   '/$locale': typeof LocaleRouteRouteWithChildren
   '/api/$': typeof ApiSplatRoute
   '/$locale/$': typeof LocalePublicSplatRoute
+  '/$locale/map': typeof LocalePublicMapRoute
   '/$locale/parts': typeof LocalePublicPartsRoute
   '/$locale/search': typeof LocalePublicSearchRoute
   '/$locale/suspended': typeof LocalePublicSuspendedRoute
@@ -199,6 +206,7 @@ export interface FileRoutesByTo {
   '/$locale': typeof LocalePublicIndexRoute
   '/api/$': typeof ApiSplatRoute
   '/$locale/$': typeof LocalePublicSplatRoute
+  '/$locale/map': typeof LocalePublicMapRoute
   '/$locale/parts': typeof LocalePublicPartsRoute
   '/$locale/search': typeof LocalePublicSearchRoute
   '/$locale/suspended': typeof LocalePublicSuspendedRoute
@@ -226,6 +234,7 @@ export interface FileRoutesById {
   '/$locale/_public': typeof LocalePublicRouteRouteWithChildren
   '/api/$': typeof ApiSplatRoute
   '/$locale/_public/$': typeof LocalePublicSplatRoute
+  '/$locale/_public/map': typeof LocalePublicMapRoute
   '/$locale/_public/parts': typeof LocalePublicPartsRoute
   '/$locale/_public/search': typeof LocalePublicSearchRoute
   '/$locale/_public/suspended': typeof LocalePublicSuspendedRoute
@@ -254,6 +263,7 @@ export interface FileRouteTypes {
     | '/$locale'
     | '/api/$'
     | '/$locale/$'
+    | '/$locale/map'
     | '/$locale/parts'
     | '/$locale/search'
     | '/$locale/suspended'
@@ -280,6 +290,7 @@ export interface FileRouteTypes {
     | '/$locale'
     | '/api/$'
     | '/$locale/$'
+    | '/$locale/map'
     | '/$locale/parts'
     | '/$locale/search'
     | '/$locale/suspended'
@@ -306,6 +317,7 @@ export interface FileRouteTypes {
     | '/$locale/_public'
     | '/api/$'
     | '/$locale/_public/$'
+    | '/$locale/_public/map'
     | '/$locale/_public/parts'
     | '/$locale/_public/search'
     | '/$locale/_public/suspended'
@@ -376,6 +388,13 @@ declare module '@tanstack/react-router' {
       path: '/$'
       fullPath: '/$locale/$'
       preLoaderRoute: typeof LocalePublicSplatRouteImport
+      parentRoute: typeof LocalePublicRouteRoute
+    }
+    '/$locale/_public/map': {
+      id: '/$locale/_public/map'
+      path: '/map'
+      fullPath: '/$locale/map'
+      preLoaderRoute: typeof LocalePublicMapRouteImport
       parentRoute: typeof LocalePublicRouteRoute
     }
     '/$locale/_public/parts': {
@@ -516,6 +535,7 @@ declare module '@tanstack/react-router' {
 
 interface LocalePublicRouteRouteChildren {
   LocalePublicSplatRoute: typeof LocalePublicSplatRoute
+  LocalePublicMapRoute: typeof LocalePublicMapRoute
   LocalePublicPartsRoute: typeof LocalePublicPartsRoute
   LocalePublicSearchRoute: typeof LocalePublicSearchRoute
   LocalePublicSuspendedRoute: typeof LocalePublicSuspendedRoute
@@ -534,6 +554,7 @@ interface LocalePublicRouteRouteChildren {
 
 const LocalePublicRouteRouteChildren: LocalePublicRouteRouteChildren = {
   LocalePublicSplatRoute: LocalePublicSplatRoute,
+  LocalePublicMapRoute: LocalePublicMapRoute,
   LocalePublicPartsRoute: LocalePublicPartsRoute,
   LocalePublicSearchRoute: LocalePublicSearchRoute,
   LocalePublicSuspendedRoute: LocalePublicSuspendedRoute,

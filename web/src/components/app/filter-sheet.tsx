@@ -19,11 +19,14 @@ export function FilterSheet({
   params,
   facets,
   groups,
+  triggerClassName = "lg:hidden",
   onApply,
 }: {
   params: SearchParams
   facets?: ListingPage["facets"]
   groups?: readonly FilterGroup[]
+  // The results page has a side panel from `lg`, so the sheet button hides there; the map has no panel and keeps it.
+  triggerClassName?: string
   onApply: (next: SearchParams) => void
 }) {
   const { t } = useT()
@@ -38,7 +41,9 @@ export function FilterSheet({
     ).length + (params.includeSold ? 1 : 0)
   return (
     <Sheet open={open} onOpenChange={setOpen}>
-      <SheetTrigger render={<Button variant="outline" className="lg:hidden" />}>
+      <SheetTrigger
+        render={<Button variant="outline" className={triggerClassName} />}
+      >
         {t("common.filters")}
         {active > 0 && <span className="num">({active})</span>}
       </SheetTrigger>

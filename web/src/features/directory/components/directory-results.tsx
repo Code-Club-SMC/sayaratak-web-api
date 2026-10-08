@@ -1,5 +1,6 @@
 import type { ReactNode } from "react"
 import type { UseQueryResult } from "@tanstack/react-query"
+import { SearchXIcon } from "lucide-react"
 
 import { useT } from "@/lib/i18n/use-t"
 import { EmptyState } from "@/components/app/empty-state"
@@ -51,6 +52,7 @@ export function DirectoryResults<T extends { id: string }>({
   if (data.total === 0)
     return (
       <EmptyState
+        icon={SearchXIcon}
         title={empty.title}
         body={empty.body}
         action={

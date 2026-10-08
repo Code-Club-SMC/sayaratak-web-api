@@ -1,4 +1,5 @@
 import { useState } from "react"
+import { InboxIcon } from "lucide-react"
 import { act, fireEvent, screen, waitFor, within } from "@testing-library/react"
 import type { RowSelectionState } from "@tanstack/react-table"
 import { describe, expect, it, vi } from "vitest"
@@ -44,7 +45,7 @@ function Table(
         onChange: setSelection,
         actions: <button type="button">Bulk go</button>,
       }}
-      empty={<EmptyState title="Nothing here" />}
+      empty={<EmptyState icon={InboxIcon} title="Nothing here" />}
       page={1}
       pageCount={1}
       hrefFor={() => "/"}

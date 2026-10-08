@@ -32,7 +32,7 @@ export function DashboardLayout() {
           <main
             id="main-content"
             tabIndex={-1}
-            className="mx-auto w-full max-w-[1160px] flex-1 p-4 outline-none md:p-6 xl:p-8"
+            className="mx-auto w-full max-w-[1440px] flex-1 p-4 outline-none md:p-6 xl:p-8"
           >
             <Outlet />
           </main>

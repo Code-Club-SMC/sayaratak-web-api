@@ -1,4 +1,5 @@
 import type { ReactNode } from "react"
+import { InboxIcon, SearchXIcon } from "lucide-react"
 
 import { EmptyState } from "@/components/app/empty-state"
 import { SectionError } from "@/components/app/section-error"
@@ -90,15 +91,18 @@ export function ThreadList({
         ) : threads?.length === 0 ? (
           <div className="px-2">
             <EmptyState
+              icon={InboxIcon}
               title={emptyTitle}
               body={t("messages.empty_body")}
               action={emptyAction}
             />
           </div>
         ) : shown.length === 0 ? (
-          <p className="p-4 text-body text-muted-foreground">
-            {t("messages.no_match")}
-          </p>
+          <EmptyState
+            icon={SearchXIcon}
+            title={t("messages.no_match")}
+            className="py-8"
+          />
         ) : (
           <ul aria-label={t("messages.list_label")} className="flex flex-col">
             {shown.map((thread) => (

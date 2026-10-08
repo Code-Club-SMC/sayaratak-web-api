@@ -1,5 +1,6 @@
 import { useState } from "react"
 import { useQuery } from "@tanstack/react-query"
+import { CarIcon } from "lucide-react"
 
 import { adminQueries } from "@/features/admin/queries"
 import { listingQueries } from "@/features/listings/queries"
@@ -8,6 +9,7 @@ import { useT } from "@/lib/i18n/use-t"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Skeleton } from "@/components/ui/skeleton"
+import { EmptyState } from "./empty-state"
 import { MediaImage } from "./media-image"
 import { PriceText } from "./price-text"
 import { ResponsiveDialog } from "./responsive-dialog"
@@ -69,9 +71,12 @@ export function ListingPickerDialog({
             ))}
           </div>
         ) : data.items.length === 0 ? (
-          <p className="py-4 text-ui text-muted-foreground">
-            {t("form.no_listings")}
-          </p>
+          <EmptyState
+            icon={CarIcon}
+            title={t("form.no_listings")}
+            level={3}
+            className="py-6"
+          />
         ) : (
           <ul className="flex flex-col gap-1">
             {data.items.map((listing) => (

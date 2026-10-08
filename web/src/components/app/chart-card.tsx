@@ -1,8 +1,10 @@
 import { lazy, Suspense, useId } from "react"
+import { ChartNoAxesColumnIcon } from "lucide-react"
 
 import { useT } from "@/lib/i18n/use-t"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
+import { EmptyState } from "./empty-state"
 
 export type ChartSeries = { key: string; label: string }
 export type ChartRow = { day: string } & Record<string, number | string>
@@ -53,9 +55,12 @@ export function ChartCard({
       ) : loading ? (
         <Skeleton className="h-64" aria-hidden="true" />
       ) : data?.length === 0 ? (
-        <p className="flex h-64 items-center text-body text-muted-foreground">
-          {t("dashboard.chart_empty")}
-        </p>
+        <EmptyState
+          icon={ChartNoAxesColumnIcon}
+          title={t("dashboard.chart_empty")}
+          level={3}
+          className="h-64"
+        />
       ) : (
         // Recharts lays out left to right; the axis stays LTR in Arabic too.
         <div dir="ltr">

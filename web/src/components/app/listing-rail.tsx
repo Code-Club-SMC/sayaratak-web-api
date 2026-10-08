@@ -1,8 +1,10 @@
 import { useId, type ReactNode } from "react"
+import { CarIcon } from "lucide-react"
 
 import { useT } from "@/lib/i18n/use-t"
 import { localeHref } from "@/lib/navigation"
 import type { Listing } from "@/schemas/listing"
+import { EmptyState } from "./empty-state"
 import { ListingCard } from "./listing-card"
 
 // Sideways scroll-snap row on mobile, four columns from lg. `href` is a path without the locale.
@@ -42,7 +44,12 @@ export function ListingRail({
         )}
       </div>
       {listings.length === 0 ? (
-        <p className="text-body text-muted-foreground">{empty}</p>
+        <EmptyState
+          icon={CarIcon}
+          title={empty ?? ""}
+          level={3}
+          className="py-6"
+        />
       ) : (
         <ul className="flex snap-x snap-mandatory gap-3 overflow-x-auto pb-2 lg:grid lg:grid-cols-4 lg:overflow-visible lg:pb-0">
           {listings.map((listing, i) => (

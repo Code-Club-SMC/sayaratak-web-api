@@ -1,5 +1,6 @@
 import { useCallback, useState } from "react"
 import { useQuery } from "@tanstack/react-query"
+import { CarIcon } from "lucide-react"
 import { Link, useLocation } from "@tanstack/react-router"
 import type { RowSelectionState } from "@tanstack/react-table"
 
@@ -36,7 +37,7 @@ import { useListingColumns } from "./use-listing-columns"
 
 const PAGE_SIZE = 24
 
-// The seller's listings table (steps 9.3 and 10.3 mount it). The URL holds tab, search, filters, sort and page; `scope` only decides the title and whether Export CSV shows.
+// The seller's listings table (steps 9.3 and 10.3 mount it). The URL holds tab, search, filters, sort and page; `scope` only decides the title.
 export function ListingsManager({
   scope,
   search,
@@ -140,15 +141,13 @@ export function ListingsManager({
         headingId={resultsHeadingId}
         count={list.data ? formatNumber(total, locale) : undefined}
       >
-        {scope === "dealer" && (
-          <Button
-            type="button"
-            variant="outline"
-            onClick={() => void exportCsv()}
-          >
-            {t("manager.export_csv")}
-          </Button>
-        )}
+        <Button
+          type="button"
+          variant="outline"
+          onClick={() => void exportCsv()}
+        >
+          {t("manager.export_csv")}
+        </Button>
         {reached ? (
           <Button type="button" disabled>
             {t("listing.post")}
@@ -225,6 +224,7 @@ export function ListingsManager({
             )}
             empty={
               <EmptyState
+                icon={CarIcon}
                 title={t("manager.empty_title")}
                 body={t(
                   filtered ? "manager.empty_filtered" : "manager.empty_body"

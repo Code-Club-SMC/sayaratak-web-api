@@ -1,5 +1,8 @@
+import { WrenchIcon } from "lucide-react"
+
 import { useT } from "@/lib/i18n/use-t"
 import type { Workshop } from "@/schemas/profile"
+import { EmptyState } from "@/components/app/empty-state"
 import { PriceText } from "@/components/app/price-text"
 
 // What the workshop does: name, a line about it, and "From" with the starting price when it set one.
@@ -11,9 +14,12 @@ export function ServiceList({ services }: { services: Workshop["services"] }) {
         {t("directory.services_title")}
       </h2>
       {services.length === 0 ? (
-        <p className="text-body text-muted-foreground">
-          {t("directory.services_empty")}
-        </p>
+        <EmptyState
+          icon={WrenchIcon}
+          title={t("directory.services_empty")}
+          level={3}
+          className="py-6"
+        />
       ) : (
         <ul className="flex flex-col divide-y divide-border">
           {services.map((s) => (

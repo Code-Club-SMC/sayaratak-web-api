@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react"
 import { useQuery } from "@tanstack/react-query"
+import { StarIcon } from "lucide-react"
 
 import { useRequireAuth } from "@/features/auth/auth-gate"
 import { meQuery } from "@/features/auth/me-query"
@@ -8,6 +9,7 @@ import { useT } from "@/lib/i18n/use-t"
 import type { Rating, TargetType } from "@/schemas/review"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
+import { EmptyState } from "./empty-state"
 import { RatingSummary } from "./rating-summary"
 import { ReviewForm } from "./review-form"
 import { ReviewItem } from "./review-item"
@@ -79,7 +81,12 @@ export function ReviewsSection({
       )}
       {isPending && delayed && <Skeleton className="h-24 w-full" />}
       {data && data.items.length === 0 && (
-        <p className="text-ui text-muted-foreground">{t("reviews.empty")}</p>
+        <EmptyState
+          icon={StarIcon}
+          title={t("reviews.empty")}
+          level={3}
+          className="py-6"
+        />
       )}
       {data && data.items.length > 0 && (
         <ul className="divide-y divide-border">

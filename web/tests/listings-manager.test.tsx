@@ -67,6 +67,11 @@ describe("search params", () => {
 })
 
 describe("ListingsManager", () => {
+  it("offers Export CSV to every seller, not only dealerships", async () => {
+    await open()
+    expect(screen.getByRole("button", { name: "Export CSV" })).toBeTruthy()
+  })
+
   it("lists the owner's listings, 24 to a page, with the tabs", async () => {
     await open()
     expect(screen.getAllByRole("tab")).toHaveLength(7)

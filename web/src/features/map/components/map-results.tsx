@@ -1,5 +1,8 @@
+import { MapPinOffIcon } from "lucide-react"
+
 import { useT } from "@/lib/i18n/use-t"
 import type { MapPoint } from "@/schemas/responses"
+import { EmptyState } from "@/components/app/empty-state"
 import { ResultsRegion } from "@/components/app/results-region"
 import { SectionError } from "@/components/app/section-error"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -44,7 +47,12 @@ export function MapResults({
         </p>
       )}
       {items.length === 0 ? (
-        <p className="text-ui text-muted-foreground">{t("map.empty")}</p>
+        <EmptyState
+          icon={MapPinOffIcon}
+          title={t("map.empty")}
+          level={3}
+          className="py-6"
+        />
       ) : (
         <div className="min-h-0 flex-1 overflow-y-auto">
           <ResultsRegion stale={stale}>

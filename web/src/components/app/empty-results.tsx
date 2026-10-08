@@ -1,4 +1,5 @@
 import { useQueries, useQuery } from "@tanstack/react-query"
+import { SearchXIcon } from "lucide-react"
 
 import { listingQueries, taxonomyQuery } from "@/features/listings/queries"
 import { clearFilters, distanceKm, radii } from "@/features/search/filters"
@@ -8,6 +9,7 @@ import { formatNumber } from "@/lib/format"
 import { useT } from "@/lib/i18n/use-t"
 import type { ListingPage } from "@/schemas/listing"
 import { Button } from "@/components/ui/button"
+import { EmptyState } from "./empty-state"
 import { SaveSearchButton } from "./save-search-button"
 
 // A4 item 11: say what to loosen instead of a dead end. Every suggestion is a button that applies it, with how many listings it brings back.
@@ -54,78 +56,82 @@ export function EmptyResults({
         .slice(0, 3)
     : []
   return (
-    <section className="flex flex-col items-start gap-4 py-8">
-      <div className="flex flex-col gap-1">
-        <h2 className="text-title font-semibold">{t("search.no_results")}</h2>
-        <p className="text-body text-muted-foreground">
-          {t("search.empty_hint")}
-        </p>
-      </div>
-      <h3 className="text-ui font-medium">{t("search.suggest_title")}</h3>
-      <ul className="flex flex-wrap gap-2">
-        {loosen.map((f) => (
-          <li key={f.id}>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => onChange(f.next)}
-            >
-              {t("search.suggest_remove", {
-                label: f.label,
-                n: formatNumber(f.count, locale),
-              })}
-            </Button>
-          </li>
-        ))}
-        {wider && (
-          <li>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => onChange({ ...params, radius: wider, page: 1 })}
-            >
-              {t("search.suggest_radius", { km: wider })}
-            </Button>
-          </li>
-        )}
-        {nearby.map(({ city, count }) => (
-          <li key={city.id}>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() =>
-                onChange({
-                  ...params,
-                  city: city.id,
-                  district: undefined,
-                  radius: undefined,
-                  lat: undefined,
-                  lng: undefined,
-                  page: 1,
-                })
-              }
-            >
-              {t("search.suggest_city", {
-                city: city.name[locale],
-                n: formatNumber(count, locale),
-              })}
-            </Button>
-          </li>
-        ))}
-        {filters.length > 0 && (
-          <li>
-            <Button
-              type="button"
-              onClick={() => onChange(clearFilters(params))}
-            >
-              {t("common.clear_all")}
-            </Button>
-          </li>
-        )}
-        <li>
-          <SaveSearchButton params={params} />
-        </li>
-      </ul>
-    </section>
+    <EmptyState
+      icon={SearchXIcon}
+      title={t("search.no_results")}
+      body={t("search.empty_hint")}
+      wide
+      action={
+        <>
+          <h3 className="text-ui font-medium">{t("search.suggest_title")}</h3>
+          <ul className="flex flex-wrap justify-center gap-2">
+            {loosen.map((f) => (
+              <li key={f.id}>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => onChange(f.next)}
+                >
+                  {t("search.suggest_remove", {
+                    label: f.label,
+                    n: formatNumber(f.count, locale),
+                  })}
+                </Button>
+              </li>
+            ))}
+            {wider && (
+              <li>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() =>
+                    onChange({ ...params, radius: wider, page: 1 })
+                  }
+                >
+                  {t("search.suggest_radius", { km: wider })}
+                </Button>
+              </li>
+            )}
+            {nearby.map(({ city, count }) => (
+              <li key={city.id}>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() =>
+                    onChange({
+                      ...params,
+                      city: city.id,
+                      district: undefined,
+                      radius: undefined,
+                      lat: undefined,
+                      lng: undefined,
+                      page: 1,
+                    })
+                  }
+                >
+                  {t("search.suggest_city", {
+                    city: city.name[locale],
+                    n: formatNumber(count, locale),
+                  })}
+                </Button>
+              </li>
+            ))}
+            {filters.length > 0 && (
+              <li>
+                <Button
+                  type="button"
+                  onClick={() => onChange(clearFilters(params))}
+                >
+                  {t("common.clear_all")}
+                </Button>
+              </li>
+            )}
+            <li>
+              <SaveSearchButton params={params} />
+            </li>
+          </ul>
+        </>
+      }
+    />
   )
 }

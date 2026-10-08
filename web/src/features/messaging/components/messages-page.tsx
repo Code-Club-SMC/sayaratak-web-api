@@ -1,6 +1,7 @@
 import { useCallback } from "react"
 import { useQuery } from "@tanstack/react-query"
 import { useNavigate, useSearch } from "@tanstack/react-router"
+import { MessageSquareIcon, MessageSquareXIcon } from "lucide-react"
 
 import { EmptyState } from "@/components/app/empty-state"
 import { PageHeader } from "@/components/app/page-header"
@@ -124,6 +125,7 @@ export function MessagesPage({
             <div className="px-4" aria-busy={threads.isPending}>
               {search.thread && threads.data ? (
                 <EmptyState
+                  icon={MessageSquareXIcon}
                   title={t("messages.thread_gone")}
                   action={
                     <Button
@@ -138,6 +140,7 @@ export function MessagesPage({
               ) : (
                 !search.thread && (
                   <EmptyState
+                    icon={MessageSquareIcon}
                     title={t("messages.pick_title")}
                     body={t("messages.pick_body")}
                   />

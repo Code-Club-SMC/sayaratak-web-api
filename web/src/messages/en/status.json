@@ -5,5 +5,7 @@
   "status.rented": "Rented",
   "status.pending": "Pending review",
   "status.rejected": "Rejected",
-  "status.removed": "Removed"
+  "status.removed": "Removed",
+  "status.draft": "Draft",
+  "status.approved": "Approved"
 }

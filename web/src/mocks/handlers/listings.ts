@@ -31,7 +31,6 @@ import {
 } from "../http"
 import {
   DAY_MS,
-  byNewest,
   canEditListing,
   eventSeries,
   listingById,
@@ -292,8 +291,10 @@ route("POST", "/listings/:id/renew", (c) => {
   const user = needUser(c)
   const row = listingById(c.params.id ?? "")
   canEditListing(user, row)
+  // The later of now and the current end, plus the setting, so renewing early loses no days.
   row.expiresAt = new Date(
-    Date.now() + db.settings.listingExpiryDays * DAY_MS
+    Math.max(Date.now(), Date.parse(row.expiresAt)) +
+      db.settings.listingExpiryDays * DAY_MS
   ).toISOString()
   row.updatedAt = nowIso()
   return owned(row)
@@ -321,9 +322,24 @@ route("POST", "/listings/:id/duplicate", (c) => {
   return owned(copy)
 })
 
+// Sort keys of the owner's table (8.2); anything else is newest first.
+const mineKey: Record<string, (l: ListingRow) => number | string> = {
+  price: (l) => l.price,
+  views: (l) => l.stats.views,
+  expires: (l) => l.expiresAt,
+}
+const sortMine =
+  (key: string | null, dir: 1 | -1) => (a: ListingRow, b: ListingRow) => {
+    const by = mineKey[key ?? ""] ?? ((l: ListingRow) => l.createdAt)
+    const [x, y] = [by(a), by(b)]
+    return (x < y ? -1 : x > y ? 1 : 0) * dir
+  }
+
 route("GET", "/me/listings", (c) => {
   const user = needRole(c, "user", "dealership")
   const q = c.query.get("q")?.toLowerCase()
+  const type = c.query.get("type")
+  const intent = c.query.get("intent")
   const moderation = c.query.get("moderation")
   const status = c.query.get("status")
   const attention = c.query.get("needsAttention") === "true"
@@ -344,8 +360,18 @@ route("GET", "/me/listings", (c) => {
   }
   const rows = db.listings
     .filter((l) => l.ownerUserId === user.id)
-    .filter((l) => inTab[tab]?.(l) ?? true)
-    .filter((l) => !q || l.title.toLowerCase().includes(q))
+    .filter((l) => inTab[tab]?.(l) ?? l.moderation !== "removed")
+    .filter(
+      (l) =>
+        !q ||
+        l.title.toLowerCase().includes(q) ||
+        l.id.toLowerCase().includes(q)
+    )
+    .filter(
+      (l) =>
+        !type || (type === "part" ? l.kind === "part" : l.vehicleType === type)
+    )
+    .filter((l) => !intent || l.intent === intent)
     .filter((l) => !moderation || l.moderation === moderation)
     .filter((l) => !status || l.status === status)
     .filter(
@@ -357,7 +383,7 @@ route("GET", "/me/listings", (c) => {
             (l.status === "reserved" &&
               now - Date.parse(l.updatedAt) >= 14 * DAY_MS)))
     )
-    .sort(byNewest)
+    .sort(sortMine(c.query.get("sort"), c.query.get("dir") === "asc" ? 1 : -1))
   // `pageSize` goes up to 500 here, for the CSV export.
   const { page: p, pageSize } = pageParams(c.query, 20, 500)
   const result = paginate(rows, p, pageSize)

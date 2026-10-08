@@ -5,6 +5,8 @@ const variants = {
   available: "success",
   reserved: "warning",
   pending: "warning",
+  approved: "success",
+  draft: "muted",
   sold: "muted",
   rented: "muted",
   rejected: "destructive",

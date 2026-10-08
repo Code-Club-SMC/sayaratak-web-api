@@ -233,6 +233,51 @@ describe("workshops and subscriptions", () => {
     })
     for (const l of drafts.body.items) expect(l.moderation).toBe("draft")
   })
+
+  it("the owner's table sorts, filters by type and intent, and finds an id", async () => {
+    const get = async (query: string) =>
+      (
+        await call("GET", `/me/listings?pageSize=500&${query}`, {
+          as: "u-omar",
+        })
+      ).body.items
+    const cheap = await get("sort=price&dir=asc")
+    const prices: number[] = cheap.map((l: { price: number }) => l.price)
+    expect(prices).toEqual([...prices].sort((a, b) => a - b))
+    const views = await get("sort=views&dir=desc")
+    const counts: number[] = views.map(
+      (l: { stats: { views: number } }) => l.stats.views
+    )
+    expect(counts).toEqual([...counts].sort((a, b) => b - a))
+    for (const l of await get("type=truck")) expect(l.vehicleType).toBe("truck")
+    for (const l of await get("intent=rent")) expect(l.intent).toBe("rent")
+    const [first] = await get("")
+    const found = await get(`q=${first.id}`)
+    expect(found.map((l: { id: string }) => l.id)).toContain(first.id)
+    const all = await get("")
+    expect(
+      all.every((l: { moderation: string }) => l.moderation !== "removed")
+    ).toBe(true)
+  })
+
+  it("renew adds the listing duration to the later of now and the current end", async () => {
+    const row = db.listings.find(
+      (l) => l.ownerUserId === "u-omar" && l.moderation === "approved"
+    )!
+    const day = 86_400_000
+    const end = Date.now() + 20 * day
+    row.expiresAt = new Date(end).toISOString()
+    await call("POST", `/listings/${row.id}/renew`, { as: "u-omar" })
+    expect(Date.parse(row.expiresAt)).toBe(
+      end + db.settings.listingExpiryDays * day
+    )
+    row.expiresAt = new Date(Date.now() - 5 * day).toISOString()
+    const before = Date.now()
+    await call("POST", `/listings/${row.id}/renew`, { as: "u-omar" })
+    expect(Date.parse(row.expiresAt)).toBeGreaterThanOrEqual(
+      before + db.settings.listingExpiryDays * day
+    )
+  })
 })
 
 describe("site and admin extras", () => {

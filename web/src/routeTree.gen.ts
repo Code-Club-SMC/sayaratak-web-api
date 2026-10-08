@@ -32,6 +32,7 @@ import { Route as LocalePublicSearchRouteImport } from './routes/$locale/_public
 import { Route as LocalePublicSuspendedRouteImport } from './routes/$locale/_public/suspended'
 import { Route as LocalePublicTermsRouteImport } from './routes/$locale/_public/terms'
 import { Route as LocaleAccountIndexRouteImport } from './routes/$locale/account/index'
+import { Route as LocaleAccountListingsRouteImport } from './routes/$locale/account/listings'
 import { Route as LocaleAdminIndexRouteImport } from './routes/$locale/admin/index'
 import { Route as LocaleAuthIndexRouteImport } from './routes/$locale/auth/index'
 import { Route as LocaleAuthForgotRouteImport } from './routes/$locale/auth/forgot'
@@ -49,6 +50,7 @@ import { Route as LocalePublicMechanicsIndexRouteImport } from './routes/$locale
 import { Route as LocalePublicMechanicsSlugRouteImport } from './routes/$locale/_public/mechanics/$slug'
 import { Route as LocalePublicWorkshopsIndexRouteImport } from './routes/$locale/_public/workshops/index'
 import { Route as LocalePublicWorkshopsSlugRouteImport } from './routes/$locale/_public/workshops/$slug'
+import { Route as LocaleDealerInventoryIndexRouteImport } from './routes/$locale/dealer/inventory/index'
 import { Route as LocaleOnboardingRoleStepRouteImport } from './routes/$locale/onboarding/$role/$step'
 import { Route as LocalePublicVehiclesTypeIntentChar123CityChar125RouteImport } from './routes/$locale/_public/vehicles/$type/$intent/{-$city}'
 
@@ -166,6 +168,11 @@ const LocaleAccountIndexRoute = LocaleAccountIndexRouteImport.update({
   path: '/',
   getParentRoute: () => LocaleAccountRouteRoute,
 } as any)
+const LocaleAccountListingsRoute = LocaleAccountListingsRouteImport.update({
+  id: '/listings',
+  path: '/listings',
+  getParentRoute: () => LocaleAccountRouteRoute,
+} as any)
 const LocaleAdminIndexRoute = LocaleAdminIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -257,6 +264,12 @@ const LocalePublicWorkshopsSlugRoute =
     path: '/workshops/$slug',
     getParentRoute: () => LocalePublicRouteRoute,
   } as any)
+const LocaleDealerInventoryIndexRoute =
+  LocaleDealerInventoryIndexRouteImport.update({
+    id: '/inventory/',
+    path: '/inventory/',
+    getParentRoute: () => LocaleDealerRouteRoute,
+  } as any)
 const LocaleOnboardingRoleStepRoute =
   LocaleOnboardingRoleStepRouteImport.update({
     id: '/onboarding/$role/$step',
@@ -291,6 +304,7 @@ export interface FileRoutesByFullPath {
   '/$locale/search': typeof LocalePublicSearchRoute
   '/$locale/suspended': typeof LocalePublicSuspendedRoute
   '/$locale/terms': typeof LocalePublicTermsRoute
+  '/$locale/account/listings': typeof LocaleAccountListingsRoute
   '/$locale/auth/forgot': typeof LocaleAuthForgotRoute
   '/$locale/auth/reset': typeof LocaleAuthResetRoute
   '/$locale/onboarding/role': typeof LocaleOnboardingRoleRoute
@@ -311,6 +325,7 @@ export interface FileRoutesByFullPath {
   '/$locale/dealerships/': typeof LocalePublicDealershipsIndexRoute
   '/$locale/mechanics/': typeof LocalePublicMechanicsIndexRoute
   '/$locale/workshops/': typeof LocalePublicWorkshopsIndexRoute
+  '/$locale/dealer/inventory/': typeof LocaleDealerInventoryIndexRoute
   '/$locale/vehicles/$type/$intent/{-$city}': typeof LocalePublicVehiclesTypeIntentChar123CityChar125Route
 }
 export interface FileRoutesByTo {
@@ -329,6 +344,7 @@ export interface FileRoutesByTo {
   '/$locale/search': typeof LocalePublicSearchRoute
   '/$locale/suspended': typeof LocalePublicSuspendedRoute
   '/$locale/terms': typeof LocalePublicTermsRoute
+  '/$locale/account/listings': typeof LocaleAccountListingsRoute
   '/$locale/auth/forgot': typeof LocaleAuthForgotRoute
   '/$locale/auth/reset': typeof LocaleAuthResetRoute
   '/$locale/onboarding/role': typeof LocaleOnboardingRoleRoute
@@ -348,6 +364,7 @@ export interface FileRoutesByTo {
   '/$locale/dealerships': typeof LocalePublicDealershipsIndexRoute
   '/$locale/mechanics': typeof LocalePublicMechanicsIndexRoute
   '/$locale/workshops': typeof LocalePublicWorkshopsIndexRoute
+  '/$locale/dealer/inventory': typeof LocaleDealerInventoryIndexRoute
   '/$locale/vehicles/$type/$intent/{-$city}': typeof LocalePublicVehiclesTypeIntentChar123CityChar125Route
 }
 export interface FileRoutesById {
@@ -373,6 +390,7 @@ export interface FileRoutesById {
   '/$locale/_public/search': typeof LocalePublicSearchRoute
   '/$locale/_public/suspended': typeof LocalePublicSuspendedRoute
   '/$locale/_public/terms': typeof LocalePublicTermsRoute
+  '/$locale/account/listings': typeof LocaleAccountListingsRoute
   '/$locale/auth/forgot': typeof LocaleAuthForgotRoute
   '/$locale/auth/reset': typeof LocaleAuthResetRoute
   '/$locale/onboarding/role': typeof LocaleOnboardingRoleRoute
@@ -393,6 +411,7 @@ export interface FileRoutesById {
   '/$locale/_public/dealerships/': typeof LocalePublicDealershipsIndexRoute
   '/$locale/_public/mechanics/': typeof LocalePublicMechanicsIndexRoute
   '/$locale/_public/workshops/': typeof LocalePublicWorkshopsIndexRoute
+  '/$locale/dealer/inventory/': typeof LocaleDealerInventoryIndexRoute
   '/$locale/_public/vehicles/$type/$intent/{-$city}': typeof LocalePublicVehiclesTypeIntentChar123CityChar125Route
 }
 export interface FileRouteTypes {
@@ -418,6 +437,7 @@ export interface FileRouteTypes {
     | '/$locale/search'
     | '/$locale/suspended'
     | '/$locale/terms'
+    | '/$locale/account/listings'
     | '/$locale/auth/forgot'
     | '/$locale/auth/reset'
     | '/$locale/onboarding/role'
@@ -438,6 +458,7 @@ export interface FileRouteTypes {
     | '/$locale/dealerships/'
     | '/$locale/mechanics/'
     | '/$locale/workshops/'
+    | '/$locale/dealer/inventory/'
     | '/$locale/vehicles/$type/$intent/{-$city}'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -456,6 +477,7 @@ export interface FileRouteTypes {
     | '/$locale/search'
     | '/$locale/suspended'
     | '/$locale/terms'
+    | '/$locale/account/listings'
     | '/$locale/auth/forgot'
     | '/$locale/auth/reset'
     | '/$locale/onboarding/role'
@@ -475,6 +497,7 @@ export interface FileRouteTypes {
     | '/$locale/dealerships'
     | '/$locale/mechanics'
     | '/$locale/workshops'
+    | '/$locale/dealer/inventory'
     | '/$locale/vehicles/$type/$intent/{-$city}'
   id:
     | '__root__'
@@ -499,6 +522,7 @@ export interface FileRouteTypes {
     | '/$locale/_public/search'
     | '/$locale/_public/suspended'
     | '/$locale/_public/terms'
+    | '/$locale/account/listings'
     | '/$locale/auth/forgot'
     | '/$locale/auth/reset'
     | '/$locale/onboarding/role'
@@ -519,6 +543,7 @@ export interface FileRouteTypes {
     | '/$locale/_public/dealerships/'
     | '/$locale/_public/mechanics/'
     | '/$locale/_public/workshops/'
+    | '/$locale/dealer/inventory/'
     | '/$locale/_public/vehicles/$type/$intent/{-$city}'
   fileRoutesById: FileRoutesById
 }
@@ -693,6 +718,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LocaleAccountIndexRouteImport
       parentRoute: typeof LocaleAccountRouteRoute
     }
+    '/$locale/account/listings': {
+      id: '/$locale/account/listings'
+      path: '/listings'
+      fullPath: '/$locale/account/listings'
+      preLoaderRoute: typeof LocaleAccountListingsRouteImport
+      parentRoute: typeof LocaleAccountRouteRoute
+    }
     '/$locale/admin/': {
       id: '/$locale/admin/'
       path: '/'
@@ -812,6 +844,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LocalePublicWorkshopsSlugRouteImport
       parentRoute: typeof LocalePublicRouteRoute
     }
+    '/$locale/dealer/inventory/': {
+      id: '/$locale/dealer/inventory/'
+      path: '/inventory'
+      fullPath: '/$locale/dealer/inventory/'
+      preLoaderRoute: typeof LocaleDealerInventoryIndexRouteImport
+      parentRoute: typeof LocaleDealerRouteRoute
+    }
     '/$locale/onboarding/$role/$step': {
       id: '/$locale/onboarding/$role/$step'
       path: '/onboarding/$role/$step'
@@ -878,10 +917,12 @@ const LocalePublicRouteRouteWithChildren =
   LocalePublicRouteRoute._addFileChildren(LocalePublicRouteRouteChildren)
 
 interface LocaleAccountRouteRouteChildren {
+  LocaleAccountListingsRoute: typeof LocaleAccountListingsRoute
   LocaleAccountIndexRoute: typeof LocaleAccountIndexRoute
 }
 
 const LocaleAccountRouteRouteChildren: LocaleAccountRouteRouteChildren = {
+  LocaleAccountListingsRoute: LocaleAccountListingsRoute,
   LocaleAccountIndexRoute: LocaleAccountIndexRoute,
 }
 
@@ -901,10 +942,12 @@ const LocaleAdminRouteRouteWithChildren =
 
 interface LocaleDealerRouteRouteChildren {
   LocaleDealerIndexRoute: typeof LocaleDealerIndexRoute
+  LocaleDealerInventoryIndexRoute: typeof LocaleDealerInventoryIndexRoute
 }
 
 const LocaleDealerRouteRouteChildren: LocaleDealerRouteRouteChildren = {
   LocaleDealerIndexRoute: LocaleDealerIndexRoute,
+  LocaleDealerInventoryIndexRoute: LocaleDealerInventoryIndexRoute,
 }
 
 const LocaleDealerRouteRouteWithChildren =

@@ -5,5 +5,7 @@
   "status.rented": "مؤجَّر",
   "status.pending": "قيد المراجعة",
   "status.rejected": "مرفوض",
-  "status.removed": "محذوف"
+  "status.removed": "محذوف",
+  "status.draft": "مسودة",
+  "status.approved": "معتمد"
 }

@@ -30,6 +30,13 @@ function readSession(key: string) {
     return null
   }
 }
+export function clearSessionDraft(key: string) {
+  try {
+    sessionStorage.removeItem(sessionKey(key))
+  } catch {
+    // Storage is blocked; there is nothing stored to remove.
+  }
+}
 function writeSession(key: string, draft: Stored) {
   try {
     sessionStorage.setItem(sessionKey(key), JSON.stringify(draft))
@@ -117,11 +124,7 @@ export function useWizardDraft({
   // After a successful publish: both copies of the draft go, and the form stops saving.
   const clear = () => {
     closed.current = true
-    try {
-      sessionStorage.removeItem(sessionKey(draftKey))
-    } catch {
-      // Storage is blocked; there is nothing stored to remove.
-    }
+    clearSessionDraft(draftKey)
     if (me) saveDraftOnExit(draftKey, {})
   }
 

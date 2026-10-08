@@ -42,6 +42,8 @@ import arOnboarding from "@/messages/ar/onboarding.json"
 import enOnboarding from "@/messages/en/onboarding.json"
 import arHome from "@/messages/ar/home.json"
 import enHome from "@/messages/en/home.json"
+import arManager from "@/messages/ar/manager.json"
+import enManager from "@/messages/en/manager.json"
 import arToast from "@/messages/ar/toast.json"
 import enToast from "@/messages/en/toast.json"
 import { useMockFetch } from "./mock-fetch"
@@ -84,6 +86,7 @@ export async function renderShell(
     dashboard: locale === "ar" ? arDashboard : enDashboard,
     billing: locale === "ar" ? arBilling : enBilling,
     toast: locale === "ar" ? arToast : enToast,
+    manager: locale === "ar" ? arManager : enManager,
     home: locale === "ar" ? arHome : enHome,
     onboarding: locale === "ar" ? arOnboarding : enOnboarding,
   })

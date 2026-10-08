@@ -28,17 +28,22 @@ const reviewOf = (id: string) => {
   return row
 }
 
+// The owner of the target may ask for hidden reviews too (`includeHidden`) and for those still without a reply (`needsReply`, hidden ones never need one). Everyone else gets the public list.
 route("GET", "/reviews", (c) => {
   const type = targetTypeSchema.safeParse(c.query.get("targetType"))
   const targetId = c.query.get("targetId")
   if (!type.success || !targetId)
     throw fail(422, "validation", { targetId: "validation.required" })
+  const isOwner = !!c.user && findBusiness(targetId)?.ownerId === c.user.id
+  const withHidden = isOwner && c.query.get("includeHidden") === "true"
+  const needsReply = c.query.get("needsReply") === "true"
   const rows = db.reviews
     .filter(
       (r) =>
         r.targetType === type.data &&
         r.targetId === targetId &&
-        r.status !== "hidden"
+        (withHidden || r.status !== "hidden") &&
+        (!needsReply || (!r.reply && r.status !== "hidden"))
     )
     .sort(byNewest)
   const { page, pageSize } = pageParams(c.query, 10)
@@ -117,6 +122,7 @@ route("POST", "/reviews/:id/reply", async (c) => {
   const row = reviewOf(c.params.id ?? "")
   if (findBusiness(row.targetId)?.ownerId !== user.id)
     throw fail(403, "forbidden")
+  if (row.status === "hidden") throw fail(409, "conflict")
   row.reply = {
     body: (await c.body(replyInputSchema)).body,
     createdAt: nowIso(),

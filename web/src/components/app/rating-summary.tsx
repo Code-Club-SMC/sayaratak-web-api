@@ -49,33 +49,34 @@ export function RatingSummary({
         {[5, 4, 3, 2, 1].map((stars) => {
           const n = histogram[stars - 1] ?? 0
           return (
-            <li
-              key={stars}
-              role="img"
-              aria-label={t("directory.histogram_row", {
-                count: stars,
-                reviews: n,
-              })}
-              className="flex items-center gap-2 text-caption"
-            >
-              <span aria-hidden="true" className="w-3 text-center num">
-                {stars}
-              </span>
-              <span
-                aria-hidden="true"
-                className="h-2 flex-1 overflow-hidden rounded-full bg-muted"
+            <li key={stars}>
+              <div
+                role="img"
+                aria-label={t("directory.histogram_row", {
+                  count: stars,
+                  reviews: n,
+                })}
+                className="flex items-center gap-2 text-caption"
               >
+                <span aria-hidden="true" className="w-3 text-center num">
+                  {stars}
+                </span>
                 <span
-                  className="block h-full rounded-full bg-primary"
-                  style={{ width: `${(n / count) * 100}%` }}
-                />
-              </span>
-              <span
-                aria-hidden="true"
-                className="w-8 text-end text-muted-foreground num"
-              >
-                {formatNumber(n, locale)}
-              </span>
+                  aria-hidden="true"
+                  className="h-2 flex-1 overflow-hidden rounded-full bg-muted"
+                >
+                  <span
+                    className="block h-full rounded-full bg-primary"
+                    style={{ width: `${(n / count) * 100}%` }}
+                  />
+                </span>
+                <span
+                  aria-hidden="true"
+                  className="w-8 text-end text-muted-foreground num"
+                >
+                  {formatNumber(n, locale)}
+                </span>
+              </div>
             </li>
           )
         })}

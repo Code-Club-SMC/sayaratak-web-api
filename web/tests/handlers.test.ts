@@ -4,6 +4,7 @@ import { z } from "zod"
 
 import { toListingInput } from "@/features/listings/wizard/to-listing-input"
 import { wizardDefaults } from "@/features/listings/wizard/wizard-defaults"
+import type { Review } from "@/schemas/review"
 import { db, resetDb } from "@/mocks/db"
 import { handleMock } from "@/mocks/router"
 
@@ -372,6 +373,113 @@ describe("reviews", () => {
       (await call("POST", "/reviews", { as: "u-omar", body })).body.code
     ).toBe("already_reviewed")
     expect((await call("POST", "/reviews", { body })).status).toBe(401)
+  })
+})
+
+describe("reviews, owner side", () => {
+  const owner = () =>
+    db.users.find((u) => u.role === "dealership" && u.onboardingDone)!
+  const biz = () => db.dealerships.find((d) => d.ownerId === owner().id)!
+  const row = (id: string, status: Review["status"], replied = false) => ({
+    id,
+    targetType: "dealership" as const,
+    targetId: biz().id,
+    authorId: "u-omar",
+    authorName: "Omar",
+    rating: 4,
+    body: "Good dealer, fair price",
+    createdAt: new Date().toISOString(),
+    status,
+    reply: replied
+      ? { body: "Thank you", createdAt: new Date().toISOString() }
+      : undefined,
+  })
+  const ids = async (query: string, as?: string) =>
+    (
+      (
+        await call(
+          "GET",
+          `/reviews?targetType=dealership&targetId=${biz().id}${query}`,
+          { as }
+        )
+      ).body.items as Review[]
+    )
+      .map((r) => r.id)
+      .filter((id) => id.startsWith("t-"))
+
+  it("hidden and unanswered reviews are for the owner to ask for, nobody else", async () => {
+    db.reviews.push(
+      row("t-visible", "visible"),
+      row("t-replied", "visible", true),
+      row("t-hidden", "hidden")
+    )
+    expect((await ids("&pageSize=100")).sort()).toEqual([
+      "t-replied",
+      "t-visible",
+    ])
+    expect((await ids("&pageSize=100&includeHidden=true")).sort()).toEqual([
+      "t-replied",
+      "t-visible",
+    ])
+    expect(
+      (await ids("&pageSize=100&includeHidden=true", owner().id)).sort()
+    ).toEqual(["t-hidden", "t-replied", "t-visible"])
+    expect(
+      await ids("&pageSize=100&includeHidden=true&needsReply=true", owner().id)
+    ).toEqual(["t-visible"])
+  })
+
+  it("a reply is saved and edited in place; a hidden review takes none", async () => {
+    db.reviews.push(row("t-a", "visible"), row("t-h", "hidden"))
+    const as = owner().id
+    expect(
+      (
+        await call("POST", "/reviews/t-a/reply", {
+          as,
+          body: { body: "First" },
+        })
+      ).status
+    ).toBe(200)
+    const edited = await call("POST", "/reviews/t-a/reply", {
+      as,
+      body: { body: "Second" },
+    })
+    expect(edited.body.reply.body).toBe("Second")
+    expect(
+      (await call("POST", "/reviews/t-h/reply", { as, body: { body: "No" } }))
+        .status
+    ).toBe(409)
+    expect(
+      (
+        await call("POST", "/reviews/t-a/reply", {
+          as: "u-omar",
+          body: { body: "Not mine" },
+        })
+      ).status
+    ).toBe(403)
+  })
+
+  it("a report keeps the review public and puts it in the admin Flagged list", async () => {
+    db.reviews.push(row("t-f", "visible"))
+    const as = owner().id
+    expect((await call("POST", "/reviews/t-f/flag", { as })).body.status).toBe(
+      "flagged"
+    )
+    expect(await ids("&pageSize=100")).toContain("t-f")
+    const admin = db.users.find((u) => u.role === "admin")!.id
+    const flagged = await call(
+      "GET",
+      "/admin/reviews?status=flagged&pageSize=100",
+      {
+        as: admin,
+      }
+    )
+    expect((flagged.body.items as Review[]).some((r) => r.id === "t-f")).toBe(
+      true
+    )
+    expect(
+      (await call("POST", "/reviews/t-f/flag", { as: "u-omar" })).status
+    ).toBe(403)
   })
 })
 

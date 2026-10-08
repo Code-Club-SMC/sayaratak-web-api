@@ -11,5 +11,7 @@
   "toast.tiktok_copied": "Link copied. Open TikTok and paste it in your post or message.",
   "toast.password_changed": "Password changed",
   "toast.status_updated": "Status updated",
-  "toast.draft_saved": "Draft saved"
+  "toast.draft_saved": "Draft saved",
+  "toast.reply_saved": "Reply saved",
+  "toast.review_reported": "Review reported"
 }

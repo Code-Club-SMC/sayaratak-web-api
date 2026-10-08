@@ -43,14 +43,17 @@ import { Route as LocaleAuthResetRouteImport } from './routes/$locale/auth/reset
 import { Route as LocaleDealerIndexRouteImport } from './routes/$locale/dealer/index'
 import { Route as LocaleDealerMessagesRouteImport } from './routes/$locale/dealer/messages'
 import { Route as LocaleDealerNotificationsRouteImport } from './routes/$locale/dealer/notifications'
+import { Route as LocaleDealerReviewsRouteImport } from './routes/$locale/dealer/reviews'
 import { Route as LocaleMechanicIndexRouteImport } from './routes/$locale/mechanic/index'
 import { Route as LocaleMechanicInquiriesRouteImport } from './routes/$locale/mechanic/inquiries'
 import { Route as LocaleMechanicNotificationsRouteImport } from './routes/$locale/mechanic/notifications'
+import { Route as LocaleMechanicReviewsRouteImport } from './routes/$locale/mechanic/reviews'
 import { Route as LocaleOnboardingIndexRouteImport } from './routes/$locale/onboarding/index'
 import { Route as LocaleOnboardingRoleRouteImport } from './routes/$locale/onboarding/role'
 import { Route as LocaleWorkshopIndexRouteImport } from './routes/$locale/workshop/index'
 import { Route as LocaleWorkshopInquiriesRouteImport } from './routes/$locale/workshop/inquiries'
 import { Route as LocaleWorkshopNotificationsRouteImport } from './routes/$locale/workshop/notifications'
+import { Route as LocaleWorkshopReviewsRouteImport } from './routes/$locale/workshop/reviews'
 import { Route as LocalePublicDealershipsIndexRouteImport } from './routes/$locale/_public/dealerships/index'
 import { Route as LocalePublicDealershipsSlugRouteImport } from './routes/$locale/_public/dealerships/$slug'
 import { Route as LocalePublicDevSharedRouteImport } from './routes/$locale/_public/dev.shared'
@@ -243,6 +246,11 @@ const LocaleDealerNotificationsRoute =
     path: '/notifications',
     getParentRoute: () => LocaleDealerRouteRoute,
   } as any)
+const LocaleDealerReviewsRoute = LocaleDealerReviewsRouteImport.update({
+  id: '/reviews',
+  path: '/reviews',
+  getParentRoute: () => LocaleDealerRouteRoute,
+} as any)
 const LocaleMechanicIndexRoute = LocaleMechanicIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -259,6 +267,11 @@ const LocaleMechanicNotificationsRoute =
     path: '/notifications',
     getParentRoute: () => LocaleMechanicRouteRoute,
   } as any)
+const LocaleMechanicReviewsRoute = LocaleMechanicReviewsRouteImport.update({
+  id: '/reviews',
+  path: '/reviews',
+  getParentRoute: () => LocaleMechanicRouteRoute,
+} as any)
 const LocaleOnboardingIndexRoute = LocaleOnboardingIndexRouteImport.update({
   id: '/onboarding/',
   path: '/onboarding/',
@@ -285,6 +298,11 @@ const LocaleWorkshopNotificationsRoute =
     path: '/notifications',
     getParentRoute: () => LocaleWorkshopRouteRoute,
   } as any)
+const LocaleWorkshopReviewsRoute = LocaleWorkshopReviewsRouteImport.update({
+  id: '/reviews',
+  path: '/reviews',
+  getParentRoute: () => LocaleWorkshopRouteRoute,
+} as any)
 const LocalePublicDealershipsIndexRoute =
   LocalePublicDealershipsIndexRouteImport.update({
     id: '/dealerships/',
@@ -427,11 +445,14 @@ export interface FileRoutesByFullPath {
   '/$locale/auth/reset': typeof LocaleAuthResetRoute
   '/$locale/dealer/messages': typeof LocaleDealerMessagesRoute
   '/$locale/dealer/notifications': typeof LocaleDealerNotificationsRoute
+  '/$locale/dealer/reviews': typeof LocaleDealerReviewsRoute
   '/$locale/mechanic/inquiries': typeof LocaleMechanicInquiriesRoute
   '/$locale/mechanic/notifications': typeof LocaleMechanicNotificationsRoute
+  '/$locale/mechanic/reviews': typeof LocaleMechanicReviewsRoute
   '/$locale/onboarding/role': typeof LocaleOnboardingRoleRoute
   '/$locale/workshop/inquiries': typeof LocaleWorkshopInquiriesRoute
   '/$locale/workshop/notifications': typeof LocaleWorkshopNotificationsRoute
+  '/$locale/workshop/reviews': typeof LocaleWorkshopReviewsRoute
   '/$locale/': typeof LocalePublicIndexRoute
   '/$locale/account/': typeof LocaleAccountIndexRoute
   '/$locale/admin/': typeof LocaleAdminIndexRoute
@@ -484,11 +505,14 @@ export interface FileRoutesByTo {
   '/$locale/auth/reset': typeof LocaleAuthResetRoute
   '/$locale/dealer/messages': typeof LocaleDealerMessagesRoute
   '/$locale/dealer/notifications': typeof LocaleDealerNotificationsRoute
+  '/$locale/dealer/reviews': typeof LocaleDealerReviewsRoute
   '/$locale/mechanic/inquiries': typeof LocaleMechanicInquiriesRoute
   '/$locale/mechanic/notifications': typeof LocaleMechanicNotificationsRoute
+  '/$locale/mechanic/reviews': typeof LocaleMechanicReviewsRoute
   '/$locale/onboarding/role': typeof LocaleOnboardingRoleRoute
   '/$locale/workshop/inquiries': typeof LocaleWorkshopInquiriesRoute
   '/$locale/workshop/notifications': typeof LocaleWorkshopNotificationsRoute
+  '/$locale/workshop/reviews': typeof LocaleWorkshopReviewsRoute
   '/$locale/account': typeof LocaleAccountIndexRoute
   '/$locale/admin': typeof LocaleAdminIndexRoute
   '/$locale/auth': typeof LocaleAuthIndexRoute
@@ -547,11 +571,14 @@ export interface FileRoutesById {
   '/$locale/auth/reset': typeof LocaleAuthResetRoute
   '/$locale/dealer/messages': typeof LocaleDealerMessagesRoute
   '/$locale/dealer/notifications': typeof LocaleDealerNotificationsRoute
+  '/$locale/dealer/reviews': typeof LocaleDealerReviewsRoute
   '/$locale/mechanic/inquiries': typeof LocaleMechanicInquiriesRoute
   '/$locale/mechanic/notifications': typeof LocaleMechanicNotificationsRoute
+  '/$locale/mechanic/reviews': typeof LocaleMechanicReviewsRoute
   '/$locale/onboarding/role': typeof LocaleOnboardingRoleRoute
   '/$locale/workshop/inquiries': typeof LocaleWorkshopInquiriesRoute
   '/$locale/workshop/notifications': typeof LocaleWorkshopNotificationsRoute
+  '/$locale/workshop/reviews': typeof LocaleWorkshopReviewsRoute
   '/$locale/_public/': typeof LocalePublicIndexRoute
   '/$locale/account/': typeof LocaleAccountIndexRoute
   '/$locale/admin/': typeof LocaleAdminIndexRoute
@@ -611,11 +638,14 @@ export interface FileRouteTypes {
     | '/$locale/auth/reset'
     | '/$locale/dealer/messages'
     | '/$locale/dealer/notifications'
+    | '/$locale/dealer/reviews'
     | '/$locale/mechanic/inquiries'
     | '/$locale/mechanic/notifications'
+    | '/$locale/mechanic/reviews'
     | '/$locale/onboarding/role'
     | '/$locale/workshop/inquiries'
     | '/$locale/workshop/notifications'
+    | '/$locale/workshop/reviews'
     | '/$locale/'
     | '/$locale/account/'
     | '/$locale/admin/'
@@ -668,11 +698,14 @@ export interface FileRouteTypes {
     | '/$locale/auth/reset'
     | '/$locale/dealer/messages'
     | '/$locale/dealer/notifications'
+    | '/$locale/dealer/reviews'
     | '/$locale/mechanic/inquiries'
     | '/$locale/mechanic/notifications'
+    | '/$locale/mechanic/reviews'
     | '/$locale/onboarding/role'
     | '/$locale/workshop/inquiries'
     | '/$locale/workshop/notifications'
+    | '/$locale/workshop/reviews'
     | '/$locale/account'
     | '/$locale/admin'
     | '/$locale/auth'
@@ -730,11 +763,14 @@ export interface FileRouteTypes {
     | '/$locale/auth/reset'
     | '/$locale/dealer/messages'
     | '/$locale/dealer/notifications'
+    | '/$locale/dealer/reviews'
     | '/$locale/mechanic/inquiries'
     | '/$locale/mechanic/notifications'
+    | '/$locale/mechanic/reviews'
     | '/$locale/onboarding/role'
     | '/$locale/workshop/inquiries'
     | '/$locale/workshop/notifications'
+    | '/$locale/workshop/reviews'
     | '/$locale/_public/'
     | '/$locale/account/'
     | '/$locale/admin/'
@@ -1012,6 +1048,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LocaleDealerNotificationsRouteImport
       parentRoute: typeof LocaleDealerRouteRoute
     }
+    '/$locale/dealer/reviews': {
+      id: '/$locale/dealer/reviews'
+      path: '/reviews'
+      fullPath: '/$locale/dealer/reviews'
+      preLoaderRoute: typeof LocaleDealerReviewsRouteImport
+      parentRoute: typeof LocaleDealerRouteRoute
+    }
     '/$locale/mechanic/': {
       id: '/$locale/mechanic/'
       path: '/'
@@ -1031,6 +1074,13 @@ declare module '@tanstack/react-router' {
       path: '/notifications'
       fullPath: '/$locale/mechanic/notifications'
       preLoaderRoute: typeof LocaleMechanicNotificationsRouteImport
+      parentRoute: typeof LocaleMechanicRouteRoute
+    }
+    '/$locale/mechanic/reviews': {
+      id: '/$locale/mechanic/reviews'
+      path: '/reviews'
+      fullPath: '/$locale/mechanic/reviews'
+      preLoaderRoute: typeof LocaleMechanicReviewsRouteImport
       parentRoute: typeof LocaleMechanicRouteRoute
     }
     '/$locale/onboarding/': {
@@ -1066,6 +1116,13 @@ declare module '@tanstack/react-router' {
       path: '/notifications'
       fullPath: '/$locale/workshop/notifications'
       preLoaderRoute: typeof LocaleWorkshopNotificationsRouteImport
+      parentRoute: typeof LocaleWorkshopRouteRoute
+    }
+    '/$locale/workshop/reviews': {
+      id: '/$locale/workshop/reviews'
+      path: '/reviews'
+      fullPath: '/$locale/workshop/reviews'
+      preLoaderRoute: typeof LocaleWorkshopReviewsRouteImport
       parentRoute: typeof LocaleWorkshopRouteRoute
     }
     '/$locale/_public/dealerships/': {
@@ -1289,6 +1346,7 @@ const LocaleAdminRouteRouteWithChildren =
 interface LocaleDealerRouteRouteChildren {
   LocaleDealerMessagesRoute: typeof LocaleDealerMessagesRoute
   LocaleDealerNotificationsRoute: typeof LocaleDealerNotificationsRoute
+  LocaleDealerReviewsRoute: typeof LocaleDealerReviewsRoute
   LocaleDealerIndexRoute: typeof LocaleDealerIndexRoute
   LocaleDealerBillingCheckoutRoute: typeof LocaleDealerBillingCheckoutRoute
   LocaleDealerBillingIndexRoute: typeof LocaleDealerBillingIndexRoute
@@ -1298,6 +1356,7 @@ interface LocaleDealerRouteRouteChildren {
 const LocaleDealerRouteRouteChildren: LocaleDealerRouteRouteChildren = {
   LocaleDealerMessagesRoute: LocaleDealerMessagesRoute,
   LocaleDealerNotificationsRoute: LocaleDealerNotificationsRoute,
+  LocaleDealerReviewsRoute: LocaleDealerReviewsRoute,
   LocaleDealerIndexRoute: LocaleDealerIndexRoute,
   LocaleDealerBillingCheckoutRoute: LocaleDealerBillingCheckoutRoute,
   LocaleDealerBillingIndexRoute: LocaleDealerBillingIndexRoute,
@@ -1310,6 +1369,7 @@ const LocaleDealerRouteRouteWithChildren =
 interface LocaleMechanicRouteRouteChildren {
   LocaleMechanicInquiriesRoute: typeof LocaleMechanicInquiriesRoute
   LocaleMechanicNotificationsRoute: typeof LocaleMechanicNotificationsRoute
+  LocaleMechanicReviewsRoute: typeof LocaleMechanicReviewsRoute
   LocaleMechanicIndexRoute: typeof LocaleMechanicIndexRoute
   LocaleMechanicBillingCheckoutRoute: typeof LocaleMechanicBillingCheckoutRoute
   LocaleMechanicBillingIndexRoute: typeof LocaleMechanicBillingIndexRoute
@@ -1318,6 +1378,7 @@ interface LocaleMechanicRouteRouteChildren {
 const LocaleMechanicRouteRouteChildren: LocaleMechanicRouteRouteChildren = {
   LocaleMechanicInquiriesRoute: LocaleMechanicInquiriesRoute,
   LocaleMechanicNotificationsRoute: LocaleMechanicNotificationsRoute,
+  LocaleMechanicReviewsRoute: LocaleMechanicReviewsRoute,
   LocaleMechanicIndexRoute: LocaleMechanicIndexRoute,
   LocaleMechanicBillingCheckoutRoute: LocaleMechanicBillingCheckoutRoute,
   LocaleMechanicBillingIndexRoute: LocaleMechanicBillingIndexRoute,
@@ -1329,6 +1390,7 @@ const LocaleMechanicRouteRouteWithChildren =
 interface LocaleWorkshopRouteRouteChildren {
   LocaleWorkshopInquiriesRoute: typeof LocaleWorkshopInquiriesRoute
   LocaleWorkshopNotificationsRoute: typeof LocaleWorkshopNotificationsRoute
+  LocaleWorkshopReviewsRoute: typeof LocaleWorkshopReviewsRoute
   LocaleWorkshopIndexRoute: typeof LocaleWorkshopIndexRoute
   LocaleWorkshopBillingCheckoutRoute: typeof LocaleWorkshopBillingCheckoutRoute
   LocaleWorkshopBillingIndexRoute: typeof LocaleWorkshopBillingIndexRoute
@@ -1337,6 +1399,7 @@ interface LocaleWorkshopRouteRouteChildren {
 const LocaleWorkshopRouteRouteChildren: LocaleWorkshopRouteRouteChildren = {
   LocaleWorkshopInquiriesRoute: LocaleWorkshopInquiriesRoute,
   LocaleWorkshopNotificationsRoute: LocaleWorkshopNotificationsRoute,
+  LocaleWorkshopReviewsRoute: LocaleWorkshopReviewsRoute,
   LocaleWorkshopIndexRoute: LocaleWorkshopIndexRoute,
   LocaleWorkshopBillingCheckoutRoute: LocaleWorkshopBillingCheckoutRoute,
   LocaleWorkshopBillingIndexRoute: LocaleWorkshopBillingIndexRoute,

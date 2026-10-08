@@ -71,3 +71,9 @@ export const useReplyToReview = () =>
       }),
     [keys.reviews.all]
   )
+export const useFlagReview = () =>
+  useApiMutation(
+    (id: string) =>
+      apiFetch(`/reviews/${id}/flag`, { method: "POST", schema: reviewSchema }),
+    [keys.reviews.all, keys.admin.all, keys.counts]
+  )

@@ -126,10 +126,14 @@ describe("public shell", () => {
     expect(
       screen.getByRole("link", { name: "Post a listing" }).getAttribute("href")
     ).toBe("/en/dealer/inventory/new")
-    const bell = await screen.findByRole("link", {
-      name: /Notifications, \d+ unread/,
-    })
-    expect(bell.getAttribute("href")).toBe("/en/dealer/notifications")
+    fireEvent.click(
+      await screen.findByRole("button", { name: /Notifications, \d+ unread/ })
+    )
+    expect(
+      (await screen.findByRole("link", { name: "See all" })).getAttribute(
+        "href"
+      )
+    ).toBe("/en/dealer/notifications")
   })
   it.each(["workshop", "mechanic", "admin"] as const)(
     "hides posting for %s",

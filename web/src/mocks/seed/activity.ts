@@ -11,7 +11,17 @@ import type {
   ThreadRow,
   UserRow,
 } from "../types"
-import { DAY, HOUR, ago, both, chance, int, pick, ratingFrom } from "./util"
+import {
+  DAY,
+  HOUR,
+  ago,
+  both,
+  chance,
+  int,
+  notificationHref,
+  pick,
+  ratingFrom,
+} from "./util"
 import {
   buyerLines,
   customerLines,
@@ -156,82 +166,112 @@ export function seedThreads(
   return { threads, messages }
 }
 
-const notes: [
-  NotificationRow["type"],
-  [string, string],
-  [string, string],
-  string,
-][] = [
-  [
-    "message",
-    ["رسالة جديدة", "New message"],
-    [
+type Role = UserRow["role"]
+const allRoles: Role[] = ["user", "dealership", "workshop", "mechanic", "admin"]
+const sellerRoles: Role[] = ["user", "dealership"]
+const businessRoles: Role[] = ["dealership", "workshop", "mechanic"]
+// What each kind of person can receive, so no demo account is told about a page it does not have. Hrefs are the mock's role-free form (see `notificationHref`).
+const notes: {
+  type: NotificationRow["type"]
+  title: [string, string]
+  body: [string, string]
+  href: string
+  roles: Role[]
+}[] = [
+  {
+    type: "message",
+    title: ["رسالة جديدة", "New message"],
+    body: [
       "لديك رسالة جديدة في صندوق الوارد.",
       "You have a new message in your inbox.",
     ],
-    "/messages",
-  ],
-  [
-    "listing_approved",
-    ["تمت الموافقة على إعلانك", "Your listing was approved"],
-    ["إعلانك الآن ظاهر للجميع.", "Your listing is now visible to everyone."],
-    "/account/listings",
-  ],
-  [
-    "listing_rejected",
-    ["تم رفض إعلانك", "Your listing was rejected"],
-    ["راجع السبب وعدّل الإعلان.", "Check the reason and edit the listing."],
-    "/account/listings",
-  ],
-  [
-    "saved_search_match",
-    ["إعلان جديد يطابق بحثك", "A new listing matches your search"],
-    [
+    href: "/messages",
+    roles: ["user", ...businessRoles],
+  },
+  {
+    type: "listing_approved",
+    title: ["تمت الموافقة على إعلانك", "Your listing was approved"],
+    body: [
+      "إعلانك الآن ظاهر للجميع.",
+      "Your listing is now visible to everyone.",
+    ],
+    href: "/listings",
+    roles: sellerRoles,
+  },
+  {
+    type: "listing_rejected",
+    title: ["تم رفض إعلانك", "Your listing was rejected"],
+    body: [
+      "راجع السبب وعدّل الإعلان.",
+      "Check the reason and edit the listing.",
+    ],
+    href: "/listings",
+    roles: sellerRoles,
+  },
+  {
+    type: "saved_search_match",
+    title: ["إعلان جديد يطابق بحثك", "A new listing matches your search"],
+    body: [
       "وصل إعلان جديد يطابق بحثك المحفوظ.",
       "A new listing matches your saved search.",
     ],
-    "/account/saved",
-  ],
-  [
-    "review_new",
-    ["تقييم جديد", "New review"],
-    ["حصلت على تقييم جديد.", "You received a new review."],
-    "/account/reviews",
-  ],
-  [
-    "payment_approved",
-    ["تمت الموافقة على الدفع", "Payment approved"],
-    ["تم تفعيل خدمتك.", "Your service is now active."],
-    "/account/billing",
-  ],
-  [
-    "subscription_expiring",
-    ["اشتراكك على وشك الانتهاء", "Your plan is about to end"],
-    ["جدد اشتراكك لتستمر في النشر.", "Renew to keep posting."],
-    "/account/billing",
-  ],
-  [
-    "broadcast",
-    ["إعلان من الإدارة", "Announcement"],
-    ["نرحب بكم في سيارتك.", "Welcome to Sayaratak."],
-    "",
-  ],
+    href: "/saved-searches",
+    roles: ["user"],
+  },
+  {
+    type: "review_new",
+    title: ["تقييم جديد", "New review"],
+    body: ["حصلت على تقييم جديد.", "You received a new review."],
+    href: "/reviews",
+    roles: businessRoles,
+  },
+  {
+    type: "payment_approved",
+    title: ["تمت الموافقة على الدفع", "Payment approved"],
+    body: ["تم تفعيل خدمتك.", "Your service is now active."],
+    href: "/billing",
+    roles: [...sellerRoles, "workshop", "mechanic"],
+  },
+  {
+    type: "subscription_expiring",
+    title: ["اشتراكك على وشك الانتهاء", "Your plan is about to end"],
+    body: ["جدد اشتراكك لتستمر في النشر.", "Renew to keep posting."],
+    href: "/billing",
+    roles: [...sellerRoles, "workshop", "mechanic"],
+  },
+  {
+    type: "verification_result",
+    title: ["تم توثيق حسابك", "Your account is verified"],
+    body: [
+      "ظهرت علامة التوثيق على ملفك.",
+      "The verified badge is now on your profile.",
+    ],
+    href: "/verification",
+    roles: businessRoles,
+  },
+  {
+    type: "broadcast",
+    title: ["إعلان من الإدارة", "Announcement"],
+    body: ["نرحب بكم في سيارتك.", "Welcome to Sayaratak."],
+    href: "",
+    roles: allRoles,
+  },
 ]
-export function seedNotifications(demoIds: string[]) {
+export function seedNotifications(people: Pick<UserRow, "id" | "role">[]) {
   const rows: NotificationRow[] = []
-  for (const userId of demoIds) {
-    for (let i = 0; i < 12; i++) {
-      const note = notes[i % notes.length]
+  for (const { id: userId, role } of people) {
+    const mine = notes.filter((n) => n.roles.includes(role))
+    for (let i = 0; i < (role === "admin" ? 3 : 12); i++) {
+      const note = mine[i % mine.length]
       if (!note) continue
-      const [type, title, body, href] = note
       const createdAt = ago((i + 1) * int(2 * HOUR, 20 * HOUR))
       rows.push({
         id: `n-${rows.length + 1}`,
         userId,
-        type,
-        title: { ar: title[0], en: title[1] },
-        body: { ar: body[0], en: body[1] },
-        href: href || undefined,
+        type: note.type,
+        title: { ar: note.title[0], en: note.title[1] },
+        body: { ar: note.body[0], en: note.body[1] },
+        href: note.href ? notificationHref(role, note.href) : undefined,
         createdAt,
         readAt: i > 3 ? createdAt : undefined,
       })

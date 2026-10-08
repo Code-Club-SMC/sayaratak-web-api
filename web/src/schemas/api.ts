@@ -12,12 +12,14 @@ export const eventTypeSchema = z.enum([
 ])
 export type EventType = z.infer<typeof eventTypeSchema>
 
+// One switch per kind of notification; the mock maps each type to one of them (8.4).
 export const notificationPrefsSchema = z.object({
   messages: z.boolean(),
-  listings: z.boolean(),
-  savedSearches: z.boolean(),
+  updates: z.boolean(),
+  savedSearchMatches: z.boolean(),
   reviews: z.boolean(),
-  marketing: z.boolean(),
+  billing: z.boolean(),
+  announcements: z.boolean(),
 })
 export type NotificationPrefs = z.infer<typeof notificationPrefsSchema>
 

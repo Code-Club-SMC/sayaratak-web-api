@@ -873,6 +873,71 @@ describe("admin", () => {
       rejectionReason: "Blurry photos",
     })
   })
+  it("a notification is skipped when its switch is off, and links to the recipient's own page", async () => {
+    const created = await call("POST", "/listings", { as: "u-1", body: car })
+    const id = created.body.id
+    const mine = (userId: string, type: string) =>
+      db.notifications.filter((n) => n.userId === userId && n.type === type)
+    const patched = await call("PATCH", "/me/notification-prefs", {
+      as: "u-1",
+      body: { updates: false },
+    })
+    expect(patched.body).toMatchObject({ updates: false, messages: true })
+    await call("POST", `/admin/listings/${id}/approve`, { as: "u-admin" })
+    expect(mine("u-1", "listing_approved")).toHaveLength(0)
+    await call("PATCH", "/me/notification-prefs", {
+      as: "u-1",
+      body: { updates: true },
+    })
+    await call("POST", `/admin/listings/${id}/reject`, {
+      as: "u-admin",
+      body: { reason: "Blurry photos" },
+    })
+    // The buyer's page is "listings"; the dealer's is "inventory".
+    expect(mine("u-1", "listing_rejected")[0]?.href).toBe("/account/listings")
+    const dealerListing = db.listings.find(
+      (l) => l.ownerUserId === "u-dealer" && l.moderation === "approved"
+    )!
+    await call("POST", `/admin/listings/${dealerListing.id}/reject`, {
+      as: "u-admin",
+      body: { reason: "Blurry photos" },
+    })
+    expect(mine("u-dealer", "listing_rejected")[0]?.href).toBe(
+      "/dealer/inventory"
+    )
+  })
+  it("a broadcast respects announcements; new messages link to the thread in the role's inbox", async () => {
+    const owner = db.users.find(
+      (u) =>
+        (u.role === "workshop" || u.role === "mechanic") &&
+        db.threads.some((t) => t.participantIds.includes(u.id))
+    )!
+    const thread = db.threads.find((t) => t.participantIds.includes(owner.id))!
+    await call("PATCH", "/me/notification-prefs", {
+      as: owner.id,
+      body: { announcements: false },
+    })
+    await call("POST", "/admin/broadcasts", {
+      as: "u-admin",
+      body: { audience: owner.role, title: "Hi all", body: "Welcome" },
+    })
+    expect(
+      db.notifications.filter(
+        (n) => n.userId === owner.id && n.title.en === "Hi all"
+      )
+    ).toHaveLength(0)
+    const other = thread.participantIds.find((p) => p !== owner.id)!
+    await call("POST", `/threads/${thread.id}/messages`, {
+      as: other,
+      body: { body: "Hello" },
+    })
+    const inbox = owner.role === "workshop" ? "workshop" : "mechanic"
+    expect(
+      db.notifications.find(
+        (n) => n.userId === owner.id && n.type === "message"
+      )?.href
+    ).toBe(`/${inbox}/inquiries?thread=${thread.id}`)
+  })
   it("search returns at most five hits per group; stats and counts add the admin extras", async () => {
     const s = await call("GET", "/admin/search?q=a", { as: "u-admin" })
     for (const group of Object.values(

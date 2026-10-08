@@ -9,6 +9,7 @@ import {
   ago,
   bilingualName,
   chance,
+  defaultPrefs,
   int,
   jitter,
   joinPairs,
@@ -28,13 +29,6 @@ import {
 } from "./words"
 import { faker } from "@faker-js/faker"
 
-const prefs = {
-  messages: true,
-  listings: true,
-  savedSearches: true,
-  reviews: true,
-  marketing: false,
-}
 const interests: Interest[] = [
   "cars",
   "trucks",
@@ -79,7 +73,7 @@ const user = (b: Base): UserRow => ({
   onboardingDone: true,
   interests: [],
   locale: "ar",
-  prefs: { ...prefs },
+  prefs: { ...defaultPrefs },
   password: DEMO_PASSWORD,
   createdAt: ago(int(30, 600) * DAY),
   ...b,

@@ -200,7 +200,7 @@ export function approveListing(row: ListingRow) {
     "listing_approved",
     { ar: "تمت الموافقة على إعلانك", en: "Your listing was approved" },
     { ar: row.title, en: row.title },
-    "/account/listings"
+    "/listings"
   )
   for (const s of db.savedSearches) {
     if (!s.alerts || s.userId === row.ownerUserId || !matches(row, s.params))
@@ -224,7 +224,7 @@ function rejectListing(row: ListingRow, reason: string) {
     "listing_rejected",
     { ar: "تم رفض إعلانك", en: "Your listing was rejected" },
     { ar: reason, en: reason },
-    "/account/listings"
+    "/listings"
   )
 }
 const apply = (

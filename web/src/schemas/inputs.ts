@@ -1,5 +1,6 @@
 import { z } from "zod"
 
+import { notificationPrefsSchema } from "./api"
 import {
   emailSchema,
   geoSchema,
@@ -79,15 +80,7 @@ export const onboardingInputSchema = z.object({
   role: roleSchema.exclude(["admin"]),
   payload: z.record(z.string(), z.unknown()).default({}),
 })
-export const notificationPrefsInputSchema = z
-  .object({
-    messages: z.boolean(),
-    listings: z.boolean(),
-    savedSearches: z.boolean(),
-    reviews: z.boolean(),
-    marketing: z.boolean(),
-  })
-  .partial()
+export const notificationPrefsInputSchema = notificationPrefsSchema.partial()
 
 const listingFields = z.object({
   kind: z.enum(["vehicle", "part"]),

@@ -91,7 +91,9 @@ export function buildSeed({ empty = false }: { empty?: boolean } = {}): Db {
     savedSearches,
     threads,
     messages,
-    notifications: empty ? [] : seedNotifications(demoIds.slice(0, 5)),
+    notifications: empty
+      ? []
+      : seedNotifications(users.filter((u) => demoIds.includes(u.id))),
     plans: structuredClone(plans),
     subscriptions: seedSubscriptions(),
     payments: empty ? [] : seedPayments(users, listings, promotions),

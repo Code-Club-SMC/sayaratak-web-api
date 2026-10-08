@@ -20,7 +20,7 @@ import {
   resetInputSchema,
 } from "@/schemas/inputs"
 import { userSchema } from "@/schemas/user"
-import { slugify } from "@/mocks/seed/util"
+import { defaultPrefs, slugify } from "@/mocks/seed/util"
 
 import { db, find, insert, newId, remove } from "../db"
 import { fail, needUser, route, withSession } from "../http"
@@ -94,13 +94,7 @@ route("POST", "/auth/register", async (c) => {
     onboardingDone: false,
     interests: [],
     locale: "ar",
-    prefs: {
-      messages: true,
-      listings: true,
-      savedSearches: true,
-      reviews: true,
-      marketing: false,
-    },
+    prefs: { ...defaultPrefs },
   }
   insert(db.users, user)
   return withSession(user.id, publicUser(user), 201)
@@ -126,13 +120,7 @@ route("POST", "/auth/oauth/:provider", async (c) => {
       onboardingDone: false,
       interests: [],
       locale: "ar",
-      prefs: {
-        messages: true,
-        listings: true,
-        savedSearches: true,
-        reviews: true,
-        marketing: false,
-      },
+      prefs: { ...defaultPrefs },
     }
     insert(db.users, user)
   }

@@ -59,10 +59,7 @@ function post(row: ThreadRow, sender: UserRow, body: string) {
         ar: `رسالة من ${sender.fullName}`,
         en: `Message from ${sender.fullName}`,
       },
-      // Dashboard-relative; workshops and mechanics call their inbox "inquiries".
-      ["workshop", "mechanic"].includes(find(db.users, id)?.role ?? "")
-        ? "/inquiries"
-        : "/messages"
+      `/messages?thread=${row.id}`
     )
   }
   return messageSchema.parse(message)

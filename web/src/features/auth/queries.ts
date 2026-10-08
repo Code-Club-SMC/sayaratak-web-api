@@ -1,5 +1,10 @@
-import { queryOptions, useQueryClient } from "@tanstack/react-query"
+import {
+  queryOptions,
+  useMutation,
+  useQueryClient,
+} from "@tanstack/react-query"
 
+import type { ApiError } from "@/lib/api/client"
 import { apiFetch } from "@/lib/api/client"
 import { useApiMutation } from "@/lib/api/mutation"
 import { keys, publicKeyRoots } from "@/lib/api/query-keys"
@@ -144,18 +149,30 @@ export const useChangePassword = () =>
   useApiMutation((body: z.input<typeof passwordInputSchema>) =>
     post("/me/password", okSchema)(body)
   )
+// Each switch saves at once: the cache changes first and goes back when the call fails.
 export function useUpdateNotificationPrefs() {
   const qc = useQueryClient()
-  return useApiMutation((body: Partial<NotificationPrefs>) =>
-    apiFetch("/me/notification-prefs", {
-      method: "PATCH",
-      body,
-      schema: notificationPrefsSchema,
-    }).then((p) => {
-      qc.setQueryData(keys.prefs, p)
-      return p
-    })
-  )
+  return useMutation<
+    NotificationPrefs,
+    ApiError,
+    Partial<NotificationPrefs>,
+    NotificationPrefs | undefined
+  >({
+    mutationFn: (body) =>
+      apiFetch("/me/notification-prefs", {
+        method: "PATCH",
+        body,
+        schema: notificationPrefsSchema,
+      }),
+    onMutate: async (body) => {
+      await qc.cancelQueries({ queryKey: keys.prefs })
+      const before = qc.getQueryData<NotificationPrefs>(keys.prefs)
+      if (before) qc.setQueryData(keys.prefs, { ...before, ...body })
+      return before
+    },
+    onError: (_error, _body, before) => qc.setQueryData(keys.prefs, before),
+    onSettled: () => qc.invalidateQueries({ queryKey: keys.prefs }),
+  })
 }
 // For a page that is closing or reloading: keepalive lets the request outlive it, and nobody is left to read a failure.
 export const saveDraftOnExit = (key: string, data: Record<string, unknown>) =>

@@ -83,7 +83,10 @@ describe("seed counts (A9)", () => {
       "u-mechanic",
       "u-admin",
     ]) {
-      expect(db.notifications.filter((n) => n.userId === id)).toHaveLength(12)
+      // The admin only receives announcements, so the seed gives three.
+      expect(db.notifications.filter((n) => n.userId === id)).toHaveLength(
+        id === "u-admin" ? 3 : 12
+      )
     }
     expect(
       db.users.find((u) => u.email === "new@demo.sy")?.onboardingDone

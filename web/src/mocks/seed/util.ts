@@ -1,8 +1,43 @@
 import { faker } from "@faker-js/faker"
 
+import { dashboardPath, messagesPath } from "@/lib/navigation"
+import type { NotificationPrefs } from "@/schemas/api"
 import type { Bilingual } from "@/schemas/fields"
+import type { User } from "@/schemas/user"
 
 import { nameEn } from "./words"
+
+// Every switch on, for new accounts and the seeded people.
+export const defaultPrefs: NotificationPrefs = {
+  messages: true,
+  updates: true,
+  savedSearchMatches: true,
+  reviews: true,
+  billing: true,
+  announcements: true,
+}
+// Notifications carry a path with no language. The mock writes dashboard pages without the role's base ("/billing") and the two that differ by role ("/messages", "/listings"); this turns them into the recipient's real path. Public paths pass through.
+const underBase = [
+  "/billing",
+  "/reviews",
+  "/verification",
+  "/saved-searches",
+  "/notifications",
+]
+export function notificationHref(role: User["role"], href: string) {
+  const [path = "", query] = href.split("?")
+  const to =
+    path === "/messages"
+      ? messagesPath(role)
+      : path === "/listings"
+        ? role === "dealership"
+          ? "/dealer/inventory"
+          : "/account/listings"
+        : underBase.includes(path)
+          ? dashboardPath(role) + path
+          : path
+  return query ? `${to}?${query}` : to
+}
 
 export const HOUR = 3_600_000
 export const DAY = 24 * HOUR

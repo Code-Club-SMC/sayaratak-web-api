@@ -34,18 +34,23 @@ import { Route as LocalePublicTermsRouteImport } from './routes/$locale/_public/
 import { Route as LocaleAccountIndexRouteImport } from './routes/$locale/account/index'
 import { Route as LocaleAccountListingsRouteImport } from './routes/$locale/account/listings'
 import { Route as LocaleAccountMessagesRouteImport } from './routes/$locale/account/messages'
+import { Route as LocaleAccountNotificationsRouteImport } from './routes/$locale/account/notifications'
 import { Route as LocaleAdminIndexRouteImport } from './routes/$locale/admin/index'
+import { Route as LocaleAdminNotificationsRouteImport } from './routes/$locale/admin/notifications'
 import { Route as LocaleAuthIndexRouteImport } from './routes/$locale/auth/index'
 import { Route as LocaleAuthForgotRouteImport } from './routes/$locale/auth/forgot'
 import { Route as LocaleAuthResetRouteImport } from './routes/$locale/auth/reset'
 import { Route as LocaleDealerIndexRouteImport } from './routes/$locale/dealer/index'
 import { Route as LocaleDealerMessagesRouteImport } from './routes/$locale/dealer/messages'
+import { Route as LocaleDealerNotificationsRouteImport } from './routes/$locale/dealer/notifications'
 import { Route as LocaleMechanicIndexRouteImport } from './routes/$locale/mechanic/index'
 import { Route as LocaleMechanicInquiriesRouteImport } from './routes/$locale/mechanic/inquiries'
+import { Route as LocaleMechanicNotificationsRouteImport } from './routes/$locale/mechanic/notifications'
 import { Route as LocaleOnboardingIndexRouteImport } from './routes/$locale/onboarding/index'
 import { Route as LocaleOnboardingRoleRouteImport } from './routes/$locale/onboarding/role'
 import { Route as LocaleWorkshopIndexRouteImport } from './routes/$locale/workshop/index'
 import { Route as LocaleWorkshopInquiriesRouteImport } from './routes/$locale/workshop/inquiries'
+import { Route as LocaleWorkshopNotificationsRouteImport } from './routes/$locale/workshop/notifications'
 import { Route as LocalePublicDealershipsIndexRouteImport } from './routes/$locale/_public/dealerships/index'
 import { Route as LocalePublicDealershipsSlugRouteImport } from './routes/$locale/_public/dealerships/$slug'
 import { Route as LocalePublicDevSharedRouteImport } from './routes/$locale/_public/dev.shared'
@@ -182,11 +187,23 @@ const LocaleAccountMessagesRoute = LocaleAccountMessagesRouteImport.update({
   path: '/messages',
   getParentRoute: () => LocaleAccountRouteRoute,
 } as any)
+const LocaleAccountNotificationsRoute =
+  LocaleAccountNotificationsRouteImport.update({
+    id: '/notifications',
+    path: '/notifications',
+    getParentRoute: () => LocaleAccountRouteRoute,
+  } as any)
 const LocaleAdminIndexRoute = LocaleAdminIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => LocaleAdminRouteRoute,
 } as any)
+const LocaleAdminNotificationsRoute =
+  LocaleAdminNotificationsRouteImport.update({
+    id: '/notifications',
+    path: '/notifications',
+    getParentRoute: () => LocaleAdminRouteRoute,
+  } as any)
 const LocaleAuthIndexRoute = LocaleAuthIndexRouteImport.update({
   id: '/auth/',
   path: '/auth/',
@@ -212,6 +229,12 @@ const LocaleDealerMessagesRoute = LocaleDealerMessagesRouteImport.update({
   path: '/messages',
   getParentRoute: () => LocaleDealerRouteRoute,
 } as any)
+const LocaleDealerNotificationsRoute =
+  LocaleDealerNotificationsRouteImport.update({
+    id: '/notifications',
+    path: '/notifications',
+    getParentRoute: () => LocaleDealerRouteRoute,
+  } as any)
 const LocaleMechanicIndexRoute = LocaleMechanicIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -222,6 +245,12 @@ const LocaleMechanicInquiriesRoute = LocaleMechanicInquiriesRouteImport.update({
   path: '/inquiries',
   getParentRoute: () => LocaleMechanicRouteRoute,
 } as any)
+const LocaleMechanicNotificationsRoute =
+  LocaleMechanicNotificationsRouteImport.update({
+    id: '/notifications',
+    path: '/notifications',
+    getParentRoute: () => LocaleMechanicRouteRoute,
+  } as any)
 const LocaleOnboardingIndexRoute = LocaleOnboardingIndexRouteImport.update({
   id: '/onboarding/',
   path: '/onboarding/',
@@ -242,6 +271,12 @@ const LocaleWorkshopInquiriesRoute = LocaleWorkshopInquiriesRouteImport.update({
   path: '/inquiries',
   getParentRoute: () => LocaleWorkshopRouteRoute,
 } as any)
+const LocaleWorkshopNotificationsRoute =
+  LocaleWorkshopNotificationsRouteImport.update({
+    id: '/notifications',
+    path: '/notifications',
+    getParentRoute: () => LocaleWorkshopRouteRoute,
+  } as any)
 const LocalePublicDealershipsIndexRoute =
   LocalePublicDealershipsIndexRouteImport.update({
     id: '/dealerships/',
@@ -330,12 +365,17 @@ export interface FileRoutesByFullPath {
   '/$locale/terms': typeof LocalePublicTermsRoute
   '/$locale/account/listings': typeof LocaleAccountListingsRoute
   '/$locale/account/messages': typeof LocaleAccountMessagesRoute
+  '/$locale/account/notifications': typeof LocaleAccountNotificationsRoute
+  '/$locale/admin/notifications': typeof LocaleAdminNotificationsRoute
   '/$locale/auth/forgot': typeof LocaleAuthForgotRoute
   '/$locale/auth/reset': typeof LocaleAuthResetRoute
   '/$locale/dealer/messages': typeof LocaleDealerMessagesRoute
+  '/$locale/dealer/notifications': typeof LocaleDealerNotificationsRoute
   '/$locale/mechanic/inquiries': typeof LocaleMechanicInquiriesRoute
+  '/$locale/mechanic/notifications': typeof LocaleMechanicNotificationsRoute
   '/$locale/onboarding/role': typeof LocaleOnboardingRoleRoute
   '/$locale/workshop/inquiries': typeof LocaleWorkshopInquiriesRoute
+  '/$locale/workshop/notifications': typeof LocaleWorkshopNotificationsRoute
   '/$locale/': typeof LocalePublicIndexRoute
   '/$locale/account/': typeof LocaleAccountIndexRoute
   '/$locale/admin/': typeof LocaleAdminIndexRoute
@@ -374,12 +414,17 @@ export interface FileRoutesByTo {
   '/$locale/terms': typeof LocalePublicTermsRoute
   '/$locale/account/listings': typeof LocaleAccountListingsRoute
   '/$locale/account/messages': typeof LocaleAccountMessagesRoute
+  '/$locale/account/notifications': typeof LocaleAccountNotificationsRoute
+  '/$locale/admin/notifications': typeof LocaleAdminNotificationsRoute
   '/$locale/auth/forgot': typeof LocaleAuthForgotRoute
   '/$locale/auth/reset': typeof LocaleAuthResetRoute
   '/$locale/dealer/messages': typeof LocaleDealerMessagesRoute
+  '/$locale/dealer/notifications': typeof LocaleDealerNotificationsRoute
   '/$locale/mechanic/inquiries': typeof LocaleMechanicInquiriesRoute
+  '/$locale/mechanic/notifications': typeof LocaleMechanicNotificationsRoute
   '/$locale/onboarding/role': typeof LocaleOnboardingRoleRoute
   '/$locale/workshop/inquiries': typeof LocaleWorkshopInquiriesRoute
+  '/$locale/workshop/notifications': typeof LocaleWorkshopNotificationsRoute
   '/$locale/account': typeof LocaleAccountIndexRoute
   '/$locale/admin': typeof LocaleAdminIndexRoute
   '/$locale/auth': typeof LocaleAuthIndexRoute
@@ -424,12 +469,17 @@ export interface FileRoutesById {
   '/$locale/_public/terms': typeof LocalePublicTermsRoute
   '/$locale/account/listings': typeof LocaleAccountListingsRoute
   '/$locale/account/messages': typeof LocaleAccountMessagesRoute
+  '/$locale/account/notifications': typeof LocaleAccountNotificationsRoute
+  '/$locale/admin/notifications': typeof LocaleAdminNotificationsRoute
   '/$locale/auth/forgot': typeof LocaleAuthForgotRoute
   '/$locale/auth/reset': typeof LocaleAuthResetRoute
   '/$locale/dealer/messages': typeof LocaleDealerMessagesRoute
+  '/$locale/dealer/notifications': typeof LocaleDealerNotificationsRoute
   '/$locale/mechanic/inquiries': typeof LocaleMechanicInquiriesRoute
+  '/$locale/mechanic/notifications': typeof LocaleMechanicNotificationsRoute
   '/$locale/onboarding/role': typeof LocaleOnboardingRoleRoute
   '/$locale/workshop/inquiries': typeof LocaleWorkshopInquiriesRoute
+  '/$locale/workshop/notifications': typeof LocaleWorkshopNotificationsRoute
   '/$locale/_public/': typeof LocalePublicIndexRoute
   '/$locale/account/': typeof LocaleAccountIndexRoute
   '/$locale/admin/': typeof LocaleAdminIndexRoute
@@ -475,12 +525,17 @@ export interface FileRouteTypes {
     | '/$locale/terms'
     | '/$locale/account/listings'
     | '/$locale/account/messages'
+    | '/$locale/account/notifications'
+    | '/$locale/admin/notifications'
     | '/$locale/auth/forgot'
     | '/$locale/auth/reset'
     | '/$locale/dealer/messages'
+    | '/$locale/dealer/notifications'
     | '/$locale/mechanic/inquiries'
+    | '/$locale/mechanic/notifications'
     | '/$locale/onboarding/role'
     | '/$locale/workshop/inquiries'
+    | '/$locale/workshop/notifications'
     | '/$locale/'
     | '/$locale/account/'
     | '/$locale/admin/'
@@ -519,12 +574,17 @@ export interface FileRouteTypes {
     | '/$locale/terms'
     | '/$locale/account/listings'
     | '/$locale/account/messages'
+    | '/$locale/account/notifications'
+    | '/$locale/admin/notifications'
     | '/$locale/auth/forgot'
     | '/$locale/auth/reset'
     | '/$locale/dealer/messages'
+    | '/$locale/dealer/notifications'
     | '/$locale/mechanic/inquiries'
+    | '/$locale/mechanic/notifications'
     | '/$locale/onboarding/role'
     | '/$locale/workshop/inquiries'
+    | '/$locale/workshop/notifications'
     | '/$locale/account'
     | '/$locale/admin'
     | '/$locale/auth'
@@ -568,12 +628,17 @@ export interface FileRouteTypes {
     | '/$locale/_public/terms'
     | '/$locale/account/listings'
     | '/$locale/account/messages'
+    | '/$locale/account/notifications'
+    | '/$locale/admin/notifications'
     | '/$locale/auth/forgot'
     | '/$locale/auth/reset'
     | '/$locale/dealer/messages'
+    | '/$locale/dealer/notifications'
     | '/$locale/mechanic/inquiries'
+    | '/$locale/mechanic/notifications'
     | '/$locale/onboarding/role'
     | '/$locale/workshop/inquiries'
+    | '/$locale/workshop/notifications'
     | '/$locale/_public/'
     | '/$locale/account/'
     | '/$locale/admin/'
@@ -780,11 +845,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LocaleAccountMessagesRouteImport
       parentRoute: typeof LocaleAccountRouteRoute
     }
+    '/$locale/account/notifications': {
+      id: '/$locale/account/notifications'
+      path: '/notifications'
+      fullPath: '/$locale/account/notifications'
+      preLoaderRoute: typeof LocaleAccountNotificationsRouteImport
+      parentRoute: typeof LocaleAccountRouteRoute
+    }
     '/$locale/admin/': {
       id: '/$locale/admin/'
       path: '/'
       fullPath: '/$locale/admin/'
       preLoaderRoute: typeof LocaleAdminIndexRouteImport
+      parentRoute: typeof LocaleAdminRouteRoute
+    }
+    '/$locale/admin/notifications': {
+      id: '/$locale/admin/notifications'
+      path: '/notifications'
+      fullPath: '/$locale/admin/notifications'
+      preLoaderRoute: typeof LocaleAdminNotificationsRouteImport
       parentRoute: typeof LocaleAdminRouteRoute
     }
     '/$locale/auth/': {
@@ -822,6 +901,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LocaleDealerMessagesRouteImport
       parentRoute: typeof LocaleDealerRouteRoute
     }
+    '/$locale/dealer/notifications': {
+      id: '/$locale/dealer/notifications'
+      path: '/notifications'
+      fullPath: '/$locale/dealer/notifications'
+      preLoaderRoute: typeof LocaleDealerNotificationsRouteImport
+      parentRoute: typeof LocaleDealerRouteRoute
+    }
     '/$locale/mechanic/': {
       id: '/$locale/mechanic/'
       path: '/'
@@ -834,6 +920,13 @@ declare module '@tanstack/react-router' {
       path: '/inquiries'
       fullPath: '/$locale/mechanic/inquiries'
       preLoaderRoute: typeof LocaleMechanicInquiriesRouteImport
+      parentRoute: typeof LocaleMechanicRouteRoute
+    }
+    '/$locale/mechanic/notifications': {
+      id: '/$locale/mechanic/notifications'
+      path: '/notifications'
+      fullPath: '/$locale/mechanic/notifications'
+      preLoaderRoute: typeof LocaleMechanicNotificationsRouteImport
       parentRoute: typeof LocaleMechanicRouteRoute
     }
     '/$locale/onboarding/': {
@@ -862,6 +955,13 @@ declare module '@tanstack/react-router' {
       path: '/inquiries'
       fullPath: '/$locale/workshop/inquiries'
       preLoaderRoute: typeof LocaleWorkshopInquiriesRouteImport
+      parentRoute: typeof LocaleWorkshopRouteRoute
+    }
+    '/$locale/workshop/notifications': {
+      id: '/$locale/workshop/notifications'
+      path: '/notifications'
+      fullPath: '/$locale/workshop/notifications'
+      preLoaderRoute: typeof LocaleWorkshopNotificationsRouteImport
       parentRoute: typeof LocaleWorkshopRouteRoute
     }
     '/$locale/_public/dealerships/': {
@@ -995,12 +1095,14 @@ const LocalePublicRouteRouteWithChildren =
 interface LocaleAccountRouteRouteChildren {
   LocaleAccountListingsRoute: typeof LocaleAccountListingsRoute
   LocaleAccountMessagesRoute: typeof LocaleAccountMessagesRoute
+  LocaleAccountNotificationsRoute: typeof LocaleAccountNotificationsRoute
   LocaleAccountIndexRoute: typeof LocaleAccountIndexRoute
 }
 
 const LocaleAccountRouteRouteChildren: LocaleAccountRouteRouteChildren = {
   LocaleAccountListingsRoute: LocaleAccountListingsRoute,
   LocaleAccountMessagesRoute: LocaleAccountMessagesRoute,
+  LocaleAccountNotificationsRoute: LocaleAccountNotificationsRoute,
   LocaleAccountIndexRoute: LocaleAccountIndexRoute,
 }
 
@@ -1008,10 +1110,12 @@ const LocaleAccountRouteRouteWithChildren =
   LocaleAccountRouteRoute._addFileChildren(LocaleAccountRouteRouteChildren)
 
 interface LocaleAdminRouteRouteChildren {
+  LocaleAdminNotificationsRoute: typeof LocaleAdminNotificationsRoute
   LocaleAdminIndexRoute: typeof LocaleAdminIndexRoute
 }
 
 const LocaleAdminRouteRouteChildren: LocaleAdminRouteRouteChildren = {
+  LocaleAdminNotificationsRoute: LocaleAdminNotificationsRoute,
   LocaleAdminIndexRoute: LocaleAdminIndexRoute,
 }
 
@@ -1020,12 +1124,14 @@ const LocaleAdminRouteRouteWithChildren =
 
 interface LocaleDealerRouteRouteChildren {
   LocaleDealerMessagesRoute: typeof LocaleDealerMessagesRoute
+  LocaleDealerNotificationsRoute: typeof LocaleDealerNotificationsRoute
   LocaleDealerIndexRoute: typeof LocaleDealerIndexRoute
   LocaleDealerInventoryIndexRoute: typeof LocaleDealerInventoryIndexRoute
 }
 
 const LocaleDealerRouteRouteChildren: LocaleDealerRouteRouteChildren = {
   LocaleDealerMessagesRoute: LocaleDealerMessagesRoute,
+  LocaleDealerNotificationsRoute: LocaleDealerNotificationsRoute,
   LocaleDealerIndexRoute: LocaleDealerIndexRoute,
   LocaleDealerInventoryIndexRoute: LocaleDealerInventoryIndexRoute,
 }
@@ -1035,11 +1141,13 @@ const LocaleDealerRouteRouteWithChildren =
 
 interface LocaleMechanicRouteRouteChildren {
   LocaleMechanicInquiriesRoute: typeof LocaleMechanicInquiriesRoute
+  LocaleMechanicNotificationsRoute: typeof LocaleMechanicNotificationsRoute
   LocaleMechanicIndexRoute: typeof LocaleMechanicIndexRoute
 }
 
 const LocaleMechanicRouteRouteChildren: LocaleMechanicRouteRouteChildren = {
   LocaleMechanicInquiriesRoute: LocaleMechanicInquiriesRoute,
+  LocaleMechanicNotificationsRoute: LocaleMechanicNotificationsRoute,
   LocaleMechanicIndexRoute: LocaleMechanicIndexRoute,
 }
 
@@ -1048,11 +1156,13 @@ const LocaleMechanicRouteRouteWithChildren =
 
 interface LocaleWorkshopRouteRouteChildren {
   LocaleWorkshopInquiriesRoute: typeof LocaleWorkshopInquiriesRoute
+  LocaleWorkshopNotificationsRoute: typeof LocaleWorkshopNotificationsRoute
   LocaleWorkshopIndexRoute: typeof LocaleWorkshopIndexRoute
 }
 
 const LocaleWorkshopRouteRouteChildren: LocaleWorkshopRouteRouteChildren = {
   LocaleWorkshopInquiriesRoute: LocaleWorkshopInquiriesRoute,
+  LocaleWorkshopNotificationsRoute: LocaleWorkshopNotificationsRoute,
   LocaleWorkshopIndexRoute: LocaleWorkshopIndexRoute,
 }
 

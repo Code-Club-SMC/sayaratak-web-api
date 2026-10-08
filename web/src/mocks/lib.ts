@@ -2,10 +2,12 @@ import { z } from "zod"
 
 import type { Bilingual } from "@/schemas/fields"
 import { extraDefaults, extraFields } from "@/schemas/listing-fields"
+import type { NotificationPrefs } from "@/schemas/api"
 import type { Notification } from "@/schemas/messaging"
 import { db, find, newId, paginate } from "./db"
 import { fail, pageParams, type Ctx } from "./http"
 import type { Promotion } from "@/schemas/billing"
+import { notificationHref } from "./seed/util"
 import type { ListingRow, UserRow } from "./types"
 
 // The step 7.9 fields of a listing input: what it sent, the rest empty. Parsing keeps only these keys.
@@ -22,7 +24,21 @@ export const nowIso = () => new Date().toISOString()
 export const dayKey = (d: Date | number = new Date()) =>
   new Date(d).toISOString().slice(0, 10)
 
-// Both languages are stored, so the recipient sees the right one even after switching.
+// The switch of the recipient's notification settings that silences each type.
+const prefOf: Record<Notification["type"], keyof NotificationPrefs> = {
+  message: "messages",
+  listing_approved: "updates",
+  listing_rejected: "updates",
+  verification_result: "updates",
+  saved_search_match: "savedSearchMatches",
+  review_new: "reviews",
+  payment_approved: "billing",
+  payment_rejected: "billing",
+  subscription_expiring: "billing",
+  broadcast: "announcements",
+}
+
+// Both languages are stored, so the recipient sees the right one even after switching. Nothing is written when the recipient turned that kind off.
 export function notify(
   userId: string,
   type: Notification["type"],
@@ -30,14 +46,15 @@ export function notify(
   body: Bilingual,
   href?: string
 ) {
-  if (!find(db.users, userId)) return
+  const user = find(db.users, userId)
+  if (!user?.prefs[prefOf[type]]) return
   db.notifications.unshift({
     id: newId("n"),
     userId,
     type,
     title,
     body,
-    href,
+    href: href && notificationHref(user.role, href),
     createdAt: nowIso(),
   })
 }

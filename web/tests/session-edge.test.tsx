@@ -57,7 +57,7 @@ function Save() {
   const save = useUpdateNotificationPrefs()
   return (
     <>
-      <button onClick={() => save.mutate({ marketing: true })}>save</button>
+      <button onClick={() => save.mutate({ billing: false })}>save</button>
       <output>{save.isSuccess ? "saved" : "idle"}</output>
       <AuthDialog />
     </>

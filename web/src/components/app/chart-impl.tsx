@@ -28,10 +28,12 @@ export function ChartImpl({
   kind,
   data,
   series,
+  stacked,
 }: {
   kind: "area" | "bar"
   data: ChartRow[]
   series: ChartSeries[]
+  stacked?: boolean
 }) {
   const { locale } = useT()
   const config: ChartConfig = Object.fromEntries(
@@ -82,7 +84,8 @@ export function ChartImpl({
               key={s.key}
               dataKey={s.key}
               fill={`var(--color-${s.key})`}
-              radius={[2, 2, 0, 0]}
+              stackId={stacked ? "stack" : undefined}
+              radius={stacked ? 0 : [2, 2, 0, 0]}
               isAnimationActive={false}
             />
           )

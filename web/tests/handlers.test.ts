@@ -941,6 +941,33 @@ describe("trust, content, map, uploads, analytics", () => {
     expect(dealer.body.topListings.length).toBeGreaterThan(0)
     expect(dealer.body.topListings.length).toBeLessThanOrEqual(10)
   })
+  it("analytics totals count today and add up to the daily series", async () => {
+    const listing = db.listings.find(
+      (l) => l.ownerUserId === "u-omar" && l.moderation === "approved"
+    )
+    for (const type of ["view", "view", "phone_click", "whatsapp_click"])
+      await call("POST", "/events", { body: { type, targetId: listing?.id } })
+    for (const range of ["7d", "30d", "90d"]) {
+      const { body } = await call("GET", `/me/analytics?range=${range}`, {
+        as: "u-omar",
+      })
+      const sum = (key: string) =>
+        body.daily.reduce(
+          (n: number, d: Record<string, number>) => n + d[key]!,
+          0
+        )
+      expect(body.totals.views).toBe(sum("views"))
+      expect(body.totals.calls).toBe(sum("calls"))
+      expect(body.totals.whatsapp).toBe(sum("whatsapp"))
+      expect(body.totals.messages).toBe(sum("messages"))
+    }
+    const day = new Date().toISOString().slice(0, 10)
+    const today = (
+      await call("GET", "/me/analytics?range=7d", { as: "u-omar" })
+    ).body.daily.find((d: { date: string }) => d.date === day)
+    expect(today).toMatchObject({ views: expect.any(Number) })
+    expect(today.views).toBeGreaterThanOrEqual(2)
+  })
 })
 
 describe("admin", () => {

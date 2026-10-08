@@ -2,6 +2,7 @@ import { useQuery, useSuspenseQuery } from "@tanstack/react-query"
 
 import { meQuery } from "@/features/auth/me-query"
 import { formatNumber } from "@/lib/format"
+import { useViewEvent } from "@/features/listings/use-view-event"
 import { useT } from "@/lib/i18n/use-t"
 import { Breadcrumbs } from "@/components/app/breadcrumbs"
 import { ContactActions } from "@/components/app/contact-actions"
@@ -28,6 +29,7 @@ export function WorkshopProfilePage({
 }) {
   const { t, locale } = useT()
   const { data: w } = useSuspenseQuery(directoryQueries.workshops.detail(slug))
+  useViewEvent(w.id)
   const { data: me } = useQuery(meQuery)
   const onTab = useWorkshopProfileNavigation(slug)
   const name = w.name[locale] || w.name.ar

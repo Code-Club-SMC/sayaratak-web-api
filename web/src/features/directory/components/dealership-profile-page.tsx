@@ -1,6 +1,7 @@
 import { useQuery, useSuspenseQuery } from "@tanstack/react-query"
 
 import { meQuery } from "@/features/auth/me-query"
+import { useViewEvent } from "@/features/listings/use-view-event"
 import { useT } from "@/lib/i18n/use-t"
 import { formatNumber } from "@/lib/format"
 import { Breadcrumbs } from "@/components/app/breadcrumbs"
@@ -33,6 +34,7 @@ export function DealershipProfilePage({
   const { data: d } = useSuspenseQuery(
     directoryQueries.dealerships.detail(slug)
   )
+  useViewEvent(d.id)
   const { data: me } = useQuery(meQuery)
   const nav = useDealershipProfileNavigation(slug, search)
   const name = d.name[locale] || d.name.ar

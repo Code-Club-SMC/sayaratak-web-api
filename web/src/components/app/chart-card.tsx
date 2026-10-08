@@ -13,6 +13,8 @@ export type ChartCardProps = {
   title: string
   data?: ChartRow[]
   series: ChartSeries[]
+  // Bars of one day pile up instead of standing side by side.
+  stacked?: boolean
   loading?: boolean
   error?: boolean
   onRetry?: () => void
@@ -29,6 +31,7 @@ export function ChartCard({
   title,
   data,
   series,
+  stacked,
   loading,
   error,
   onRetry,
@@ -65,7 +68,9 @@ export function ChartCard({
         // Recharts lays out left to right; the axis stays LTR in Arabic too.
         <div dir="ltr">
           <Suspense fallback={<Skeleton className="h-64" aria-hidden="true" />}>
-            {data && <Impl kind={kind} data={data} series={series} />}
+            {data && (
+              <Impl kind={kind} data={data} series={series} stacked={stacked} />
+            )}
           </Suspense>
         </div>
       )}

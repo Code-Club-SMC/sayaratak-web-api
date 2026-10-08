@@ -65,8 +65,16 @@ route("GET", "/me/analytics", (c) => {
       .map((t) => t.id)
   )
   const since = (n: number) => Date.now() - n * DAY_MS
-  const within = (iso: string, from: number, to: number) =>
-    Date.parse(iso) >= since(from) && Date.parse(iso) < since(to)
+  // Whole days, the way the daily series counts them: a window of `n` days is today and the `n - 1` days before, so totals and chart add up. `from` and `to` count days back (0 is today) and both ends are included.
+  const span = (from: number, to: number) => ({
+    first: dayKey(since(from - 1)),
+    last: dayKey(since(to)),
+  })
+  const within = (iso: string, from: number, to: number) => {
+    const { first, last } = span(from, to)
+    const day = dayKey(Date.parse(iso))
+    return day >= first && day <= last
+  }
   const targets = new Set(biz?.row ? [biz.row.id] : [])
   const period = (from: number, to: number) => ({
     messages: db.messages.filter(
@@ -82,12 +90,11 @@ route("GET", "/me/analytics", (c) => {
       (r) => (all || targets.has(r.targetId)) && within(r.createdAt, from, to)
     ).length,
   })
-  // Event rows are per target and day; the window runs from `from` days ago up to `to` days ago.
+  // Event rows are per target and day; the window covers the days from `from` back to `to` back, both included.
   const events = (from: number, to: number) => {
-    const first = dayKey(since(from))
-    const last = dayKey(since(to))
+    const { first, last } = span(from, to)
     return db.events.filter(
-      (e) => mine(e.targetId) && e.day >= first && e.day < last
+      (e) => mine(e.targetId) && e.day >= first && e.day <= last
     )
   }
   const totals = (from: number, to: number) => {

@@ -1111,6 +1111,116 @@ describe("admin", () => {
   })
 })
 
+describe("verification, owner side", () => {
+  const send = (as: string, docs: [string, File][], note?: string) => {
+    const form = new FormData()
+    for (const [label, f] of docs) {
+      form.append("label", label)
+      form.append("file", f)
+    }
+    if (note) form.set("note", note)
+    return call("POST", "/me/verification", { as, form })
+  }
+  const dealerBiz = () => db.dealerships.find((d) => d.ownerId === "u-dealer")!
+  beforeEach(() => {
+    db.verifications = db.verifications.filter((v) => v.ownerId !== "u-dealer")
+    dealerBiz().verified = false
+  })
+
+  it("stores the files, lands in the admin queue and approval turns the badge on", async () => {
+    const sent = await send(
+      "u-dealer",
+      [
+        ["commercial_registration", file("cr.png", 20)],
+        ["shop_photo", file("shop.png", 30)],
+      ],
+      "Please check"
+    )
+    expect(sent.status).toBe(200)
+    expect(sent.body).toMatchObject({
+      status: "pending",
+      targetType: "dealership",
+      targetId: dealerBiz().id,
+      note: "Please check",
+    })
+    expect(sent.body.documents.map((d: { label: string }) => d.label)).toEqual([
+      "commercial_registration",
+      "shop_photo",
+    ])
+    const doc = await call(
+      "GET",
+      sent.body.documents[0].url.replace("/api", "")
+    )
+    expect(doc.raw.byteLength).toBe(20)
+    expect(
+      (await call("GET", "/me/verification", { as: "u-dealer" })).body.id
+    ).toBe(sent.body.id)
+    const queue = await call("GET", "/admin/verifications?status=pending", {
+      as: "u-admin",
+    })
+    expect(
+      queue.body.items.some((v: { id: string }) => v.id === sent.body.id)
+    ).toBe(true)
+    await call("POST", `/admin/verifications/${sent.body.id}/approve`, {
+      as: "u-admin",
+    })
+    expect(dealerBiz().verified).toBe(true)
+    expect(
+      db.notifications.some(
+        (n) => n.userId === "u-dealer" && n.type === "verification_result"
+      )
+    ).toBe(true)
+  })
+
+  it("refuses bad input, a second pending request and an already verified business", async () => {
+    const png = () => file("a.png", 10)
+    const bad = await send("u-dealer", [["selfie", png()]])
+    expect(bad.status).toBe(422)
+    expect(bad.body.fields.documents).toBe("validation.select_min")
+    expect((await send("u-dealer", [])).status).toBe(422)
+    expect(
+      (
+        await send(
+          "u-dealer",
+          Array.from({ length: 6 }, () => ["other", png()])
+        )
+      ).status
+    ).toBe(422)
+    const pdf = await send("u-dealer", [
+      ["other", file("a.pdf", 10, "application/pdf")],
+    ])
+    expect(pdf.body.fields.file).toBe("validation.image_type")
+    expect(
+      (await send("u-dealer", [["other", png()]], "x".repeat(301))).body.fields
+        .note
+    ).toBe("validation.too_long")
+    expect((await send("u-omar", [["other", png()]])).status).toBe(403)
+    expect((await send("u-dealer", [["other", png()]])).status).toBe(200)
+    expect((await send("u-dealer", [["other", png()]])).status).toBe(409)
+    dealerBiz().verified = true
+    db.verifications = db.verifications.filter((v) => v.ownerId !== "u-dealer")
+    expect((await send("u-dealer", [["other", png()]])).status).toBe(409)
+  })
+
+  it("a rejected request can be sent again and the newest one wins", async () => {
+    const first = await send("u-dealer", [["other", file("a.png", 10)]])
+    await call("POST", `/admin/verifications/${first.body.id}/reject`, {
+      as: "u-admin",
+      body: { reason: "Blurry" },
+    })
+    const mine = await call("GET", "/me/verification", { as: "u-dealer" })
+    expect(mine.body).toMatchObject({
+      status: "rejected",
+      rejectionReason: "Blurry",
+    })
+    const again = await send("u-dealer", [["other", file("b.png", 10)]])
+    expect(again.status).toBe(200)
+    expect(
+      (await call("GET", "/me/verification", { as: "u-dealer" })).body.id
+    ).toBe(again.body.id)
+  })
+})
+
 describe("mock", () => {
   it("reset restores the seed", async () => {
     await call("POST", "/listings", { as: "u-1", body: car })

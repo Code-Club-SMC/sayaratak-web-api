@@ -5,10 +5,8 @@ import { apiFetch } from "@/lib/api/client"
 import { useApiMutation } from "@/lib/api/mutation"
 import { keys } from "@/lib/api/query-keys"
 import { reportSchema, verificationRequestSchema } from "@/schemas/admin"
-import type {
-  reportInputSchema,
-  verificationInputSchema,
-} from "@/schemas/inputs"
+import type { reportInputSchema } from "@/schemas/inputs"
+import type { VerificationForm } from "./schemas"
 
 export const verificationQuery = queryOptions({
   queryKey: keys.verification,
@@ -23,13 +21,21 @@ export const useReportListing = () =>
   useApiMutation((body: z.input<typeof reportInputSchema>) =>
     apiFetch("/reports", { method: "POST", body, schema: reportSchema })
   )
+// multipart, like a payment: `label` and `file` once per document, in order.
 export const useRequestVerification = () =>
   useApiMutation(
-    (body: z.input<typeof verificationInputSchema>) =>
-      apiFetch("/me/verification", {
+    ({ documents, note }: VerificationForm) => {
+      const form = new FormData()
+      for (const d of documents) {
+        form.append("label", d.label)
+        form.append("file", d.file)
+      }
+      if (note) form.set("note", note)
+      return apiFetch("/me/verification", {
         method: "POST",
-        body,
+        form,
         schema: verificationRequestSchema,
-      }),
+      })
+    },
     [keys.verification]
   )

@@ -53,6 +53,15 @@ export const reportSchema = z.object({
 })
 export type Report = z.infer<typeof reportSchema>
 
+export const verificationLabels = [
+  "commercial_registration",
+  "national_id",
+  "workshop_license",
+  "certificate",
+  "shop_photo",
+  "other",
+] as const
+
 export const verificationRequestSchema = z.object({
   id: idSchema,
   targetType: targetTypeSchema,

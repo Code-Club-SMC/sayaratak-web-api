@@ -283,6 +283,12 @@ export function seedReports(
   }))
 }
 
+const documentLabel = {
+  dealership: "commercial_registration",
+  workshop: "workshop_license",
+  mechanic: "national_id",
+} as const
+
 export function seedVerifications(
   targets: {
     id: string
@@ -298,7 +304,7 @@ export function seedVerifications(
     documents: [
       {
         id: `doc-${i + 1}-1`,
-        label: "السجل التجاري",
+        label: documentLabel[t.type],
         url: `/mock/doc-0${(i % 3) + 1}.webp`,
       },
     ],

@@ -202,12 +202,6 @@ export const reportInputSchema = z.object({
   ]),
   details: z.string().trim().max(1000, "validation.too_long").optional(),
 })
-export const verificationInputSchema = z.object({
-  documents: z
-    .array(z.object({ label: z.string().min(1), url: z.string().min(1) }))
-    .min(1, "validation.media_min"),
-  note: z.string().max(500, "validation.too_long").optional(),
-})
 export const contactSubjects = [
   "general",
   "listing_help",

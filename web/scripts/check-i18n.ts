@@ -39,6 +39,8 @@ const fileOf: Record<string, string[]> = {
   messages: ["dashboard"],
   notifications: ["dashboard"],
   settings: ["dashboard"],
+  reviews_manager: ["dashboard"],
+  verification: ["dashboard"],
   admin: ["admin", "error"],
   billing: ["billing", "error"],
   manager: ["manager"],
@@ -60,7 +62,7 @@ function load(lang: keyof typeof forms) {
       readFileSync(`src/messages/${lang}/${file}`, "utf8")
     ) as Record<string, string>
     for (const key of Object.keys(json)) {
-      if (!/^[a-z]+\.[a-z0-9_]+$/.test(key))
+      if (!/^[a-z_]+\.[a-z0-9_]+$/.test(key))
         fail(`${lang}/${file}: bad key "${key}"`)
       const allowed = fileOf[key.split(".")[0] ?? ""]
       if (!allowed)

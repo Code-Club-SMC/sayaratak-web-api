@@ -4,19 +4,19 @@ import { XIcon } from "lucide-react"
 import type { ControlProps } from "@/components/app/form-field"
 import { UploadDropzone } from "@/components/app/upload-dropzone"
 import { Button } from "@/components/ui/button"
-import { useT } from "@/lib/i18n/use-t"
 
-// One receipt image: a dropzone, then a thumbnail with the file name and a remove button. The file is checked by the form's schema.
-export function ReceiptUpload({
+// One image file: a dropzone, then a thumbnail with the file name and a remove button. The file is checked by the form's schema.
+export function ImageFileInput({
   value,
   onChange,
   control,
+  labels,
 }: {
   value?: File
   onChange: (file?: File) => void
   control: ControlProps
+  labels: { choose: string; preview: string; remove: string }
 }) {
-  const { t } = useT()
   const [preview, setPreview] = useState<string>()
   const current = useRef<string>(undefined)
   useEffect(
@@ -39,7 +39,7 @@ export function ReceiptUpload({
         {preview && (
           <img
             src={preview}
-            alt={t("billing.receipt_preview")}
+            alt={labels.preview}
             className="size-16 shrink-0 rounded-lg object-cover"
           />
         )}
@@ -50,7 +50,7 @@ export function ReceiptUpload({
           type="button"
           variant="ghost"
           size="icon"
-          aria-label={t("billing.receipt_remove")}
+          aria-label={labels.remove}
           onClick={() => {
             pick(undefined)
             // The button is gone after this: focus moves to the dropzone that replaces it.
@@ -69,7 +69,7 @@ export function ReceiptUpload({
       inputProps={control}
       className="min-h-24 rounded-xl"
     >
-      {t("billing.receipt_choose")}
+      {labels.choose}
     </UploadDropzone>
   )
 }

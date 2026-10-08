@@ -4,6 +4,7 @@ import { useQueryClient } from "@tanstack/react-query"
 import { useForm } from "react-hook-form"
 
 import { FormField } from "@/components/app/form-field"
+import { ImageFileInput } from "@/components/app/image-file-input"
 import { SubmitButton } from "@/components/app/submit-button"
 import { Input } from "@/components/ui/input"
 import { toast } from "@/components/ui/toast"
@@ -15,7 +16,6 @@ import { useT } from "@/lib/i18n/use-t"
 import type { Checkout } from "@/schemas/responses"
 import { useCreatePayment } from "../queries"
 import { paymentFormSchema, type PaymentForm as Values } from "../schemas"
-import { ReceiptUpload } from "./receipt-upload"
 
 const fieldNames = ["payerName", "transactionRef", "receipt"] as const
 
@@ -85,9 +85,14 @@ export function PaymentForm({ checkout }: { checkout: Checkout }) {
       </FormField>
       <FormField label={t("billing.receipt")} error={errors.receipt?.message}>
         {(control) => (
-          <ReceiptUpload
+          <ImageFileInput
             value={receipt}
             control={control}
+            labels={{
+              choose: t("billing.receipt_choose"),
+              preview: t("billing.receipt_preview"),
+              remove: t("billing.receipt_remove"),
+            }}
             onChange={(file) =>
               form.setValue("receipt", file as File, {
                 shouldValidate: true,

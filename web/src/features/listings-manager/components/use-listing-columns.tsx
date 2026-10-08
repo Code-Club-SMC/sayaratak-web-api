@@ -15,9 +15,11 @@ import { ReviewBadge } from "./review-badge"
 export function useListingColumns({
   actions,
   onAnalytics,
+  onPromote,
 }: {
   actions: ReturnType<typeof useListingActions>
   onAnalytics: (listing: Listing) => void
+  onPromote: (listing: Listing) => void
 }): DataColumn<Listing>[] {
   const { t, locale } = useT()
   const now = useNow()
@@ -118,6 +120,7 @@ export function useListingColumns({
           listing={row.original}
           actions={actions}
           onAnalytics={onAnalytics}
+          onPromote={onPromote}
         />
       ),
     },

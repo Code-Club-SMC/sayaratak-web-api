@@ -8,15 +8,17 @@ import { canRenew, type useListingActions } from "../use-listing-actions"
 
 export type ListingActions = ReturnType<typeof useListingActions>
 
-// The "..." menu of one listing. Promote joins it in step 8.5.
+// The "..." menu of one listing. Promote is for an approved listing and opens its dialog.
 export function ListingRowActions({
   listing,
   actions,
   onAnalytics,
+  onPromote,
 }: {
   listing: Listing
   actions: ListingActions
   onAnalytics: (listing: Listing) => void
+  onPromote: (listing: Listing) => void
 }) {
   const { t, locale } = useT()
   const now = useNow()
@@ -56,6 +58,15 @@ export function ListingRowActions({
       label: t("manager.action_duplicate"),
       onSelect: () => actions.duplicate(listing),
     },
+    ...(listing.moderation === "approved"
+      ? [
+          {
+            key: "promote",
+            label: t("manager.action_promote"),
+            onSelect: () => onPromote(listing),
+          },
+        ]
+      : []),
     {
       key: "analytics",
       label: t("manager.action_analytics"),

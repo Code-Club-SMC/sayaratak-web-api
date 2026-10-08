@@ -149,6 +149,7 @@ describe("ListingsManager", () => {
       (i) => i.textContent
     )
     expect(items).not.toContain("View public page")
+    expect(items).not.toContain("Promote")
     expect(items).toContain("Edit")
     expect(within(row).getByRole("button", { name: "Rejected" })).toBeTruthy()
   })
@@ -215,5 +216,20 @@ describe("ListingsManager", () => {
     const sheet = await screen.findByRole("dialog")
     expect(await within(sheet).findByText("Shares")).toBeTruthy()
     expect(within(sheet).getByText("Last 30 days")).toBeTruthy()
+  })
+
+  it("opens the promote dialog from the row menu of an approved listing", async () => {
+    const target = newestActive()
+    await open({ tab: "active" })
+    fireEvent.click(
+      within(await rowOf(target.title)).getByRole("button", {
+        name: `Actions for ${target.title}`,
+      })
+    )
+    fireEvent.click(await screen.findByRole("menuitem", { name: "Promote" }))
+    const dialog = await screen.findByRole("dialog", {
+      name: "Promote this listing",
+    })
+    expect(await within(dialog).findAllByRole("radio")).toHaveLength(4)
   })
 })

@@ -1,7 +1,7 @@
 import { keepPreviousData, queryOptions } from "@tanstack/react-query"
 import { z } from "zod"
 
-import { apiFetch } from "@/lib/api/client"
+import { ApiError, apiFetch } from "@/lib/api/client"
 import { useApiMutation } from "@/lib/api/mutation"
 import { keys } from "@/lib/api/query-keys"
 import { pageOf } from "@/schemas/fields"
@@ -45,6 +45,9 @@ export const billingQueries = {
           schema: checkoutSchema,
           signal,
         }),
+      // An unknown, foreign or paid item stays that way: the page says so at once.
+      retry: (count, error) =>
+        !(error instanceof ApiError && error.status < 500) && count < 1,
     }),
   payments: (filters: Record<string, unknown> = {}) =>
     queryOptions({

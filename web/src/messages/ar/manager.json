@@ -76,5 +76,6 @@
   "manager.metric_whatsapp": "واتساب",
   "manager.metric_shares": "المشاركات",
   "manager.csv_id": "المعرّف",
-  "manager.col_actions": "إجراءات"
+  "manager.col_actions": "إجراءات",
+  "manager.action_promote": "ترويج"
 }

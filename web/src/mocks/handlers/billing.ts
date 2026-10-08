@@ -121,7 +121,7 @@ route("POST", "/payments", async (c) => {
   if (itemType !== "plan" && itemType !== "promotion")
     fields.itemType = "validation.required"
   if (payerName.length < 2) fields.payerName = "validation.name_min"
-  if (transactionRef.length < 6) fields.transactionRef = "validation.txn_min"
+  if (transactionRef.length < 4) fields.transactionRef = "validation.txn_min"
   if (!(receipt instanceof File)) fields.receipt = "validation.required"
   if (
     Object.keys(fields).length ||

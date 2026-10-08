@@ -12,10 +12,12 @@ export function ListingManagerCard({
   listing,
   actions,
   onAnalytics,
+  onPromote,
 }: {
   listing: Listing
   actions: ListingActions
   onAnalytics: (listing: Listing) => void
+  onPromote: (listing: Listing) => void
 }) {
   const { t, locale } = useT()
   const { views, favorites, phoneClicks, whatsappClicks } = listing.stats
@@ -27,6 +29,7 @@ export function ListingManagerCard({
           listing={listing}
           actions={actions}
           onAnalytics={onAnalytics}
+          onPromote={onPromote}
         />
       </div>
       <div className="flex flex-wrap items-center justify-between gap-2">

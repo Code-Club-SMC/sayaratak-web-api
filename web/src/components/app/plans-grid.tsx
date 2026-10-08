@@ -14,7 +14,7 @@ type Props = { plans: Plan[]; currentId?: string } & (
       mode: "action"
       actionLabel: string
       onAction: (id: string) => void
-      pendingId?: string
+      pendingIds?: string[]
     }
 )
 
@@ -45,7 +45,7 @@ export function PlansGrid(props: Props) {
             mode="action"
             actionLabel={props.actionLabel}
             onAction={props.onAction}
-            pending={plan.id === props.pendingId}
+            pending={props.pendingIds?.includes(plan.id)}
           />
         )
       )}

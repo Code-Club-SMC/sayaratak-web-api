@@ -17,11 +17,12 @@ type Props = { plan: Plan; current?: boolean } & (
       mode: "action"
       actionLabel: string
       onAction: (id: string) => void
+      // A payment for this plan waits for review: a badge, and no second payment.
       pending?: boolean
     }
 )
 
-// "select" is a native radio (arrow keys and grouping for free) for onboarding. "action" is a button for the billing page.
+// "select" is a native radio (arrow keys and grouping for free) for onboarding. "action" is a button for the billing page; the free plan has nothing to buy, so it says "Included" instead.
 export function PlanCard(props: Props) {
   const { plan, current } = props
   const { t, locale } = useT()
@@ -34,13 +35,16 @@ export function PlanCard(props: Props) {
         : t("billing.unlimited")
   const body = (
     <>
-      <div className="flex items-center gap-2">
+      <div className="flex flex-wrap items-center gap-2">
         <h3 className="text-ui font-semibold">{plan.name[locale]}</h3>
         {current && (
           <Badge variant="primary">{t("billing.current_plan")}</Badge>
         )}
         {props.mode === "select" && plan.price === 0 && (
           <Badge>{t("billing.start_free")}</Badge>
+        )}
+        {props.mode === "action" && props.pending && (
+          <Badge variant="warning">{t("billing.pending_badge")}</Badge>
         )}
       </div>
       <p className="flex flex-wrap items-baseline gap-x-1">
@@ -67,14 +71,20 @@ export function PlanCard(props: Props) {
     return (
       <div className="flex flex-col gap-3 rounded-xl bg-card p-5">
         {body}
-        <Button
-          type="button"
-          className="mt-auto"
-          disabled={current || props.pending}
-          onClick={() => props.onAction(plan.id)}
-        >
-          {props.actionLabel}
-        </Button>
+        {plan.price === 0 ? (
+          <p className="mt-auto text-ui text-muted-foreground">
+            {t("billing.included")}
+          </p>
+        ) : (
+          <Button
+            type="button"
+            className="mt-auto"
+            disabled={current || props.pending}
+            onClick={() => props.onAction(plan.id)}
+          >
+            {props.actionLabel}
+          </Button>
+        )}
       </div>
     )
   return (

@@ -14,6 +14,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { meQuery } from "@/features/auth/me-query"
 import { billingQueries } from "@/features/billing/queries"
 import { usePageTitle } from "@/features/dashboard/components/page-title"
+import { PromoteDialog } from "@/features/billing/components/promote-dialog"
 import { listingQueries } from "@/features/listings/queries"
 import { formatNumber } from "@/lib/format"
 import { useT } from "@/lib/i18n/use-t"
@@ -55,6 +56,7 @@ export function ListingsManager({
   const actions = useListingActions()
   const exportCsv = useExportListings()
   const [analytics, setAnalytics] = useState<Listing>()
+  const [promote, setPromote] = useState<Listing>()
   // Selection belongs to one page of results: it is dropped when the URL changes.
   const urlKey = JSON.stringify(search)
   const [picked, setPicked] = useState<{
@@ -120,7 +122,11 @@ export function ListingsManager({
     return localeHref(`${pathname}${query && `?${query}`}`, locale)
   }
 
-  const columns = useListingColumns({ actions, onAnalytics: setAnalytics })
+  const columns = useListingColumns({
+    actions,
+    onAnalytics: setAnalytics,
+    onPromote: setPromote,
+  })
   const limit = subscription?.usage.limit ?? null
   const used = subscription?.usage.used ?? 0
   const reached = limit !== null && used >= limit
@@ -220,6 +226,7 @@ export function ListingsManager({
                 listing={l}
                 actions={actions}
                 onAnalytics={setAnalytics}
+                onPromote={setPromote}
               />
             )}
             empty={
@@ -238,6 +245,12 @@ export function ListingsManager({
           />
         </TabsContent>
       </Tabs>
+      {promote && (
+        <PromoteDialog
+          listingId={promote.id}
+          onClose={() => setPromote(undefined)}
+        />
+      )}
       {analytics && (
         <ListingAnalyticsSheet
           listing={analytics}

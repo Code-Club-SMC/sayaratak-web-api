@@ -64,5 +64,6 @@
   "manager.metric_whatsapp": "WhatsApp",
   "manager.metric_shares": "Shares",
   "manager.csv_id": "ID",
-  "manager.col_actions": "Actions"
+  "manager.col_actions": "Actions",
+  "manager.action_promote": "Promote"
 }

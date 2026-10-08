@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from "react"
+import { useState, type ComponentProps, type ReactNode } from "react"
 import { UploadIcon } from "lucide-react"
 
 import { cn } from "@/lib/utils"
@@ -8,12 +8,15 @@ export function UploadDropzone({
   onFiles,
   multiple = false,
   accept = "image/*",
+  inputProps,
   className,
   children,
 }: {
   onFiles: (files: File[]) => void
   multiple?: boolean
   accept?: string
+  // Id and aria attributes of the file input, when a `FormField` labels it.
+  inputProps?: ComponentProps<"input">
   className?: string
   children: ReactNode
 }) {
@@ -37,6 +40,7 @@ export function UploadDropzone({
       )}
     >
       <input
+        {...inputProps}
         type="file"
         accept={accept}
         multiple={multiple}

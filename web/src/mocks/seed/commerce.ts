@@ -28,10 +28,7 @@ const planRows: PlanRow[] = [
     0,
     30,
     3,
-    [
-      "3 active listings|3 إعلانات نشطة",
-      "Listing lasts 30 days|مدة الإعلان 30 يوماً",
-    ],
+    ["Listing lasts 30 days|مدة الإعلان 30 يوماً"],
   ],
   [
     "plan-user-plus",
@@ -41,7 +38,7 @@ const planRows: PlanRow[] = [
     50_000,
     30,
     15,
-    ["15 active listings|15 إعلاناً نشطاً", "Priority support|دعم أولوية"],
+    ["Priority support|دعم أولوية"],
   ],
   [
     "plan-dealer-starter",
@@ -51,7 +48,7 @@ const planRows: PlanRow[] = [
     0,
     30,
     10,
-    ["Up to 10 vehicles|حتى 10 مركبات", "Dealer page|صفحة المعرض"],
+    ["Dealer page|صفحة المعرض"],
   ],
   [
     "plan-dealer-growth",
@@ -61,10 +58,7 @@ const planRows: PlanRow[] = [
     350_000,
     30,
     80,
-    [
-      "Up to 80 vehicles|حتى 80 مركبة",
-      "Verified badge review|مراجعة شارة التوثيق",
-    ],
+    ["Verified badge review|مراجعة شارة التوثيق"],
   ],
   [
     "plan-dealer-pro",
@@ -74,7 +68,7 @@ const planRows: PlanRow[] = [
     700_000,
     30,
     300,
-    ["Up to 300 vehicles|حتى 300 مركبة", "Featured placement|ظهور مميز"],
+    ["Featured placement|ظهور مميز"],
   ],
   [
     "plan-workshop-basic",
@@ -201,7 +195,10 @@ export function seedPayments(
       (listing && users.find((u) => u.id === listing.ownerUserId)) ??
       payers[i % payers.length]
     if (!user) continue
-    const plan = plans.find((p) => p.id === demoPlan[user.id])
+    // A plan payment buys a paid plan: the payer's own, else the first paid one of their audience.
+    const plan =
+      plans.find((p) => p.id === demoPlan[user.id] && p.price > 0) ??
+      plans.find((p) => p.audience === user.role && p.price > 0)
     const isPlan = !promo && plan
     const id = `pay-${i + 1}`
     if (promo && !pending) promo.paymentId = id

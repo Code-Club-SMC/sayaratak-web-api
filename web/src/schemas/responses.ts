@@ -94,6 +94,7 @@ export const checkoutSchema = z.object({
   bankak: z.object({ name: z.string(), number: z.string() }),
   pendingPaymentId: idSchema.nullable(), // set when a payment for this item is already waiting for review
 })
+export type Checkout = z.infer<typeof checkoutSchema>
 
 export const siteSchema = z.object({
   contact: z.object({

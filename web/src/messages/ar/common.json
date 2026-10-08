@@ -278,5 +278,6 @@
   "form.weight_kg": "الوزن (كجم)",
   "form.installation": "التركيب متاح",
   "form.returns": "الاسترجاع مقبول",
-  "form.required_note": "* مطلوب"
+  "form.required_note": "* مطلوب",
+  "common.new_messages": "رسائل جديدة"
 }

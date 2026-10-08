@@ -41,6 +41,7 @@ const fileOf: Record<string, string[]> = {
   settings: ["dashboard"],
   admin: ["admin", "error"],
   billing: ["billing", "error"],
+  manager: ["manager"],
   promotion: ["billing"],
   validation: ["validation"],
 }

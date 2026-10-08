@@ -270,5 +270,6 @@
   "form.weight_kg": "Weight (kg)",
   "form.installation": "Installation available",
   "form.returns": "Returns accepted",
-  "form.required_note": "* Required"
+  "form.required_note": "* Required",
+  "common.new_messages": "New messages"
 }

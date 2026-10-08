@@ -1,5 +1,5 @@
 // @vitest-environment node
-import { beforeEach, describe, expect, it } from "vitest"
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import { z } from "zod"
 
 import { toListingInput } from "@/features/listings/wizard/to-listing-input"
@@ -456,6 +456,60 @@ describe("messaging and notifications", () => {
       (await call("GET", "/me/counts", { as: "u-omar" })).body
         .unreadNotifications
     ).toBe(0)
+  })
+})
+
+describe("messaging demo reply", () => {
+  afterEach(() => vi.unstubAllEnvs())
+  const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
+  const listing = () =>
+    db.listings.find(
+      (l) => l.ownerUserId === "u-omar" && l.moderation === "approved"
+    )
+  const messagesOf = (id: string) =>
+    db.messages.filter((m) => m.threadId === id)
+
+  it("answers a new thread once, from the owner, after the delay", async () => {
+    vi.stubEnv("VITE_DEMO", "true")
+    vi.stubEnv("MOCK_REPLY_MS", "30")
+    const thread = await call("POST", "/threads", {
+      as: "u-1",
+      body: { subjectType: "listing", subjectId: listing()?.id, body: "Hi" },
+    })
+    expect(thread.body.subjectSlug).toBe(listing()?.slug)
+    expect(messagesOf(thread.body.id)).toHaveLength(1)
+    await wait(120)
+    const [first, reply] = messagesOf(thread.body.id)
+    expect(reply?.senderId).toBe("u-omar")
+    expect(first?.senderId).toBe("u-1")
+    // The owner has spoken now, so nothing more is scripted.
+    await call("POST", `/threads/${thread.body.id}/messages`, {
+      as: "u-1",
+      body: { body: "And the price?" },
+    })
+    await wait(120)
+    expect(messagesOf(thread.body.id)).toHaveLength(3)
+  })
+
+  it("stays silent when the demo is off, and in threads the other person already wrote in", async () => {
+    vi.stubEnv("VITE_DEMO", "false")
+    vi.stubEnv("MOCK_REPLY_MS", "30")
+    const off = await call("POST", "/threads", {
+      as: "u-1",
+      body: { subjectType: "listing", subjectId: listing()?.id, body: "Hi" },
+    })
+    await wait(120)
+    expect(messagesOf(off.body.id)).toHaveLength(1)
+
+    vi.stubEnv("VITE_DEMO", "true")
+    const seeded = db.threads.find((t) => t.participantIds.includes("u-omar"))
+    const before = messagesOf(seeded?.id ?? "").length
+    await call("POST", `/threads/${seeded?.id}/messages`, {
+      as: "u-omar",
+      body: { body: "Thanks" },
+    })
+    await wait(120)
+    expect(messagesOf(seeded?.id ?? "")).toHaveLength(before + 1)
   })
 })
 

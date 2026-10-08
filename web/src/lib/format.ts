@@ -32,6 +32,14 @@ export const formatDate = (iso: string, locale: Locale) =>
     year: "numeric",
   }).format(new Date(iso))
 
+// "14:05" in Khartoum time, for the time under a message.
+export const formatTime = (iso: string, locale: Locale) =>
+  new Intl.DateTimeFormat(locale, {
+    ...dateBase,
+    hour: "numeric",
+    minute: "2-digit",
+  }).format(new Date(iso))
+
 // "October 2025", for member-since lines.
 export const formatMonthYear = (iso: string, locale: Locale) =>
   new Intl.DateTimeFormat(locale, {

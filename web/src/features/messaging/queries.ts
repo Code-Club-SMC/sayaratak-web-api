@@ -17,15 +17,19 @@ import { keys } from "@/lib/api/query-keys"
 import { okSchema, type Counts } from "@/schemas/api"
 import { pageOf } from "@/schemas/fields"
 import type { messageInputSchema, threadInputSchema } from "@/schemas/inputs"
-import { messageSchema, threadSchema } from "@/schemas/messaging"
+import { messageSchema, threadSchema, type Message } from "@/schemas/messaging"
 
-// Clients poll: the inbox refetches on focus, the open thread every 10 seconds.
+const messagePageSchema = pageOf(messageSchema)
+type MessagePage = z.infer<typeof messagePageSchema>
+
+// Clients poll, and only while the tab is visible: the inbox every 15 seconds, the open thread every 5.
 export const messagingQueries = {
   threads: queryOptions({
     queryKey: keys.threads.all,
     queryFn: ({ signal }) =>
       apiFetch("/threads", { schema: z.array(threadSchema), signal }),
     staleTime: 10_000,
+    refetchInterval: 15_000,
     refetchOnWindowFocus: true,
   }),
   messages: (id: string) =>
@@ -34,10 +38,10 @@ export const messagingQueries = {
       queryFn: ({ signal }) =>
         apiFetch(`/threads/${id}/messages`, {
           query: { pageSize: 100 },
-          schema: pageOf(messageSchema),
+          schema: messagePageSchema,
           signal,
         }),
-      refetchInterval: 10_000,
+      refetchInterval: 5_000,
       refetchOnWindowFocus: true,
     }),
 }
@@ -49,16 +53,30 @@ export const useStartThread = () =>
       apiFetch("/threads", { method: "POST", body, schema: threadSchema }),
     touched
   )
-export const useSendMessage = (threadId: string) =>
-  useApiMutation(
-    (body: z.input<typeof messageInputSchema>) =>
+// The sent message joins the open thread at once; the refetch after it confirms read marks and order.
+export function useSendMessage(threadId: string) {
+  const qc = useQueryClient()
+  return useMutation<Message, ApiError, z.input<typeof messageInputSchema>>({
+    mutationFn: (body) =>
       apiFetch(`/threads/${threadId}/messages`, {
         method: "POST",
         body,
         schema: messageSchema,
       }),
-    touched
-  )
+    onSuccess: (message) => {
+      qc.setQueryData<MessagePage>(keys.threads.messages(threadId), (page) =>
+        page && !page.items.some((m) => m.id === message.id)
+          ? {
+              ...page,
+              items: [...page.items, message],
+              total: page.total + 1,
+            }
+          : page
+      )
+      for (const queryKey of touched) void qc.invalidateQueries({ queryKey })
+    },
+  })
+}
 
 // Optimistic: the unread badge clears at once.
 export function useMarkThreadRead() {

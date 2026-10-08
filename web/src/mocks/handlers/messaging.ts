@@ -5,7 +5,7 @@ import { pageOf } from "@/schemas/fields"
 import { both } from "@/mocks/seed/util"
 
 import { db, find, insert, newId, paginate } from "../db"
-import { fail, needUser, pageParams, route } from "../http"
+import { fail, needUser, pageParams, readCookie, route } from "../http"
 import { findBusiness, nowIso, notify } from "../lib"
 import type { ThreadRow, UserRow } from "../types"
 
@@ -17,8 +17,13 @@ const messagesOf = (id: string) =>
 export function toThread(row: ThreadRow, me: string): Thread {
   const all = messagesOf(row.id)
   const last = all.at(-1)
+  const subject =
+    row.subjectType === "listing"
+      ? find(db.listings, row.subjectId)
+      : findBusiness(row.subjectId)
   return threadSchema.parse({
     ...row,
+    subjectSlug: subject?.slug,
     participants: row.participantIds.map((id) => {
       const u = find(db.users, id)
       return { id, name: u?.fullName ?? "", avatarUrl: u?.avatarUrl ?? null }
@@ -54,11 +59,44 @@ function post(row: ThreadRow, sender: UserRow, body: string) {
         ar: `رسالة من ${sender.fullName}`,
         en: `Message from ${sender.fullName}`,
       },
-      "/messages"
+      // Dashboard-relative; workshops and mechanics call their inbox "inquiries".
+      ["workshop", "mechanic"].includes(find(db.users, id)?.role ?? "")
+        ? "/inquiries"
+        : "/messages"
     )
   }
   return messageSchema.parse(message)
 }
+
+// Demo only: when nobody but the sender has written in a thread, the other person answers once, 8 seconds later, so the flow can be seen without a second browser.
+const replies = {
+  ar: ["وعليكم السلام، نعم متاحة. متى يناسبك الحضور؟", "تفضل في أي وقت."],
+  en: ["Hello, yes it is available. When can you come by?", "Come any time."],
+}
+function autoReply(row: ThreadRow, sender: UserRow, locale: "ar" | "en") {
+  // Tests opt in with MOCK_REPLY_MS, so a stray timer never touches another test's database.
+  const delay = Number(
+    process.env.MOCK_REPLY_MS ?? (process.env.VITEST ? Number.NaN : 8000)
+  )
+  if (import.meta.env.VITE_DEMO !== "true" || !Number.isFinite(delay)) return
+  const answered = () =>
+    db.messages.some((m) => m.threadId === row.id && m.senderId !== sender.id)
+  if (answered()) return
+  const other = row.participantIds.find((p) => p !== sender.id)
+  const replier = other ? find(db.users, other) : undefined
+  if (!replier) return
+  setTimeout(() => {
+    // The thread may be gone (a reset) or already answered by a test or a second tab.
+    if (!db.threads.includes(row) || answered()) return
+    post(
+      row,
+      replier,
+      replies[locale][row.subjectType === "listing" ? 0 : 1] ?? ""
+    )
+  }, delay)
+}
+const localeOf = (req: Request) =>
+  readCookie(req, "locale") === "en" ? "en" : "ar"
 
 route("GET", "/threads", (c) => {
   const user = needUser(c)
@@ -104,6 +142,7 @@ route("POST", "/threads", async (c) => {
     })
   }
   post(row, user, input.body)
+  autoReply(row, user, localeOf(c.req))
   return toThread(row, user.id)
 })
 
@@ -117,7 +156,9 @@ route("GET", "/threads/:id/messages", (c) => {
 route("POST", "/threads/:id/messages", async (c) => {
   const user = needUser(c)
   const row = threadFor(user, c.params.id ?? "")
-  return post(row, user, (await c.body(messageInputSchema)).body)
+  const message = post(row, user, (await c.body(messageInputSchema)).body)
+  autoReply(row, user, localeOf(c.req))
+  return message
 })
 route("POST", "/threads/:id/read", (c) => {
   const user = needUser(c)

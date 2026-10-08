@@ -8,6 +8,8 @@ export const threadSchema = z.object({
   subjectId: idSchema,
   subjectTitle: bilingualSchema,
   subjectImage: z.string().optional(),
+  // Public page of the subject (a listing or a business); absent when it was deleted.
+  subjectSlug: z.string().optional(),
   participants: z.array(
     z.object({
       id: idSchema,

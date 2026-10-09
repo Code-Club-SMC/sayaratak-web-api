@@ -202,13 +202,6 @@ describe("listings", () => {
     ).toBe(true)
     expect(res.body.facets.fuel.length).toBeGreaterThan(1) // fuel facet ignores the fuel filter itself
     expect(res.body.pageSize).toBe(24)
-    const promoted = res.body.items.findIndex(
-      (l: { promotions: unknown[] }) => l.promotions.length > 0
-    )
-    const plain = res.body.items.findIndex(
-      (l: { promotions: unknown[] }) => l.promotions.length === 0
-    )
-    if (promoted >= 0 && plain >= 0) expect(promoted).toBeLessThan(plain)
     const cheap = await call(
       "GET",
       "/listings?intent=sale&type=car&sort=price_asc&page=1"
@@ -221,6 +214,35 @@ describe("listings", () => {
         ["khartoum", "bahri", "omdurman"].includes(l.cityId)
       )
     ).toBe(true)
+  })
+  it("caps paid listings per page: up to 4 sponsored on top, a featured at most once per row", async () => {
+    type Row = {
+      promotions: { type: string; startsAt: string; endsAt: string }[]
+    }
+    const now = Date.now()
+    const has = (l: Row, types: string[]) =>
+      l.promotions.some(
+        (p) =>
+          types.includes(p.type) &&
+          Date.parse(p.startsAt) <= now &&
+          Date.parse(p.endsAt) >= now
+      )
+    const all = (await call("GET", "/listings?pageSize=500")).body
+      .items as Row[]
+    const page = (await call("GET", "/listings")).body.items as Row[]
+    expect(
+      all.filter((l) => has(l, ["sponsored"])).length
+    ).toBeGreaterThanOrEqual(4)
+    const sponsored = page.flatMap((l, i) => (has(l, ["sponsored"]) ? [i] : []))
+    expect(sponsored).toEqual([0, 1, 2, 3])
+    const featured = page.flatMap((l, i) =>
+      !has(l, ["sponsored"]) && has(l, ["pin", "boost"]) ? [i] : []
+    )
+    expect(featured.length).toBeGreaterThan(0)
+    expect(featured.every((i) => i >= 4 && i % 4 === 0)).toBe(true)
+    expect(
+      page.length - sponsored.length - featured.length
+    ).toBeGreaterThanOrEqual(14)
   })
   it("narrows by the step 7.9 filters: repeated keys are lists, flags are yes-only, features need all", async () => {
     const total = (q: string) =>

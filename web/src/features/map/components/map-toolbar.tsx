@@ -44,7 +44,6 @@ export function MapToolbar({
     denied: "form.location_denied",
     failed: "form.location_failed",
   }[place as Exclude<Place, "idle">]
-  // On a card, so a pressed toggle (muted) differs from an unpressed one (clear) against the page color.
   return (
     <div className="flex flex-col gap-2 rounded-xl bg-card p-3">
       <div className="flex flex-wrap items-center gap-2">

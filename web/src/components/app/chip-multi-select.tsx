@@ -7,6 +7,7 @@ export function ChipMultiSelect({
   onChange,
   max,
   error,
+  hideLegend,
 }: {
   legend: string
   options: ChipOption[]
@@ -14,6 +15,7 @@ export function ChipMultiSelect({
   onChange: (value: string[]) => void
   max?: number
   error?: string
+  hideLegend?: boolean
 }) {
   return (
     <ChipSelect
@@ -29,6 +31,7 @@ export function ChipMultiSelect({
             : undefined
       }
       error={error}
+      hideLegend={hideLegend}
     />
   )
 }

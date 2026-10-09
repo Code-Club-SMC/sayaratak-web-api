@@ -416,3 +416,11 @@ html[data-data-saver]::view-transition-old(*),
 html[data-data-saver]::view-transition-new(*) {
   animation: none;
 }
+
+/* A pressed toggle takes the primary fill, as a selected chip does. The default pressed fill (muted) is 1.03:1 on the page background, so the chosen option was invisible. Outside any layer so it also beats the item's own hover fill. */
+[data-slot="toggle"][aria-pressed="true"],
+[data-slot="toggle-group-item"][aria-pressed="true"] {
+  border-color: var(--primary);
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+}

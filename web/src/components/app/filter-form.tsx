@@ -1,12 +1,12 @@
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useRef } from "react"
 import { Controller, FormProvider, useForm } from "react-hook-form"
 import { useQuery } from "@tanstack/react-query"
 
 import { listingQueries, taxonomyQuery } from "@/features/listings/queries"
 import {
+  activeCount,
   applyDraft,
   clearFilters,
-  radii,
   toDraft,
   type FilterGroup,
 } from "@/features/search/filters"
@@ -18,15 +18,18 @@ import type { ListingPage } from "@/schemas/listing"
 import { Button } from "@/components/ui/button"
 import { ChipSingleSelect } from "./chip-single-select"
 import { CheckboxGroup } from "./checkbox-group"
-import { CityDistrictFields } from "./city-district-fields"
-import { FormField } from "./form-field"
+import { FilterLocationFields } from "./filter-location-fields"
+import { FilterSection } from "./filter-section"
 import { FilterSpecFields } from "./filter-spec-fields"
 import { FilterVehicleFields } from "./filter-vehicle-fields"
-import { FormSection } from "./form-section"
+import { FieldMarks, FormField } from "./form-field"
 import { NumberField } from "./number-field"
-import { SelectInput } from "./select-input"
 
 type Facets = ListingPage["facets"]
+
+// The desktop panel is denser than the 36 px forms: 32 px fields and chips, tighter gaps. The sheet on a phone keeps the 44 px touch size.
+const dense =
+  "flex flex-col gap-1 [--control-h:2rem] [--row-h:1.75rem] [&_[data-slot=chip-group]]:gap-1.5 [&_[data-slot=chip]]:px-3 [&_[data-slot=field-label]]:text-caption [&_[data-slot=field-label]]:font-normal [&_[data-slot=field]]:gap-1"
 
 // One form for the desktop panel and the mobile sheet. It edits a local draft. The panel writes it to the URL 300 ms after the last change; the sheet waits for "Show N results".
 export function FilterForm({
@@ -47,7 +50,6 @@ export function FilterForm({
   const methods = useForm({ defaultValues: toDraft(params) })
   const { control, handleSubmit, watch, setValue, reset } = methods
   const draft = watch()
-  const [place, setPlace] = useState<"idle" | "asking" | "failed">("idle")
   const centerOf = (city: string) =>
     tax?.cities.find((c) => c.id === city)?.center
   const next = () => applyDraft(params, draft, centerOf(draft.city))
@@ -74,28 +76,6 @@ export function FilterForm({
     select: (page) => page.total,
   })
 
-  // A radius counts from the city center or from a position. With neither, the browser is asked once; if that fails the control stays off until a city is chosen or the position is shared.
-  const located = Boolean(draft.city) || draft.origin !== null
-  const locate = () => {
-    setPlace("asking")
-    const failed = () => {
-      setPlace("failed")
-      setValue("radius", null)
-    }
-    if (!("geolocation" in navigator)) return failed()
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        setPlace("idle")
-        setValue("origin", {
-          lat: pos.coords.latitude,
-          lng: pos.coords.longitude,
-        })
-      },
-      failed,
-      { timeout: 10_000 }
-    )
-  }
-
   const withCount = useFacetLabel(facets)
   const isPart = params.kind === "part"
   const vehicleTypes = (tax?.vehicleTypes ?? [])
@@ -113,193 +93,172 @@ export function FilterForm({
 
   return (
     <FormProvider {...methods}>
-      <form
-        onSubmit={handleSubmit((d) =>
-          onApply(applyDraft(params, d, centerOf(d.city)))
-        )}
-        className="flex flex-col gap-6"
-      >
-        {show("category") && (
-          <FormSection title={t("search.group_category")}>
-            {isPart && (
+      <FieldMarks value="none">
+        <form
+          onSubmit={handleSubmit((d) =>
+            onApply(applyDraft(params, d, centerOf(d.city)))
+          )}
+          className={variant === "panel" ? dense : "flex flex-col gap-2"}
+        >
+          {show("category") && (
+            <FilterSection
+              title={t("search.group_category")}
+              defaultOpen
+              active={activeCount(draft.type, draft.partCategory)}
+            >
+              {isPart && (
+                <Controller
+                  control={control}
+                  name="partCategory"
+                  render={({ field }) => (
+                    <ChipSingleSelect
+                      legend={t("search.part_category")}
+                      options={[any, ...partCategories]}
+                      value={field.value ?? ""}
+                      onChange={(v) => field.onChange(v || null)}
+                    />
+                  )}
+                />
+              )}
               <Controller
                 control={control}
-                name="partCategory"
+                name="type"
                 render={({ field }) => (
                   <ChipSingleSelect
-                    legend={t("search.part_category")}
-                    options={[any, ...partCategories]}
+                    legend={t(
+                      isPart ? "search.fits_type" : "search.vehicle_type"
+                    )}
+                    hideLegend={!isPart}
+                    options={[any, ...vehicleTypes]}
                     value={field.value ?? ""}
-                    onChange={(v) => field.onChange(v || null)}
+                    onChange={(v) => {
+                      field.onChange(v || null)
+                      if (!isPart) {
+                        setValue("make", "")
+                        setValue("model", "")
+                      }
+                    }}
                   />
                 )}
               />
-            )}
-            <Controller
-              control={control}
-              name="type"
-              render={({ field }) => (
-                <ChipSingleSelect
-                  legend={t(
-                    isPart ? "search.fits_type" : "search.vehicle_type"
-                  )}
-                  options={[any, ...vehicleTypes]}
-                  value={field.value ?? ""}
-                  onChange={(v) => {
-                    field.onChange(v || null)
-                    if (!isPart) {
-                      setValue("make", "")
-                      setValue("model", "")
-                    }
-                  }}
-                />
-              )}
-            />
-          </FormSection>
-        )}
-        {show("price") && (
-          <FormSection title={t("search.group_price")}>
-            <div className="grid grid-cols-2 gap-3">
-              {(["minPrice", "maxPrice"] as const).map((name) => (
-                <Controller
-                  key={name}
-                  control={control}
-                  name={name}
-                  render={({ field }) => (
-                    <FormField
-                      label={t(
-                        `search.${name === "minPrice" ? "min_price" : "max_price"}`
-                      )}
-                    >
-                      {(c) => (
-                        <NumberField
-                          {...c}
-                          grouping
-                          min={0}
-                          value={field.value}
-                          onChange={field.onChange}
-                        />
-                      )}
-                    </FormField>
-                  )}
-                />
-              ))}
-            </div>
-          </FormSection>
-        )}
-        {!isPart && <FilterVehicleFields facets={facets} show={show} />}
-        {show("condition") && (
-          <FormSection title={t("search.group_condition")}>
-            <Controller
-              control={control}
-              name="condition"
-              render={({ field }) => (
-                <ChipSingleSelect
-                  legend={t("search.condition")}
-                  options={[
-                    any,
-                    { value: "new", label: t("condition.new") },
-                    { value: "used", label: t("condition.used") },
-                  ]}
-                  value={field.value ?? ""}
-                  onChange={(v) =>
-                    field.onChange(v === "new" || v === "used" ? v : null)
-                  }
-                />
-              )}
-            />
-          </FormSection>
-        )}
-        {show("location") && (
-          <FormSection title={t("search.group_location")}>
-            <CityDistrictFields
-              value={{ cityId: draft.city, districtId: draft.district }}
-              onChange={(v) => {
-                setValue("city", v.cityId)
-                setValue("district", v.districtId)
-              }}
-            />
-            <FormField label={t("search.radius")}>
-              {(c) => (
-                <SelectInput
-                  {...c}
-                  disabled={
-                    place === "asking" || (!located && place === "failed")
-                  }
-                  value={draft.radius ? String(draft.radius) : ""}
-                  placeholder={t("search.radius_any")}
-                  options={radii.map((r) => ({
-                    value: String(r),
-                    label: t("search.radius_value", { km: r }),
-                  }))}
-                  onChange={(v) => {
-                    setValue("radius", v ? Number(v) : null)
-                    if (v && !located) locate()
-                  }}
-                />
-              )}
-            </FormField>
-            {!located && place === "failed" && (
-              <div className="flex flex-col items-start gap-2">
-                <p className="text-caption text-muted-foreground">
-                  {t("search.radius_needs_place")}
-                </p>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={locate}
-                >
-                  {t("search.use_location")}
-                </Button>
-              </div>
-            )}
-          </FormSection>
-        )}
-        {show("spec") && (
-          <FilterSpecFields part={isPart} intent={params.intent} />
-        )}
-        {show("more") && (
-          <FormSection title={t("search.group_more")}>
-            <CheckboxGroup
-              legend={t("search.group_more")}
-              options={[
-                { value: "verifiedOnly", label: t("search.verified_only") },
-                { value: "hasVideo", label: t("search.has_video") },
-                { value: "includeSold", label: t("search.include_sold") },
-              ]}
-              value={(
-                ["verifiedOnly", "hasVideo", "includeSold"] as const
-              ).filter((k) => draft[k])}
-              onChange={(on) => {
-                for (const k of [
-                  "verifiedOnly",
-                  "hasVideo",
-                  "includeSold",
-                ] as const)
-                  setValue(k, on.includes(k))
-              }}
-            />
-          </FormSection>
-        )}
-        <div className="sticky bottom-0 flex gap-3 bg-background py-3">
-          {variant === "sheet" && (
-            <Button type="submit" className="flex-1">
-              {count !== undefined
-                ? t("search.show_results", { count })
-                : t("search.apply")}
-            </Button>
+            </FilterSection>
           )}
-          <Button
-            type="button"
-            variant="outline"
-            className={variant === "panel" ? "flex-1" : undefined}
-            onClick={() => onApply(clearFilters(params))}
-          >
-            {t("common.clear_all")}
-          </Button>
-        </div>
-      </form>
+          {show("price") && (
+            <FilterSection
+              title={t("search.group_price")}
+              defaultOpen
+              active={activeCount(draft.minPrice, draft.maxPrice)}
+            >
+              <div className="grid grid-cols-2 gap-3">
+                {(["minPrice", "maxPrice"] as const).map((name) => (
+                  <Controller
+                    key={name}
+                    control={control}
+                    name={name}
+                    render={({ field }) => (
+                      <FormField
+                        label={t(
+                          `search.${name === "minPrice" ? "min_price" : "max_price"}`
+                        )}
+                      >
+                        {(c) => (
+                          <NumberField
+                            {...c}
+                            grouping
+                            min={0}
+                            value={field.value}
+                            onChange={field.onChange}
+                          />
+                        )}
+                      </FormField>
+                    )}
+                  />
+                ))}
+              </div>
+            </FilterSection>
+          )}
+          {!isPart && <FilterVehicleFields facets={facets} show={show} />}
+          {show("condition") && (
+            <FilterSection
+              title={t("search.group_condition")}
+              defaultOpen={isPart}
+              active={activeCount(draft.condition)}
+            >
+              <Controller
+                control={control}
+                name="condition"
+                render={({ field }) => (
+                  <ChipSingleSelect
+                    legend={t("search.condition")}
+                    hideLegend
+                    options={[
+                      any,
+                      { value: "new", label: t("condition.new") },
+                      { value: "used", label: t("condition.used") },
+                    ]}
+                    value={field.value ?? ""}
+                    onChange={(v) =>
+                      field.onChange(v === "new" || v === "used" ? v : null)
+                    }
+                  />
+                )}
+              />
+            </FilterSection>
+          )}
+          {show("location") && <FilterLocationFields />}
+          {show("spec") && (
+            <FilterSpecFields part={isPart} intent={params.intent} />
+          )}
+          {show("more") && (
+            <FilterSection
+              title={t("search.group_more")}
+              active={activeCount(
+                draft.verifiedOnly,
+                draft.hasVideo,
+                draft.includeSold
+              )}
+            >
+              <CheckboxGroup
+                hideLegend
+                legend={t("search.group_more")}
+                options={[
+                  { value: "verifiedOnly", label: t("search.verified_only") },
+                  { value: "hasVideo", label: t("search.has_video") },
+                  { value: "includeSold", label: t("search.include_sold") },
+                ]}
+                value={(
+                  ["verifiedOnly", "hasVideo", "includeSold"] as const
+                ).filter((k) => draft[k])}
+                onChange={(on) => {
+                  for (const k of [
+                    "verifiedOnly",
+                    "hasVideo",
+                    "includeSold",
+                  ] as const)
+                    setValue(k, on.includes(k))
+                }}
+              />
+            </FilterSection>
+          )}
+          <div className="sticky bottom-0 flex gap-3 bg-background py-3">
+            {variant === "sheet" && (
+              <Button type="submit" className="flex-1">
+                {count !== undefined
+                  ? t("search.show_results", { count })
+                  : t("search.apply")}
+              </Button>
+            )}
+            <Button
+              type="button"
+              variant="outline"
+              className={variant === "panel" ? "flex-1" : undefined}
+              onClick={() => onApply(clearFilters(params))}
+            >
+              {t("common.clear_all")}
+            </Button>
+          </div>
+        </form>
+      </FieldMarks>
     </FormProvider>
   )
 }

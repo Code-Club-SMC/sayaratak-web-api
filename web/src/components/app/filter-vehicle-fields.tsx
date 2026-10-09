@@ -2,13 +2,17 @@ import { Controller, useFormContext } from "react-hook-form"
 import { useQuery } from "@tanstack/react-query"
 
 import { taxonomyQuery } from "@/features/listings/queries"
-import type { FilterDraft, FilterGroup } from "@/features/search/filters"
+import {
+  activeCount,
+  type FilterDraft,
+  type FilterGroup,
+} from "@/features/search/filters"
 import { useFacetLabel } from "@/features/search/use-facet-label"
 import { useT } from "@/lib/i18n/use-t"
 import type { ListingPage } from "@/schemas/listing"
 import { ChipMultiSelect } from "./chip-multi-select"
+import { FilterSection } from "./filter-section"
 import { FormField } from "./form-field"
-import { FormSection } from "./form-section"
 import { MakeLogo } from "./make-logo"
 import { NumberField } from "./number-field"
 import { SelectInput } from "./select-input"
@@ -38,7 +42,11 @@ export function FilterVehicleFields({
   return (
     <>
       {show("make") && (
-        <FormSection title={t("search.group_make")}>
+        <FilterSection
+          title={t("search.group_make")}
+          defaultOpen
+          active={activeCount(draft.make, draft.model)}
+        >
           <FormField label={t("form.make")}>
             {(c) => (
               <SelectInput
@@ -73,12 +81,17 @@ export function FilterVehicleFields({
               )}
             </FormField>
           )}
-        </FormSection>
+        </FilterSection>
       )}
       {(show("year") || show("mileage")) && (
-        <FormSection
+        <FilterSection
           title={t(
             show("mileage") ? "search.group_year" : "search.group_year_only"
+          )}
+          active={activeCount(
+            draft.minYear,
+            draft.maxYear,
+            show("mileage") ? draft.maxMileage : null
           )}
         >
           {show("year") && (
@@ -127,10 +140,13 @@ export function FilterVehicleFields({
               )}
             />
           )}
-        </FormSection>
+        </FilterSection>
       )}
       {show("fuel") && (
-        <FormSection title={t("search.group_fuel")}>
+        <FilterSection
+          title={t("search.group_fuel")}
+          active={activeCount(draft.fuel, draft.transmission)}
+        >
           <Controller
             control={control}
             name="fuel"
@@ -161,7 +177,7 @@ export function FilterVehicleFields({
               />
             )}
           />
-        </FormSection>
+        </FilterSection>
       )}
     </>
   )

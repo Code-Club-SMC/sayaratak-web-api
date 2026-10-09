@@ -2,6 +2,19 @@ import type { Geo } from "@/schemas/fields"
 import type { Fuel, Transmission, VehicleType } from "@/schemas/listing"
 import { flagKeys, type FlagKey, type SearchParams } from "./schemas"
 
+// How many filters are set among these draft values: an array counts each choice, anything else counts once when it holds a value. It feeds the count on a section heading.
+export const activeCount = (...values: unknown[]) =>
+  values.reduce<number>(
+    (n, v) =>
+      n +
+      (Array.isArray(v)
+        ? v.length
+        : v === null || v === undefined || v === "" || v === false
+          ? 0
+          : 1),
+    0
+  )
+
 export const radii = [5, 10, 25, 50, 100] as const
 
 // The part of the URL the filter form edits. Empty values are null or [], never undefined, so every field stays controlled.

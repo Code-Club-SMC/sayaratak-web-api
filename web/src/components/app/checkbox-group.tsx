@@ -13,6 +13,7 @@ export function CheckboxGroup({
   error,
   disabled = [],
   row = false,
+  hideLegend,
 }: {
   legend: string
   options: ChipOption[]
@@ -23,10 +24,16 @@ export function CheckboxGroup({
   disabled?: string[]
   // Lay the options in one wrapping line instead of a column.
   row?: boolean
+  hideLegend?: boolean
 }) {
   return (
     <FieldSet>
-      <FieldLegend variant="label">{legend}</FieldLegend>
+      <FieldLegend
+        variant="label"
+        className={hideLegend ? "sr-only" : undefined}
+      >
+        {legend}
+      </FieldLegend>
       <div className={row ? "flex flex-wrap gap-x-6" : "contents"}>
         {options.map((o) => (
           <Label key={o.value} className="min-h-(--row-h) font-normal">

@@ -3,7 +3,13 @@ import {
   defaultParseSearch,
   defaultStringifySearch,
 } from "@tanstack/react-router"
-import { fireEvent, screen, waitFor, within } from "@testing-library/react"
+import {
+  cleanup,
+  fireEvent,
+  screen,
+  waitFor,
+  within,
+} from "@testing-library/react"
 import { beforeEach, describe, expect, it, vi } from "vitest"
 
 import { FilterForm } from "@/components/app/filter-form"
@@ -199,6 +205,21 @@ describe("FilterForm, more filters", () => {
     const section = screen.getByText("More filters").closest("details")!
     expect(section.open).toBe(true)
     expect(within(section).getByText("2")).toBeTruthy()
+  })
+  it("blocks: category, price and make start open, the rest closed, and one with a value opens with its count", async () => {
+    await open({})
+    const block = (title: string) =>
+      screen.getByText(title, { selector: "summary span" }).closest("details")!
+    for (const title of ["Category", "Price", "Make and model"])
+      expect(block(title).open).toBe(true)
+    for (const title of ["Year and mileage", "Fuel and transmission"])
+      expect(block(title).open).toBe(false)
+    cleanup()
+    await open({ fuel: ["petrol", "diesel"], minYear: 2015 })
+    const fuel = block("Fuel and transmission")
+    expect(fuel.open).toBe(true)
+    expect(within(fuel).getByText("2")).toBeTruthy()
+    expect(within(block("Year and mileage")).getByText("1")).toBeTruthy()
   })
   it("chips and flags are written to the params on submit", async () => {
     const onApply = await open({})

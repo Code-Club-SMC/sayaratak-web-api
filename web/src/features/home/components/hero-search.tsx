@@ -18,8 +18,6 @@ import { intentSchema } from "@/schemas/listing"
 import { heroSearchSchema, type HeroSearch as HeroValues } from "../schemas"
 
 const YEAR = 365 * 24 * 60 * 60
-const choice =
-  "aria-pressed:bg-primary aria-pressed:text-primary-foreground aria-pressed:hover:bg-primary/90"
 
 // The search card, with the page heading: vehicles or parts, buy or rent, city, make, model and the highest price. It builds the search URL and goes there; nothing is stored but the city, which the home and search pages remember.
 export function HeroSearch({ city }: { city: string }) {
@@ -94,10 +92,10 @@ export function HeroSearch({ city }: { city: string }) {
                       if (intent.success) field.onChange(intent.data)
                     }}
                   >
-                    <ToggleGroupItem value="sale" className={choice}>
+                    <ToggleGroupItem value="sale">
                       {t("home.buy")}
                     </ToggleGroupItem>
-                    <ToggleGroupItem value="rent" className={choice}>
+                    <ToggleGroupItem value="rent">
                       {t("home.rent")}
                     </ToggleGroupItem>
                   </ToggleGroup>

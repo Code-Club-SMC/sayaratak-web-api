@@ -9,6 +9,7 @@ export function ChipSingleSelect({
   onChange,
   error,
   action,
+  hideLegend,
 }: {
   legend: string
   options: ChipOption[]
@@ -16,6 +17,7 @@ export function ChipSingleSelect({
   onChange: (value: string) => void
   error?: string
   action?: ReactNode
+  hideLegend?: boolean
 }) {
   return (
     <ChipSelect
@@ -25,6 +27,7 @@ export function ChipSingleSelect({
       isOn={(v) => v === value}
       onToggle={onChange}
       error={error}
+      hideLegend={hideLegend}
       action={action}
     />
   )

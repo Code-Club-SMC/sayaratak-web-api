@@ -18,7 +18,7 @@ import {
 } from "@/schemas/listing-fields"
 import { CheckboxGroup } from "./checkbox-group"
 import { ChipMultiSelect } from "./chip-multi-select"
-import { CollapsibleSection } from "./collapsible-section"
+import { FilterSection } from "./filter-section"
 import { FormField } from "./form-field"
 import { NumberField } from "./number-field"
 
@@ -76,12 +76,8 @@ export function FilterSpecFields({
     (part ? 0 : draft.features.length + (draft.seatsMin === null ? 0 : 1)) +
     (part && draft.fitsYear !== null ? 1 : 0)
   return (
-    <CollapsibleSection
-      title={t("search.group_spec")}
-      defaultOpen={active > 0}
-      summary={active > 0 ? String(active) : undefined}
-    >
-      <div className="flex flex-col gap-4">
+    <FilterSection title={t("search.group_spec")} active={active}>
+      <div className="flex flex-col gap-3">
         {lists.map((key) => (
           <Controller
             key={key}
@@ -183,6 +179,6 @@ export function FilterSpecFields({
           />
         )}
       </div>
-    </CollapsibleSection>
+    </FilterSection>
   )
 }

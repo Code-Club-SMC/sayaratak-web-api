@@ -7,10 +7,6 @@ import type { FavoritesSearch } from "../schemas"
 
 const types = ["all", ...vehicleTypeSchema.options, "part"] as const
 
-// The default pressed look (a 5 percent grey) is invisible on the page background, so the chosen type takes the primary fill, as the chips do.
-const pressed =
-  "aria-pressed:bg-primary aria-pressed:text-primary-foreground aria-pressed:hover:bg-primary aria-pressed:hover:text-primary-foreground"
-
 // Type filter and sort. A change starts again at page 1. The type group is a radio: pressing the chosen type again keeps it.
 export function FavoritesToolbar({
   search,
@@ -37,7 +33,7 @@ export function FavoritesToolbar({
           }}
         >
           {types.map((value) => (
-            <ToggleGroupItem key={value} value={value} className={pressed}>
+            <ToggleGroupItem key={value} value={value}>
               {t(`dashboard.favorites_${value}`)}
             </ToggleGroupItem>
           ))}

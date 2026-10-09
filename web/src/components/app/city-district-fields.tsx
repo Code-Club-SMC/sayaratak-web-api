@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query"
 
 import { taxonomyQuery } from "@/features/listings/queries"
 import { useT } from "@/lib/i18n/use-t"
+import { cn } from "@/lib/utils"
 import { CitySelect } from "./city-select"
 import { FormField } from "./form-field"
 import { SelectInput } from "./select-input"
@@ -15,19 +16,21 @@ export function CityDistrictFields({
   cityError,
   districtError,
   districtRequired = false,
+  className,
 }: {
   value: CityDistrictValue
   onChange: (value: CityDistrictValue) => void
   cityError?: string
   districtError?: string
   districtRequired?: boolean
+  className?: string
 }) {
   const { t, locale } = useT()
   const { data } = useQuery(taxonomyQuery)
   const districts =
     data?.districts.filter((d) => d.cityId === value.cityId) ?? []
   return (
-    <div className="grid gap-4 sm:grid-cols-2">
+    <div className={cn("grid gap-4 sm:grid-cols-2", className)}>
       <CitySelect
         value={value.cityId}
         error={cityError}

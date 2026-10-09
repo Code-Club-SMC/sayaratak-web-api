@@ -11,8 +11,10 @@ export type ControlProps = {
   "aria-required": true | undefined
 }
 
-// How a form marks its fields. "optional" (the default) writes "(Optional)" on the few optional ones; "required" writes an asterisk on the required ones and no text on the rest. A form where most fields are optional picks "required".
-export const FieldMarks = createContext<"optional" | "required">("optional")
+// How a form marks its fields. "optional" (the default) writes "(Optional)" on the few optional ones; "required" writes an asterisk on the required ones and no text on the rest. A form where most fields are optional picks "required". "none" marks nothing, for a form where every field is optional (the search filters).
+export const FieldMarks = createContext<"optional" | "required" | "none">(
+  "optional"
+)
 
 // Label, control, hint and translated error wired together with ids. The control comes in as a render prop.
 export function FormField({

@@ -170,6 +170,10 @@ describe("StatCard", () => {
     expect(screen.getByText("1,500")).toBeTruthy()
     expect(screen.getByText(/\+50%/)).toBeTruthy()
   })
+  it("reads a tiny drop as 0%, never -0%", async () => {
+    await renderShell(<StatCard label="Views" value={999} previous={1000} />)
+    expect(screen.getByText(/0%/).textContent).not.toContain("-")
+  })
   it("hides the change when the previous period is 0", async () => {
     await renderShell(<StatCard label="Views" value={5} previous={0} />)
     expect(screen.queryByText(/%/)).toBeNull()

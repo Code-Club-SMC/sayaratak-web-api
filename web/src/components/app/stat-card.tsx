@@ -17,7 +17,7 @@ export function StatCard({
   const { t, locale } = useT()
   const change =
     value !== undefined && previous
-      ? Math.round(((value - previous) / previous) * 100)
+      ? Math.round(((value - previous) / previous) * 100) || 0 // `|| 0` turns -0 into 0, so a tiny drop reads "0%", not "-0%"
       : undefined
   return (
     <div className="flex flex-col gap-1 rounded-xl bg-card p-5">

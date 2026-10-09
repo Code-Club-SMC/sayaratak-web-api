@@ -14,7 +14,11 @@ import {
   InputOTPGroup,
   InputOTPSlot,
 } from "@/components/ui/input-otp"
-import { useSendOtp, useUpdateProfile } from "@/features/auth/queries"
+import {
+  useSendOtp,
+  useUpdateProfile,
+  useVerifyOtp,
+} from "@/features/auth/queries"
 import { otpFormSchema } from "@/features/auth/schemas"
 import { normalizeDigits } from "@/lib/digits"
 import { useT } from "@/lib/i18n/use-t"
@@ -24,20 +28,24 @@ import type { User } from "@/schemas/user"
 const COOLDOWN = 30
 
 // A new phone or email is saved only with the code sent to it. The code goes out when the dialog opens; the right code saves the change.
+// `existing` confirms a contact the account already has: the code only marks it verified.
 export function VerifyContactDialog({
   field,
   value,
+  existing = false,
   onVerified,
   onCancel,
 }: {
   field: "email" | "phone"
   value: string
+  existing?: boolean
   onVerified: (user: User) => void
   onCancel: () => void
 }) {
   const { t } = useT()
   const send = useSendOtp()
   const update = useUpdateProfile()
+  const verify = useVerifyOtp()
   const [code, setCode] = useState("")
   const [errorKey, setErrorKey] = useState<string>()
   const [resendIn, setResendIn] = useCountdown(COOLDOWN)
@@ -50,24 +58,33 @@ export function VerifyContactDialog({
   const submit = (raw: string) => {
     const parsed = otpFormSchema.safeParse({ code: normalizeDigits(raw) })
     if (!parsed.success) return setErrorKey(parsed.error.issues[0]?.message)
-    update.mutate(
-      field === "email"
-        ? { email: value, code: parsed.data.code }
-        : { phone: value, code: parsed.data.code },
-      {
-        onSuccess: onVerified,
-        onError: (e) => {
-          setCode("")
-          setErrorKey(
-            e.code === "otp_invalid"
-              ? "auth.otp_invalid"
-              : e.code === "exists"
-                ? "settings.contact_taken"
-                : "auth.otp_verify_error"
-          )
-        },
-      }
-    )
+    const options = {
+      onError: (e: { code?: string }) => {
+        setCode("")
+        setErrorKey(
+          e.code === "otp_invalid"
+            ? "auth.otp_invalid"
+            : e.code === "exists"
+              ? "settings.contact_taken"
+              : "auth.otp_verify_error"
+        )
+      },
+    }
+    if (existing)
+      verify.mutate(
+        { identifier: value, code: parsed.data.code },
+        {
+          ...options,
+          onSuccess: (r) => ("id" in r ? onVerified(r) : onCancel()),
+        }
+      )
+    else
+      update.mutate(
+        field === "email"
+          ? { email: value, code: parsed.data.code }
+          : { phone: value, code: parsed.data.code },
+        { ...options, onSuccess: onVerified }
+      )
   }
   const taken = send.error?.code === "exists"
   const error = taken
@@ -105,7 +122,7 @@ export function VerifyContactDialog({
                   autoFocus
                   autoComplete="one-time-code"
                   inputMode="numeric"
-                  disabled={update.isPending}
+                  disabled={update.isPending || verify.isPending}
                 >
                   <InputOTPGroup>
                     {[0, 1, 2, 3, 4, 5].map((i) => (

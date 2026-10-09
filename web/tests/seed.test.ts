@@ -75,7 +75,7 @@ describe("seed counts (A9)", () => {
       db.payments.filter((p) => p.status !== "pending_review")
     ).toHaveLength(8)
     expect(db.taxonomy.cities).toHaveLength(10)
-    expect(db.taxonomy.makes).toHaveLength(16)
+    expect(db.taxonomy.makes).toHaveLength(55)
     for (const id of [
       "u-omar",
       "u-dealer",

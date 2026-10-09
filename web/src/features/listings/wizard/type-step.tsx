@@ -1,12 +1,11 @@
-import { useState } from "react"
 import { useQuery } from "@tanstack/react-query"
 import { useFormContext } from "react-hook-form"
 
 import { ChipMultiSelect } from "@/components/app/chip-multi-select"
 import { ChipSingleSelect } from "@/components/app/chip-single-select"
-import { ConfirmDialog } from "@/components/app/confirm-dialog"
 import { taxonomyQuery } from "@/features/listings/queries"
 import { useT } from "@/lib/i18n/use-t"
+import { toast } from "@/components/ui/toast"
 import {
   applyTile,
   detailsTouched,
@@ -23,20 +22,27 @@ export function TypeStep() {
   const { getValues } = useFormContext()
   const { values, error, set } = useStepFields()
   const { data: tax } = useQuery(taxonomyQuery)
-  const [asked, setAsked] = useState<Tile | null>(null)
   const current = tileOf(values)
 
-  const apply = (tile: Tile) => {
-    const before = getValues()
-    const next = applyTile(before, tile, tax?.makes ?? [])
-    for (const [field, value] of Object.entries(next))
-      if (JSON.stringify(before[field]) !== JSON.stringify(value))
-        set(field, value)
-  }
+  // Applies at once. When details were already filled in, some may be cleared, so the toast offers Undo instead of a dialog asking first.
   const choose = (tile: Tile) => {
     if (tile === current) return
-    if (current !== null && detailsTouched(getValues())) setAsked(tile)
-    else apply(tile)
+    const before = getValues()
+    const next = applyTile(before, tile, tax?.makes ?? [])
+    const changed = Object.keys(next).filter(
+      (field) => JSON.stringify(before[field]) !== JSON.stringify(next[field])
+    )
+    for (const field of changed) set(field, next[field])
+    if (current !== null && detailsTouched(before))
+      toast.add({
+        title: t("post.type_changed"),
+        actionProps: {
+          children: t("common.undo"),
+          onClick: () => {
+            for (const field of changed) set(field, before[field])
+          },
+        },
+      })
   }
   const enabled = new Set(
     tax?.vehicleTypes.filter((v) => v.enabled).map((v) => v.id)
@@ -89,17 +95,6 @@ export function TypeStep() {
           />
         </>
       )}
-      <ConfirmDialog
-        open={asked !== null}
-        onOpenChange={(open) => !open && setAsked(null)}
-        title={t("post.change_type_title")}
-        description={t("post.change_type_body")}
-        confirmLabel={t("post.change_type_confirm")}
-        onConfirm={() => {
-          if (asked) apply(asked)
-          setAsked(null)
-        }}
-      />
     </>
   )
 }

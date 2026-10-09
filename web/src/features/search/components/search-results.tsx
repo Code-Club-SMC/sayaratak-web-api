@@ -8,6 +8,7 @@ import { EmptyResults } from "@/components/app/empty-results"
 import { FilterPanel } from "@/components/app/filter-panel"
 import { FilterSheet } from "@/components/app/filter-sheet"
 import { ListingGrid } from "@/components/app/listing-grid"
+import { MakeLogo } from "@/components/app/make-logo"
 import { GridCard } from "@/components/app/page-skeleton"
 import { ResultsHeader } from "@/components/app/results-header"
 import { ResultsPagination } from "@/components/app/results-pagination"
@@ -101,7 +102,12 @@ export function SearchResults({
 
   return (
     <>
-      <ResultsHeader title={title} total={data?.total} as={headingAs}>
+      <ResultsHeader
+        title={title}
+        total={data?.total}
+        as={headingAs}
+        icon={<MakeLogo id={search.make} size="md" />}
+      >
         <FilterSheet
           params={search}
           facets={data?.facets}

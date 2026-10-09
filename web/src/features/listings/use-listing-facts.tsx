@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query"
 import { formatMileage, formatNumber } from "@/lib/format"
 import { useT } from "@/lib/i18n/use-t"
 import type { Listing } from "@/schemas/listing"
+import { MakeLogo } from "@/components/app/make-logo"
 import type { Spec } from "@/components/app/specs-list"
 import { taxonomyQuery } from "./queries"
 import { listingColors } from "./schemas"
@@ -30,6 +31,12 @@ export function useListingFacts(l: Listing) {
     .filter(Boolean)
     .join(", ")
   const latin = (value?: string | null) => value && <bdi>{value}</bdi>
+  const makeCell = make && (
+    <span className="inline-flex items-center gap-2">
+      <MakeLogo id={l.makeId} />
+      <bdi>{make}</bdi>
+    </span>
+  )
   const item = (label: string, value: Spec["value"]): Spec | null =>
     value ? { label, value } : null
   const list = (items: (Spec | null)[]) => items.filter((i) => i !== null)
@@ -56,7 +63,7 @@ export function useListingFacts(l: Listing) {
 
   if (l.kind === "part") {
     const partCategory = item(t("listing.spec_category"), latin(category))
-    const partMake = item(t("listing.spec_make"), latin(make))
+    const partMake = item(t("listing.spec_make"), makeCell)
     return {
       facts: list([condition, partCategory, partMake]),
       specs: list([
@@ -70,7 +77,7 @@ export function useListingFacts(l: Listing) {
   return {
     facts: list([year, mileage, fuel, gearbox, condition, payload]),
     specs: list([
-      item(t("listing.spec_make"), latin(make)),
+      item(t("listing.spec_make"), makeCell),
       item(t("listing.spec_model"), latin(model)),
       item(t("listing.spec_type"), type),
       year,

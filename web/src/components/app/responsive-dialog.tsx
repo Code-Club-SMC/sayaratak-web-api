@@ -10,12 +10,18 @@ export function ResponsiveDialog({
   onOpenChange,
   title,
   description,
+  wide = false,
+  className = "",
   children,
 }: {
   open: boolean
   onOpenChange: (open: boolean) => void
   title: string
   description?: string
+  // A long body: the dialog widens to 4xl, both containers stop at 85% of the screen height and the body scrolls.
+  wide?: boolean
+  // Extra classes for the dialog and the sheet, e.g. a different surface colour.
+  className?: string
   children: ReactNode
 }) {
   const mobile = useIsMobile()
@@ -24,19 +30,28 @@ export function ResponsiveDialog({
       {description && (
         <p className="text-ui text-muted-foreground">{description}</p>
       )}
-      {children}
+      {wide ? (
+        <div className="-mx-6 min-h-0 overflow-y-auto px-6 pb-1">
+          {children}
+        </div>
+      ) : (
+        children
+      )}
     </>
   )
+  const size = `${wide ? "max-h-[85dvh] sm:max-w-4xl" : ""} ${className}`
   return mobile ? (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent side="bottom" className="gap-4 p-6">
+      <SheetContent side="bottom" className={`gap-4 p-6 ${size}`}>
         <SheetTitle>{title}</SheetTitle>
         {body}
       </SheetContent>
     </Sheet>
   ) : (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="gap-4 p-6">
+      <DialogContent
+        className={`gap-4 p-6 ${size} ${wide ? "grid-rows-[auto_minmax(0,1fr)]" : ""}`}
+      >
         <DialogTitle>{title}</DialogTitle>
         {body}
       </DialogContent>

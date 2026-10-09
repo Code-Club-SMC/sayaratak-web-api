@@ -8,6 +8,7 @@ import { promotionKind } from "@/lib/promotion"
 import type { Listing } from "@/schemas/listing"
 import { CopyButton } from "@/components/app/copy-button"
 import { FavoriteButton } from "@/components/app/favorite-button"
+import { MakeLogo } from "@/components/app/make-logo"
 import { PriceText } from "@/components/app/price-text"
 import { PromotedBadge } from "@/components/app/promoted-badge"
 import { RelativeTime } from "@/components/app/relative-time"
@@ -35,8 +36,9 @@ export function TitleBlock({
       <div className="flex flex-wrap items-start justify-between gap-x-4 gap-y-1">
         <h1
           tabIndex={-1}
-          className="min-w-0 flex-1 basis-72 text-page font-semibold [text-wrap:balance] outline-none"
+          className="flex min-w-0 flex-1 basis-72 items-center gap-3 text-page font-semibold [text-wrap:balance] outline-none"
         >
+          <MakeLogo id={listing.makeId} size="md" />
           <bdi>{title}</bdi>
         </h1>
         <div className="-ms-2 flex shrink-0 items-center md:ms-0">

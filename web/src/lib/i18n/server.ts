@@ -64,7 +64,7 @@ export const getLocaleFromRequest = createServerFn().handler(() =>
 
 // Runs once per document: locale (path, then cookie, then header), messages, prefs and the server clock.
 export const getRootData = createServerFn()
-  .inputValidator(z.object({ pathname: z.string() }))
+  .validator(z.object({ pathname: z.string() }))
   .handler(({ data }) => {
     const fromPath = localeSchema.safeParse(data.pathname.split("/")[1])
     const locale = fromPath.success ? fromPath.data : detectLocale()

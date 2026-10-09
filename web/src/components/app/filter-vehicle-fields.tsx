@@ -9,6 +9,7 @@ import type { ListingPage } from "@/schemas/listing"
 import { ChipMultiSelect } from "./chip-multi-select"
 import { FormField } from "./form-field"
 import { FormSection } from "./form-section"
+import { MakeLogo } from "./make-logo"
 import { NumberField } from "./number-field"
 import { SelectInput } from "./select-input"
 
@@ -47,6 +48,7 @@ export function FilterVehicleFields({
                 options={makes.map((m) => ({
                   value: m.id,
                   label: withCount(m.name[locale], facets?.make, m.id),
+                  icon: <MakeLogo id={m.id} name={m.name.en} />,
                 }))}
                 onChange={(v) => {
                   setValue("make", v)

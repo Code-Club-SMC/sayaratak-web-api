@@ -1,4 +1,4 @@
-import { useRef } from "react"
+import { useRef, type ReactNode } from "react"
 import { XIcon } from "lucide-react"
 
 import { useT } from "@/lib/i18n/use-t"
@@ -12,7 +12,8 @@ import {
 } from "@/components/ui/select"
 import type { ControlProps } from "./form-field"
 
-export type SelectOption = { value: string; label: string }
+// `icon` sits before the label, in the list and on the closed field.
+export type SelectOption = { value: string; label: string; icon?: ReactNode }
 
 // The shadcn Select on a plain string value, the one dropdown of the app (never a native select element).
 // `placeholder` is only the hint on the closed field ("Choose a city"), never a row in the list; a small clear button reports "" once a value is picked.
@@ -44,10 +45,19 @@ export function SelectInput({
     const gap = Math.min(need - (window.innerHeight - box.bottom), box.top - 80)
     if (gap > 0) window.scrollBy({ top: gap, behavior: "instant" })
   }
+  const labelOf = (o: SelectOption) =>
+    o.icon ? (
+      <span className="flex items-center gap-2">
+        {o.icon}
+        {o.label}
+      </span>
+    ) : (
+      o.label
+    )
   return (
     <div className={cn("relative w-full", className)}>
       <Select
-        items={options}
+        items={options.map((o) => ({ value: o.value, label: labelOf(o) }))}
         onOpenChange={makeRoom}
         value={value || null}
         disabled={disabled}
@@ -63,7 +73,7 @@ export function SelectInput({
         <SelectContent alignItemWithTrigger={false} align="start">
           {options.map((o) => (
             <SelectItem key={o.value} value={o.value}>
-              {o.label}
+              {labelOf(o)}
             </SelectItem>
           ))}
         </SelectContent>

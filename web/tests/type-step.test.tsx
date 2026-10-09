@@ -1,10 +1,11 @@
-import { fireEvent, screen, waitFor, within } from "@testing-library/react"
+import { fireEvent, screen, waitFor } from "@testing-library/react"
 import { useRouterState } from "@tanstack/react-router"
 import { beforeEach, describe, expect, it, vi } from "vitest"
 
 import { ListingWizard } from "@/features/listings/wizard/listing-wizard"
 import { wizardDefaults } from "@/features/listings/wizard/wizard-defaults"
 import { wizardSteps } from "@/features/listings/wizard/wizard-steps"
+import { toast } from "@/components/ui/toast"
 import { db, resetDb } from "@/mocks/db"
 import { renderShell } from "./shell-render"
 
@@ -113,46 +114,54 @@ describe("TypeStep", () => {
     await waitFor(() => expect(step(shell)).toBe("details"))
   })
 
-  it("changing the type asks only after the details were touched", async () => {
+  it("changing the type never asks, and says nothing before the details were touched", async () => {
+    const add = vi.spyOn(toast, "add")
     await open({ vehicleType: "car" })
     fireEvent.click(await tile("Truck"))
     expect(screen.queryByRole("alertdialog")).toBeNull()
     expect(checked("Truck")).toBe(true)
+    expect(add).not.toHaveBeenCalled()
   })
 
-  it("asks, and Cancel keeps the type", async () => {
-    await open(touched)
-    fireEvent.click(await tile("Truck"))
-    const dialog = await screen.findByRole("alertdialog")
-    expect(
-      within(dialog).getByText(
-        "Changing the type clears fields that do not apply."
-      )
-    ).toBeTruthy()
-    fireEvent.click(within(dialog).getByRole("button", { name: "Cancel" }))
-    await waitFor(() => expect(screen.queryByRole("alertdialog")).toBeNull())
-    expect(checked("Car")).toBe(true)
-  })
-
-  it("asks, and Change type applies it and keeps the title", async () => {
+  it("applies at once when details were touched, keeps the title, and Undo brings the cleared fields back", async () => {
+    const add = vi.spyOn(toast, "add")
     const shell = await open(touched)
     fireEvent.click(await tile("Spare part"))
-    fireEvent.click(
-      within(await screen.findByRole("alertdialog")).getByRole("button", {
-        name: "Change type",
-      })
+    expect(screen.queryByRole("alertdialog")).toBeNull()
+    await waitFor(() => expect(checked("Spare part")).toBe(true))
+    const options = add.mock.calls[0]![0]
+    expect(options.title).toBe(
+      "Type changed. Fields that do not apply were cleared."
     )
-    await waitFor(() => expect(screen.queryByRole("alertdialog")).toBeNull())
-    expect(checked("Spare part")).toBe(true)
+    expect(options.actionProps!.children).toBe("Undo")
     // The draft, flushed when the page goes, holds the new type and the kept title.
     shell.unmount()
-    const stored = JSON.parse(sessionStorage.getItem("sy:draft:listing:new")!)
-    expect(stored.values).toMatchObject({
+    const stored = () =>
+      JSON.parse(sessionStorage.getItem("sy:draft:listing:new")!).values
+    expect(stored()).toMatchObject({
       kind: "part",
       vehicleType: null,
       title: "Toyota Corolla 2018",
       year: null,
       fuel: null,
+    })
+  })
+
+  it("Undo puts the type and the cleared details back", async () => {
+    const add = vi.spyOn(toast, "add")
+    const shell = await open(touched)
+    fireEvent.click(await tile("Spare part"))
+    await waitFor(() => expect(checked("Spare part")).toBe(true))
+    add.mock.calls[0]![0].actionProps!.onClick!({} as never)
+    await waitFor(() => expect(checked("Car")).toBe(true))
+    shell.unmount()
+    const stored = JSON.parse(sessionStorage.getItem("sy:draft:listing:new")!)
+    expect(stored.values).toMatchObject({
+      kind: "vehicle",
+      vehicleType: "car",
+      title: "Toyota Corolla 2018",
+      year: 2018,
+      fuel: "petrol",
     })
   })
 

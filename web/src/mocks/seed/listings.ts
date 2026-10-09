@@ -87,6 +87,7 @@ export function seedListings(ctx: Ctx) {
   )
   const alNasr = dealerships[0]
   const otherDealers = dealerships.slice(1).filter((d) => d.status === "active")
+  const popular = new Set(taxonomy.makes.slice(0, 20).map((m) => m.id))
   const listings: ListingRow[] = []
   const promotions: Promotion[] = []
   let counter = 0
@@ -141,7 +142,15 @@ export function seedListings(ctx: Ctx) {
     const used = !chance(0.06)
     const trait = pick(traits)
     if (kind === "vehicle" && type) {
-      model = pick(catalog.filter((m) => m.type === type))
+      // The twenty makes that lead the taxonomy sell far more than the rest, so they get twelve times the weight.
+      model = faker.helpers.weightedArrayElement(
+        catalog
+          .filter((m) => m.type === type)
+          .map((value) => ({
+            weight: popular.has(value.makeId) ? 12 : 1,
+            value,
+          }))
+      )
       year =
         intent === "rent"
           ? int(2016, 2025)
@@ -163,6 +172,8 @@ export function seedListings(ctx: Ctx) {
               ? pick(["petrol", "petrol", "lpg"])
               : "petrol"
       gear = type === "car" && chance(0.6) ? "automatic" : "manual"
+      // A model with no engine size is electric.
+      if (model.size === 0) fuel = "electric"
       const frac = Math.min(1, Math.max(0, (year - 2000) / 26))
       const step = type === "car" || type === "truck" ? 100_000 : 50_000
       price = roundTo(
@@ -289,7 +300,8 @@ export function seedListings(ctx: Ctx) {
       fuel,
       transmission: gear,
       color: model ? pick(colors) : null,
-      engineCc: model && model.type !== "truck" ? model.size : null,
+      engineCc:
+        model && model.type !== "truck" && model.size ? model.size : null,
       payloadTons: model?.type === "truck" ? model.size : null,
       partCategoryId,
       compatibleTypes: kind === "part" ? ["car"] : [],
@@ -302,7 +314,8 @@ export function seedListings(ctx: Ctx) {
         year,
         cityId: city,
         makeId,
-        engineCc: model && model.type !== "truck" ? model.size : null,
+        engineCc:
+          model && model.type !== "truck" && model.size ? model.size : null,
       }),
       media,
       cityId: city,

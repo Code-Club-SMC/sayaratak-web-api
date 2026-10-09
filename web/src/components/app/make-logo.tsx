@@ -1,0 +1,97 @@
+// Colour brand marks in public/images/makes/<make id>.svg, cropped to the artwork (no width or height, a tight viewBox). Add a file there and its id below to give a make a logo.
+const logos = new Set([
+  "acura",
+  "alfa-romeo",
+  "aston-martin",
+  "audi",
+  "bentley",
+  "bmw",
+  "bugatti",
+  "buick",
+  "byd",
+  "cadillac",
+  "chevrolet",
+  "chrysler",
+  "dodge",
+  "ferrari",
+  "fiat",
+  "ford",
+  "genesis",
+  "gmc",
+  "honda",
+  "hummer",
+  "hyundai",
+  "infiniti",
+  "isuzu",
+  "jaguar",
+  "jeep",
+  "kia",
+  "koenigsegg",
+  "lamborghini",
+  "land-rover",
+  "lexus",
+  "lincoln",
+  "lotus",
+  "lucid",
+  "maserati",
+  "mazda",
+  "mclaren",
+  "mercedes",
+  "mini",
+  "mitsubishi",
+  "nissan",
+  "pagani",
+  "peugeot",
+  "polestar",
+  "porsche",
+  "ram",
+  "rivian",
+  "rolls-royce",
+  "subaru",
+  "suzuki",
+  "tesla",
+  "toyota",
+  "tvs",
+  "volkswagen",
+  "volvo",
+  "yamaha",
+])
+
+// One box per size for every logo, so rows and tiles line up; `object-contain` fits wide wordmarks and round badges alike. `lg` fills whatever box the tile gives it.
+const sizes = {
+  sm: { box: "h-6 w-10", letter: "text-caption" },
+  md: { box: "h-10 w-14", letter: "text-ui" },
+  lg: { box: "size-full", letter: "text-title" },
+} as const
+
+// Decorative: the make name always sits beside it. A make without a file shows the first letter of `name` when it is given (lists and grids, where a gap would break the column), and nothing otherwise (headings). Pass the English name: the Latin initial matches the badge on the car, and an Arabic initial reads as a stray mark.
+export function MakeLogo({
+  id,
+  name,
+  size = "sm",
+}: {
+  id?: string | null
+  name?: string
+  size?: keyof typeof sizes
+}) {
+  const { box, letter } = sizes[size]
+  if (id && logos.has(id))
+    return (
+      <img
+        src={`/images/makes/${id}.svg`}
+        alt=""
+        loading={size === "md" ? "eager" : "lazy"}
+        decoding="async"
+        className={`${box} shrink-0 object-contain`}
+      />
+    )
+  if (!name) return null
+  return (
+    <span
+      aria-hidden
+      className={`${box} ${letter} grid shrink-0 place-items-center rounded-md bg-muted font-semibold text-muted-foreground`}
+    >
+      <bdi>{name.charAt(0)}</bdi>
+    </span>
+  )
+}

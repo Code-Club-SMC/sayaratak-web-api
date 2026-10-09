@@ -63,6 +63,9 @@ const file = (name: string, size: number, type = "image/png") =>
 
 beforeEach(() => {
   resetDb()
+  // The seed's random draws decide how many listings u-1 owns; the tests below post as u-1 and need room under the free limit (3), so it keeps two.
+  for (const row of db.listings.filter((l) => l.ownerUserId === "u-1").slice(2))
+    row.ownerUserId = "u-omar"
 })
 
 describe("auth", () => {
@@ -1421,6 +1424,14 @@ describe("account, settings side", () => {
 
   it("deletes a business owner with the profile, its reviews and threads", async () => {
     const biz = db.dealerships.find((d) => d.ownerId === "u-dealer")!
+    // Seeded reviews land on random businesses, so make sure this one has one.
+    if (!db.reviews.some((r) => r.targetId === biz.id))
+      db.reviews.push({
+        ...db.reviews[0]!,
+        id: "r-cascade",
+        targetType: "dealership",
+        targetId: biz.id,
+      })
     expect(db.reviews.some((r) => r.targetId === biz.id)).toBe(true)
     const pending = db.payments.find((p) => p.userId === "u-dealer")
     const res = await call("DELETE", "/me", { as: "u-dealer" })

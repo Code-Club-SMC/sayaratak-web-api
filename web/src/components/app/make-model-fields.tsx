@@ -5,6 +5,7 @@ import { useT } from "@/lib/i18n/use-t"
 import type { VehicleType } from "@/schemas/listing"
 import { Input } from "@/components/ui/input"
 import { FormField } from "./form-field"
+import { MakeLogo } from "./make-logo"
 import { SelectInput } from "./select-input"
 
 export type MakeModelValue = {
@@ -75,8 +76,20 @@ export function MakeModelFields({
             value={makeIsOther ? OTHER : (value.makeId ?? "")}
             placeholder={t("form.select_make")}
             options={[
-              ...makes.map((m) => ({ value: m.id, label: m.name[locale] })),
-              ...(search ? [] : [{ value: OTHER, label: t("form.other") }]),
+              ...makes.map((m) => ({
+                value: m.id,
+                label: m.name[locale],
+                icon: <MakeLogo id={m.id} name={m.name.en} />,
+              })),
+              ...(search
+                ? []
+                : [
+                    {
+                      value: OTHER,
+                      label: t("form.other"),
+                      icon: <MakeLogo name="…" />,
+                    },
+                  ]),
             ]}
             onChange={(v) =>
               onChange(

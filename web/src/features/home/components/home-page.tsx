@@ -7,6 +7,7 @@ import { CategoryTiles } from "./category-tiles"
 import { DealershipRow } from "./dealership-row"
 import { HomeHero } from "./home-hero"
 import { HomeRail } from "./home-rail"
+import { MakeGrid } from "./make-grid"
 import { NearYouRail } from "./near-you-rail"
 import { PostBand } from "./post-band"
 import { ServicesBand } from "./services-band"
@@ -28,6 +29,7 @@ export function HomePage({
     <div className="flex flex-col gap-12 pt-4 pb-12 md:gap-16 md:pt-6 md:pb-16">
       <HomeHero searchCity={searchCity} />
       <CategoryTiles />
+      <MakeGrid />
       <HomeRail
         title={t("home.featured")}
         query={homeQueries.featured}

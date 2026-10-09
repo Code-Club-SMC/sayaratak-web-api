@@ -5,6 +5,7 @@ import { beforeEach, describe, expect, it } from "vitest"
 import { keys } from "@/lib/api/query-keys"
 import { requireRole } from "@/features/auth/guards"
 import { DashboardLayout } from "@/features/dashboard/components/dashboard-layout"
+import { DashboardNotFound } from "@/features/dashboard/components/dashboard-not-found"
 import { SidebarProvider } from "@/components/ui/sidebar"
 import { DashboardTopbar } from "@/features/dashboard/components/dashboard-topbar"
 import {
@@ -210,5 +211,31 @@ describe("requireRole", () => {
         "/en/onboarding/role?redirect=%2Fen%2Fdealer%3Fx%3D1"
       )
     }
+  })
+  it("sends another role to its own dashboard", () => {
+    try {
+      requireRole("user")(guard(true))
+      throw new Error("no redirect")
+    } catch (e) {
+      if (!isRedirect(e)) throw e
+      expect(e.options.href).toBe("/en/dealer")
+    }
+  })
+})
+
+describe("dashboard not found", () => {
+  it("names the problem and links back to the overview of the role", async () => {
+    await renderShell(<DashboardNotFound />, {
+      role: "user",
+      path: "/en/account/nope",
+    })
+    expect(
+      await screen.findByRole("heading", { level: 1, name: "Page not found" })
+    ).toBeTruthy()
+    expect(
+      screen
+        .getByRole("link", { name: "Back to overview" })
+        .getAttribute("href")
+    ).toBe("/en/account")
   })
 })

@@ -32,9 +32,12 @@ import { Route as LocalePublicSearchRouteImport } from './routes/$locale/_public
 import { Route as LocalePublicSuspendedRouteImport } from './routes/$locale/_public/suspended'
 import { Route as LocalePublicTermsRouteImport } from './routes/$locale/_public/terms'
 import { Route as LocaleAccountIndexRouteImport } from './routes/$locale/account/index'
+import { Route as LocaleAccountSplatRouteImport } from './routes/$locale/account/$'
+import { Route as LocaleAccountFavoritesRouteImport } from './routes/$locale/account/favorites'
 import { Route as LocaleAccountListingsRouteImport } from './routes/$locale/account/listings'
 import { Route as LocaleAccountMessagesRouteImport } from './routes/$locale/account/messages'
 import { Route as LocaleAccountNotificationsRouteImport } from './routes/$locale/account/notifications'
+import { Route as LocaleAccountSavedSearchesRouteImport } from './routes/$locale/account/saved-searches'
 import { Route as LocaleAccountSettingsRouteImport } from './routes/$locale/account/settings'
 import { Route as LocaleAdminIndexRouteImport } from './routes/$locale/admin/index'
 import { Route as LocaleAdminAccountRouteImport } from './routes/$locale/admin/account'
@@ -199,6 +202,16 @@ const LocaleAccountIndexRoute = LocaleAccountIndexRouteImport.update({
   path: '/',
   getParentRoute: () => LocaleAccountRouteRoute,
 } as any)
+const LocaleAccountSplatRoute = LocaleAccountSplatRouteImport.update({
+  id: '/$',
+  path: '/$',
+  getParentRoute: () => LocaleAccountRouteRoute,
+} as any)
+const LocaleAccountFavoritesRoute = LocaleAccountFavoritesRouteImport.update({
+  id: '/favorites',
+  path: '/favorites',
+  getParentRoute: () => LocaleAccountRouteRoute,
+} as any)
 const LocaleAccountListingsRoute = LocaleAccountListingsRouteImport.update({
   id: '/listings',
   path: '/listings',
@@ -213,6 +226,12 @@ const LocaleAccountNotificationsRoute =
   LocaleAccountNotificationsRouteImport.update({
     id: '/notifications',
     path: '/notifications',
+    getParentRoute: () => LocaleAccountRouteRoute,
+  } as any)
+const LocaleAccountSavedSearchesRoute =
+  LocaleAccountSavedSearchesRouteImport.update({
+    id: '/saved-searches',
+    path: '/saved-searches',
     getParentRoute: () => LocaleAccountRouteRoute,
   } as any)
 const LocaleAccountSettingsRoute = LocaleAccountSettingsRouteImport.update({
@@ -506,9 +525,12 @@ export interface FileRoutesByFullPath {
   '/$locale/search': typeof LocalePublicSearchRoute
   '/$locale/suspended': typeof LocalePublicSuspendedRoute
   '/$locale/terms': typeof LocalePublicTermsRoute
+  '/$locale/account/$': typeof LocaleAccountSplatRoute
+  '/$locale/account/favorites': typeof LocaleAccountFavoritesRoute
   '/$locale/account/listings': typeof LocaleAccountListingsRoute
   '/$locale/account/messages': typeof LocaleAccountMessagesRoute
   '/$locale/account/notifications': typeof LocaleAccountNotificationsRoute
+  '/$locale/account/saved-searches': typeof LocaleAccountSavedSearchesRoute
   '/$locale/account/settings': typeof LocaleAccountSettingsRoute
   '/$locale/admin/account': typeof LocaleAdminAccountRoute
   '/$locale/admin/notifications': typeof LocaleAdminNotificationsRoute
@@ -577,9 +599,12 @@ export interface FileRoutesByTo {
   '/$locale/search': typeof LocalePublicSearchRoute
   '/$locale/suspended': typeof LocalePublicSuspendedRoute
   '/$locale/terms': typeof LocalePublicTermsRoute
+  '/$locale/account/$': typeof LocaleAccountSplatRoute
+  '/$locale/account/favorites': typeof LocaleAccountFavoritesRoute
   '/$locale/account/listings': typeof LocaleAccountListingsRoute
   '/$locale/account/messages': typeof LocaleAccountMessagesRoute
   '/$locale/account/notifications': typeof LocaleAccountNotificationsRoute
+  '/$locale/account/saved-searches': typeof LocaleAccountSavedSearchesRoute
   '/$locale/account/settings': typeof LocaleAccountSettingsRoute
   '/$locale/admin/account': typeof LocaleAdminAccountRoute
   '/$locale/admin/notifications': typeof LocaleAdminNotificationsRoute
@@ -654,9 +679,12 @@ export interface FileRoutesById {
   '/$locale/_public/search': typeof LocalePublicSearchRoute
   '/$locale/_public/suspended': typeof LocalePublicSuspendedRoute
   '/$locale/_public/terms': typeof LocalePublicTermsRoute
+  '/$locale/account/$': typeof LocaleAccountSplatRoute
+  '/$locale/account/favorites': typeof LocaleAccountFavoritesRoute
   '/$locale/account/listings': typeof LocaleAccountListingsRoute
   '/$locale/account/messages': typeof LocaleAccountMessagesRoute
   '/$locale/account/notifications': typeof LocaleAccountNotificationsRoute
+  '/$locale/account/saved-searches': typeof LocaleAccountSavedSearchesRoute
   '/$locale/account/settings': typeof LocaleAccountSettingsRoute
   '/$locale/admin/account': typeof LocaleAdminAccountRoute
   '/$locale/admin/notifications': typeof LocaleAdminNotificationsRoute
@@ -732,9 +760,12 @@ export interface FileRouteTypes {
     | '/$locale/search'
     | '/$locale/suspended'
     | '/$locale/terms'
+    | '/$locale/account/$'
+    | '/$locale/account/favorites'
     | '/$locale/account/listings'
     | '/$locale/account/messages'
     | '/$locale/account/notifications'
+    | '/$locale/account/saved-searches'
     | '/$locale/account/settings'
     | '/$locale/admin/account'
     | '/$locale/admin/notifications'
@@ -803,9 +834,12 @@ export interface FileRouteTypes {
     | '/$locale/search'
     | '/$locale/suspended'
     | '/$locale/terms'
+    | '/$locale/account/$'
+    | '/$locale/account/favorites'
     | '/$locale/account/listings'
     | '/$locale/account/messages'
     | '/$locale/account/notifications'
+    | '/$locale/account/saved-searches'
     | '/$locale/account/settings'
     | '/$locale/admin/account'
     | '/$locale/admin/notifications'
@@ -879,9 +913,12 @@ export interface FileRouteTypes {
     | '/$locale/_public/search'
     | '/$locale/_public/suspended'
     | '/$locale/_public/terms'
+    | '/$locale/account/$'
+    | '/$locale/account/favorites'
     | '/$locale/account/listings'
     | '/$locale/account/messages'
     | '/$locale/account/notifications'
+    | '/$locale/account/saved-searches'
     | '/$locale/account/settings'
     | '/$locale/admin/account'
     | '/$locale/admin/notifications'
@@ -1106,6 +1143,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LocaleAccountIndexRouteImport
       parentRoute: typeof LocaleAccountRouteRoute
     }
+    '/$locale/account/$': {
+      id: '/$locale/account/$'
+      path: '/$'
+      fullPath: '/$locale/account/$'
+      preLoaderRoute: typeof LocaleAccountSplatRouteImport
+      parentRoute: typeof LocaleAccountRouteRoute
+    }
+    '/$locale/account/favorites': {
+      id: '/$locale/account/favorites'
+      path: '/favorites'
+      fullPath: '/$locale/account/favorites'
+      preLoaderRoute: typeof LocaleAccountFavoritesRouteImport
+      parentRoute: typeof LocaleAccountRouteRoute
+    }
     '/$locale/account/listings': {
       id: '/$locale/account/listings'
       path: '/listings'
@@ -1125,6 +1176,13 @@ declare module '@tanstack/react-router' {
       path: '/notifications'
       fullPath: '/$locale/account/notifications'
       preLoaderRoute: typeof LocaleAccountNotificationsRouteImport
+      parentRoute: typeof LocaleAccountRouteRoute
+    }
+    '/$locale/account/saved-searches': {
+      id: '/$locale/account/saved-searches'
+      path: '/saved-searches'
+      fullPath: '/$locale/account/saved-searches'
+      preLoaderRoute: typeof LocaleAccountSavedSearchesRouteImport
       parentRoute: typeof LocaleAccountRouteRoute
     }
     '/$locale/account/settings': {
@@ -1522,9 +1580,12 @@ const LocalePublicRouteRouteWithChildren =
   LocalePublicRouteRoute._addFileChildren(LocalePublicRouteRouteChildren)
 
 interface LocaleAccountRouteRouteChildren {
+  LocaleAccountSplatRoute: typeof LocaleAccountSplatRoute
+  LocaleAccountFavoritesRoute: typeof LocaleAccountFavoritesRoute
   LocaleAccountListingsRoute: typeof LocaleAccountListingsRoute
   LocaleAccountMessagesRoute: typeof LocaleAccountMessagesRoute
   LocaleAccountNotificationsRoute: typeof LocaleAccountNotificationsRoute
+  LocaleAccountSavedSearchesRoute: typeof LocaleAccountSavedSearchesRoute
   LocaleAccountSettingsRoute: typeof LocaleAccountSettingsRoute
   LocaleAccountIndexRoute: typeof LocaleAccountIndexRoute
   LocaleAccountBillingCheckoutRoute: typeof LocaleAccountBillingCheckoutRoute
@@ -1532,9 +1593,12 @@ interface LocaleAccountRouteRouteChildren {
 }
 
 const LocaleAccountRouteRouteChildren: LocaleAccountRouteRouteChildren = {
+  LocaleAccountSplatRoute: LocaleAccountSplatRoute,
+  LocaleAccountFavoritesRoute: LocaleAccountFavoritesRoute,
   LocaleAccountListingsRoute: LocaleAccountListingsRoute,
   LocaleAccountMessagesRoute: LocaleAccountMessagesRoute,
   LocaleAccountNotificationsRoute: LocaleAccountNotificationsRoute,
+  LocaleAccountSavedSearchesRoute: LocaleAccountSavedSearchesRoute,
   LocaleAccountSettingsRoute: LocaleAccountSettingsRoute,
   LocaleAccountIndexRoute: LocaleAccountIndexRoute,
   LocaleAccountBillingCheckoutRoute: LocaleAccountBillingCheckoutRoute,

@@ -274,5 +274,22 @@
   "dashboard.overview_edit_resubmit": "عدّل وأعد الإرسال",
   "dashboard.overview_update_status": "حدّث الحالة",
   "dashboard.overview_performance_title": "المشاهدات اليومية",
-  "dashboard.overview_activity_title": "آخر النشاط"
+  "dashboard.overview_activity_title": "آخر النشاط",
+  "dashboard.favorites_filter_label": "تصفية حسب النوع",
+  "dashboard.favorites_all": "الكل",
+  "dashboard.favorites_car": "سيارات",
+  "dashboard.favorites_truck": "شاحنات",
+  "dashboard.favorites_motorcycle": "دراجات نارية",
+  "dashboard.favorites_tuk_tuk": "توك توك",
+  "dashboard.favorites_rickshaw": "ركشات",
+  "dashboard.favorites_part": "قطع غيار",
+  "dashboard.favorites_unavailable": "لم يعد متاحًا",
+  "dashboard.favorites_load_error": "تعذر تحميل المفضلة.",
+  "dashboard.favorites_empty_title": "لا توجد مفضلة بعد",
+  "dashboard.favorites_empty_body": "اضغط على القلب في أي إعلان ليظهر هنا.",
+  "dashboard.favorites_browse": "تصفح الإعلانات",
+  "dashboard.favorites_empty_type_title": "لا توجد مفضلة من هذا النوع",
+  "dashboard.favorites_empty_type_body": "جرّب نوعًا آخر، أو اعرض كل المفضلة.",
+  "dashboard.favorites_show_all": "عرض الكل",
+  "dashboard.favorites_list_title": "الإعلانات المحفوظة"
 }

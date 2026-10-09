@@ -19,9 +19,11 @@ import { listingAnalyticsSchema, okSchema, type Range } from "@/schemas/api"
 import { pageOf } from "@/schemas/fields"
 import type { listingCreateSchema, listingPatchSchema } from "@/schemas/inputs"
 import {
+  favoritePageSchema,
   listingPageSchema,
   listingSchema,
   mediaSchema,
+  type FavoritePage,
   type ListingStatus,
 } from "@/schemas/listing"
 import { taxonomySchema } from "@/schemas/taxonomy"
@@ -199,21 +201,21 @@ export const favoriteQueries = {
       queryFn: ({ signal }) =>
         apiFetch("/favorites", {
           query: filters,
-          schema: pageOf(listingSchema),
+          schema: favoritePageSchema,
           signal,
         }),
       placeholderData: keepPreviousData,
     }),
 }
 
-// Optimistic heart: the id list flips at once, then the server answers.
+// Optimistic heart: the id list flips at once, and a removed listing leaves every cached page of the favorites list, then the server answers. A failure puts both back.
 export function useToggleFavorite() {
   const qc = useQueryClient()
   return useMutation<
     unknown,
     ApiError,
     { id: string; on: boolean },
-    string[] | undefined
+    Awaited<ReturnType<typeof snapshot>>
   >({
     mutationFn: ({ id, on }) =>
       on
@@ -224,15 +226,23 @@ export function useToggleFavorite() {
           })
         : apiFetch(`/favorites/${id}`, { method: "DELETE", schema: okSchema }),
     onMutate: async ({ id, on }) => {
-      await qc.cancelQueries({ queryKey: keys.favorites.ids })
-      const before = qc.getQueryData<string[]>(keys.favorites.ids)
+      const snap = await snapshot(qc, keys.favorites.all)
       qc.setQueryData<string[]>(keys.favorites.ids, (ids = []) =>
         on ? [...new Set([...ids, id])] : ids.filter((x) => x !== id)
       )
-      return before
+      if (!on)
+        for (const [key, page] of qc.getQueriesData<FavoritePage>({
+          queryKey: keys.favorites.lists,
+        }))
+          if (page?.items.some((l) => l.id === id))
+            qc.setQueryData<FavoritePage>(key, {
+              ...page,
+              items: page.items.filter((l) => l.id !== id),
+              total: page.total - 1,
+            })
+      return snap
     },
-    onError: (_error, _vars, before) =>
-      qc.setQueryData(keys.favorites.ids, before),
+    onError: (_error, _vars, snap) => restore(qc, snap),
     onSettled: () => qc.invalidateQueries({ queryKey: keys.favorites.all }),
   })
 }

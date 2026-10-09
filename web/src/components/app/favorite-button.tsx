@@ -3,10 +3,10 @@ import { useQuery } from "@tanstack/react-query"
 import { HeartIcon } from "lucide-react"
 
 import { useRequireAuth } from "@/features/auth/auth-gate"
-import { favoriteQueries, useToggleFavorite } from "@/features/listings/queries"
+import { useFavoriteActions } from "@/features/listings/favorite-actions"
+import { favoriteQueries } from "@/features/listings/queries"
 import { useT } from "@/lib/i18n/use-t"
 import { cn } from "@/lib/utils"
-import { toast } from "@/components/ui/toast"
 
 // `overlay` is the white circle that sits on a card photo, `plain` is the bare icon for the detail page.
 export function FavoriteButton({
@@ -21,22 +21,15 @@ export function FavoriteButton({
   const { t } = useT()
   const requireAuth = useRequireAuth()
   const { data: ids } = useQuery(favoriteQueries.ids)
-  const { mutate } = useToggleFavorite()
+  const { save, remove } = useFavoriteActions()
   const active = ids?.includes(listingId) ?? false
   // The pop plays once, right after the person saves, never on mount or when coming Back.
   const [justSaved, setJustSaved] = useState(false)
   const toggle = () =>
     requireAuth(() => {
-      mutate({ id: listingId, on: !active })
+      if (active) remove(listingId)
+      else save(listingId)
       setJustSaved(!active)
-      if (active)
-        toast.add({
-          title: t("toast.favorite_removed"),
-          actionProps: {
-            children: t("common.undo"),
-            onClick: () => mutate({ id: listingId, on: true }),
-          },
-        })
     }, "auth.reason_favorite")
   return (
     <button

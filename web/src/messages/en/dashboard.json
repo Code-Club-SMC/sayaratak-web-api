@@ -270,5 +270,22 @@
   "dashboard.overview_edit_resubmit": "Edit and resubmit",
   "dashboard.overview_update_status": "Update status",
   "dashboard.overview_performance_title": "Daily views",
-  "dashboard.overview_activity_title": "Recent activity"
+  "dashboard.overview_activity_title": "Recent activity",
+  "dashboard.favorites_filter_label": "Filter by type",
+  "dashboard.favorites_all": "All",
+  "dashboard.favorites_car": "Cars",
+  "dashboard.favorites_truck": "Trucks",
+  "dashboard.favorites_motorcycle": "Motorcycles",
+  "dashboard.favorites_tuk_tuk": "Tuk-tuks",
+  "dashboard.favorites_rickshaw": "Rickshaws",
+  "dashboard.favorites_part": "Parts",
+  "dashboard.favorites_unavailable": "No longer available",
+  "dashboard.favorites_load_error": "Could not load your favorites.",
+  "dashboard.favorites_empty_title": "No favorites yet",
+  "dashboard.favorites_empty_body": "Tap the heart on a listing to keep it here.",
+  "dashboard.favorites_browse": "Browse listings",
+  "dashboard.favorites_empty_type_title": "No favorites of this type",
+  "dashboard.favorites_empty_type_body": "Try another type, or show all your favorites.",
+  "dashboard.favorites_show_all": "Show all",
+  "dashboard.favorites_list_title": "Saved listings"
 }

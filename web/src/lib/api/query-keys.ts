@@ -23,6 +23,7 @@ export const keys = {
   favorites: {
     all: ["favorites"] as const,
     ids: ["favorites", "ids"] as const,
+    lists: ["favorites", "list"] as const,
     list: (f: Params) => ["favorites", "list", f] as const,
   },
   savedSearches: ["saved-searches"] as const,

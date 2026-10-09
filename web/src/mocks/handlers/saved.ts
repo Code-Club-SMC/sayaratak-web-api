@@ -1,30 +1,61 @@
 import { okSchema } from "@/schemas/api"
 import {
   favoriteInputSchema,
+  favoriteSortSchema,
   savedSearchInputSchema,
   savedSearchPatchSchema,
 } from "@/schemas/inputs"
-import { listingSchema } from "@/schemas/listing"
-import { pageOf } from "@/schemas/fields"
+import { favoritePageSchema, typeFilterSchema } from "@/schemas/listing"
 import { savedSearchSchema } from "@/schemas/saved-search"
 import { z } from "zod"
 
 import { db, find, insert, newId, paginate } from "../db"
 import { fail, needUser, pageParams, route } from "../http"
 import { nowIso } from "../lib"
+import { isPublic } from "../search"
+import type { ListingRow } from "../types"
+import { shown } from "./listings"
 
-const favoriteListings = (userId: string) =>
-  db.favorites
-    .filter((f) => f.userId === userId)
-    .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
-    .flatMap((f) => db.listings.filter((l) => l.id === f.listingId))
+type Saved = { listing: ListingRow; savedAt: string }
+const bySaved = (a: Saved, b: Saved) => b.savedAt.localeCompare(a.savedAt)
+const favoriteOrder: Record<
+  z.infer<typeof favoriteSortSchema>,
+  (a: Saved, b: Saved) => number
+> = {
+  recent: bySaved,
+  price_asc: (a, b) => a.listing.price - b.listing.price || bySaved(a, b),
+  price_desc: (a, b) => b.listing.price - a.listing.price || bySaved(a, b),
+}
 
+// `type` is a vehicle type or "part"; a bad `type` or `sort` falls back to no filter and `recent`. A listing nobody can open any more still comes back, flagged `unavailable`, so the person can remove it.
 route("GET", "/favorites", (c) => {
   const user = needUser(c)
   const { page, pageSize } = pageParams(c.query, 24)
-  return pageOf(listingSchema).parse(
-    paginate(favoriteListings(user.id), page, pageSize)
-  )
+  const type = typeFilterSchema.safeParse(c.query.get("type")).data
+  const sort = favoriteSortSchema.catch("recent").parse(c.query.get("sort"))
+  const rows = db.favorites
+    .filter((f) => f.userId === user.id)
+    .flatMap((f) => {
+      const listing = find(db.listings, f.listingId)
+      return listing ? [{ listing, savedAt: f.createdAt }] : []
+    })
+    .filter(
+      ({ listing: l }) =>
+        !type || (type === "part" ? l.kind === "part" : l.vehicleType === type)
+    )
+    .sort(favoriteOrder[sort])
+  const result = paginate(rows, page, pageSize)
+  return favoritePageSchema.parse({
+    ...result,
+    items: result.items.map(({ listing, savedAt }) => ({
+      ...shown(listing, user),
+      savedAt,
+      unavailable:
+        !isPublic(listing) ||
+        listing.status === "sold" ||
+        listing.status === "rented",
+    })),
+  })
 })
 // Ids only, so every card can draw its heart without loading the full list. Public: empty when signed out.
 route("GET", "/me/favorite-ids", (c) =>

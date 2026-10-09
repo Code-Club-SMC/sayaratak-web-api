@@ -527,6 +527,69 @@ describe("saved", () => {
     expect((await call("GET", "/me/favorite-ids")).body).toEqual({ ids: [] })
     expect((await call("GET", "/favorites")).status).toBe(401)
   })
+  it("favorites list: newest save first, sorts, type filter, savedAt on every item", async () => {
+    type Item = { id: string; price: number; savedAt: string; kind: string }
+    const list = async (query = "") => {
+      const { body } = await call("GET", `/favorites${query}`, { as: "u-omar" })
+      return body as { items: Item[]; total: number; pageSize: number }
+    }
+    const recent = await list()
+    expect(recent.total).toBe(
+      db.favorites.filter((f) => f.userId === "u-omar").length
+    )
+    expect(recent.pageSize).toBe(24)
+    const saved = recent.items.map((l) => l.savedAt)
+    expect(saved).toEqual([...saved].sort().reverse())
+    const asc = (await list("?sort=price_asc")).items.map((l) => l.price)
+    expect(asc).toEqual([...asc].sort((a, b) => a - b))
+    const desc = (await list("?sort=price_desc")).items.map((l) => l.price)
+    expect(desc).toEqual([...desc].sort((a, b) => b - a))
+    // A bad sort falls back to recent, a bad type to no filter.
+    expect((await list("?sort=nope&type=nope")).items.map((l) => l.id)).toEqual(
+      recent.items.map((l) => l.id)
+    )
+    const first = db.listings.find((l) => l.id === recent.items[0]!.id)!
+    const type = first.kind === "part" ? "part" : first.vehicleType!
+    const expected = db.favorites
+      .filter((f) => f.userId === "u-omar")
+      .map((f) => db.listings.find((l) => l.id === f.listingId)!)
+      .filter((l) =>
+        type === "part" ? l.kind === "part" : l.vehicleType === type
+      )
+    expect(expected.length).toBeGreaterThan(0)
+    expect((await list(`?type=${type}`)).total).toBe(expected.length)
+  })
+  it("favorites list flags sold, rented, removed and blocked-seller listings as unavailable", async () => {
+    const ids = (
+      (await call("GET", "/me/favorite-ids", { as: "u-omar" })).body as {
+        ids: string[]
+      }
+    ).ids
+    const [sold, rented, removed, blocked, fine] = ids.map((id) =>
+      db.listings.find((l) => l.id === id)!
+    )
+    for (const l of [sold!, rented!, removed!, blocked!, fine!]) {
+      l.moderation = "approved"
+      l.status = "available"
+    }
+    sold!.status = "sold"
+    rented!.status = "rented"
+    removed!.moderation = "removed"
+    const owner = db.users.find((u) => u.id === blocked!.ownerUserId)!
+    owner.banned = true
+    const { body } = await call("GET", "/favorites", { as: "u-omar" })
+    const flag = (id: string) =>
+      (body as { items: { id: string; unavailable: boolean }[] }).items.find(
+        (l) => l.id === id
+      )?.unavailable
+    expect([sold, rented, removed, blocked].map((l) => flag(l!.id))).toEqual([
+      true,
+      true,
+      true,
+      true,
+    ])
+    expect(flag(fine!.id)).toBe(false)
+  })
   it("saved searches: create, mark seen", async () => {
     const created = await call("POST", "/saved-searches", {
       as: "u-new",

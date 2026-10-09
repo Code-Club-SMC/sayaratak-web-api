@@ -54,7 +54,7 @@ const forViewer = (l: ListingRow, viewer?: UserRow | null) =>
         location: { lat: round2(l.location.lat), lng: round2(l.location.lng) },
       }
     : l
-const shown = (l: ListingRow, viewer?: UserRow | null) =>
+export const shown = (l: ListingRow, viewer?: UserRow | null) =>
   owned(forViewer(l, viewer))
 
 route("GET", "/taxonomy", () => taxonomySchema.parse(db.taxonomy))

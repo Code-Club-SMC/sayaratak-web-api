@@ -1,7 +1,7 @@
 import { z } from "zod"
 
 import { optional } from "@/features/search/schemas"
-import { intentSchema, vehicleTypeSchema } from "@/schemas/listing"
+import { intentSchema, typeFilterSchema } from "@/schemas/listing"
 
 export const managerTabs = [
   "all",
@@ -16,7 +16,7 @@ export const managerTabs = [
 export const listingsManagerSearchSchema = z.object({
   tab: z.enum(managerTabs).default("all").catch("all"),
   q: optional(z.string().trim().max(60)),
-  type: optional(z.union([vehicleTypeSchema, z.literal("part")])),
+  type: optional(typeFilterSchema),
   intent: optional(intentSchema),
   sort: z
     .enum(["posted", "price", "views", "expires"])

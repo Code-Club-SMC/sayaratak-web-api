@@ -157,6 +157,7 @@ export const replyInputSchema = z.object({
 })
 
 export const favoriteInputSchema = z.object({ listingId: z.string().min(1) })
+export const favoriteSortSchema = z.enum(["recent", "price_asc", "price_desc"])
 export const savedSearchInputSchema = z.object({
   name: requiredText(60),
   params: searchParamsSchema,

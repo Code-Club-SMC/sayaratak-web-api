@@ -16,6 +16,8 @@ export const vehicleTypeSchema = z.enum([
   "tuk_tuk",
   "rickshaw",
 ])
+// A vehicle type, or "part" for spare parts: the `type` filter of the owner's pages.
+export const typeFilterSchema = z.union([vehicleTypeSchema, z.literal("part")])
 export const intentSchema = z.enum(["sale", "rent"])
 export const fuelSchema = z.enum([
   "petrol",
@@ -147,3 +149,12 @@ export const listingPageSchema = pageOf(listingSchema).extend({
   }),
 })
 export type ListingPage = z.infer<typeof listingPageSchema>
+
+// A saved listing. `unavailable` is true when it cannot be opened any more (sold, rented, removed, or its seller is blocked); the card then offers only Remove.
+export const favoriteListingSchema = listingSchema.extend({
+  savedAt: z.string(),
+  unavailable: z.boolean(),
+})
+export type FavoriteListing = z.infer<typeof favoriteListingSchema>
+export const favoritePageSchema = pageOf(favoriteListingSchema)
+export type FavoritePage = z.infer<typeof favoritePageSchema>

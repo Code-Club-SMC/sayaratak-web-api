@@ -6,7 +6,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import { AuthDialog } from "@/features/auth/components/auth-dialog"
 import { closeAuthGate, useRequireAuth } from "@/features/auth/auth-gate"
 import { requireRole, requireUser } from "@/features/auth/guards"
-import { userSchema } from "@/schemas/user"
+import { publicUser } from "@/mocks/lib"
 import { db, resetDb } from "@/mocks/db"
 import { renderShell } from "./shell-render"
 
@@ -86,7 +86,7 @@ describe("auth dialog", () => {
 
 describe("route guards", () => {
   const user = (role: string) =>
-    userSchema.parse(db.users.find((u) => u.role === role && u.onboardingDone))
+    publicUser(db.users.find((u) => u.role === role && u.onboardingDone)!)
   const guard = (me: ReturnType<typeof user> | null) => ({
     context: { me, locale: "en" as const },
     location: { href: "/en/account?tab=x" },

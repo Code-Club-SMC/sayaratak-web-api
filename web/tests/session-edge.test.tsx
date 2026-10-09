@@ -9,7 +9,7 @@ import { useUpdateNotificationPrefs } from "@/features/auth/queries"
 import { Header } from "@/components/app/header"
 import { keys } from "@/lib/api/query-keys"
 import { db, resetDb } from "@/mocks/db"
-import { userSchema } from "@/schemas/user"
+import { publicUser } from "@/mocks/lib"
 import { useMockFetch } from "./mock-fetch"
 import { renderShell } from "./shell-render"
 
@@ -67,8 +67,8 @@ function Save() {
 describe("401 from a mutation", () => {
   it("asks to sign in again, then runs the call again", async () => {
     const { client } = await renderShell(<Save />, { role: "user" })
-    const user = userSchema.parse(
-      db.users.find((u) => u.role === "user" && u.onboardingDone)
+    const user = publicUser(
+      db.users.find((u) => u.role === "user" && u.onboardingDone)!
     )
     useMockFetch() // the session cookie is gone
     fireEvent.click(screen.getByRole("button", { name: "save" }))
@@ -92,7 +92,7 @@ describe("401 from a mutation", () => {
 
 describe("banned account", () => {
   const me = (banned: boolean) => ({
-    ...userSchema.parse(db.users.find((u) => u.onboardingDone)),
+    ...publicUser(db.users.find((u) => u.onboardingDone)!),
     banned,
   })
   const target = (banned: boolean, pathname: string) => {

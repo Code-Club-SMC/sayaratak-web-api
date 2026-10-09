@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/input-otp"
 import { normalizeDigits } from "@/lib/digits"
 import { useT } from "@/lib/i18n/use-t"
+import { useCountdown } from "@/lib/use-countdown"
 import { useSendOtp, useVerifyOtp } from "../queries"
 import { otpFormSchema } from "../schemas"
 import { IdentifierSummary } from "./identifier-summary"
@@ -16,16 +17,6 @@ import type { StepProps } from "./step-switch"
 
 const COOLDOWN = 30
 const MAX_FAILS = 3
-
-function useCountdown(initial: number) {
-  const [seconds, setSeconds] = useState(initial)
-  useEffect(() => {
-    if (seconds <= 0) return
-    const id = window.setTimeout(() => setSeconds((s) => s - 1), 1000)
-    return () => window.clearTimeout(id)
-  }, [seconds])
-  return [seconds, setSeconds] as const
-}
 
 export function OtpStep({ state, dispatch, onDone, mode }: StepProps) {
   const { t } = useT()

@@ -19,12 +19,12 @@ import {
   registerInputSchema,
   resetInputSchema,
 } from "@/schemas/inputs"
-import { userSchema } from "@/schemas/user"
 import { defaultPrefs, slugify } from "@/mocks/seed/util"
 
-import { db, find, insert, newId, remove } from "../db"
+import { db, find, insert, newId } from "../db"
+import { removeAccount } from "../account"
 import { fail, needUser, route, withSession } from "../http"
-import { nowIso } from "../lib"
+import { nowIso, publicUser } from "../lib"
 import type { UserRow } from "../types"
 
 const WINDOW_MS = 10 * 60_000
@@ -36,7 +36,6 @@ export const findByIdentifier = (id: string) => {
   const key = normalize(id)
   return db.users.find((u) => (isEmail(id) ? u.email === key : u.phone === key))
 }
-const publicUser = (u: UserRow) => userSchema.parse(u)
 
 function throttled(key: string) {
   const recent = (db.attempts.get(key) ?? []).filter(
@@ -129,7 +128,10 @@ route("POST", "/auth/oauth/:provider", async (c) => {
 })
 
 route("POST", "/auth/otp/send", async (c) => {
-  await c.body(otpSendInputSchema)
+  const { identifier } = await c.body(otpSendInputSchema)
+  // Signed in, the code is for a new phone or email, so one that another account owns is refused up front.
+  const owner = identifier ? findByIdentifier(identifier) : undefined
+  if (c.user && owner && owner.id !== c.user.id) throw fail(409, "exists")
   return okSchema.parse({ ok: true })
 })
 // The code 123456 always passes; a signed-in user gets the matching verified flag.
@@ -170,14 +172,37 @@ route("POST", "/auth/reset", async (c) => {
 })
 route("POST", "/auth/logout", () => withSession(null, { ok: true }))
 
+// A new phone or email is saved only with the code sent to it (always 123456), and counts as verified then. "" removes one, but never the last. "" on the city or the avatar clears it.
 route("PATCH", "/me", async (c) => {
   const user = needUser(c)
-  const patch = await c.body(profilePatchSchema)
-  const taken = (field: "email" | "phone") =>
-    patch[field] &&
-    db.users.some((u) => u.id !== user.id && u[field] === patch[field])
-  if (taken("email") || taken("phone")) throw fail(409, "exists")
-  Object.assign(user, patch)
+  const { code, email, phone, cityId, avatarUrl, locale, ...rest } =
+    await c.body(profilePatchSchema)
+  const change = (
+    field: "email" | "phone",
+    verified: "verifiedEmail" | "verifiedPhone",
+    value: string | undefined
+  ) => {
+    if (value === undefined || value === user[field]) return
+    if (value === "") {
+      if (!user[field === "email" ? "phone" : "email"])
+        throw fail(422, "contact_required")
+      delete user[field]
+      user[verified] = false
+      return
+    }
+    if (db.users.some((u) => u.id !== user.id && u[field] === value))
+      throw fail(409, "exists")
+    if (code !== "123456")
+      throw fail(422, "otp_invalid", { code: "auth.otp_invalid" })
+    user[field] = value
+    user[verified] = true
+  }
+  change("email", "verifiedEmail", email)
+  change("phone", "verifiedPhone", phone)
+  Object.assign(user, rest)
+  if (locale) user.locale = locale
+  if (cityId !== undefined) user.cityId = cityId || undefined
+  if (avatarUrl !== undefined) user.avatarUrl = avatarUrl || undefined
   return publicUser(user)
 })
 route("POST", "/me/password", async (c) => {
@@ -190,9 +215,8 @@ route("POST", "/me/password", async (c) => {
 })
 route("DELETE", "/me", (c) => {
   const user = needUser(c)
-  for (const l of db.listings)
-    if (l.ownerUserId === user.id) l.moderation = "removed"
-  remove(db.users, user.id)
+  if (user.role === "admin") throw fail(403, "forbidden")
+  removeAccount(user)
   return withSession(null, { ok: true })
 })
 route("GET", "/me/notification-prefs", (c) =>

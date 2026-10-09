@@ -162,6 +162,7 @@ const cases: [string, z.ZodType, unknown][] = [
       fullName: "A",
       verifiedPhone: false,
       verifiedEmail: false,
+      hasPassword: true,
       banned: false,
       createdAt: t,
       onboardingDone: false,

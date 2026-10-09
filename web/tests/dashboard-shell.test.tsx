@@ -13,7 +13,7 @@ import {
 } from "@/features/dashboard/components/page-title"
 import { navConfig } from "@/features/dashboard/nav-config"
 import { db, resetDb } from "@/mocks/db"
-import { userSchema } from "@/schemas/user"
+import { publicUser } from "@/mocks/lib"
 import { renderShell } from "./shell-render"
 
 Element.prototype.scrollIntoView = () => {}
@@ -192,8 +192,8 @@ describe("command menu", () => {
 describe("requireRole", () => {
   const guard = (done: boolean) => ({
     context: {
-      me: userSchema.parse({
-        ...db.users.find((u) => u.role === "dealership" && u.onboardingDone),
+      me: publicUser({
+        ...db.users.find((u) => u.role === "dealership" && u.onboardingDone)!,
         onboardingDone: done,
       }),
       locale: "en" as const,

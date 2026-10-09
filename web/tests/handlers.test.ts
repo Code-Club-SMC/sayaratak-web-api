@@ -1248,6 +1248,119 @@ describe("verification, owner side", () => {
   })
 })
 
+describe("account, settings side", () => {
+  const user = () => db.users.find((u) => u.id === "u-1")!
+  const patch = (body: object, as = "u-1") => call("PATCH", "/me", { as, body })
+
+  it("saves a new phone only with the code, and then counts it as verified", async () => {
+    user().verifiedPhone = false
+    const noCode = await patch({ phone: "+249922222222" })
+    expect(noCode.status).toBe(422)
+    expect(noCode.body.code).toBe("otp_invalid")
+    expect(
+      (await patch({ phone: "+249922222222", code: "111111" })).status
+    ).toBe(422)
+    expect(user().phone).not.toBe("+249922222222")
+    const ok = await patch({ phone: "+249922222222", code: "123456" })
+    expect(ok.status).toBe(200)
+    expect(ok.body).toMatchObject({
+      phone: "+249922222222",
+      verifiedPhone: true,
+    })
+  })
+
+  it("needs no code for a field that did not change", async () => {
+    const res = await patch({ phone: user().phone, fullName: "Omar Saved" })
+    expect(res.status).toBe(200)
+    expect(res.body.fullName).toBe("Omar Saved")
+  })
+
+  it("refuses a phone or email another account has, before and after the code", async () => {
+    const taken = db.users.find((u) => u.id !== "u-1" && u.phone)!.phone!
+    expect((await patch({ phone: taken, code: "123456" })).body.code).toBe(
+      "exists"
+    )
+    const send = (as?: string) =>
+      call("POST", "/auth/otp/send", { as, body: { identifier: taken } })
+    expect((await send("u-1")).status).toBe(409)
+    expect((await send()).status).toBe(200) // signed out, the code is for signing in
+  })
+
+  it("removes an email or phone with an empty string, but never the last one", async () => {
+    user().email = "omar@example.com"
+    user().verifiedEmail = true
+    const cleared = await patch({ email: "" })
+    expect(cleared.status).toBe(200)
+    expect(cleared.body.email).toBeUndefined()
+    expect(user().verifiedEmail).toBe(false)
+    const last = await patch({ phone: "" })
+    expect(last.status).toBe(422)
+    expect(last.body.code).toBe("contact_required")
+    expect(user().phone).toBeTruthy()
+  })
+
+  it("keeps the language on the account and clears the city and avatar on empty", async () => {
+    user().cityId = "khartoum"
+    user().avatarUrl = "/api/uploads/up-1?w={w}"
+    const res = await patch({ locale: "en", cityId: "", avatarUrl: "" })
+    expect(res.status).toBe(200)
+    expect(user().locale).toBe("en")
+    expect(res.body.cityId).toBeUndefined()
+    expect(res.body.avatarUrl).toBeUndefined()
+  })
+
+  it("tells whether the account has a password, and takes a first one without the current", async () => {
+    const social = await call("POST", "/auth/oauth/google", {
+      body: { accountId: "Sara" },
+    })
+    expect(social.body.hasPassword).toBe(false)
+    const as = social.res.headers
+      .get("set-cookie")!
+      .match(/sy_session=([^;]+)/)![1]!
+    expect((await call("GET", "/me", { as })).body.hasPassword).toBe(false)
+    const set = await call("POST", "/me/password", {
+      as,
+      body: { newPassword: "Fresh1234" },
+    })
+    expect(set.status).toBe(200)
+    expect((await call("GET", "/me", { as })).body.hasPassword).toBe(true)
+    const wrong = await call("POST", "/me/password", {
+      as,
+      body: { currentPassword: "Nope1234", newPassword: "Other5678" },
+    })
+    expect(wrong.status).toBe(401)
+  })
+
+  it("deletes a business owner with the profile, its reviews and threads", async () => {
+    const biz = db.dealerships.find((d) => d.ownerId === "u-dealer")!
+    expect(db.reviews.some((r) => r.targetId === biz.id)).toBe(true)
+    const pending = db.payments.find((p) => p.userId === "u-dealer")
+    const res = await call("DELETE", "/me", { as: "u-dealer" })
+    expect(res.status).toBe(200)
+    expect(db.users.some((u) => u.id === "u-dealer")).toBe(false)
+    expect(db.dealerships.some((d) => d.id === biz.id)).toBe(false)
+    expect(db.reviews.some((r) => r.targetId === biz.id)).toBe(false)
+    expect(
+      db.listings.some(
+        (l) => l.ownerUserId === "u-dealer" && l.moderation !== "removed"
+      )
+    ).toBe(false)
+    expect(db.threads.some((t) => t.participantIds.includes("u-dealer"))).toBe(
+      false
+    )
+    expect(db.subscriptions.some((s) => s.userId === "u-dealer")).toBe(false)
+    expect((await call("GET", `/dealerships/${biz.slug}`)).status).toBe(404)
+    if (pending?.status === "pending_review")
+      throw new Error("payment kept pending")
+    expect((await call("GET", "/me", { as: "u-dealer" })).body).toBeNull()
+  })
+
+  it("does not delete an admin", async () => {
+    expect((await call("DELETE", "/me", { as: "u-admin" })).status).toBe(403)
+    expect(db.users.some((u) => u.id === "u-admin")).toBe(true)
+  })
+})
+
 describe("mock", () => {
   it("reset restores the seed", async () => {
     await call("POST", "/listings", { as: "u-1", body: car })

@@ -9,6 +9,10 @@ import { fail, pageParams, type Ctx } from "./http"
 import type { Promotion } from "@/schemas/billing"
 import { notificationHref } from "./seed/util"
 import type { ListingRow, UserRow } from "./types"
+import { userSchema } from "@/schemas/user"
+
+export const publicUser = (u: UserRow) =>
+  userSchema.parse({ ...u, hasPassword: Boolean(u.password) })
 
 // The step 7.9 fields of a listing input: what it sent, the rest empty. Parsing keeps only these keys.
 const extrasInput = z.object(extraFields).partial()

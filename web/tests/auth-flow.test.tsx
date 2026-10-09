@@ -11,7 +11,7 @@ import { AuthDialog } from "@/features/auth/components/auth-dialog"
 import { AuthFlow } from "@/features/auth/components/auth-flow"
 import { AuthHeader } from "@/features/auth/components/auth-header"
 import { redirectSearch, signInDestination } from "@/features/auth/destination"
-import { userSchema } from "@/schemas/user"
+import { publicUser } from "@/mocks/lib"
 import { db, resetDb } from "@/mocks/db"
 import { renderShell } from "./shell-render"
 
@@ -57,8 +57,8 @@ describe("authReducer", () => {
 
 describe("signInDestination", () => {
   const user = (onboardingDone: boolean) => ({
-    ...userSchema.parse(
-      db.users.find((u) => u.role === "dealership" && u.onboardingDone)
+    ...publicUser(
+      db.users.find((u) => u.role === "dealership" && u.onboardingDone)!
     ),
     onboardingDone,
   })

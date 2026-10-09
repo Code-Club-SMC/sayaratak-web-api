@@ -29,6 +29,7 @@ import {
   listPage,
   nowIso,
   notify,
+  publicUser,
   rangeDays,
   textOf,
 } from "../lib"
@@ -300,7 +301,10 @@ route("GET", "/admin/users", (c) => {
     rows,
     (u) => `${u.fullName} ${u.phone ?? ""} ${u.email ?? ""}`
   )
-  return pageOf(userSchema).parse(page)
+  return pageOf(userSchema).parse({
+    ...page,
+    items: page.items.map(publicUser),
+  })
 })
 for (const ban of [true, false]) {
   route("POST", `/admin/users/:id/${ban ? "ban" : "unban"}`, async (c) => {
@@ -310,7 +314,7 @@ for (const ban of [true, false]) {
     if (user.role === "admin") throw fail(403, "forbidden")
     user.banned = ban
     user.bannedReason = ban ? (await c.body(banInputSchema)).reason : undefined
-    return userSchema.parse(user)
+    return publicUser(user)
   })
 }
 

@@ -15,9 +15,10 @@ import { keys } from "@/lib/api/query-keys"
 import { createI18n } from "@/lib/i18n/create"
 import { PrefsProvider, type Prefs } from "@/lib/prefs"
 import type { Locale } from "@/schemas/locale"
-import { userSchema, type User } from "@/schemas/user"
+import type { User } from "@/schemas/user"
 import { DirectionProvider } from "@/components/ui/direction"
 import { db } from "@/mocks/db"
+import { publicUser } from "@/mocks/lib"
 import ar from "@/messages/ar/common.json"
 import en from "@/messages/en/common.json"
 import arAuth from "@/messages/ar/auth.json"
@@ -63,11 +64,10 @@ export async function renderShell(
     path = `/${locale}`,
     prefs = { dataSaver: false, listingView: "grid" },
   } = options
-  const me = role
-    ? userSchema.parse(
-        db.users.find((user) => user.role === role && user.onboardingDone)
-      )
-    : null
+  const row = role
+    ? db.users.find((user) => user.role === role && user.onboardingDone)
+    : undefined
+  const me = row ? publicUser(row) : null
   useMockFetch(me?.id)
   const client: QueryClient = new QueryClient({
     ...sessionCaches(() => client),

@@ -3,12 +3,12 @@ import { z } from "zod"
 import { defaultWeeklyHours } from "@/lib/hours"
 import { geoSchema, phoneSchema, weeklyHoursSchema } from "@/schemas/fields"
 import { onboardingInputSchema } from "@/schemas/inputs"
-import { interestSchema, userSchema } from "@/schemas/user"
+import { interestSchema } from "@/schemas/user"
 import { DAY, both, ratingFrom, slugify } from "@/mocks/seed/util"
 
 import { db, newId } from "../db"
 import { needUser, route } from "../http"
-import { nowIso } from "../lib"
+import { nowIso, publicUser } from "../lib"
 import { template } from "./uploads"
 
 const phoneRows = z.array(z.object({ value: phoneSchema }))
@@ -134,5 +134,5 @@ route("POST", "/onboarding/complete", async (c) => {
   user.role = role
   user.cityId = city
   user.onboardingDone = true
-  return userSchema.parse(user)
+  return publicUser(user)
 })

@@ -145,10 +145,20 @@ export function useUpdateProfile() {
     })
   )
 }
-export const useChangePassword = () =>
-  useApiMutation((body: z.input<typeof passwordInputSchema>) =>
-    post("/me/password", okSchema)(body)
+export function useChangePassword() {
+  const qc = useQueryClient()
+  return useApiMutation((body: z.input<typeof passwordInputSchema>) =>
+    post(
+      "/me/password",
+      okSchema
+    )(body).then((r) => {
+      qc.setQueryData(keys.me, (me: User | null | undefined) =>
+        me ? { ...me, hasPassword: true } : me
+      )
+      return r
+    })
   )
+}
 // Each switch saves at once: the cache changes first and goes back when the call fails.
 export function useUpdateNotificationPrefs() {
   const qc = useQueryClient()

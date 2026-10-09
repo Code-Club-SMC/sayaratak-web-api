@@ -61,8 +61,10 @@ export const resetInputSchema = z.object({
 export const profilePatchSchema = z
   .object({
     fullName: nameSchema,
-    email: emailSchema,
-    phone: phoneSchema,
+    // "" removes it. A new address needs the code sent to it.
+    email: emailSchema.or(z.literal("")),
+    phone: phoneSchema.or(z.literal("")),
+    code: z.string().min(1, "validation.otp"),
     avatarUrl: z.string(),
     cityId: z.string(),
     interests: z.array(interestSchema),

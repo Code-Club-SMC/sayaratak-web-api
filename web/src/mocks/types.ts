@@ -25,7 +25,7 @@ import type { Taxonomy } from "@/schemas/taxonomy"
 import type { User } from "@/schemas/user"
 
 // Rows are the API shapes plus the few server-only columns; handlers parse through the schemas, which drops the extras.
-export type UserRow = User & {
+export type UserRow = Omit<User, "hasPassword"> & {
   password: string | null
   locale: Locale
   prefs: NotificationPrefs

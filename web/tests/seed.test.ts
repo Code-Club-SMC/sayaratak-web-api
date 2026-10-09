@@ -102,7 +102,7 @@ describe("seed counts (A9)", () => {
 
 describe("rows parse with their schemas", () => {
   const cases: [string, unknown[], z.ZodTypeAny][] = [
-    ["users", db.users, userSchema],
+    ["users", db.users, userSchema.omit({ hasPassword: true })],
     ["listings", db.listings, listingSchema],
     ["dealerships", db.dealerships, dealershipSchema],
     ["workshops", db.workshops, workshopSchema],

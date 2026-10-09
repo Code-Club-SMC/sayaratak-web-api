@@ -24,6 +24,8 @@ export const userSchema = z.object({
   cityId: z.string().optional(),
   verifiedPhone: z.boolean(),
   verifiedEmail: z.boolean(),
+  // False for accounts made with Google or Facebook: they set a password instead of changing one.
+  hasPassword: z.boolean(),
   banned: z.boolean(),
   bannedReason: z.string().optional(),
   createdAt: z.string(),

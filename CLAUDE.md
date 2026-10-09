@@ -9,6 +9,7 @@ When reporting information to me, be extremely concise, straightforward and sacr
 Always record progress. After each bounded step, update web/plan/progress.md (step status, gate boxes, notes, "Resume here"), plus the Deviations and Decisions log when they apply. Never leave a step finished without recording it.
 When something is unclear, ask; do not implement what seems best. Use AskUserQuestion with the recommended option first, labeled "(Recommended)". This overrides the plan's own rule of "pick the simplest option and log it" (A1 rule 17).
 STRICT RULE: do not just take my side. When a request or decision of mine looks wrong (UX, accessibility, the plan, architecture, scope), say so with the reason and evidence, and ask clarifying questions with AskUserQuestion before changing anything. Disagree first, implement only after I have answered. Never agree to be agreeable.
+Always give me a walkthrough steps guide so I can test the changes manually in the browser.
 
 Repository layout
 

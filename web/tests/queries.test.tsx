@@ -61,7 +61,7 @@ describe("useRequireAuth", () => {
     expect(authGate.state).toMatchObject({ open: true, reason: "favorite" })
     await act(() =>
       result.current.login.mutateAsync({
-        identifier: "+249912345601",
+        email: "user@demo.sy",
         password: "Demo1234",
       })
     )

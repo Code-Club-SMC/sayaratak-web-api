@@ -19,7 +19,7 @@ import {
 } from "@/lib/api/dev-flags"
 
 const accounts = [
-  { label: "User (Omar)", identifier: "+249912345601" },
+  { label: "User (Omar)", identifier: "user@demo.sy" },
   { label: "Dealership", identifier: "dealer@demo.sy" },
   { label: "Workshop", identifier: "workshop@demo.sy" },
   { label: "Mechanic", identifier: "mechanic@demo.sy" },
@@ -102,7 +102,7 @@ export function DevPanel({ onClose }: { onClose: () => void }) {
             if (v === "out") await logout.mutateAsync()
             else
               await login.mutateAsync({
-                identifier: v,
+                email: v,
                 password: "Demo1234",
               })
             void refresh()

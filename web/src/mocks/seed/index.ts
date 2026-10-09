@@ -127,6 +127,7 @@ export function buildSeed({ empty = false }: { empty?: boolean } = {}): Db {
     broadcasts: [],
     uploads: new Map(),
     attempts: new Map(),
-    resetUserId: null,
+    codes: new Map(),
+    resetTokens: new Map(),
   }
 }

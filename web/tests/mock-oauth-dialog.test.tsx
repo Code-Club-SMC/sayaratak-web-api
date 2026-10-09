@@ -1,8 +1,7 @@
 import { fireEvent, screen, waitFor } from "@testing-library/react"
 import { beforeEach, describe, expect, it, vi } from "vitest"
 
-import { IdentifierStep } from "@/features/auth/components/identifier-step"
-import { initialAuthState } from "@/features/auth/auth-flow-state"
+import { LoginForm } from "@/features/auth/components/login-form"
 import { db, resetDb } from "@/mocks/db"
 import { renderShell } from "./shell-render"
 
@@ -18,14 +17,7 @@ beforeEach(() => {
 
 const setup = async () => {
   const onDone = vi.fn()
-  await renderShell(
-    <IdentifierStep
-      state={initialAuthState}
-      dispatch={vi.fn() as never}
-      onDone={onDone}
-      mode="page"
-    />
-  )
+  await renderShell(<LoginForm onDone={onDone} />)
   return onDone
 }
 

@@ -44,7 +44,8 @@ import { Route as LocaleAdminAccountRouteImport } from './routes/$locale/admin/a
 import { Route as LocaleAdminNotificationsRouteImport } from './routes/$locale/admin/notifications'
 import { Route as LocaleAuthIndexRouteImport } from './routes/$locale/auth/index'
 import { Route as LocaleAuthForgotRouteImport } from './routes/$locale/auth/forgot'
-import { Route as LocaleAuthResetRouteImport } from './routes/$locale/auth/reset'
+import { Route as LocaleAuthLoginRouteImport } from './routes/$locale/auth/login'
+import { Route as LocaleAuthSignupRouteImport } from './routes/$locale/auth/signup'
 import { Route as LocaleDealerIndexRouteImport } from './routes/$locale/dealer/index'
 import { Route as LocaleDealerAnalyticsRouteImport } from './routes/$locale/dealer/analytics'
 import { Route as LocaleDealerMessagesRouteImport } from './routes/$locale/dealer/messages'
@@ -265,9 +266,14 @@ const LocaleAuthForgotRoute = LocaleAuthForgotRouteImport.update({
   path: '/auth/forgot',
   getParentRoute: () => LocaleRouteRoute,
 } as any)
-const LocaleAuthResetRoute = LocaleAuthResetRouteImport.update({
-  id: '/auth/reset',
-  path: '/auth/reset',
+const LocaleAuthLoginRoute = LocaleAuthLoginRouteImport.update({
+  id: '/auth/login',
+  path: '/auth/login',
+  getParentRoute: () => LocaleRouteRoute,
+} as any)
+const LocaleAuthSignupRoute = LocaleAuthSignupRouteImport.update({
+  id: '/auth/signup',
+  path: '/auth/signup',
   getParentRoute: () => LocaleRouteRoute,
 } as any)
 const LocaleDealerIndexRoute = LocaleDealerIndexRouteImport.update({
@@ -535,7 +541,8 @@ export interface FileRoutesByFullPath {
   '/$locale/admin/account': typeof LocaleAdminAccountRoute
   '/$locale/admin/notifications': typeof LocaleAdminNotificationsRoute
   '/$locale/auth/forgot': typeof LocaleAuthForgotRoute
-  '/$locale/auth/reset': typeof LocaleAuthResetRoute
+  '/$locale/auth/login': typeof LocaleAuthLoginRoute
+  '/$locale/auth/signup': typeof LocaleAuthSignupRoute
   '/$locale/dealer/analytics': typeof LocaleDealerAnalyticsRoute
   '/$locale/dealer/messages': typeof LocaleDealerMessagesRoute
   '/$locale/dealer/notifications': typeof LocaleDealerNotificationsRoute
@@ -609,7 +616,8 @@ export interface FileRoutesByTo {
   '/$locale/admin/account': typeof LocaleAdminAccountRoute
   '/$locale/admin/notifications': typeof LocaleAdminNotificationsRoute
   '/$locale/auth/forgot': typeof LocaleAuthForgotRoute
-  '/$locale/auth/reset': typeof LocaleAuthResetRoute
+  '/$locale/auth/login': typeof LocaleAuthLoginRoute
+  '/$locale/auth/signup': typeof LocaleAuthSignupRoute
   '/$locale/dealer/analytics': typeof LocaleDealerAnalyticsRoute
   '/$locale/dealer/messages': typeof LocaleDealerMessagesRoute
   '/$locale/dealer/notifications': typeof LocaleDealerNotificationsRoute
@@ -689,7 +697,8 @@ export interface FileRoutesById {
   '/$locale/admin/account': typeof LocaleAdminAccountRoute
   '/$locale/admin/notifications': typeof LocaleAdminNotificationsRoute
   '/$locale/auth/forgot': typeof LocaleAuthForgotRoute
-  '/$locale/auth/reset': typeof LocaleAuthResetRoute
+  '/$locale/auth/login': typeof LocaleAuthLoginRoute
+  '/$locale/auth/signup': typeof LocaleAuthSignupRoute
   '/$locale/dealer/analytics': typeof LocaleDealerAnalyticsRoute
   '/$locale/dealer/messages': typeof LocaleDealerMessagesRoute
   '/$locale/dealer/notifications': typeof LocaleDealerNotificationsRoute
@@ -770,7 +779,8 @@ export interface FileRouteTypes {
     | '/$locale/admin/account'
     | '/$locale/admin/notifications'
     | '/$locale/auth/forgot'
-    | '/$locale/auth/reset'
+    | '/$locale/auth/login'
+    | '/$locale/auth/signup'
     | '/$locale/dealer/analytics'
     | '/$locale/dealer/messages'
     | '/$locale/dealer/notifications'
@@ -844,7 +854,8 @@ export interface FileRouteTypes {
     | '/$locale/admin/account'
     | '/$locale/admin/notifications'
     | '/$locale/auth/forgot'
-    | '/$locale/auth/reset'
+    | '/$locale/auth/login'
+    | '/$locale/auth/signup'
     | '/$locale/dealer/analytics'
     | '/$locale/dealer/messages'
     | '/$locale/dealer/notifications'
@@ -923,7 +934,8 @@ export interface FileRouteTypes {
     | '/$locale/admin/account'
     | '/$locale/admin/notifications'
     | '/$locale/auth/forgot'
-    | '/$locale/auth/reset'
+    | '/$locale/auth/login'
+    | '/$locale/auth/signup'
     | '/$locale/dealer/analytics'
     | '/$locale/dealer/messages'
     | '/$locale/dealer/notifications'
@@ -1227,11 +1239,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LocaleAuthForgotRouteImport
       parentRoute: typeof LocaleRouteRoute
     }
-    '/$locale/auth/reset': {
-      id: '/$locale/auth/reset'
-      path: '/auth/reset'
-      fullPath: '/$locale/auth/reset'
-      preLoaderRoute: typeof LocaleAuthResetRouteImport
+    '/$locale/auth/login': {
+      id: '/$locale/auth/login'
+      path: '/auth/login'
+      fullPath: '/$locale/auth/login'
+      preLoaderRoute: typeof LocaleAuthLoginRouteImport
+      parentRoute: typeof LocaleRouteRoute
+    }
+    '/$locale/auth/signup': {
+      id: '/$locale/auth/signup'
+      path: '/auth/signup'
+      fullPath: '/$locale/auth/signup'
+      preLoaderRoute: typeof LocaleAuthSignupRouteImport
       parentRoute: typeof LocaleRouteRoute
     }
     '/$locale/dealer/': {
@@ -1715,7 +1734,8 @@ interface LocaleRouteRouteChildren {
   LocaleWorkshopRouteRoute: typeof LocaleWorkshopRouteRouteWithChildren
   LocalePostRoute: typeof LocalePostRoute
   LocaleAuthForgotRoute: typeof LocaleAuthForgotRoute
-  LocaleAuthResetRoute: typeof LocaleAuthResetRoute
+  LocaleAuthLoginRoute: typeof LocaleAuthLoginRoute
+  LocaleAuthSignupRoute: typeof LocaleAuthSignupRoute
   LocaleOnboardingRoleRoute: typeof LocaleOnboardingRoleRoute
   LocaleAuthIndexRoute: typeof LocaleAuthIndexRoute
   LocaleOnboardingIndexRoute: typeof LocaleOnboardingIndexRoute
@@ -1731,7 +1751,8 @@ const LocaleRouteRouteChildren: LocaleRouteRouteChildren = {
   LocaleWorkshopRouteRoute: LocaleWorkshopRouteRouteWithChildren,
   LocalePostRoute: LocalePostRoute,
   LocaleAuthForgotRoute: LocaleAuthForgotRoute,
-  LocaleAuthResetRoute: LocaleAuthResetRoute,
+  LocaleAuthLoginRoute: LocaleAuthLoginRoute,
+  LocaleAuthSignupRoute: LocaleAuthSignupRoute,
   LocaleOnboardingRoleRoute: LocaleOnboardingRoleRoute,
   LocaleAuthIndexRoute: LocaleAuthIndexRoute,
   LocaleOnboardingIndexRoute: LocaleOnboardingIndexRoute,

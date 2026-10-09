@@ -33,15 +33,19 @@ import { interestSchema } from "./user"
 import { searchParamsSchema } from "@/features/search/schemas"
 
 // Request bodies. Messages are i18n keys, as everywhere else.
-export const identifyInputSchema = z.object({ identifier: identifierSchema })
 export const loginInputSchema = z.object({
-  identifier: identifierSchema,
+  email: emailSchema,
   password: z.string().min(1, "validation.required"),
 })
-export const registerInputSchema = z.object({
-  identifier: identifierSchema,
+export const signupInputSchema = z.object({
   fullName: nameSchema,
+  email: emailSchema,
   password: passwordSchema,
+})
+export const emailInputSchema = z.object({ email: emailSchema })
+export const codeInputSchema = z.object({
+  email: emailSchema,
+  code: z.string().regex(/^\d{6}$/, "validation.otp"),
 })
 export const oauthInputSchema = z.object({
   accountId: z.string().min(1, "validation.required"),
@@ -53,7 +57,6 @@ export const otpVerifyInputSchema = z.object({
   code: z.string().min(1, "validation.otp"),
   identifier: z.string().optional(),
 })
-export const forgotInputSchema = z.object({ identifier: identifierSchema })
 export const resetInputSchema = z.object({
   token: z.string().min(1, "validation.required"),
   password: passwordSchema,

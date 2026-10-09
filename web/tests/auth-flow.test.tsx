@@ -1,59 +1,28 @@
 import { fireEvent, screen, waitFor } from "@testing-library/react"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 
-import {
-  authReducer,
-  initialAuthState,
-  type AuthState,
-} from "@/features/auth/auth-flow-state"
 import { authGate, closeAuthGate } from "@/features/auth/auth-gate"
 import { AuthDialog } from "@/features/auth/components/auth-dialog"
-import { AuthFlow } from "@/features/auth/components/auth-flow"
-import { AuthHeader } from "@/features/auth/components/auth-header"
+import { ForgotFlow } from "@/features/auth/components/forgot-flow"
+import { LoginForm } from "@/features/auth/components/login-form"
+import { SignupFlow } from "@/features/auth/components/signup-flow"
 import { redirectSearch, signInDestination } from "@/features/auth/destination"
 import { publicUser } from "@/mocks/lib"
 import { db, resetDb } from "@/mocks/db"
 import { renderShell } from "./shell-render"
 
-const identified = (exists: boolean) =>
-  authReducer(initialAuthState, {
-    type: "identified",
-    identifier: "0912345678",
-    normalizedIdentifier: "+249912345678",
-    kind: "phone",
-    exists,
-  })
+// input-otp measures the page for its caret; jsdom has no layout.
+document.elementFromPoint = () => null
 
-describe("authReducer", () => {
-  it("goes to password for a known identifier and to create for a new one", () => {
-    expect(identified(true).step).toBe("password")
-    expect(identified(false).step).toBe("create")
+const type = (label: string | RegExp, value: string) =>
+  fireEvent.change(screen.getByLabelText(label), { target: { value } })
+// The demo notice prints the code the mock "emailed".
+const demoCode = async () =>
+  (await screen.findByText(/Your code:/)).textContent.match(/\d{6}/)?.[0] ?? ""
+const enterCode = (code: string) =>
+  fireEvent.change(screen.getByLabelText("Verification code"), {
+    target: { value: code },
   })
-
-  it("keeps the typed identifier when going back", () => {
-    const back = authReducer(identified(true), { type: "back" })
-    expect(back.step).toBe("identifier")
-    expect(back.identifier).toBe("0912345678")
-    expect(back.normalizedIdentifier).toBe("+249912345678")
-  })
-
-  it("goes back from otp to the step it came from", () => {
-    const otp = authReducer(identified(false), { type: "otp", from: "create" })
-    expect(otp.step).toBe("otp")
-    expect(authReducer(otp, { type: "back" }).step).toBe("create")
-    const login = authReducer(identified(true), {
-      type: "otp",
-      from: "password",
-    })
-    expect(authReducer(login, { type: "back" }).step).toBe("password")
-  })
-
-  it("ignores back on the first step", () => {
-    expect(authReducer(initialAuthState, { type: "back" })).toBe(
-      initialAuthState
-    )
-  })
-})
 
 describe("signInDestination", () => {
   const user = (onboardingDone: boolean) => ({
@@ -85,6 +54,7 @@ describe("signInDestination", () => {
 
 beforeEach(() => {
   resetDb()
+  vi.stubEnv("VITE_DEMO", "true")
   vi.stubGlobal("matchMedia", () => ({
     matches: false,
     addEventListener: () => {},
@@ -95,47 +65,123 @@ beforeEach(() => {
 afterEach(() => {
   closeAuthGate()
   vi.unstubAllGlobals()
+  vi.unstubAllEnvs()
 })
 
-describe("AuthHeader", () => {
-  const step = (s: AuthState["step"], reason?: string) => {
-    const dispatch = vi.fn()
-    return {
-      dispatch,
-      ui: (
-        <AuthHeader mode="page" step={s} reason={reason} dispatch={dispatch} />
-      ),
-    }
+describe("LoginForm", () => {
+  it("logs in with email and password", async () => {
+    const onDone = vi.fn()
+    await renderShell(<LoginForm onDone={onDone} />)
+    type("Email", "dealer@demo.sy")
+    type("Password", "Demo1234")
+    fireEvent.click(screen.getByRole("button", { name: "Log in" }))
+    await waitFor(() => expect(onDone).toHaveBeenCalled())
+  })
+
+  it("says so on a wrong password and links to sign up and forgot", async () => {
+    await renderShell(<LoginForm onDone={vi.fn()} redirect="/en/post" />)
+    type("Email", "dealer@demo.sy")
+    type("Password", "wrong1234")
+    fireEvent.click(screen.getByRole("button", { name: "Log in" }))
+    expect(
+      await screen.findByText("The phone, email or password is not correct")
+    ).toBeTruthy()
+    expect(
+      screen.getByRole("link", { name: "Create account" }).getAttribute("href")
+    ).toBe("/en/auth/signup?redirect=%2Fen%2Fpost")
+    expect(
+      screen
+        .getByRole("link", { name: "Forgot password?" })
+        .getAttribute("href")
+    ).toBe("/en/auth/forgot")
+  })
+})
+
+describe("SignupFlow", () => {
+  const fill = (email = "new.person@example.com") => {
+    type("Full name", "New Person")
+    type("Email", email)
+    type("Password", "Passw0rd1")
+    type("Confirm password", "Passw0rd1")
   }
 
-  it("shows the stored reason as the identifier helper", async () => {
-    await renderShell(step("identifier", "auth.reason_favorite").ui)
-    expect(screen.getByText("Sign in to save this listing")).toBeTruthy()
-    expect(screen.queryByRole("button", { name: "Back" })).toBeNull()
+  it("needs matching passwords and the terms", async () => {
+    await renderShell(<SignupFlow onDone={vi.fn()} />)
+    fill()
+    type("Confirm password", "Passw0rd2")
+    fireEvent.click(screen.getByRole("button", { name: "Create account" }))
+    expect(await screen.findByText("The passwords do not match")).toBeTruthy()
+    expect(screen.getByText("Accept the terms to continue")).toBeTruthy()
   })
 
-  it("shows a Back button after the first step", async () => {
-    const { ui, dispatch } = step("password", "auth.reason_favorite")
-    await renderShell(ui)
+  it("creates the account only after the code, then shows Email verified", async () => {
+    const onDone = vi.fn()
+    await renderShell(<SignupFlow onDone={onDone} />)
+    fill()
+    fireEvent.click(screen.getByRole("checkbox"))
+    fireEvent.click(screen.getByRole("button", { name: "Create account" }))
+    const code = await demoCode()
+    expect(screen.getByText("new.person@example.com")).toBeTruthy()
+    expect(db.users.some((u) => u.email === "new.person@example.com")).toBe(
+      false
+    )
+    enterCode(code)
     expect(
-      screen.getByRole("heading", { name: "Enter your password" })
+      await screen.findByRole("heading", { name: "Email verified" })
     ).toBeTruthy()
-    expect(screen.queryByText("Sign in to save this listing")).toBeNull()
-    fireEvent.click(screen.getByRole("button", { name: "Back" }))
-    expect(dispatch).toHaveBeenCalledWith({ type: "back" })
+    expect(
+      db.users.find((u) => u.email === "new.person@example.com")?.verifiedEmail
+    ).toBe(true)
+    expect(onDone).not.toHaveBeenCalled()
+    fireEvent.click(screen.getByRole("button", { name: "Continue" }))
+    expect(onDone).toHaveBeenCalledOnce()
+  })
+
+  it("clears a wrong code and keeps the form when changing the email", async () => {
+    await renderShell(<SignupFlow onDone={vi.fn()} />)
+    fill()
+    fireEvent.click(screen.getByRole("checkbox"))
+    fireEvent.click(screen.getByRole("button", { name: "Create account" }))
+    const code = await demoCode()
+    enterCode(code === "000000" ? "111111" : "000000")
+    expect(await screen.findByText("The code is not correct")).toBeTruthy()
+    fireEvent.click(screen.getByRole("button", { name: "Change email" }))
+    expect(screen.getByLabelText<HTMLInputElement>("Full name").value).toBe(
+      "New Person"
+    )
+  })
+
+  it("refuses an email that already has an account", async () => {
+    await renderShell(<SignupFlow onDone={vi.fn()} />)
+    fill("dealer@demo.sy")
+    fireEvent.click(screen.getByRole("checkbox"))
+    fireEvent.click(screen.getByRole("button", { name: "Create account" }))
+    expect(
+      await screen.findByText(
+        "An account with this email already exists. Log in instead."
+      )
+    ).toBeTruthy()
   })
 })
 
-describe("AuthFlow", () => {
-  it("renders the identifier step with legal links that open a new tab", async () => {
-    await renderShell(<AuthFlow mode="page" onDone={() => {}} />)
+describe("ForgotFlow", () => {
+  it("resets the password with the emailed code", async () => {
+    const dealer = db.users.find((u) => u.email === "dealer@demo.sy")!
+    await renderShell(<ForgotFlow />)
+    type("Email", "dealer@demo.sy")
+    fireEvent.click(screen.getByRole("button", { name: "Send code" }))
+    enterCode(await demoCode())
+    await screen.findByRole("heading", { name: "Choose a new password" })
+    type("New password", "Newpass123")
+    type("Confirm password", "Newpass123")
+    fireEvent.click(screen.getByRole("button", { name: "Save password" }))
     expect(
-      screen.getByRole("heading", { name: "Sign in or create an account" })
+      await screen.findByRole("heading", { name: "Password changed" })
     ).toBeTruthy()
-    const terms = screen.getByRole("link", { name: "Terms" })
-    expect(terms.getAttribute("href")).toBe("/en/terms")
-    expect(terms.getAttribute("target")).toBe("_blank")
-    expect(screen.getByRole("link", { name: "Privacy" })).toBeTruthy()
+    expect(dealer.password).toBe("Newpass123")
+    expect(
+      screen.getByRole("link", { name: "Log in" }).getAttribute("href")
+    ).toBe("/en/auth/login")
   })
 })
 
@@ -160,14 +206,20 @@ describe("AuthDialog", () => {
     const trigger = screen.getByRole("button", { name: "trigger" })
     trigger.focus()
     fireEvent.click(trigger)
-    expect(
-      await screen.findByRole("dialog", {
-        name: "Sign in or create an account",
-      })
-    ).toBeTruthy()
+    expect(await screen.findByRole("dialog", { name: "Log in" })).toBeTruthy()
     expect(screen.getByText("Sign in to send a message")).toBeTruthy()
     fireEvent.keyDown(screen.getByRole("dialog"), { key: "Escape" })
     await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull())
     await waitFor(() => expect(document.activeElement).toBe(trigger))
+  })
+
+  it("swaps to sign up in place", async () => {
+    await renderShell(<AuthDialog />)
+    authGate.setState(() => ({ open: true, pending: null }))
+    await screen.findByRole("dialog", { name: "Log in" })
+    fireEvent.click(screen.getByRole("button", { name: "Create account" }))
+    expect(
+      await screen.findByRole("dialog", { name: "Create your account" })
+    ).toBeTruthy()
   })
 })

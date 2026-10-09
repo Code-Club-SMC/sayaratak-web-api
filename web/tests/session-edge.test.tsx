@@ -77,9 +77,7 @@ describe("401 from a mutation", () => {
     ).toBeTruthy()
     expect(client.getQueryData(keys.me)).toBeNull()
     useMockFetch(user.id) // sign in sets the cookie
-    fireEvent.click(
-      screen.getByRole("button", { name: "Sign in as demo user" })
-    )
+    fireEvent.click(screen.getByRole("button", { name: "Buyer" }))
     expect(await screen.findByText("saved")).toBeTruthy()
   })
   it("does not open for a visitor who was never signed in", async () => {

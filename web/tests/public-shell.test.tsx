@@ -119,7 +119,7 @@ describe("public shell", () => {
     ).toBe("/en/post")
     expect(
       screen.getByRole("link", { name: "Favorites" }).getAttribute("href")
-    ).toBe("/en/auth?redirect=%2Fen%2Faccount%2Ffavorites")
+    ).toBe("/en/auth/login?redirect=%2Fen%2Faccount%2Ffavorites")
   })
   it("uses the dealer wizard and real unread notification count", async () => {
     await renderShell(<Header />, { role: "dealership" })

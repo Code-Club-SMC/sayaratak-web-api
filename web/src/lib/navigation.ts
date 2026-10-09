@@ -46,7 +46,7 @@ export function personalHref(path: string, locale: Locale, me: User | null) {
   const destination = localeHref(path, locale)
   return me
     ? destination
-    : `${localeHref("/auth", locale)}?redirect=${encodeURIComponent(destination)}`
+    : `${localeHref("/auth/login", locale)}?redirect=${encodeURIComponent(destination)}`
 }
 
 // The `redirect` param is only followed when it is a path on this site: one leading slash, no protocol, no `//host`, no whitespace (browsers drop tabs and newlines, so `/\t/host` would become `//host`).

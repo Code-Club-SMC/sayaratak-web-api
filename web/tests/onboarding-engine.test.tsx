@@ -96,7 +96,7 @@ const type = (value: string) =>
 describe("OnboardingStepPage", () => {
   it("shows the step count and title", async () => {
     await open()
-    expect(screen.getByText("Step 1 of 2")).toBeTruthy()
+    expect(screen.getByText("Step 2 of 3")).toBeTruthy()
     expect(
       screen.getByRole("heading", { name: "Your dealership" })
     ).toBeTruthy()

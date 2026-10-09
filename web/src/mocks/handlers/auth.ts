@@ -1,14 +1,17 @@
+import { customAlphabet, nanoid } from "nanoid"
+
 import { normalizePhone } from "@/lib/phone"
 import {
-  identifySchema,
+  codeSentSchema,
   notificationPrefsSchema,
   okSchema,
   draftSchema,
+  resetTokenSchema,
 } from "@/schemas/api"
 import {
+  codeInputSchema,
   draftInputSchema,
-  forgotInputSchema,
-  identifyInputSchema,
+  emailInputSchema,
   loginInputSchema,
   notificationPrefsInputSchema,
   oauthInputSchema,
@@ -16,8 +19,8 @@ import {
   otpVerifyInputSchema,
   passwordInputSchema,
   profilePatchSchema,
-  registerInputSchema,
   resetInputSchema,
+  signupInputSchema,
 } from "@/schemas/inputs"
 import { defaultPrefs, slugify } from "@/mocks/seed/util"
 
@@ -25,7 +28,7 @@ import { db, find, insert, newId } from "../db"
 import { removeAccount } from "../account"
 import { fail, needUser, route, withSession } from "../http"
 import { nowIso, publicUser } from "../lib"
-import type { UserRow } from "../types"
+import type { EmailCode, UserRow } from "../types"
 
 const WINDOW_MS = 10 * 60_000
 const MAX_FAILS = 5
@@ -35,6 +38,35 @@ const normalize = (id: string) =>
 export const findByIdentifier = (id: string) => {
   const key = normalize(id)
   return db.users.find((u) => (isEmail(id) ? u.email === key : u.phone === key))
+}
+
+const CODE_TTL_MS = 10 * 60_000
+const CODE_FAILS = 5
+const newCode = customAlphabet("0123456789", 6)
+
+function sendCode(key: string, signup?: EmailCode["signup"]) {
+  const code = newCode()
+  db.codes.set(key, {
+    code,
+    expiresAt: Date.now() + CODE_TTL_MS,
+    fails: 0,
+    signup,
+  })
+  return codeSentSchema.parse({ ok: true, demoCode: code })
+}
+// A code works once. Five wrong tries or ten minutes and it is gone; the person asks for a new one.
+function checkCode(key: string, code: string) {
+  const entry = db.codes.get(key)
+  if (!entry || entry.expiresAt < Date.now()) {
+    db.codes.delete(key)
+    throw fail(410, "code_expired")
+  }
+  if (entry.code !== code) {
+    if (++entry.fails >= CODE_FAILS) db.codes.delete(key)
+    throw fail(422, "otp_invalid", { code: "auth.otp_invalid" })
+  }
+  db.codes.delete(key)
+  return entry
 }
 
 function throttled(key: string) {
@@ -52,42 +84,38 @@ function throttled(key: string) {
 
 route("GET", "/me", ({ user }) => (user ? publicUser(user) : null))
 
-route("POST", "/auth/identify", async (c) => {
-  const user = findByIdentifier((await c.body(identifyInputSchema)).identifier)
-  return identifySchema.parse({
-    exists: Boolean(user),
-    hasPassword: Boolean(user?.password),
-  })
-})
-
 route("POST", "/auth/login", async (c) => {
-  const { identifier, password } = await c.body(loginInputSchema)
-  const key = normalize(identifier)
-  throttled(key)
-  const user = findByIdentifier(identifier)
+  const { email, password } = await c.body(loginInputSchema)
+  throttled(email)
+  const user = findByIdentifier(email)
   if (!user || user.password !== password) {
-    db.attempts.set(key, [...(db.attempts.get(key) ?? []), Date.now()])
+    db.attempts.set(email, [...(db.attempts.get(email) ?? []), Date.now()])
     throw fail(401, "invalid_credentials")
   }
   if (user.banned) throw fail(403, "banned")
-  db.attempts.delete(key)
+  db.attempts.delete(email)
   return withSession(user.id, publicUser(user))
 })
 
-route("POST", "/auth/register", async (c) => {
-  const { identifier, fullName, password } = await c.body(registerInputSchema)
-  if (findByIdentifier(identifier)) throw fail(409, "exists")
-  const email = isEmail(identifier)
+// Sign up: nothing is created until the emailed code comes back. Sending again replaces the code.
+route("POST", "/auth/signup", async (c) => {
+  const { email, fullName, password } = await c.body(signupInputSchema)
+  if (findByIdentifier(email)) throw fail(409, "exists")
+  return sendCode(`signup:${email}`, { fullName, password })
+})
+route("POST", "/auth/signup/verify", async (c) => {
+  const { email, code } = await c.body(codeInputSchema)
+  const { signup } = checkCode(`signup:${email}`, code)
+  if (!signup) throw fail(410, "code_expired")
+  if (findByIdentifier(email)) throw fail(409, "exists")
   const user: UserRow = {
     id: newId("u"),
     role: "user",
-    fullName,
-    password,
-    ...(email
-      ? { email: normalize(identifier) }
-      : { phone: normalize(identifier) }),
+    fullName: signup.fullName,
+    password: signup.password,
+    email,
     verifiedPhone: false,
-    verifiedEmail: false,
+    verifiedEmail: true,
     banned: false,
     createdAt: nowIso(),
     onboardingDone: false,
@@ -151,23 +179,30 @@ route("POST", "/auth/otp/verify", async (c) => {
   return okSchema.parse({ ok: true })
 })
 
+// Answers the same whether or not the account exists; only a real account gets a code.
 route("POST", "/auth/forgot", async (c) => {
-  const { identifier } = await c.body(forgotInputSchema)
-  db.resetUserId = findByIdentifier(identifier)?.id ?? null
-  return okSchema.parse({ ok: true })
+  const { email } = await c.body(emailInputSchema)
+  return findByIdentifier(email)
+    ? sendCode(`reset:${email}`)
+    : codeSentSchema.parse({ ok: true })
 })
-// The demo token resets the account of the last forgot request, else the demo user.
+route("POST", "/auth/forgot/verify", async (c) => {
+  const { email, code } = await c.body(codeInputSchema)
+  checkCode(`reset:${email}`, code)
+  const user = findByIdentifier(email)
+  if (!user) throw fail(410, "code_expired")
+  const token = nanoid()
+  db.resetTokens.set(token, user.id)
+  return resetTokenSchema.parse({ token })
+})
 route("POST", "/auth/reset", async (c) => {
   const { token, password } = await c.body(resetInputSchema)
-  const user =
-    token === "demo-reset" &&
-    (db.users.find((u) => u.id === db.resetUserId) ??
-      findByIdentifier("+249912345601"))
+  const user = db.users.find((u) => u.id === db.resetTokens.get(token))
   if (!user) throw fail(422, "invalid_token")
+  db.resetTokens.delete(token)
   user.password = password
   for (const id of [user.email, user.phone])
     if (id) db.attempts.delete(normalize(id))
-  db.resetUserId = null
   return okSchema.parse({ ok: true })
 })
 route("POST", "/auth/logout", () => withSession(null, { ok: true }))

@@ -44,5 +44,7 @@
   "validation.video_type": "اختر ملف فيديو",
   "validation.date": "أدخل تاريخًا صحيحًا",
   "validation.chassis": "استخدم من 5 إلى 25 حرفًا أو رقمًا أو شرطة",
-  "validation.year_order": "يجب ألا تكون السنة الأولى بعد الأخيرة"
+  "validation.year_order": "يجب ألا تكون السنة الأولى بعد الأخيرة",
+  "validation.password_match": "كلمتا المرور غير متطابقتين",
+  "validation.terms": "وافق على الشروط للمتابعة"
 }

@@ -48,13 +48,9 @@ describe("auth dialog", () => {
   it("opens for a signed-out visitor and replays the action after sign in", async () => {
     await renderShell(<Demo />)
     fireEvent.click(screen.getByRole("button", { name: "gated" }))
-    expect(
-      screen.getByRole("dialog", { name: "Sign in or create an account" })
-    ).toBeTruthy()
+    expect(screen.getByRole("dialog", { name: "Log in" })).toBeTruthy()
     expect(screen.getByText("runs 0")).toBeTruthy()
-    fireEvent.click(
-      screen.getByRole("button", { name: "Sign in as demo user" })
-    )
+    fireEvent.click(screen.getByRole("button", { name: "Buyer" }))
     expect(await screen.findByText("runs 1")).toBeTruthy()
     await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull())
   })
@@ -102,14 +98,14 @@ describe("route guards", () => {
 
   it("requireUser sends signed-out visitors to sign in with a return path", () => {
     expect(redirectOf(() => requireUser(guard(null)))).toBe(
-      "/en/auth?redirect=%2Fen%2Faccount%3Ftab%3Dx"
+      "/en/auth/login?redirect=%2Fen%2Faccount%3Ftab%3Dx"
     )
     expect(requireUser(guard(user("user"))).role).toBe("user")
   })
 
   it("requireRole sends another role to its own dashboard", () => {
     expect(redirectOf(() => requireRole("admin")(guard(null)))).toContain(
-      "/en/auth?redirect="
+      "/en/auth/login?redirect="
     )
     expect(
       redirectOf(() => requireRole("admin")(guard(user("dealership"))))

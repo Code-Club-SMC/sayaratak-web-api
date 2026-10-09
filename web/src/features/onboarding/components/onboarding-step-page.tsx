@@ -5,7 +5,9 @@ import { useRouter, useRouterState } from "@tanstack/react-router"
 import { FormProvider, useForm, type FieldValues } from "react-hook-form"
 import { z } from "zod"
 
+import { AuthShell } from "@/components/app/auth-shell"
 import { StepHeader } from "@/components/app/step-header"
+import { StepIndicator } from "@/components/app/step-indicator"
 import { StickyFooter } from "@/components/app/sticky-footer"
 import { SubmitButton } from "@/components/app/submit-button"
 import { Button } from "@/components/ui/button"
@@ -132,67 +134,95 @@ export function OnboardingStepPage({
       <StepPreview role={role} steps={steps} stepId={step.id} data={data} />
     )
 
+  // The role page was step 1, so every flow counts it.
+  const progress = { current: index + 2, total: steps.length + 1 }
+  const skip = (
+    <>
+      {preview && <PreviewSheetButton>{preview}</PreviewSheetButton>}
+      {step.optional && (
+        <Button type="button" variant="link" onClick={() => advance(data)}>
+          {t("common.skip")}
+        </Button>
+      )}
+    </>
+  )
+  const submitButton = (
+    <SubmitButton
+      size="lg"
+      pending={save.isPending || complete.isPending || navigating}
+    >
+      {next ? t("common.continue") : t(`onboarding.finish_${role}`)}
+    </SubmitButton>
+  )
+  const body = (
+    <>
+      <StepHeader
+        title={t(step.titleKey)}
+        helper={t(step.helperKey)}
+        step={step.id}
+      />
+      <form
+        ref={formRef}
+        noValidate
+        data-reserve-errors
+        className="flex flex-col gap-4"
+        onSubmit={submit}
+      >
+        <div
+          key={step.id}
+          className={`flex flex-col gap-4 transition-opacity duration-(--dur-fast) ease-(--ease-standard) starting:opacity-0 ${role === "user" ? "" : "min-h-80"}`}
+        >
+          {loaded === step.id && <step.Component />}
+        </div>
+        {(save.isError || complete.isError) && (
+          <div className="flex flex-wrap items-center gap-x-3">
+            <p role="alert" className="text-ui text-destructive">
+              {t("onboarding.save_error")}
+            </p>
+            <Button type="button" variant="link" onClick={submit}>
+              {t("common.retry")}
+            </Button>
+          </div>
+        )}
+        {role === "user" ? (
+          <div className="flex items-center gap-3 pt-4">
+            <Button type="button" variant="ghost" onClick={back}>
+              {t("common.back")}
+            </Button>
+            <div className="ms-auto flex items-center gap-3">
+              {skip}
+              {submitButton}
+            </div>
+          </div>
+        ) : (
+          <StickyFooter onBack={back} skip={skip}>
+            {submitButton}
+          </StickyFooter>
+        )}
+      </form>
+    </>
+  )
+
   return (
     <FormProvider {...form}>
-      <OnboardingLayout
-        progress={{ current: index + 1, total: steps.length }}
-        preview={preview}
-        onExit={exit}
-      >
-        <StepHeader
-          title={t(step.titleKey)}
-          helper={t(step.helperKey)}
-          step={step.id}
-        />
-        <form
-          ref={formRef}
-          noValidate
-          data-reserve-errors
-          className="flex flex-col gap-4"
-          onSubmit={submit}
+      {role === "user" ? (
+        // The buyer's one step shares the sign up screen, so signing up and onboarding read as one flow.
+        <AuthShell
+          panel="signup"
+          action={
+            <Button type="button" variant="ghost" onClick={exit}>
+              {t("onboarding.save_exit")}
+            </Button>
+          }
         >
-          <div
-            key={step.id}
-            className="flex min-h-80 flex-col gap-4 transition-opacity duration-(--dur-fast) ease-(--ease-standard) starting:opacity-0"
-          >
-            {loaded === step.id && <step.Component />}
-          </div>
-          {(save.isError || complete.isError) && (
-            <div className="flex flex-wrap items-center gap-x-3">
-              <p role="alert" className="text-ui text-destructive">
-                {t("onboarding.save_error")}
-              </p>
-              <Button type="button" variant="link" onClick={submit}>
-                {t("common.retry")}
-              </Button>
-            </div>
-          )}
-          <StickyFooter
-            onBack={back}
-            skip={
-              <>
-                {preview && <PreviewSheetButton>{preview}</PreviewSheetButton>}
-                {step.optional && (
-                  <Button
-                    type="button"
-                    variant="link"
-                    onClick={() => advance(data)}
-                  >
-                    {t("common.skip")}
-                  </Button>
-                )}
-              </>
-            }
-          >
-            <SubmitButton
-              size="lg"
-              pending={save.isPending || complete.isPending || navigating}
-            >
-              {next ? t("common.continue") : t(`onboarding.finish_${role}`)}
-            </SubmitButton>
-          </StickyFooter>
-        </form>
-      </OnboardingLayout>
+          <StepIndicator {...progress} labelFromMd />
+          {body}
+        </AuthShell>
+      ) : (
+        <OnboardingLayout progress={progress} preview={preview} onExit={exit}>
+          {body}
+        </OnboardingLayout>
+      )}
     </FormProvider>
   )
 }

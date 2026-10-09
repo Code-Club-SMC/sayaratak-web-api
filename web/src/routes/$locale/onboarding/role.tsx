@@ -1,9 +1,9 @@
 import { createFileRoute, redirect } from "@tanstack/react-router"
 
+import { AuthShell } from "@/components/app/auth-shell"
 import { redirectSearch } from "@/features/auth/destination"
 import { requireUser } from "@/features/auth/guards"
 import { draftQuery } from "@/features/auth/queries"
-import { OnboardingLayout } from "@/features/onboarding/components/onboarding-layout"
 import { RoleForm } from "@/features/onboarding/components/role-form"
 import { roleDraftKey } from "@/features/onboarding/schemas"
 import { getCopy } from "@/lib/i18n/server"
@@ -41,9 +41,9 @@ export const Route = createFileRoute("/$locale/onboarding/role")({
       : {},
   component: function Role() {
     return (
-      <OnboardingLayout>
+      <AuthShell panel="signup">
         <RoleForm redirect={Route.useSearch().redirect} />
-      </OnboardingLayout>
+      </AuthShell>
     )
   },
 })

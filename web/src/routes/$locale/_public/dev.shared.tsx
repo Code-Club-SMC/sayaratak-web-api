@@ -5,7 +5,6 @@ import { createFileRoute, notFound } from "@tanstack/react-router"
 import { billingQueries } from "@/features/billing/queries"
 import { listingQueries } from "@/features/listings/queries"
 import { searchParamsSchema } from "@/features/search/schemas"
-import { AuthCardLayout } from "@/components/app/auth-card-layout"
 import { Breadcrumbs } from "@/components/app/breadcrumbs"
 import { DatePicker } from "@/components/app/date-picker"
 import { FocusedTopBar } from "@/components/app/focused-top-bar"
@@ -207,13 +206,6 @@ function SharedDemo() {
           action={{ label: "Save and exit", onClick: () => setStep(1) }}
         />
         <StepHeader title={`Step ${step}`} helper="Helper line" step={step} />
-      </Section>
-      <Section title="AuthCardLayout">
-        <div className="max-h-[28rem] overflow-auto bg-muted">
-          <AuthCardLayout title="Forgot password" description="We send a code.">
-            <Button>Send code</Button>
-          </AuthCardLayout>
-        </div>
       </Section>
       <StickyFooter
         onBack={() => setStep(Math.max(1, step - 1))}

@@ -57,7 +57,6 @@ export const flows = {
       ...step("user", "details"),
       schema: userOnboardingSchema,
       defaults: (me) => ({
-        fullName: me.fullName,
         cityId: me.cityId ?? "",
         interests: [],
       }),

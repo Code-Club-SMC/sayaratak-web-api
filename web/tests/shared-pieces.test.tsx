@@ -10,7 +10,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest"
 
 import type { Plan } from "@/schemas/billing"
 import { listingSchema, type Listing } from "@/schemas/listing"
-import { AuthCardLayout } from "@/components/app/auth-card-layout"
+import { AuthShell } from "@/components/app/auth-shell"
 import { Breadcrumbs } from "@/components/app/breadcrumbs"
 import { DatePicker } from "@/components/app/date-picker"
 import { FocusedTopBar } from "@/components/app/focused-top-bar"
@@ -405,13 +405,14 @@ describe("focused flow pieces", () => {
     expect(onBack).toHaveBeenCalled()
   })
 
-  it("AuthCardLayout has the title and a language switch", async () => {
+  it("AuthShell has the form, the side panel copy and a language switch", async () => {
     await renderShell(
-      <AuthCardLayout title="Forgot" description="Help">
+      <AuthShell panel="login">
         <button>Go</button>
-      </AuthCardLayout>
+      </AuthShell>
     )
-    expect(screen.getByRole("heading", { name: "Forgot" })).toBeTruthy()
+    expect(screen.getByRole("button", { name: "Go" })).toBeTruthy()
+    expect(screen.getByText("Welcome back to Sayaratak")).toBeTruthy()
     await waitFor(() =>
       expect(screen.getByRole("link", { name: /Arabic/ })).toBeTruthy()
     )

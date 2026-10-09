@@ -32,7 +32,7 @@ export function BrandLogo() {
         width={96}
         height={48}
         alt=""
-        className={`absolute inset-0 h-full w-full bg-card object-cover ${loaded ? "" : "invisible"}`}
+        className={`absolute inset-0 h-full w-full object-cover ${loaded ? "" : "invisible"}`}
         onLoad={() => setLoaded(true)}
         onError={() => setLoaded(false)}
       />

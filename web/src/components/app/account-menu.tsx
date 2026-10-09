@@ -30,7 +30,7 @@ export function AccountMenu() {
   if (!me)
     return (
       <a
-        href={localeHref("/auth", locale)}
+        href={localeHref("/auth/login", locale)}
         aria-label={t("common.sign_in")}
         className="inline-flex h-11 min-w-11 shrink-0 items-center justify-center rounded-lg px-2 text-ui font-medium hover:bg-muted md:h-10"
       >

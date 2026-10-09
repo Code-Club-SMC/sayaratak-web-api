@@ -247,6 +247,6 @@ describe("NotificationBell", () => {
   it("asks a signed-out visitor to sign in", async () => {
     await renderShell(<NotificationBell />)
     const link = await screen.findByRole("link", { name: "Notifications" })
-    expect(link.getAttribute("href")).toContain("/en/auth?redirect=")
+    expect(link.getAttribute("href")).toContain("/en/auth/login?redirect=")
   })
 })

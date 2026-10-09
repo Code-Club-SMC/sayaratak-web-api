@@ -101,6 +101,7 @@ export function seedPeople(taxonomy: Taxonomy, empty: boolean) {
       id: "u-omar",
       role: "user",
       fullName: "Omar Hassan",
+      email: "user@demo.sy",
       phone: "+249912345601",
       cityId: "khartoum",
       interests: ["cars", "parts"],

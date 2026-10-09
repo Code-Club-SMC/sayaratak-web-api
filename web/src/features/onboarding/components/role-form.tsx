@@ -11,13 +11,14 @@ import {
 import { Controller, useForm } from "react-hook-form"
 
 import { StepHeader } from "@/components/app/step-header"
+import { StepIndicator } from "@/components/app/step-indicator"
 import { SubmitButton } from "@/components/app/submit-button"
 import { Button } from "@/components/ui/button"
 import { RadioGroup } from "@/components/ui/radio-group"
 import { draftQuery, useSaveDraft } from "@/features/auth/queries"
 import { useT } from "@/lib/i18n/use-t"
 import { stepHref } from "../draft"
-import { firstStepId } from "../flows"
+import { firstStepId, flows } from "../flows"
 import { roleChoiceSchema, roleDraftKey, type RoleChoice } from "../schemas"
 import { RoleOption } from "./role-option"
 
@@ -52,8 +53,11 @@ export function RoleForm({ redirect }: { redirect?: string }) {
       }
     )
   )
+  // Step 1 of the whole flow; the total follows the role picked so far.
+  const total = flows[form.watch("role")].length + 1
   return (
-    <form noValidate className="flex flex-col gap-8" onSubmit={submit}>
+    <form noValidate className="flex flex-col gap-6" onSubmit={submit}>
+      <StepIndicator current={1} total={total} labelFromMd />
       <StepHeader title={t("onboarding.role_title")} step="role" />
       <Controller
         control={form.control}

@@ -69,9 +69,9 @@ beforeEach(() => {
 })
 
 describe("auth", () => {
-  it("login sets the session cookie, bad password is 401, five misses throttle, reset clears", async () => {
+  it("login sets the session cookie, bad password is 401, five misses throttle, a reset by code clears", async () => {
     const ok = await call("POST", "/auth/login", {
-      body: { identifier: "dealer@demo.sy", password: "Demo1234" },
+      body: { email: "dealer@demo.sy", password: "Demo1234" },
     })
     expect(ok.status).toBe(200)
     expect(ok.res.headers.get("set-cookie")).toContain("sy_session=u-dealer")
@@ -79,54 +79,95 @@ describe("auth", () => {
       expect(
         (
           await call("POST", "/auth/login", {
-            body: { identifier: "admin@demo.sy", password: "wrong1234" },
+            body: { email: "admin@demo.sy", password: "wrong1234" },
           })
         ).body.code
       ).toBe("invalid_credentials")
     }
     const locked = await call("POST", "/auth/login", {
-      body: { identifier: "admin@demo.sy", password: "Demo1234" },
+      body: { email: "admin@demo.sy", password: "Demo1234" },
     })
     expect(locked.status).toBe(429)
     expect(locked.body.retryAfter).toBeGreaterThan(0)
-    await call("POST", "/auth/forgot", {
-      body: { identifier: "admin@demo.sy" },
+    const sent = await call("POST", "/auth/forgot", {
+      body: { email: "admin@demo.sy" },
+    })
+    const verified = await call("POST", "/auth/forgot/verify", {
+      body: { email: "admin@demo.sy", code: sent.body.demoCode },
     })
     await call("POST", "/auth/reset", {
-      body: {
-        token: "demo-reset",
-        password: "Demo1234",
-      },
+      body: { token: verified.body.token, password: "Newpass123" },
     })
     expect(
       (
         await call("POST", "/auth/login", {
-          body: { identifier: "admin@demo.sy", password: "Demo1234" },
+          body: { email: "admin@demo.sy", password: "Newpass123" },
         })
       ).status
     ).toBe(200)
+    // The token works once.
+    expect(
+      (
+        await call("POST", "/auth/reset", {
+          body: { token: verified.body.token, password: "Other1234" },
+        })
+      ).body.code
+    ).toBe("invalid_token")
   })
-  it("register creates a role-less-until-onboarding user and refuses a taken identifier", async () => {
-    const res = await call("POST", "/auth/register", {
-      body: {
-        identifier: "+249911111111",
-        fullName: "Sara Ali",
-        password: "Passw0rd1",
-      },
+  it("forgot answers alike for an unknown email and sends no code", async () => {
+    const res = await call("POST", "/auth/forgot", {
+      body: { email: "nobody@example.com" },
+    })
+    expect(res.status).toBe(200)
+    expect(res.body.demoCode).toBeUndefined()
+  })
+  it("signup creates the account only after the emailed code, and refuses a taken email", async () => {
+    const body = {
+      fullName: "Sara Ali",
+      email: "sara@example.com",
+      password: "Passw0rd1",
+    }
+    const sent = await call("POST", "/auth/signup", { body })
+    expect(sent.body.demoCode).toMatch(/^\d{6}$/)
+    expect(db.users.some((u) => u.email === body.email)).toBe(false)
+    const wrong = sent.body.demoCode === "000000" ? "111111" : "000000"
+    expect(
+      (
+        await call("POST", "/auth/signup/verify", {
+          body: { email: body.email, code: wrong },
+        })
+      ).body.code
+    ).toBe("otp_invalid")
+    const res = await call("POST", "/auth/signup/verify", {
+      body: { email: body.email, code: sent.body.demoCode },
     })
     expect(res.status).toBe(201)
     expect(res.body.onboardingDone).toBe(false)
+    expect(res.res.headers.get("set-cookie")).toContain("sy_session=")
+    expect(db.users.find((u) => u.email === body.email)?.verifiedEmail).toBe(
+      true
+    )
+    expect((await call("POST", "/auth/signup", { body })).body.code).toBe(
+      "exists"
+    )
+  })
+  it("a sign-up code is gone after five wrong tries", async () => {
+    const email = "five@example.com"
+    const sent = await call("POST", "/auth/signup", {
+      body: { fullName: "Five Tries", email, password: "Passw0rd1" },
+    })
+    const wrong = sent.body.demoCode === "000000" ? "111111" : "000000"
+    for (let i = 0; i < 5; i++)
+      await call("POST", "/auth/signup/verify", {
+        body: { email, code: wrong },
+      })
     expect(
       (
-        await call("POST", "/auth/register", {
-          body: {
-            identifier: "+249911111111",
-            fullName: "Sara Ali",
-            password: "Passw0rd1",
-          },
+        await call("POST", "/auth/signup/verify", {
+          body: { email, code: sent.body.demoCode },
         })
       ).body.code
-    ).toBe("exists")
+    ).toBe("code_expired")
   })
   it("onboarding creates the business record", async () => {
     const done = await call("POST", "/onboarding/complete", {

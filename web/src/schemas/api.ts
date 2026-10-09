@@ -24,10 +24,12 @@ export const notificationPrefsSchema = z.object({
 export type NotificationPrefs = z.infer<typeof notificationPrefsSchema>
 
 export const okSchema = z.object({ ok: z.literal(true) })
-export const identifySchema = z.object({
-  exists: z.boolean(),
-  hasPassword: z.boolean(),
+// No email is sent yet: the mock returns the code as `demoCode` so the demo can show it. The real API leaves it out.
+export const codeSentSchema = z.object({
+  ok: z.literal(true),
+  demoCode: z.string().optional(),
 })
+export const resetTokenSchema = z.object({ token: z.string() })
 export const draftSchema = z.object({ data: z.record(z.string(), z.unknown()) })
 export const rangeSchema = z.enum(["7d", "30d", "90d"]).catch("30d")
 export type Range = z.infer<typeof rangeSchema>

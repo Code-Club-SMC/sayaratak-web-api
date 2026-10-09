@@ -44,5 +44,7 @@
   "validation.video_type": "Choose a video file",
   "validation.date": "Enter a valid date",
   "validation.chassis": "Use 5 to 25 letters, digits or dashes",
-  "validation.year_order": "The first year must not be after the last"
+  "validation.year_order": "The first year must not be after the last",
+  "validation.password_match": "The passwords do not match",
+  "validation.terms": "Accept the terms to continue"
 }

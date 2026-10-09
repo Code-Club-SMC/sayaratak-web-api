@@ -50,16 +50,11 @@ const finish = () =>
   fireEvent.click(screen.getByRole("button", { name: "Start using Sayaratak" }))
 
 describe("userOnboardingSchema", () => {
-  const ok = { fullName: "Amna", cityId: "khartoum", interests: [] }
-  it("needs a city and a name", () => {
+  const ok = { cityId: "khartoum", interests: [] }
+  it("needs a city", () => {
     expect(userOnboardingSchema.safeParse(ok).success).toBe(true)
-    const bad = userOnboardingSchema.safeParse({
-      ...ok,
-      cityId: "",
-      fullName: "A",
-    })
-    expect(bad.error?.issues.map((i) => i.message).sort()).toEqual([
-      "validation.name_min",
+    const bad = userOnboardingSchema.safeParse({ ...ok, cityId: "" })
+    expect(bad.error?.issues.map((i) => i.message)).toEqual([
       "validation.required",
     ])
   })
@@ -71,12 +66,10 @@ describe("userOnboardingSchema", () => {
 })
 
 describe("UserDetailsStep", () => {
-  it("prefills the name from the account", async () => {
-    const { user } = await open()
-    expect(screen.getByRole("textbox", { name: /Full name/ })).toHaveProperty(
-      "value",
-      user.fullName
-    )
+  it("does not ask the name again and counts the role page as step 1", async () => {
+    await open()
+    expect(screen.queryByRole("textbox", { name: /Full name/ })).toBeNull()
+    expect(screen.getByText("Step 2 of 2")).toBeTruthy()
   })
 
   it("keeps Finish from going through without a city", async () => {

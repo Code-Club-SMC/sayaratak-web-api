@@ -3,8 +3,6 @@ import { Controller, useFormContext } from "react-hook-form"
 import { AvatarUpload } from "@/components/app/avatar-upload"
 import { ChipMultiSelect } from "@/components/app/chip-multi-select"
 import { CitySelect } from "@/components/app/city-select"
-import { FormField } from "@/components/app/form-field"
-import { Input } from "@/components/ui/input"
 import { useT } from "@/lib/i18n/use-t"
 import { interestSchema, type Interest } from "@/schemas/user"
 import { mediaFromId } from "../media"
@@ -22,22 +20,9 @@ const labelKeys = {
 
 export function UserDetailsStep() {
   const { t } = useT()
-  const { control, register, formState } = useFormContext<UserOnboarding>()
+  const { control } = useFormContext<UserOnboarding>()
   return (
     <>
-      <FormField
-        label={t("auth.full_name_label")}
-        error={formState.errors.fullName?.message}
-      >
-        {(c) => (
-          <Input
-            {...c}
-            {...register("fullName")}
-            size="lg"
-            autoComplete="name"
-          />
-        )}
-      </FormField>
       <Controller
         control={control}
         name="cityId"

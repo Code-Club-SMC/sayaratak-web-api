@@ -116,6 +116,15 @@ export type Db = {
   broadcasts: BroadcastRow[]
   uploads: Map<string, UploadRow>
   attempts: Map<string, number[]>
-  // The account the last forgot-password request named; the demo token resets it.
-  resetUserId: string | null
+  // Email codes by `signup:<email>` or `reset:<email>`. A sign-up code carries the account to create once it is verified.
+  codes: Map<string, EmailCode>
+  // One-time reset tokens (a verified reset code), token to user id.
+  resetTokens: Map<string, string>
+}
+
+export type EmailCode = {
+  code: string
+  expiresAt: number
+  fails: number
+  signup?: { fullName: string; password: string }
 }

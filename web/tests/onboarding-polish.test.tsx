@@ -7,8 +7,6 @@ import { z } from "zod"
 
 import { FormField } from "@/components/app/form-field"
 import { PhoneInput } from "@/components/app/phone-input"
-import { initialAuthState } from "@/features/auth/auth-flow-state"
-import { IdentifierStep } from "@/features/auth/components/identifier-step"
 import { OnboardingStepPage } from "@/features/onboarding/components/onboarding-step-page"
 import type { FlowStep } from "@/features/onboarding/flows"
 import { db, resetDb } from "@/mocks/db"
@@ -195,46 +193,5 @@ describe("phone paste", () => {
     expect((input as HTMLInputElement).value).toBe("912345678")
     paste(input, "+249 91 234 5678")
     expect(screen.getByRole("status").textContent).toBe("+249912345678")
-  })
-
-  it("cleans the identifier on paste and on blur, and only for phones", async () => {
-    await renderShell(
-      <IdentifierStep
-        state={initialAuthState}
-        dispatch={vi.fn()}
-        onDone={vi.fn()}
-        mode="page"
-      />
-    )
-    const input = screen.getByLabelText<HTMLInputElement>("Phone or email")
-    paste(input, "٠٩١٢٣٤٥٦٧٨")
-    expect(input.value).toBe("+249912345678")
-    fireEvent.change(input, { target: { value: "0912 345 678" } })
-    fireEvent.blur(input)
-    expect(input.value).toBe("+249912345678")
-    fireEvent.change(input, { target: { value: "Omar@X.com" } })
-    fireEvent.blur(input)
-    expect(input.value).toBe("Omar@X.com")
-  })
-
-  it("switches the keyboard by what is typed", async () => {
-    await renderShell(
-      <IdentifierStep
-        state={initialAuthState}
-        dispatch={vi.fn()}
-        onDone={vi.fn()}
-        mode="page"
-      />
-    )
-    const input = screen.getByLabelText<HTMLInputElement>("Phone or email")
-    const mode = (value: string) => {
-      fireEvent.change(input, { target: { value } })
-      return input.inputMode
-    }
-    expect(input.inputMode).toBe("text")
-    expect(mode("0")).toBe("tel")
-    expect(mode("+2")).toBe("tel")
-    expect(mode("omar")).toBe("text")
-    expect(mode("omar@")).toBe("email")
   })
 })

@@ -9,24 +9,25 @@ import { apiFetch } from "@/lib/api/client"
 import { useApiMutation } from "@/lib/api/mutation"
 import { keys, publicKeyRoots } from "@/lib/api/query-keys"
 import {
+  codeSentSchema,
   draftSchema,
-  identifySchema,
   notificationPrefsSchema,
   okSchema,
+  resetTokenSchema,
   type NotificationPrefs,
 } from "@/schemas/api"
 import type { z } from "zod"
 import type {
-  forgotInputSchema,
-  identifyInputSchema,
+  codeInputSchema,
+  emailInputSchema,
   loginInputSchema,
   oauthInputSchema,
   otpSendInputSchema,
   otpVerifyInputSchema,
   passwordInputSchema,
   profilePatchSchema,
-  registerInputSchema,
   resetInputSchema,
+  signupInputSchema,
 } from "@/schemas/inputs"
 import { userSchema, type User } from "@/schemas/user"
 
@@ -63,20 +64,21 @@ const post =
   (body?: unknown) =>
     apiFetch(path, { method: "POST", body, schema })
 
-export const useIdentify = () =>
-  useApiMutation((body: z.input<typeof identifyInputSchema>) =>
-    post("/auth/identify", identifySchema)(body)
-  )
 export function useLogin() {
   const signedIn = useSignedIn()
   return useApiMutation((body: z.input<typeof loginInputSchema>) =>
     post("/auth/login", userSchema)(body).then(signedIn)
   )
 }
-export function useRegister() {
+// Sends (or sends again) the sign-up code; the account exists only after useVerifySignup.
+export const useSignup = () =>
+  useApiMutation((body: z.input<typeof signupInputSchema>) =>
+    post("/auth/signup", codeSentSchema)(body)
+  )
+export function useVerifySignup() {
   const signedIn = useSignedIn()
-  return useApiMutation((body: z.input<typeof registerInputSchema>) =>
-    post("/auth/register", userSchema)(body).then(signedIn)
+  return useApiMutation((body: z.input<typeof codeInputSchema>) =>
+    post("/auth/signup/verify", userSchema)(body).then(signedIn)
   )
 }
 export function useOauthLogin() {
@@ -108,8 +110,12 @@ export function useVerifyOtp() {
   )
 }
 export const useForgotPassword = () =>
-  useApiMutation((body: z.input<typeof forgotInputSchema>) =>
-    post("/auth/forgot", okSchema)(body)
+  useApiMutation((body: z.input<typeof emailInputSchema>) =>
+    post("/auth/forgot", codeSentSchema)(body)
+  )
+export const useVerifyReset = () =>
+  useApiMutation((body: z.input<typeof codeInputSchema>) =>
+    post("/auth/forgot/verify", resetTokenSchema)(body)
   )
 export const useResetPassword = () =>
   useApiMutation((body: z.input<typeof resetInputSchema>) =>

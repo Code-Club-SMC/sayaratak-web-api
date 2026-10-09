@@ -72,6 +72,33 @@ describe("ListingsManager", () => {
     expect(screen.getByRole("button", { name: "Export CSV" })).toBeTruthy()
   })
 
+  it("shows the limit meter of the plan, and no meter when individual plans are off", async () => {
+    const { unmount } = await open()
+    const meter = await screen.findByRole("meter", { name: "Listings used" })
+    expect(meter.getAttribute("aria-valuemax")).toBe("40")
+    unmount()
+    db.settings.individualSubscriptionsEnabled = false
+    await open()
+    expect(screen.queryByRole("meter")).toBeNull()
+  })
+
+  it("disables Post at the limit and points to billing", async () => {
+    db.subscriptions.find(
+      (s) => s.userId === "u-omar" && s.status === "active"
+    )!.usage.limit = 1
+    await open()
+    expect(
+      screen
+        .getByRole("button", { name: "Post a listing" })
+        .hasAttribute("disabled")
+    ).toBe(true)
+    expect(
+      screen
+        .getAllByRole("link", { name: "See plans" })[0]!
+        .getAttribute("href")
+    ).toBe("/en/account/billing")
+  })
+
   it("lists the owner's listings, 24 to a page, with the tabs", async () => {
     await open()
     expect(screen.getAllByRole("tab")).toHaveLength(7)

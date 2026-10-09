@@ -288,6 +288,31 @@ describe("listings", () => {
     expect(edited.status).toBe(422)
     expect(edited.body.fields.year).toBe("validation.required")
   })
+  it("a rejected listing is resubmitted with submit: pending again, reason cleared; at the limit it stays rejected", async () => {
+    const row = db.listings.find(
+      (l) => l.ownerUserId === "u-omar" && l.moderation === "rejected"
+    )!
+    const sub = db.subscriptions.find(
+      (s) => s.userId === "u-omar" && s.status === "active"
+    )!
+    const { limit } = sub.usage
+    sub.usage.limit = 1
+    const blocked = await call("PATCH", `/listings/${row.id}`, {
+      as: "u-omar",
+      body: { submit: true },
+    })
+    expect(blocked.body.code).toBe("limit_reached")
+    expect(row.moderation).toBe("rejected")
+    sub.usage.limit = limit
+    const sent = await call("PATCH", `/listings/${row.id}`, {
+      as: "u-omar",
+      body: { submit: true },
+    })
+    expect(sent.body).toMatchObject({
+      moderation: "pending",
+      rejectionReason: null,
+    })
+  })
   it("an edit that changes title, description, photos or type sends an approved listing back to review; price never does", async () => {
     const created = await call("POST", "/listings", { as: "u-1", body: car })
     const row = db.listings.find((l) => l.id === created.body.id)!

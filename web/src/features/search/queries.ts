@@ -1,8 +1,17 @@
-import { queryOptions } from "@tanstack/react-query"
+import {
+  queryOptions,
+  useMutation,
+  useQueryClient,
+} from "@tanstack/react-query"
 import { z } from "zod"
 
-import { apiFetch } from "@/lib/api/client"
-import { useApiMutation } from "@/lib/api/mutation"
+import { apiFetch, type ApiError } from "@/lib/api/client"
+import {
+  patchRows,
+  restore,
+  snapshot,
+  useApiMutation,
+} from "@/lib/api/mutation"
 import { keys } from "@/lib/api/query-keys"
 import { okSchema } from "@/schemas/api"
 import type {
@@ -32,19 +41,33 @@ export const useCreateSavedSearch = () =>
       }),
     [keys.savedSearches]
   )
-export const useUpdateSavedSearch = () =>
-  useApiMutation(
-    ({
-      id,
-      ...body
-    }: { id: string } & z.input<typeof savedSearchPatchSchema>) =>
+// Rename, the alerts switch and "seen" change the cached row first and put it back when the call fails.
+export function useUpdateSavedSearch() {
+  const qc = useQueryClient()
+  return useMutation<
+    z.infer<typeof savedSearchSchema>,
+    ApiError,
+    { id: string } & z.input<typeof savedSearchPatchSchema>,
+    Awaited<ReturnType<typeof snapshot>>
+  >({
+    mutationFn: ({ id, ...body }) =>
       apiFetch(`/saved-searches/${id}`, {
         method: "PATCH",
         body,
         schema: savedSearchSchema,
       }),
-    [keys.savedSearches]
-  )
+    onMutate: async ({ id, markSeen, ...patch }) => {
+      const snap = await snapshot(qc, keys.savedSearches)
+      patchRows(qc, keys.savedSearches, (rowId) => rowId === id, {
+        ...patch,
+        ...(markSeen && { newCount: 0 }),
+      })
+      return snap
+    },
+    onError: (_error, _vars, snap) => restore(qc, snap),
+    onSettled: () => qc.invalidateQueries({ queryKey: keys.savedSearches }),
+  })
+}
 export const useDeleteSavedSearch = () =>
   useApiMutation(
     (id: string) =>

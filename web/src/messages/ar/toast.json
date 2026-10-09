@@ -13,5 +13,7 @@
   "toast.status_updated": "تم تحديث الحالة",
   "toast.draft_saved": "تم حفظ المسودة",
   "toast.reply_saved": "تم حفظ الرد",
-  "toast.review_reported": "تم الإبلاغ عن التقييم"
+  "toast.review_reported": "تم الإبلاغ عن التقييم",
+  "toast.search_renamed": "تمت إعادة تسمية البحث",
+  "toast.search_deleted": "تم حذف البحث"
 }

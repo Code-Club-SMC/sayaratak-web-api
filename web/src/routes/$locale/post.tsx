@@ -2,6 +2,7 @@ import { useMemo } from "react"
 import { createFileRoute } from "@tanstack/react-router"
 import { useQuery } from "@tanstack/react-query"
 
+import { StatusBanner } from "@/features/listings/components/status-banner"
 import { listingQueries, taxonomyQuery } from "@/features/listings/queries"
 import { DoneStep } from "@/features/listings/wizard/done-step"
 import { ListingWizard } from "@/features/listings/wizard/listing-wizard"
@@ -63,6 +64,11 @@ export const Route = createFileRoute("/$locale/post")({
         base={base}
         defaultValues={wizardDefaults}
         publishDisabled={reached}
+        banner={
+          listing.data?.moderation === "rejected" && (
+            <StatusBanner listing={listing.data} />
+          )
+        }
         onPublish={publish}
       />
     )

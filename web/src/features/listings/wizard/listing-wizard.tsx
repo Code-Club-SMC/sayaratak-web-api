@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react"
+import { useEffect, useRef, type ReactNode } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useRouter } from "@tanstack/react-router"
 import { FormProvider, useForm, type FieldValues } from "react-hook-form"
@@ -33,6 +33,7 @@ export function ListingWizard({
   base,
   defaultValues = {},
   publishDisabled = false,
+  banner,
   onPublish,
 }: {
   context: "public" | "dealer"
@@ -44,6 +45,8 @@ export function ListingWizard({
   defaultValues?: FieldValues
   // Publish stays off, for example while the free limit is used up.
   publishDisabled?: boolean
+  // A notice above the step, for example why the listing being edited was rejected.
+  banner?: ReactNode
   // Runs on Publish after the last step is valid. It shows its own errors, and resolves `true` once the listing is saved: the wizard then drops its draft.
   onPublish: (values: FieldValues) => Promise<unknown>
 }) {
@@ -116,6 +119,7 @@ export function ListingWizard({
             href,
           }}
         >
+          {banner}
           <StepHeader
             title={t(step.titleKey)}
             helper={step.helperKey && t(step.helperKey)}

@@ -10,6 +10,7 @@ import {
   pruneMessagesSearch,
 } from "@/features/messaging/schemas"
 import { toThread } from "@/mocks/handlers/messaging"
+import { handleMock } from "@/mocks/router"
 import { db, resetDb } from "@/mocks/db"
 import { renderShell } from "./shell-render"
 
@@ -156,6 +157,46 @@ describe("MessagesPage", () => {
       name: new RegExp(nameOf(target)),
     })
     await waitFor(() => expect(within(row).queryByText(/ new$/)).toBeNull())
+  })
+
+  it("shows a thread a buyer started from a listing page as unread, and the seller can answer", async () => {
+    const seller = me()
+    const listing = db.listings.find(
+      (l) => l.ownerUserId === seller.id && l.moderation === "approved"
+    )!
+    const buyer = db.users.find((u) => u.role === "user" && u.id !== seller.id)!
+    const started = await handleMock(
+      new Request("http://localhost/api/threads", {
+        method: "POST",
+        headers: {
+          cookie: `sy_session=${buyer.id}`,
+          "content-type": "application/json",
+        },
+        body: JSON.stringify({
+          subjectType: "listing",
+          subjectId: listing.id,
+          body: "Is the car still available?",
+        }),
+      })
+    )
+    const { id } = await started.json()
+    const { router } = await open()
+    const row = within(await list())
+      .getAllByRole("button")
+      .find((b) => b.textContent.includes("Is the car still available?"))!
+    expect(within(row).getByText("1 new")).toBeTruthy()
+    fireEvent.click(row)
+    await waitFor(() => expect(currentSearch(router).thread).toBe(id))
+    const box = await screen.findByRole("textbox", { name: "Write a message" })
+    fireEvent.change(box, { target: { value: "Yes, come and see it." } })
+    fireEvent.keyDown(box, { key: "Enter" })
+    await waitFor(() =>
+      expect(
+        db.messages.some(
+          (m) => m.threadId === id && m.body === "Yes, come and see it."
+        )
+      ).toBe(true)
+    )
   })
 
   it("sends at once, on Enter, and clears the box", async () => {

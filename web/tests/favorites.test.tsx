@@ -10,6 +10,7 @@ import {
 import { NowProvider } from "@/lib/now"
 import { db, resetDb } from "@/mocks/db"
 import { pick } from "./pick"
+import { confirmRemove } from "./confirm"
 import { renderShell } from "./shell-render"
 
 Element.prototype.scrollIntoView = () => {}
@@ -125,6 +126,15 @@ describe("FavoritesPage", () => {
       within(card).queryByRole("button", { name: "Save to favorites" })
     ).toBeNull()
     fireEvent.click(within(card).getByRole("button", { name: "Remove" }))
+    // It asks first: Cancel keeps the favorite, Remove removes it.
+    const dialog = await screen.findByRole("alertdialog", {
+      name: "Remove from favorites?",
+    })
+    fireEvent.click(within(dialog).getByRole("button", { name: "Cancel" }))
+    await waitFor(() => expect(screen.queryByRole("alertdialog")).toBeNull())
+    expect(db.favorites.some((f) => f.listingId === sold.id)).toBe(true)
+    fireEvent.click(within(card).getByRole("button", { name: "Remove" }))
+    await confirmRemove("Remove from favorites?")
     await waitFor(() =>
       expect(db.favorites.some((f) => f.listingId === sold.id)).toBe(false)
     )

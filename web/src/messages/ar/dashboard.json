@@ -291,5 +291,7 @@
   "dashboard.favorites_empty_type_title": "لا توجد مفضلة من هذا النوع",
   "dashboard.favorites_empty_type_body": "جرّب نوعًا آخر، أو اعرض كل المفضلة.",
   "dashboard.favorites_show_all": "عرض الكل",
-  "dashboard.favorites_list_title": "الإعلانات المحفوظة"
+  "dashboard.favorites_list_title": "الإعلانات المحفوظة",
+  "verification.doc_remove_title": "حذف المستند {{n}}؟",
+  "dashboard.favorites_remove_title": "إزالة من المفضلة؟"
 }

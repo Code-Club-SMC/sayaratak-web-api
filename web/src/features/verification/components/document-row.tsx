@@ -4,7 +4,7 @@ import { Trash2Icon } from "lucide-react"
 import { FormField } from "@/components/app/form-field"
 import { ImageFileInput } from "@/components/app/image-file-input"
 import { SelectInput, type SelectOption } from "@/components/app/select-input"
-import { Button } from "@/components/ui/button"
+import { RemoveButton } from "@/components/app/remove-button"
 import { useT } from "@/lib/i18n/use-t"
 import type { VerificationForm } from "../schemas"
 
@@ -52,15 +52,15 @@ export function DocumentRow({
           )}
         </FormField>
         {onRemove && (
-          <Button
-            type="button"
+          <RemoveButton
             variant="ghost"
             size="icon"
             aria-label={t("verification.doc_remove", { n })}
-            onClick={onRemove}
+            title={t("verification.doc_remove_title", { n })}
+            onConfirm={onRemove}
           >
             <Trash2Icon aria-hidden="true" />
-          </Button>
+          </RemoveButton>
         )}
       </div>
       <FormField

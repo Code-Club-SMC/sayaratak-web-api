@@ -271,5 +271,11 @@
   "form.installation": "Installation available",
   "form.returns": "Returns accepted",
   "form.required_note": "* Required",
-  "common.new_messages": "New messages"
+  "common.new_messages": "New messages",
+  "common.remove_photo_title": "Remove this photo?",
+  "common.remove_video_title": "Remove this video?",
+  "common.remove_file_title": "Remove this file?",
+  "form.remove_pin_title": "Remove the pin?",
+  "form.remove_phone_title": "Remove phone number {{number}}?",
+  "form.remove_service_title": "Remove service {{number}}?"
 }

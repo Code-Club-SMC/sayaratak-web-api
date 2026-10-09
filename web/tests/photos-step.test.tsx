@@ -11,6 +11,7 @@ import { uploadMedia } from "@/lib/api/upload"
 import { processVideo } from "@/lib/video-process"
 import type { Media } from "@/schemas/listing"
 import { resetDb } from "@/mocks/db"
+import { confirmRemove } from "./confirm"
 import { renderShell } from "./shell-render"
 
 vi.mock("@/lib/image-process", () => ({ processImage: vi.fn() }))
@@ -180,6 +181,7 @@ describe("PhotosStep", () => {
   it("removing the video leaves the photos", async () => {
     await open({ media: [...photos, media("v", "video")] })
     fireEvent.click(screen.getAllByRole("button", { name: "Remove" }).at(-1)!)
+    await confirmRemove("Remove this video?")
     await publishNow()
     await waitFor(() => expect(publish).toHaveBeenCalled())
     expect(sent()).toEqual(["a", "b", "c"])

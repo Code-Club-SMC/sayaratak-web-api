@@ -1,5 +1,5 @@
 import { StatusBadge } from "@/components/app/status-badge"
-import { Button } from "@/components/ui/button"
+import { RemoveButton } from "@/components/app/remove-button"
 import { useListingTitle } from "@/hooks/use-listing-title"
 import { useT } from "@/lib/i18n/use-t"
 import type { FavoriteListing } from "@/schemas/listing"
@@ -25,14 +25,14 @@ export function UnavailableCard({
       <p className="text-caption text-muted-foreground">
         {t("dashboard.favorites_unavailable")}
       </p>
-      <Button
-        type="button"
+      <RemoveButton
         variant="outline"
         className="mt-auto"
-        onClick={onRemove}
+        title={t("dashboard.favorites_remove_title")}
+        onConfirm={onRemove}
       >
         {t("common.remove")}
-      </Button>
+      </RemoveButton>
     </article>
   )
 }

@@ -2,6 +2,7 @@ import { PlusIcon, XIcon } from "lucide-react"
 
 import { useT } from "@/lib/i18n/use-t"
 import { Button } from "@/components/ui/button"
+import { RemoveButton } from "@/components/app/remove-button"
 import { FormField } from "./form-field"
 import { PhoneInput } from "./phone-input"
 
@@ -40,16 +41,16 @@ export function PhoneList({
             )}
           </FormField>
           {value.length > 1 && (
-            <Button
-              type="button"
+            <RemoveButton
               variant="ghost"
               size="icon"
               className="mt-6"
               aria-label={t("form.remove_phone", { number: i + 1 })}
-              onClick={() => onChange(value.filter((_, j) => j !== i))}
+              title={t("form.remove_phone_title", { number: i + 1 })}
+              onConfirm={() => onChange(value.filter((_, j) => j !== i))}
             >
               <XIcon />
-            </Button>
+            </RemoveButton>
           )}
         </div>
       ))}

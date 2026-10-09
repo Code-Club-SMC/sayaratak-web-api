@@ -2,6 +2,7 @@ import { useT } from "@/lib/i18n/use-t"
 import { cn } from "@/lib/utils"
 import type { PendingUpload } from "@/hooks/use-image-uploads"
 import { Button } from "@/components/ui/button"
+import { RemoveButton } from "@/components/app/remove-button"
 import { Progress } from "@/components/ui/progress"
 
 // One file on its way: progress while uploading, Retry and Remove when it failed.
@@ -47,9 +48,13 @@ export function PendingUploadTile({
                 {t("common.retry")}
               </Button>
             )}
-            <Button variant="ghost" onClick={onRemove}>
+            <RemoveButton
+              variant="ghost"
+              title={t("common.remove_photo_title")}
+              onConfirm={onRemove}
+            >
               {t("common.remove")}
-            </Button>
+            </RemoveButton>
           </div>
         </div>
       )}

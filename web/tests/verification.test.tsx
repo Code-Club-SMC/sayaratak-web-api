@@ -4,6 +4,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest"
 import { VerificationPage } from "@/features/verification/components/verification-page"
 import { verificationFormSchema } from "@/features/verification/schemas"
 import { db, newId, resetDb } from "@/mocks/db"
+import { confirmRemove } from "./confirm"
 import { renderShell } from "./shell-render"
 
 Element.prototype.scrollIntoView = () => {}
@@ -161,8 +162,15 @@ describe("VerificationPage", () => {
     expect(
       screen.queryByRole("button", { name: "Add another document" })
     ).toBeNull()
-    for (let i = 5; i > 1; i--)
+    for (let i = 5; i > 1; i--) {
       fireEvent.click(screen.getByRole("button", { name: "Remove document 1" }))
+      await confirmRemove("Remove document 1?")
+      await waitFor(() =>
+        expect(
+          screen.getAllByRole("group", { name: /^Document / })
+        ).toHaveLength(i - 1)
+      )
+    }
     expect(screen.getAllByRole("group", { name: /^Document / })).toHaveLength(1)
     expect(
       screen.queryByRole("button", { name: /^Remove document/ })

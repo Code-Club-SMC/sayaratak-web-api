@@ -57,6 +57,7 @@ Folder plan: src/routes, src/features/<name>/{components,queries.ts,schemas.ts,h
 Rules that are easy to violate
 
 No dead UI: every button/link/toggle/form must mutate the mock DB or local state and invalidate queries. No href="#", empty handlers or console-only submits.
+HARD RULE (owner): every Remove asks for confirmation first, wherever it is in the app. Use `RemoveButton` (components/app/remove-button.tsx, on `ConfirmDialog`); scripts/check-rules.ts fails a file that uses `common.remove` without it. The heart toggle (un-save) and dismissing a search filter chip are not removals. The Undo toast comes after the confirm, not instead of it.
 Logical CSS only (ms-, me-, ps-, pe-, start-, end-, text-start, border-s, border-e, rounded-s, rounded-e). Never ml-/mr-/pl-/pr-/left-/right-/text-left/text-right/border-l/border-r/rounded-l/rounded-r (or rounded-tl/tr/bl/br) outside components/ui. Isolate phone numbers, plates and model names with <bdi> or dir="ltr".
 No hard-coded UI strings: each needs ar and en keys. Zod messages are i18n keys, not sentences. useT() takes no namespace argument and returns { t, locale }. No TODO/FIXME/console.log in src/**.
 Numeric form fields use requiredInt, optionalInt, latSchema, lngSchema (A7), not z.coerce.number(). z.coerce is only for URL search params.

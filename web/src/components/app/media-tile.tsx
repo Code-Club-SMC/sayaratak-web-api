@@ -4,6 +4,7 @@ import { useT } from "@/lib/i18n/use-t"
 import type { Media } from "@/schemas/listing"
 import { Button } from "@/components/ui/button"
 import { MediaImage } from "./media-image"
+import { RemoveButton } from "./remove-button"
 
 // A finished photo with its order controls. The whole tile can also be dragged.
 export function MediaTile({
@@ -64,14 +65,15 @@ export function MediaTile({
         >
           <ChevronRightIcon className="rtl:-scale-x-100" />
         </Button>
-        <Button
+        <RemoveButton
           variant="ghost"
           size="icon"
           aria-label={t("common.remove")}
-          onClick={onRemove}
+          title={t("common.remove_photo_title")}
+          onConfirm={onRemove}
         >
           <XIcon />
-        </Button>
+        </RemoveButton>
       </div>
       {index > 0 && (
         <Button variant="secondary" onClick={() => onMove(0)}>

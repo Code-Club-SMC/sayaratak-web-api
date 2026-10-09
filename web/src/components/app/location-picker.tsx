@@ -7,6 +7,7 @@ import { useT } from "@/lib/i18n/use-t"
 import { defaultCenter } from "@/lib/map"
 import type { Geo } from "@/schemas/fields"
 import { Button } from "@/components/ui/button"
+import { RemoveButton } from "@/components/app/remove-button"
 import { CityDistrictFields } from "./city-district-fields"
 import { FieldError } from "./field-error"
 import { MapCanvas } from "./map-canvas"
@@ -81,13 +82,13 @@ export function LocationPicker({
           {t("form.use_location")}
         </Button>
         {value.location && (
-          <Button
-            type="button"
+          <RemoveButton
             variant="ghost"
-            onClick={() => onChange({ ...value, location: null })}
+            title={t("form.remove_pin_title")}
+            onConfirm={() => onChange({ ...value, location: null })}
           >
             {t("form.remove_pin")}
-          </Button>
+          </RemoveButton>
         )}
         <span role="status" className="text-caption text-muted-foreground">
           {status === "locating" && t("form.locating")}

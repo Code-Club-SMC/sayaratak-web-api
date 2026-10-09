@@ -10,6 +10,7 @@ import {
 } from "@/features/onboarding/schemas"
 import { defaultWeeklyHours } from "@/lib/hours"
 import { db, resetDb } from "@/mocks/db"
+import { confirmRemove } from "./confirm"
 import { renderShell } from "./shell-render"
 
 beforeEach(() => {
@@ -154,6 +155,14 @@ describe("workshop steps", () => {
     const names = screen.getAllByRole("textbox", { name: /^Service \d name$/ })
     expect(names).toHaveLength(1)
     fireEvent.click(screen.getByRole("button", { name: "Remove service 1" }))
+    // The page behind the dialog is hidden from role queries, and the row is still there.
+    expect(
+      screen.getAllByRole("textbox", {
+        name: /^Service \d name$/,
+        hidden: true,
+      })
+    ).toHaveLength(1)
+    await confirmRemove("Remove service 1?")
     expect(
       screen.queryByRole("textbox", { name: /^Service \d name$/ })
     ).toBeNull()

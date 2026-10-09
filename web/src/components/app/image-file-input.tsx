@@ -3,7 +3,8 @@ import { XIcon } from "lucide-react"
 
 import type { ControlProps } from "@/components/app/form-field"
 import { UploadDropzone } from "@/components/app/upload-dropzone"
-import { Button } from "@/components/ui/button"
+import { RemoveButton } from "@/components/app/remove-button"
+import { useT } from "@/lib/i18n/use-t"
 
 // One image file: a dropzone, then a thumbnail with the file name and a remove button. The file is checked by the form's schema.
 export function ImageFileInput({
@@ -17,6 +18,7 @@ export function ImageFileInput({
   control: ControlProps
   labels: { choose: string; preview: string; remove: string }
 }) {
+  const { t } = useT()
   const [preview, setPreview] = useState<string>()
   const current = useRef<string>(undefined)
   useEffect(
@@ -46,12 +48,12 @@ export function ImageFileInput({
         <span className="min-w-0 flex-1 truncate text-ui" dir="auto">
           {value.name}
         </span>
-        <Button
-          type="button"
+        <RemoveButton
           variant="ghost"
           size="icon"
           aria-label={labels.remove}
-          onClick={() => {
+          title={t("common.remove_file_title")}
+          onConfirm={() => {
             pick(undefined)
             // The button is gone after this: focus moves to the dropzone that replaces it.
             requestAnimationFrame(() =>
@@ -60,7 +62,7 @@ export function ImageFileInput({
           }}
         >
           <XIcon aria-hidden="true" />
-        </Button>
+        </RemoveButton>
       </div>
     )
   return (

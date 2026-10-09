@@ -6,6 +6,7 @@ import { useT } from "@/lib/i18n/use-t"
 import { processVideo, type ProcessedVideo } from "@/lib/video-process"
 import type { Media } from "@/schemas/listing"
 import { Button } from "@/components/ui/button"
+import { RemoveButton } from "@/components/app/remove-button"
 import { Progress } from "@/components/ui/progress"
 import { GallerySlide } from "./gallery-slide"
 import { UploadDropzone } from "./upload-dropzone"
@@ -76,9 +77,13 @@ export function VideoUploader({
               className="aspect-video w-full"
             />
           </div>
-          <Button variant="ghost" onClick={() => onChange(null)}>
+          <RemoveButton
+            variant="ghost"
+            title={t("common.remove_video_title")}
+            onConfirm={() => onChange(null)}
+          >
             {t("common.remove")}
-          </Button>
+          </RemoveButton>
         </>
       ) : state.status === "working" ? (
         <Progress

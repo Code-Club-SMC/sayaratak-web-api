@@ -11,6 +11,7 @@ import { Gallery } from "@/components/app/gallery"
 import { ImageUploader } from "@/components/app/image-uploader"
 import { LogoUpload } from "@/components/app/logo-upload"
 import { MediaImage } from "@/components/app/media-image"
+import { confirmRemove } from "./confirm"
 import { renderShell } from "./shell-render"
 
 vi.mock("@/lib/image-process", () => ({ processImage: vi.fn() }))
@@ -184,6 +185,7 @@ describe("ImageUploader", () => {
     expect(await screen.findByText("Choose an image file")).toBeTruthy()
     expect(screen.queryByRole("button", { name: "Try again" })).toBeNull()
     fireEvent.click(screen.getByRole("button", { name: "Remove" }))
+    await confirmRemove("Remove this photo?")
     expect(screen.queryByText("Choose an image file")).toBeNull()
   })
   it("reorders with buttons and sets the cover", async () => {
@@ -228,6 +230,8 @@ describe("LogoUpload", () => {
     pick(container, photo())
     await waitFor(() => expect(onChange).toHaveBeenCalledWith(media("fresh")))
     fireEvent.click(screen.getByRole("button", { name: "Remove" }))
+    expect(onChange).toHaveBeenLastCalledWith(media("fresh"))
+    await confirmRemove("Remove this photo?")
     expect(onChange).toHaveBeenLastCalledWith(null)
   })
 })

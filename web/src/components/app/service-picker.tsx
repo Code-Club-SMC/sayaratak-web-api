@@ -2,6 +2,7 @@ import { PlusIcon, XIcon } from "lucide-react"
 
 import { useT } from "@/lib/i18n/use-t"
 import { Button } from "@/components/ui/button"
+import { RemoveButton } from "@/components/app/remove-button"
 import { Input } from "@/components/ui/input"
 import { ChipMultiSelect } from "./chip-multi-select"
 import { FormField } from "./form-field"
@@ -85,16 +86,16 @@ export function ServicePicker({
               />
             )}
           </FormField>
-          <Button
-            type="button"
+          <RemoveButton
             variant="ghost"
             size="icon"
             className="mt-6"
             aria-label={t("form.remove_service", { number: i + 1 })}
-            onClick={() => onChange(value.filter((_, j) => j !== i))}
+            title={t("form.remove_service_title", { number: i + 1 })}
+            onConfirm={() => onChange(value.filter((_, j) => j !== i))}
           >
             <XIcon />
-          </Button>
+          </RemoveButton>
         </div>
       ))}
       {value.length < max && (

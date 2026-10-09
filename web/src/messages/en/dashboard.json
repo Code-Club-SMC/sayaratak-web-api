@@ -287,5 +287,7 @@
   "dashboard.favorites_empty_type_title": "No favorites of this type",
   "dashboard.favorites_empty_type_body": "Try another type, or show all your favorites.",
   "dashboard.favorites_show_all": "Show all",
-  "dashboard.favorites_list_title": "Saved listings"
+  "dashboard.favorites_list_title": "Saved listings",
+  "verification.doc_remove_title": "Remove document {{n}}?",
+  "dashboard.favorites_remove_title": "Remove from favorites?"
 }

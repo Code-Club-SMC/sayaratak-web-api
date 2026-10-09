@@ -29,6 +29,7 @@ import { StepHeader } from "@/components/app/step-header"
 import { StickyFooter } from "@/components/app/sticky-footer"
 import { UsageMeter } from "@/components/app/usage-meter"
 import { db, resetDb } from "@/mocks/db"
+import { confirmRemove } from "./confirm"
 import { renderShell } from "./shell-render"
 
 const listings = (n = 3): Listing[] =>
@@ -155,7 +156,10 @@ describe("PhoneList", () => {
     fireEvent.click(
       screen.getByRole("button", { name: "Remove phone number 2" })
     )
-    expect(screen.getAllByRole("textbox")).toHaveLength(2)
+    // The page behind the dialog is hidden from role queries, and the row is still there.
+    expect(screen.getAllByRole("textbox", { hidden: true })).toHaveLength(3)
+    await confirmRemove("Remove phone number 2?")
+    await waitFor(() => expect(screen.getAllByRole("textbox")).toHaveLength(2))
   })
 })
 

@@ -61,6 +61,7 @@ export function EmptyResults({
       title={t("search.no_results")}
       body={t("search.empty_hint")}
       wide
+      className="flex-none"
       action={
         <>
           <h3 className="text-ui font-medium">{t("search.suggest_title")}</h3>

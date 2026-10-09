@@ -245,6 +245,7 @@ describe("AccountOverviewPage", () => {
   })
 
   it("asks to verify an unverified phone only when codes are on", async () => {
+    vi.stubEnv("VITE_FEATURE_OTP", "false")
     me().verifiedPhone = false
     await open()
     await screen.findByText("Needs attention")

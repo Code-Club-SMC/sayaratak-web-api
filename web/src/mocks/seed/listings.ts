@@ -315,7 +315,11 @@ export function seedListings(ctx: Ctx) {
       moderation,
       rejectionReason:
         moderation === "rejected"
-          ? pick(["الصور غير واضحة", "السعر غير منطقي", "الوصف غير مكتمل"])
+          ? pick([
+              "Photos are unclear / الصور غير واضحة",
+              "Price is unrealistic / السعر غير منطقي",
+              "Description is incomplete / الوصف غير مكتمل",
+            ])
           : null,
       promotions: [],
       owner: dealer

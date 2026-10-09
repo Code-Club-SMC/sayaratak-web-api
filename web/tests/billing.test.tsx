@@ -311,3 +311,72 @@ describe("PromoteDialog", () => {
     ).toBeTruthy()
   })
 })
+
+describe("account billing, a buyer without a paid plan", () => {
+  const omar = () => db.users.find((u) => u.id === "u-omar")!
+  // The demo buyer starts on Plus, the only paid plan, so the plan tab has nothing to buy. Dropping that subscription makes him a free buyer.
+  beforeEach(() => {
+    db.subscriptions = db.subscriptions.filter((s) => s.userId !== omar().id)
+    db.payments = db.payments.filter((p) => p.userId !== omar().id)
+  })
+  const open = (path: string, ui = <BillingPage audience="user" />) =>
+    renderShell(<NowProvider serverNow={Date.now()}>{ui}</NowProvider>, {
+      role: "user",
+      path: `/en/account/billing${path}`,
+    })
+  const pay = (itemType: "plan" | "promotion", label: string) =>
+    db.payments.unshift({
+      id: newId("pay"),
+      userId: omar().id,
+      itemType,
+      itemId: itemType === "plan" ? "plan-user-plus" : "promo-1",
+      itemLabel: { en: label, ar: label },
+      amount: 50_000,
+      method: "bankak_transfer",
+      reference: "SY-222222",
+      payerName: "Omar Hassan",
+      transactionRef: "TX123456",
+      receiptUrl: "/mock/r.webp",
+      status: "pending_review",
+      createdAt: new Date().toISOString(),
+    })
+
+  it("shows Free as the current plan and Plus as the one to choose, which opens the account checkout", async () => {
+    const { router } = await open("")
+    const current = await screen.findByRole("region", { name: "Your plan" })
+    expect(within(current).getByText("Free")).toBeTruthy()
+    const choose = screen.getAllByRole<HTMLButtonElement>("button", {
+      name: "Choose plan",
+    })
+    expect(choose.filter((b) => !b.disabled)).toHaveLength(1)
+    fireEvent.click(choose.find((b) => !b.disabled)!)
+    await waitFor(() =>
+      expect(router.state.location.href).toBe(
+        "/en/account/billing/checkout?item=plan%3Aplan-user-plus"
+      )
+    )
+  })
+
+  it("opens the checkout of Plus with the buyer's own reference", async () => {
+    await open(
+      "/checkout?item=plan:plan-user-plus",
+      <CheckoutPage audience="user" />
+    )
+    expect(
+      await screen.findByRole("heading", { name: "Pay by Bankak transfer" })
+    ).toBeTruthy()
+    expect(
+      screen.getByText(paymentReference(omar().id, "plan-user-plus"))
+    ).toBeTruthy()
+  })
+
+  it("lists a plan payment and a promotion payment in the history, both under review", async () => {
+    pay("plan", "Plus plan")
+    pay("promotion", "Pin for 7 days")
+    await open("?tab=history")
+    const table = await screen.findByRole("table", { name: "Payment history" })
+    expect(await within(table).findByText("Plus plan")).toBeTruthy()
+    expect(within(table).getByText("Pin for 7 days")).toBeTruthy()
+    expect(within(table).getAllByText("Under review")).toHaveLength(2)
+  })
+})

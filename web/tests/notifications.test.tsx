@@ -1,3 +1,4 @@
+import { existsSync } from "node:fs"
 import { fireEvent, screen, waitFor, within } from "@testing-library/react"
 import { beforeEach, describe, expect, it, vi } from "vitest"
 
@@ -90,6 +91,43 @@ describe("NotificationsPage", () => {
     fireEvent.click(link)
     await waitFor(() => expect(unread()).toHaveLength(before - 1))
     expect(router.state.location.pathname).toBe(target)
+  })
+
+  it("every page a demo buyer's notification opens has a route file", () => {
+    const hrefs = [
+      ...new Set(
+        mine()
+          .map((n) => n.href)
+          .filter(Boolean)
+      ),
+    ]
+    expect(hrefs.length).toBeGreaterThan(0)
+    for (const href of hrefs) {
+      const dir = `src/routes/$locale${href!}`
+      expect(
+        existsSync(`${dir}.tsx`) || existsSync(`${dir}/index.tsx`),
+        href
+      ).toBe(true)
+    }
+  })
+
+  it("a notification without a page is not a link", async () => {
+    await openPage()
+    const row = (await rows()).find((li) =>
+      within(li).queryByText("Announcement")
+    )!
+    expect(within(row).queryByRole("link")).toBeNull()
+  })
+
+  it("a read row stays read after the page is opened again", async () => {
+    const first = await openPage()
+    const before = unread().length
+    fireEvent.click(await unreadLink())
+    await waitFor(() => expect(unread()).toHaveLength(before - 1))
+    first.unmount()
+    await openPage()
+    const left = (await rows()).filter((li) => within(li).queryByText("Unread"))
+    expect(left).toHaveLength(before - 1)
   })
 
   it("Mark all as read empties the unread tab", async () => {

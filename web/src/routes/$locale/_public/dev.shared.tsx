@@ -119,7 +119,6 @@ function SharedDemo() {
             />
             <PlansGrid
               mode="action"
-              actionLabel="Subscribe"
               plans={plans.data.filter((p) => p.audience === "workshop")}
               currentId={plans.data.find((p) => p.audience === "workshop")?.id}
               onAction={setPlan}

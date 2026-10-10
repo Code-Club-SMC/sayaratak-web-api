@@ -45,6 +45,7 @@ const plan = (id: string, patch: Partial<Plan> = {}): Plan => ({
   durationDays: 30,
   listingLimit: 20,
   features: [{ ar: "ميزة", en: "Feature" }],
+  featuredCredits: 0,
   enabled: true,
   sortOrder: 1,
   ...patch,
@@ -183,36 +184,67 @@ describe("PlansGrid", () => {
     ).toBe(true)
     fireEvent.click(screen.getByRole("radio", { name: /Plan b/ }))
     expect(onChange).toHaveBeenCalledWith("b")
-    expect(screen.getByText("Up to 20 listings")).toBeTruthy()
+    // Both cards carry the same rows, so they line up.
+    expect(screen.getAllByText("Listings")).toHaveLength(2)
+    expect(screen.getByText("20")).toBeTruthy()
     expect(screen.getByText("No limit")).toBeTruthy()
   })
 
-  it("action mode disables the current plan", async () => {
+  it("action mode: no button on the current plan, upgrade above it, switch below", async () => {
+    const onAction = vi.fn()
+    const three = [
+      plan("free", { price: 0 }),
+      plan("mid", { price: 50000, featuredCredits: 3 }),
+      plan("top", { price: 90000, featuredCredits: 10 }),
+    ]
+    await renderShell(
+      <PlansGrid
+        mode="action"
+        plans={three}
+        currentId="top"
+        onAction={onAction}
+      />
+    )
+    expect(screen.getByText("Your current plan")).toBeTruthy()
+    fireEvent.click(screen.getByRole("button", { name: "Switch to Plan mid" }))
+    expect(onAction).toHaveBeenCalledWith("mid")
+    expect(screen.getByText("3 a month")).toBeTruthy()
+    expect(screen.getAllByLabelText("Not included")).toHaveLength(1)
+    expect(
+      screen.getByText(
+        "Your account returns to this plan when a paid plan ends."
+      )
+    ).toBeTruthy()
+  })
+
+  it("marks the first paid plan recommended and blocks a second payment", async () => {
     const onAction = vi.fn()
     await renderShell(
       <PlansGrid
         mode="action"
-        actionLabel="Subscribe"
-        plans={plans}
-        currentId="a"
+        plans={[
+          plan("free", { price: 0 }),
+          plan("mid"),
+          plan("top", { price: 90000 }),
+        ]}
+        currentId="free"
+        pendingIds={["top"]}
         onAction={onAction}
       />
     )
-    const buttons = screen.getAllByRole("button", { name: "Subscribe" })
-    expect((buttons[0] as HTMLButtonElement).disabled).toBe(true)
-    fireEvent.click(buttons[1]!)
-    expect(onAction).toHaveBeenCalledWith("b")
-    expect(screen.getByText("Current plan")).toBeTruthy()
+    expect(screen.getByText("Recommended")).toBeTruthy()
+    fireEvent.click(screen.getByRole("button", { name: "Upgrade to Plan mid" }))
+    expect(onAction).toHaveBeenCalledWith("mid")
+    expect(
+      screen.getByRole<HTMLButtonElement>("button", {
+        name: "Payment under review",
+      }).disabled
+    ).toBe(true)
   })
 
   it("renders Arabic names", async () => {
     await renderShell(
-      <PlansGrid
-        mode="action"
-        actionLabel="x"
-        plans={plans}
-        onAction={() => {}}
-      />,
+      <PlansGrid mode="action" plans={plans} onAction={() => {}} />,
       { locale: "ar" }
     )
     expect(screen.getByText("باقة a")).toBeTruthy()

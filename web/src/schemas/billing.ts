@@ -12,6 +12,8 @@ export const planSchema = z.object({
   listingLimit: z.number().int().optional(),
   vehicleLimit: z.number().int().optional(),
   features: z.array(bilingualSchema),
+  // Free 7-day pins per period; they do not carry over.
+  featuredCredits: z.number().int().min(0).default(0),
   enabled: z.boolean(),
   sortOrder: z.number().int(),
 })
@@ -61,7 +63,7 @@ export const promotionSchema = z.object({
   durationDays: z.number().int(),
   startsAt: z.string().optional(),
   endsAt: z.string().optional(),
-  source: z.enum(["paid", "admin_grant"]),
+  source: z.enum(["paid", "admin_grant", "credit"]),
   paymentId: z.string().optional(),
 })
 export type Promotion = z.infer<typeof promotionSchema>

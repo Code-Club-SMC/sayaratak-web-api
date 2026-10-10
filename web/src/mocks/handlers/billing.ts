@@ -17,6 +17,7 @@ import { db, find, insert, newId, paginate } from "../db"
 import { fail, needUser, pageParams, route } from "../http"
 import {
   byNewest,
+  activatePromotion,
   currentSubscription,
   listingById,
   listingLimit,
@@ -48,6 +49,26 @@ route("GET", "/plans", (c) => {
 })
 
 // The active subscription (else the pending one), its plan, and how much of the limit is used. No subscription means null: an individual then runs on the free limit.
+// Featured credits of the active subscription: its plan's count, less the credit pins started since the period began.
+function credits(userId: string) {
+  const sub = currentSubscription(userId)
+  const total =
+    sub?.status === "active"
+      ? (find(db.plans, sub.planId)?.featuredCredits ?? 0)
+      : 0
+  if (!sub || !total) return { total: 0, left: 0 }
+  const mine = new Set(
+    db.listings.filter((l) => l.ownerUserId === userId).map((l) => l.id)
+  )
+  const used = db.promotions.filter(
+    (p) =>
+      p.source === "credit" &&
+      mine.has(p.listingId) &&
+      (p.startsAt ?? "") >= sub.startsAt
+  ).length
+  return { total, left: Math.max(0, total - used) }
+}
+
 route("GET", "/me/subscription", (c) => {
   const user = needUser(c)
   const sub = currentSubscription(user.id)
@@ -58,6 +79,7 @@ route("GET", "/me/subscription", (c) => {
       : null,
     plan: sub ? (find(db.plans, sub.planId) ?? null) : null,
     usage: { used, limit: listingLimit(user.id) },
+    credits: credits(user.id),
   })
 })
 
@@ -157,11 +179,25 @@ route("GET", "/promotion-prices", () =>
 // A promotion starts as `pending_payment`; the admin's approval of its payment starts it. Asking again for the same listing and type returns the unpaid one.
 route("POST", "/promotions", async (c) => {
   const user = needUser(c)
-  const { listingId, type } = await c.body(promotionInputSchema)
+  const { listingId, type, useCredit } = await c.body(promotionInputSchema)
   const listing = listingById(listingId)
   if (listing.ownerUserId !== user.id) throw fail(403, "forbidden")
   const price = promotionPrice(type)
   if (!price) throw fail(404, "not_found")
+  if (useCredit) {
+    if (type !== "pin") throw fail(422, "validation")
+    if (credits(user.id).left < 1) throw fail(409, "no_credits")
+    const promo = insert(db.promotions, {
+      id: newId("promo"),
+      listingId,
+      type,
+      status: "pending_payment" as const,
+      durationDays: price.durationDays,
+      source: "credit" as const,
+    })
+    activatePromotion(promo)
+    return promotionSchema.parse(promo)
+  }
   const unpaid = db.promotions.find(
     (p) =>
       p.listingId === listingId &&

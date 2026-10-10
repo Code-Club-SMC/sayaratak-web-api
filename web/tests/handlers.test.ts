@@ -776,6 +776,39 @@ describe("messaging demo reply", () => {
 })
 
 describe("billing, promotions and payments", () => {
+  it("spends featured credits on pins: active at once, counted per period, refused when gone", async () => {
+    const as = "u-dealer"
+    const mine = db.listings.filter(
+      (l) => l.ownerUserId === as && l.status === "available"
+    )
+    const credits = async () =>
+      (await call("GET", "/me/subscription", { as })).body.credits
+    expect(await credits()).toEqual({ total: 3, left: 3 })
+    expect(
+      (
+        await call("POST", "/promotions", {
+          as,
+          body: { listingId: mine[0]!.id, type: "boost", useCredit: true },
+        })
+      ).status
+    ).toBe(422)
+    for (const l of mine.slice(0, 3)) {
+      const res = await call("POST", "/promotions", {
+        as,
+        body: { listingId: l.id, type: "pin", useCredit: true },
+      })
+      expect(res.body).toMatchObject({ status: "active", source: "credit" })
+    }
+    expect(await credits()).toEqual({ total: 3, left: 0 })
+    expect(
+      (
+        await call("POST", "/promotions", {
+          as,
+          body: { listingId: mine[3]!.id, type: "pin", useCredit: true },
+        })
+      ).body.code
+    ).toBe("no_credits")
+  })
   const receipt = (itemType: string, itemId: string, extra = {}) => {
     const form = new FormData()
     form.set("itemType", itemType)

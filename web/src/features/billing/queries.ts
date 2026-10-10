@@ -107,5 +107,6 @@ export const useCreatePromotion = () =>
         body,
         schema: promotionSchema,
       }),
-    [keys.billing.all]
+    // A credit pin starts at once, so listings show the badge and the credit count drops.
+    [keys.billing.all, keys.listings.all]
   )

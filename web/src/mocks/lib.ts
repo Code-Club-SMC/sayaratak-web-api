@@ -152,8 +152,7 @@ export function promotionView(p: Promotion) {
       coverUrl:
         (cover?.type === "video" ? cover.posterUrl : cover?.url) ?? null,
     },
-    price:
-      p.source === "admin_grant" ? 0 : (promotionPrice(p.type)?.price ?? 0),
+    price: p.source === "paid" ? (promotionPrice(p.type)?.price ?? 0) : 0,
     paymentStatus: payment?.status ?? ("none" as const),
   }
 }

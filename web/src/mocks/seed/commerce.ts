@@ -38,7 +38,10 @@ const planRows: PlanRow[] = [
     50_000,
     30,
     15,
-    ["Priority support|دعم أولوية"],
+    [
+      "Listing lasts 30 days|مدة الإعلان 30 يوماً",
+      "Priority support|دعم أولوية",
+    ],
   ],
   [
     "plan-dealer-starter",
@@ -58,7 +61,7 @@ const planRows: PlanRow[] = [
     350_000,
     30,
     80,
-    ["Verified badge review|مراجعة شارة التوثيق"],
+    ["Dealer page|صفحة المعرض", "Verified badge review|مراجعة شارة التوثيق"],
   ],
   [
     "plan-dealer-pro",
@@ -68,7 +71,11 @@ const planRows: PlanRow[] = [
     700_000,
     30,
     300,
-    ["Featured placement|ظهور مميز"],
+    [
+      "Dealer page|صفحة المعرض",
+      "Verified badge review|مراجعة شارة التوثيق",
+      "Priority support|دعم أولوية",
+    ],
   ],
   [
     "plan-workshop-basic",
@@ -88,7 +95,11 @@ const planRows: PlanRow[] = [
     120_000,
     30,
     undefined,
-    ["Unlimited services|خدمات غير محدودة", "Photo gallery|معرض صور"],
+    [
+      "Workshop page|صفحة الورشة",
+      "Unlimited services|خدمات غير محدودة",
+      "Photo gallery|معرض صور",
+    ],
   ],
   [
     "plan-mechanic-basic",
@@ -108,9 +119,18 @@ const planRows: PlanRow[] = [
     60_000,
     30,
     undefined,
-    ["Unlimited portfolio|معرض غير محدود", "Top of search|ظهور متقدم"],
+    [
+      "Mechanic page|صفحة الميكانيكي",
+      "Unlimited portfolio|معرض غير محدود",
+      "Top of search|ظهور متقدم",
+    ],
   ],
 ]
+const credits: Record<string, number> = {
+  "plan-user-plus": 1,
+  "plan-dealer-growth": 3,
+  "plan-dealer-pro": 10,
+}
 // A9: the first plan of each audience costs nothing and is its free plan.
 export const plans: Plan[] = planRows.map(
   ([id, audience, en, ar, price, durationDays, limit, features], i) => ({
@@ -126,6 +146,7 @@ export const plans: Plan[] = planRows.map(
       const [fen = "", far = ""] = f.split("|")
       return { en: fen, ar: far }
     }),
+    featuredCredits: credits[id] ?? 0,
     enabled: true,
     sortOrder: i,
   })

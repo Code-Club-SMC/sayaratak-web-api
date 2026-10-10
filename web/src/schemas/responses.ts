@@ -113,6 +113,7 @@ export const meSubscriptionSchema = z.object({
     used: z.number().int(),
     limit: z.number().int().nullable(),
   }), // limit null means no limit, and every limit meter hides
+  credits: z.object({ total: z.number().int(), left: z.number().int() }), // featured credits of the active plan this period; total 0 when the plan has none
 })
 export type MeSubscription = z.infer<typeof meSubscriptionSchema>
 

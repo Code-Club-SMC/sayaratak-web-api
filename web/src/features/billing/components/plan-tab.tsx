@@ -55,6 +55,12 @@ export function PlanTab({
       />
     )
   const free = plans.data.find((p) => p.price === 0)
+  const pendingIds = new Set(
+    payments.data?.items
+      .filter((p) => p.itemType === "plan" && p.status === "pending_review")
+      .map((p) => p.itemId)
+  )
+  const pending = plans.data.filter((p) => pendingIds.has(p.id))
   const choose = (id: string) =>
     router.history.push(
       localeHref(
@@ -72,17 +78,21 @@ export function PlanTab({
       />
       <section className="flex flex-col gap-3">
         <h2 className="text-title font-semibold">{t("billing.plans_title")}</h2>
+        {pending.map((p) => (
+          <p
+            key={p.id}
+            role="status"
+            className="rounded-lg bg-muted px-4 py-3 text-ui"
+          >
+            {t("billing.pending_notice", { name: p.name[locale] })}
+          </p>
+        ))}
         <PlansGrid
           mode="action"
           plans={plans.data}
           currentId={(subscription.data.plan ?? free)?.id}
-          actionLabel={t("billing.choose_plan")}
           onAction={choose}
-          pendingIds={payments.data?.items
-            .filter(
-              (p) => p.itemType === "plan" && p.status === "pending_review"
-            )
-            .map((p) => p.itemId)}
+          pendingIds={pending.map((p) => p.id)}
         />
       </section>
     </div>

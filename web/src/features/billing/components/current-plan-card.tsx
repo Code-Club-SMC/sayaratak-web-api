@@ -78,6 +78,19 @@ export function CurrentPlanCard({
           limit={usage.limit}
         />
       )}
+      {data.credits.total > 0 && (
+        <div className="flex flex-col gap-1">
+          <p className="flex items-center justify-between gap-3 text-ui">
+            <span>{t("billing.credits_label")}</span>
+            <span className="font-medium num">
+              {t("billing.credits_left", data.credits)}
+            </span>
+          </p>
+          <p className="text-caption text-muted-foreground">
+            {t("billing.credits_hint")}
+          </p>
+        </div>
+      )}
       <Button
         type="button"
         variant="link"

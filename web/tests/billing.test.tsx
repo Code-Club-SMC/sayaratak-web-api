@@ -113,39 +113,42 @@ describe("BillingPage, plan tab", () => {
     expect(within(current).getByText("Active")).toBeTruthy()
     expect(within(current).getByText(/Ends in \d+ days/)).toBeTruthy()
     expect(within(current).getByRole("meter")).toBeTruthy()
-    const plans = db.plans.filter((p) => p.audience === "dealership")
-    expect(screen.getAllByRole("button", { name: "Choose plan" })).toHaveLength(
-      plans.filter((p) => p.price > 0).length
-    )
+    expect(screen.getByText("Your current plan")).toBeTruthy()
+    expect(screen.getByRole("button", { name: "Upgrade to Pro" })).toBeTruthy()
     // The free plan has nothing to buy.
-    expect(screen.getByText("Included")).toBeTruthy()
+    expect(
+      screen.getByText(
+        "Your account returns to this plan when a paid plan ends."
+      )
+    ).toBeTruthy()
+    expect(screen.getByText("3 a month")).toBeTruthy()
   })
 
-  it("the current plan cannot be chosen again, another opens its checkout", async () => {
+  it("the current plan has no button, an upgrade opens its checkout", async () => {
     const { router } = await openBilling()
     await screen.findByRole("region", { name: "Your plan" })
-    const buttons = screen.getAllByRole<HTMLButtonElement>("button", {
-      name: "Choose plan",
-    })
-    expect(buttons.filter((b) => b.disabled)).toHaveLength(1)
-    fireEvent.click(buttons.find((b) => !b.disabled)!)
+    expect(screen.queryByRole("button", { name: /Growth/ })).toBeNull()
+    fireEvent.click(screen.getByRole("button", { name: "Upgrade to Pro" }))
     await waitFor(() =>
-      expect(router.state.location.href).toMatch(
-        /\/en\/dealer\/billing\/checkout\?item=plan%3Aplan-dealer-/
+      expect(router.state.location.href).toBe(
+        "/en/dealer/billing/checkout?item=plan%3Aplan-dealer-pro"
       )
     )
   })
 
-  it("a payment under review shows a badge and blocks a second payment", async () => {
+  it("a payment under review shows a notice and blocks a second payment", async () => {
     payment("pending_review")
     await openBilling()
-    await screen.findByText("Payment under review")
-    const card = screen
-      .getByText("Payment under review")
-      .closest<HTMLElement>("div.rounded-xl")!
-    expect(within(card).getByRole<HTMLButtonElement>("button").disabled).toBe(
-      true
-    )
+    expect(
+      await screen.findByText(
+        "Your payment for Pro is under review. The plan starts as soon as it is approved."
+      )
+    ).toBeTruthy()
+    expect(
+      screen.getByRole<HTMLButtonElement>("button", {
+        name: "Payment under review",
+      }).disabled
+    ).toBe(true)
   })
 
   it("without individual plans a user sees an empty state", async () => {
@@ -312,6 +315,34 @@ describe("PromoteDialog", () => {
   })
 })
 
+describe("PromoteDialog credits", () => {
+  it("pins the listing with a plan credit, no checkout", async () => {
+    const listing = db.listings.find(
+      (l) => l.ownerUserId === dealer().id && l.moderation === "approved"
+    )!
+    const onClose = vi.fn()
+    await renderShell(
+      <PromoteDialog listingId={listing.id} onClose={onClose} />,
+      { role: "dealership", path: "/en/dealer/inventory" }
+    )
+    expect(
+      await screen.findByText(
+        "A 7-day Pin. You have 3 of 3 credits left this month."
+      )
+    ).toBeTruthy()
+    fireEvent.click(screen.getByRole("button", { name: "Use a credit" }))
+    await waitFor(() => expect(onClose).toHaveBeenCalled())
+    expect(
+      db.promotions.find(
+        (p) =>
+          p.listingId === listing.id &&
+          p.source === "credit" &&
+          p.status === "active"
+      )
+    ).toBeTruthy()
+  })
+})
+
 describe("account billing, a buyer without a paid plan", () => {
   const omar = () => db.users.find((u) => u.id === "u-omar")!
   // The demo buyer starts on Plus, the only paid plan, so the plan tab has nothing to buy. Dropping that subscription makes him a free buyer.
@@ -345,11 +376,7 @@ describe("account billing, a buyer without a paid plan", () => {
     const { router } = await open("")
     const current = await screen.findByRole("region", { name: "Your plan" })
     expect(within(current).getByText("Free")).toBeTruthy()
-    const choose = screen.getAllByRole<HTMLButtonElement>("button", {
-      name: "Choose plan",
-    })
-    expect(choose.filter((b) => !b.disabled)).toHaveLength(1)
-    fireEvent.click(choose.find((b) => !b.disabled)!)
+    fireEvent.click(screen.getByRole("button", { name: "Upgrade to Plus" }))
     await waitFor(() =>
       expect(router.state.location.href).toBe(
         "/en/account/billing/checkout?item=plan%3Aplan-user-plus"

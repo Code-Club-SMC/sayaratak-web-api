@@ -195,6 +195,8 @@ export const readInputSchema = z.object({ ids: z.array(z.string()).optional() })
 export const promotionInputSchema = z.object({
   listingId: z.string().min(1),
   type: promotionTypeSchema,
+  // Spend one of the plan's featured credits instead of paying: only for a pin, and it starts at once.
+  useCredit: z.boolean().optional(),
 })
 export const reportInputSchema = z.object({
   listingId: z.string().min(1),

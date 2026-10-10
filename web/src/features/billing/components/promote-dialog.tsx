@@ -9,6 +9,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { meQuery } from "@/features/auth/me-query"
 import { useT } from "@/lib/i18n/use-t"
 import { billingQueries } from "../queries"
+import { CreditOffer } from "./credit-offer"
 import { PromotionChoiceForm } from "./promotion-choice-form"
 
 // Promote one listing (never a bulk action): pick a promotion, then pay for it at the checkout.
@@ -47,17 +48,20 @@ export function PromoteDialog({
           className="py-6"
         />
       ) : (
-        <PromotionChoiceForm
-          listingId={listingId}
-          role={me?.role ?? "user"}
-          prices={prices.data}
-          label={t("billing.promote_title")}
-          secondary={
-            <Button type="button" variant="ghost" onClick={onClose}>
-              {t("common.cancel")}
-            </Button>
-          }
-        />
+        <div className="flex flex-col gap-4">
+          <CreditOffer listingId={listingId} onDone={onClose} />
+          <PromotionChoiceForm
+            listingId={listingId}
+            role={me?.role ?? "user"}
+            prices={prices.data}
+            label={t("billing.promote_title")}
+            secondary={
+              <Button type="button" variant="ghost" onClick={onClose}>
+                {t("common.cancel")}
+              </Button>
+            }
+          />
+        </div>
       )}
     </ResponsiveDialog>
   )

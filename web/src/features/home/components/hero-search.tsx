@@ -1,7 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useRouter } from "@tanstack/react-router"
 import { SearchIcon } from "lucide-react"
-import { Controller, useForm } from "react-hook-form"
+import { Controller } from "react-hook-form"
 
 import { CitySelect } from "@/components/app/city-select"
 import { FormField } from "@/components/app/form-field"
@@ -16,6 +16,7 @@ import { useT } from "@/lib/i18n/use-t"
 import { localeHref } from "@/lib/navigation"
 import { intentSchema } from "@/schemas/listing"
 import { heroSearchSchema, type HeroSearch as HeroValues } from "../schemas"
+import { useAppForm } from "@/hooks/use-app-form"
 
 const YEAR = 365 * 24 * 60 * 60
 
@@ -24,7 +25,7 @@ export function HeroSearch({ city }: { city: string }) {
   const { t, locale } = useT()
   const router = useRouter()
   const { control, handleSubmit, watch, setValue, formState } =
-    useForm<HeroValues>({
+    useAppForm<HeroValues>({
       resolver: zodResolver(heroSearchSchema),
       mode: "onTouched",
       defaultValues: {

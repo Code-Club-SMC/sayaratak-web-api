@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod"
-import { Controller, useForm } from "react-hook-form"
+import { Controller } from "react-hook-form"
 
 import { useCreateReview, useUpdateReview } from "@/features/reviews/queries"
 import {
@@ -16,6 +16,7 @@ import { FieldError } from "./field-error"
 import { FormField } from "./form-field"
 import { RatingStars } from "./rating-stars"
 import { SubmitButton } from "./submit-button"
+import { useAppForm } from "@/hooks/use-app-form"
 
 // Writes a new review, or edits `existing` (one review per person per business).
 export function ReviewForm({
@@ -33,7 +34,7 @@ export function ReviewForm({
   const create = useCreateReview()
   const update = useUpdateReview()
   const pending = create.isPending || update.isPending
-  const form = useForm<Values>({
+  const form = useAppForm<Values>({
     resolver: zodResolver(reviewSchema),
     mode: "onTouched",
     defaultValues: {

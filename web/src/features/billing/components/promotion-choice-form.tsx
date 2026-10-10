@@ -1,7 +1,6 @@
 import { useId, useRef, type ReactNode } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useRouter } from "@tanstack/react-router"
-import { useForm } from "react-hook-form"
 import type { z } from "zod"
 
 import { FieldError } from "@/components/app/field-error"
@@ -16,6 +15,7 @@ import { dashboardPath, localeHref } from "@/lib/navigation"
 import type { PromotionPrice } from "@/schemas/billing"
 import type { User } from "@/schemas/user"
 import { useCreatePromotion } from "../queries"
+import { useAppForm } from "@/hooks/use-app-form"
 
 type Choice = z.input<typeof promotionChoiceSchema>
 
@@ -38,7 +38,9 @@ export function PromotionChoiceForm({
   const create = useCreatePromotion()
   const error = useId()
   const formRef = useRef<HTMLFormElement>(null)
-  const form = useForm<Choice>({ resolver: zodResolver(promotionChoiceSchema) })
+  const form = useAppForm<Choice>({
+    resolver: zodResolver(promotionChoiceSchema),
+  })
   const chosen = form.watch("promotion")
   const message = form.formState.errors.promotion?.message
   const submit = form.handleSubmit(

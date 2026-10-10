@@ -1,6 +1,5 @@
 import { useContext, useRef } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
 
 import { FormField } from "@/components/app/form-field"
 import { PasswordInput } from "@/components/app/password-input"
@@ -17,6 +16,7 @@ import { AuthHeading, AuthMode } from "./auth-heading"
 import { AuthSwitch, type AuthSwitchTarget } from "./auth-switch"
 import { DemoAccounts } from "./demo-accounts"
 import { SocialSignIn } from "./social-sign-in"
+import { useAppForm } from "@/hooks/use-app-form"
 
 const linkClass =
   "inline-flex min-h-11 items-center text-ui font-medium text-primary md:min-h-10"
@@ -39,7 +39,7 @@ export function LoginForm({
   const [lockedFor, setLockedFor] = useCountdown(0)
   const root = useRef<HTMLFormElement>(null)
   useEnterKeyHints(root, "done")
-  const form = useForm<Values>({
+  const form = useAppForm<Values>({
     resolver: zodResolver(loginFormSchema),
     mode: "onTouched",
     defaultValues: { email: "", password: "" },

@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { FlagIcon } from "lucide-react"
-import { Controller, useForm } from "react-hook-form"
+import { Controller } from "react-hook-form"
 
 import { useRequireAuth } from "@/features/auth/auth-gate"
 import {
@@ -19,6 +19,7 @@ import { ChipSingleSelect } from "./chip-single-select"
 import { FormField } from "./form-field"
 import { ResponsiveDialog } from "./responsive-dialog"
 import { SubmitButton } from "./submit-button"
+import { useAppForm } from "@/hooks/use-app-form"
 
 // Owns its trigger (the "Report" text button) and sits behind the sign in gate.
 export function ReportDialog({
@@ -32,7 +33,7 @@ export function ReportDialog({
   const requireAuth = useRequireAuth()
   const [open, setOpen] = useState(false)
   const { mutate, isPending } = useReportListing()
-  const form = useForm<ReportForm>({
+  const form = useAppForm<ReportForm>({
     resolver: zodResolver(reportSchema),
     mode: "onTouched",
     defaultValues: { details: "" },

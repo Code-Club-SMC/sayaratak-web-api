@@ -1,5 +1,4 @@
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
 
 import { FormField } from "@/components/app/form-field"
 import { SubmitButton } from "@/components/app/submit-button"
@@ -11,6 +10,7 @@ import { useT } from "@/lib/i18n/use-t"
 import type { Review } from "@/schemas/review"
 import { useReplyToReview } from "../queries"
 import { replySchema, type ReplyForm as Values } from "../schemas"
+import { useAppForm } from "@/hooks/use-app-form"
 
 // Writes the owner's reply, or edits the one already there.
 export function ReplyForm({
@@ -22,7 +22,7 @@ export function ReplyForm({
 }) {
   const { t } = useT()
   const reply = useReplyToReview()
-  const form = useForm<Values>({
+  const form = useAppForm<Values>({
     resolver: zodResolver(replySchema),
     mode: "onTouched",
     defaultValues: { body: review.reply?.body ?? "" },

@@ -2,7 +2,7 @@ import { useRef } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useQueryClient } from "@tanstack/react-query"
 import { PlusIcon } from "lucide-react"
-import { useFieldArray, useForm } from "react-hook-form"
+import { useFieldArray } from "react-hook-form"
 
 import { FormField } from "@/components/app/form-field"
 import { SubmitButton } from "@/components/app/submit-button"
@@ -23,6 +23,7 @@ import {
 } from "../schemas"
 import { verificationStatusId } from "./status-card"
 import { DocumentRow } from "./document-row"
+import { useAppForm } from "@/hooks/use-app-form"
 
 // One row per required document to start, up to five. Sending saves a pending request; the status card above then reads "Under review".
 export function VerificationForm({ targetType }: { targetType: TargetType }) {
@@ -36,7 +37,7 @@ export function VerificationForm({ targetType }: { targetType: TargetType }) {
     value,
     label: t(`verification.${value}_label`),
   }))
-  const form = useForm<Values>({
+  const form = useAppForm<Values>({
     resolver: zodResolver(verificationFormSchema),
     mode: "onTouched",
     defaultValues: {

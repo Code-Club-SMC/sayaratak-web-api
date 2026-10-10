@@ -1,6 +1,5 @@
 import { useRef, useState } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
 
 import { FormField } from "@/components/app/form-field"
 import { ShellLink } from "@/components/app/shell-link"
@@ -15,6 +14,7 @@ import { AuthHeading } from "./auth-heading"
 import { CodeStep } from "./code-step"
 import { NewPasswordForm } from "./new-password-form"
 import { SuccessStep } from "./success-step"
+import { useAppForm } from "@/hooks/use-app-form"
 
 const linkClass =
   "inline-flex min-h-11 items-center justify-center text-ui font-medium text-primary md:min-h-10"
@@ -30,7 +30,7 @@ export function ForgotFlow() {
   const [email, setEmail] = useState("")
   const root = useRef<HTMLFormElement>(null)
   useEnterKeyHints(root, "done")
-  const form = useForm<EmailForm>({
+  const form = useAppForm<EmailForm>({
     resolver: zodResolver(emailFormSchema),
     mode: "onTouched",
     defaultValues: { email: "" },

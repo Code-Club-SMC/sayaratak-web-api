@@ -8,7 +8,7 @@ import {
   WrenchIcon,
   type LucideIcon,
 } from "lucide-react"
-import { Controller, useForm } from "react-hook-form"
+import { Controller } from "react-hook-form"
 
 import { StepHeader } from "@/components/app/step-header"
 import { StepIndicator } from "@/components/app/step-indicator"
@@ -21,6 +21,7 @@ import { stepHref } from "../draft"
 import { firstStepId, flows } from "../flows"
 import { roleChoiceSchema, roleDraftKey, type RoleChoice } from "../schemas"
 import { RoleOption } from "./role-option"
+import { useAppForm } from "@/hooks/use-app-form"
 
 const options: { role: RoleChoice["role"]; icon: LucideIcon }[] = [
   { role: "user", icon: CarIcon },
@@ -36,7 +37,7 @@ export function RoleForm({ redirect }: { redirect?: string }) {
   const save = useSaveDraft(roleDraftKey)
   // Coming back from step 1 keeps the saved choice; otherwise `user`. `values` also covers a draft that arrives after the first render.
   const saved = roleChoiceSchema.safeParse(draft.data?.data)
-  const form = useForm<RoleChoice>({
+  const form = useAppForm<RoleChoice>({
     resolver: zodResolver(roleChoiceSchema),
     values: { role: saved.success ? saved.data.role : "user" },
   })

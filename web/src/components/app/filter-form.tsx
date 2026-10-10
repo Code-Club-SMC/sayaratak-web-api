@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react"
-import { Controller, FormProvider, useForm } from "react-hook-form"
+import { Controller, FormProvider } from "react-hook-form"
 import { useQuery } from "@tanstack/react-query"
 
 import { listingQueries, taxonomyQuery } from "@/features/listings/queries"
@@ -24,6 +24,7 @@ import { FilterSpecFields } from "./filter-spec-fields"
 import { FilterVehicleFields } from "./filter-vehicle-fields"
 import { FieldMarks, FormField } from "./form-field"
 import { NumberField } from "./number-field"
+import { useAppForm } from "@/hooks/use-app-form"
 
 type Facets = ListingPage["facets"]
 
@@ -47,7 +48,7 @@ export function FilterForm({
 }) {
   const { t, locale } = useT()
   const { data: tax } = useQuery(taxonomyQuery)
-  const methods = useForm({ defaultValues: toDraft(params) })
+  const methods = useAppForm({ defaultValues: toDraft(params) })
   const { control, handleSubmit, watch, setValue, reset } = methods
   const draft = watch()
   const centerOf = (city: string) =>

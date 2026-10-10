@@ -1,7 +1,6 @@
 import { useRef } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useQueryClient } from "@tanstack/react-query"
-import { useForm } from "react-hook-form"
 
 import { FormField } from "@/components/app/form-field"
 import { ImageFileInput } from "@/components/app/image-file-input"
@@ -16,6 +15,7 @@ import { useT } from "@/lib/i18n/use-t"
 import type { Checkout } from "@/schemas/responses"
 import { useCreatePayment } from "../queries"
 import { paymentFormSchema, type PaymentForm as Values } from "../schemas"
+import { useAppForm } from "@/hooks/use-app-form"
 
 const fieldNames = ["payerName", "transactionRef", "receipt"] as const
 
@@ -25,7 +25,7 @@ export function PaymentForm({ checkout }: { checkout: Checkout }) {
   const qc = useQueryClient()
   const create = useCreatePayment()
   const formRef = useRef<HTMLFormElement>(null)
-  const form = useForm<Values>({
+  const form = useAppForm<Values>({
     resolver: zodResolver(paymentFormSchema),
     mode: "onTouched",
     defaultValues: { payerName: "", transactionRef: "" },

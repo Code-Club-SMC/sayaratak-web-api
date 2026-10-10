@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { Controller, useForm } from "react-hook-form"
+import { Controller } from "react-hook-form"
 
 import { normalizeIdentifier } from "@/features/auth/identifier"
 import { errorText } from "@/lib/api/error-text"
@@ -15,6 +15,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { toast } from "@/components/ui/toast"
 import { useSendContact } from "../queries"
 import { contactFormSchema, type ContactForm as Values } from "../schemas"
+import { useAppForm } from "@/hooks/use-app-form"
 
 const empty: Values = {
   name: "",
@@ -28,7 +29,7 @@ export function ContactForm() {
   const { t } = useT()
   const send = useSendContact()
   const sent = useRef<HTMLHeadingElement>(null)
-  const form = useForm<Values>({
+  const form = useAppForm<Values>({
     resolver: zodResolver(contactFormSchema),
     mode: "onTouched",
     defaultValues: empty,

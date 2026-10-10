@@ -1,7 +1,7 @@
 import { useEffect, useRef, type ReactNode } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useRouter } from "@tanstack/react-router"
-import { FormProvider, useForm, type FieldValues } from "react-hook-form"
+import { FormProvider, type FieldValues } from "react-hook-form"
 import { z } from "zod"
 
 import { FieldMarks } from "@/components/app/form-field"
@@ -21,6 +21,7 @@ import {
   wizardDraftKey,
   type WizardStep,
 } from "./wizard-config"
+import { useAppForm } from "@/hooks/use-app-form"
 
 const noRules = z.object({})
 
@@ -55,7 +56,7 @@ export function ListingWizard({
   const href = useStepHref()
   const index = steps.findIndex((s) => s.id === stepId)
   const step = steps[index]
-  const form = useForm<FieldValues>({
+  const form = useAppForm<FieldValues>({
     defaultValues,
     resolver: (values, ctx, options) =>
       zodResolver(step?.schema?.(values) ?? noRules)(values, ctx, options),

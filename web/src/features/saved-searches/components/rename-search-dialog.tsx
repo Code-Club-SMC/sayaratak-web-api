@@ -1,5 +1,4 @@
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
 
 import { FormField } from "@/components/app/form-field"
 import { ResponsiveDialog } from "@/components/app/responsive-dialog"
@@ -12,6 +11,7 @@ import { useT } from "@/lib/i18n/use-t"
 import { useUpdateSavedSearch } from "@/features/search/queries"
 import type { SavedSearch } from "@/schemas/saved-search"
 import { renameSearchSchema, type RenameSearchForm } from "../schemas"
+import { useAppForm } from "@/hooks/use-app-form"
 
 // The form lives in its own component so every opening starts from the current name.
 function RenameForm({
@@ -23,7 +23,7 @@ function RenameForm({
 }) {
   const { t } = useT()
   const update = useUpdateSavedSearch()
-  const form = useForm<RenameSearchForm>({
+  const form = useAppForm<RenameSearchForm>({
     resolver: zodResolver(renameSearchSchema),
     mode: "onTouched",
     defaultValues: { name: search.name },

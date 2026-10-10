@@ -1,7 +1,6 @@
 import { useState } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { MailIcon } from "lucide-react"
-import { useForm } from "react-hook-form"
 
 import { useRequireAuth } from "@/features/auth/auth-gate"
 import { useStartThread } from "@/features/messaging/queries"
@@ -14,6 +13,7 @@ import { toast } from "@/components/ui/toast"
 import { FormField } from "./form-field"
 import { ResponsiveDialog } from "./responsive-dialog"
 import { SubmitButton } from "./submit-button"
+import { useAppForm } from "@/hooks/use-app-form"
 
 export type MessageSubject = {
   type: "listing" | "dealership" | "workshop" | "mechanic"
@@ -35,7 +35,7 @@ export function MessageComposer({
   const requireAuth = useRequireAuth()
   const [open, setOpen] = useState(false)
   const { mutate, isPending } = useStartThread()
-  const form = useForm<MessageForm>({
+  const form = useAppForm<MessageForm>({
     resolver: zodResolver(messageSchema),
     mode: "onTouched",
     defaultValues: { body: "" },

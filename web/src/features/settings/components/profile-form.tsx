@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { Controller, useForm } from "react-hook-form"
+import { Controller } from "react-hook-form"
 
 import { AvatarUpload } from "@/components/app/avatar-upload"
 import { CitySelect } from "@/components/app/city-select"
@@ -15,6 +15,7 @@ import { useT } from "@/lib/i18n/use-t"
 import type { User } from "@/schemas/user"
 import { profileFormSchema, type ProfileForm } from "../schemas"
 import { VerifyContactDialog } from "./verify-contact-dialog"
+import { useAppForm } from "@/hooks/use-app-form"
 
 type Contact = "email" | "phone"
 const contacts: Contact[] = ["email", "phone"]
@@ -33,7 +34,7 @@ export function ProfileForm({ me }: { me: User }) {
   const update = useUpdateProfile()
   const [saved, setSaved] = useState(false)
   const [waiting, setWaiting] = useState<Contact[]>([])
-  const form = useForm<ProfileForm>({
+  const form = useAppForm<ProfileForm>({
     resolver: zodResolver(profileFormSchema),
     mode: "onTouched",
     defaultValues: valuesOf(me),

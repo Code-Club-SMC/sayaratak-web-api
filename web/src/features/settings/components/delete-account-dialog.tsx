@@ -1,7 +1,6 @@
 import { useState } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useRouter } from "@tanstack/react-router"
-import { useForm } from "react-hook-form"
 
 import { FormField } from "@/components/app/form-field"
 import { SubmitButton } from "@/components/app/submit-button"
@@ -22,6 +21,7 @@ import { useT } from "@/lib/i18n/use-t"
 import { localeHref } from "@/lib/navigation"
 import type { Role } from "@/schemas/fields"
 import { deleteAccountSchema, type DeleteAccountForm } from "../schemas"
+import { useAppForm } from "@/hooks/use-app-form"
 
 // The person types the word to confirm. Success signs out and goes to the home page.
 export function DeleteAccountDialog({ role }: { role: Role }) {
@@ -29,7 +29,7 @@ export function DeleteAccountDialog({ role }: { role: Role }) {
   const router = useRouter()
   const [open, setOpen] = useState(false)
   const remove = useDeleteAccount()
-  const form = useForm<DeleteAccountForm>({
+  const form = useAppForm<DeleteAccountForm>({
     resolver: zodResolver(deleteAccountSchema),
     defaultValues: { phrase: "" },
   })

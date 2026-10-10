@@ -1,10 +1,17 @@
-import { createFileRoute } from "@tanstack/react-router"
+import { createFileRoute, stripSearchParams } from "@tanstack/react-router"
 
-import { PlaceholderPage } from "@/features/dashboard/components/placeholder-page"
+import { PromotionsPage } from "@/features/billing/components/promotions-page"
+import {
+  promotionsSearchSchema,
+  type PromotionsSearch,
+} from "@/features/billing/schemas"
 import { dashboardPage } from "@/features/dashboard/overview-route"
 
-// Step 10.6 replaces the component.
 export const Route = createFileRoute("/$locale/dealer/promotions")({
+  validateSearch: promotionsSearchSchema,
+  search: {
+    middlewares: [stripSearchParams<PromotionsSearch>({ tab: "active" })],
+  },
   ...dashboardPage("/dealer/promotions", "dashboard.nav_promotions"),
-  component: () => <PlaceholderPage titleKey="dashboard.nav_promotions" />,
+  component: PromotionsPage,
 })

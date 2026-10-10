@@ -31,3 +31,10 @@ export const pruneBillingSearch = ({ tab, page }: BillingSearch) => ({
 export const checkoutSearchSchema = z.object({
   item: z.string().max(80).default("").catch(""),
 })
+
+// The dealer's promotions page keeps its tab in the URL.
+export const promotionTabs = ["active", "ended", "waiting"] as const
+export const promotionsSearchSchema = z.object({
+  tab: z.enum(promotionTabs).default("active").catch("active"),
+})
+export type PromotionsSearch = z.infer<typeof promotionsSearchSchema>

@@ -2,12 +2,12 @@ import type { Dealership, Mechanic, Workshop } from "@/schemas/profile"
 
 export type SetupItem = { key: string; done: boolean; href: string }
 
-// What each dashboard overview asks for (A9 10.2, 11.2, 12.2). Paths are locale-free. Verification is done once a request exists (`asked`) or the business already has the badge (a seed or admin can verify with no request).
+// What each dashboard overview asks for (A9 10.2, 11.2, 12.2). Paths are locale-free. Verification is done while a request waits for review (`pending`) or once the business has the badge (a seed or admin can verify with no request); a rejected request opens it again.
 export function setupItems(
   b: Dealership | Workshop | Mechanic,
-  asked: boolean
+  pending: boolean
 ): SetupItem[] {
-  const verified = asked || b.verified
+  const verified = pending || b.verified
   const item = (key: string, done: boolean, href: string) => ({
     key,
     done,

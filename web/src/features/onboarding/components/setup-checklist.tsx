@@ -20,7 +20,10 @@ export function SetupChecklist() {
   const verification = useQuery(verificationQuery)
   const dismissed = useSelector(setupDismissed, (s) => s)
   if (dismissed || !business.data || verification.isPending) return null
-  const items = setupItems(business.data, Boolean(verification.data))
+  const items = setupItems(
+    business.data,
+    verification.data?.status === "pending"
+  )
   const done = items.filter((i) => i.done).length
   if (done === items.length) return null
   return (

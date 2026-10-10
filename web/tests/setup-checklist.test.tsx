@@ -24,8 +24,8 @@ const workshop = () =>
   db.workshops.find((b) => b.ownerId === ownerOf("workshop"))!
 const mechanic = () =>
   db.mechanics.find((b) => b.ownerId === ownerOf("mechanic"))!
-const todo = (b: Parameters<typeof setupItems>[0], asked = false) =>
-  setupItems(b, asked)
+const todo = (b: Parameters<typeof setupItems>[0], pending = false) =>
+  setupItems(b, pending)
     .filter((i) => !i.done)
     .map((i) => i.key)
 
@@ -80,6 +80,7 @@ describe("SetupChecklist", () => {
       description: { ar: "x", en: "x" },
       services: [],
       images: [],
+      verified: false,
     })
     const { client } = await renderShell(<SetupChecklist />, {
       role: "workshop",
@@ -115,6 +116,12 @@ describe("SetupChecklist", () => {
     })
     await act(() => client.invalidateQueries())
     await waitFor(() => expect(screen.queryByRole("heading")).toBeNull())
+    // A rejected request opens the item again.
+    db.verifications.at(-1)!.status = "rejected"
+    await act(() => client.invalidateQueries())
+    expect(
+      await screen.findByRole("link", { name: /Request verification/ })
+    ).toBeTruthy()
   })
 
   it("stays hidden for the session once dismissed", async () => {

@@ -4,19 +4,17 @@ import { useSentinel } from "@/hooks/use-sentinel"
 import { useT } from "@/lib/i18n/use-t"
 import { Button } from "@/components/ui/button"
 
-// Fixed to the bottom, so the page needs bottom padding of about 5rem. `inline` makes it sticky at the end of its parent instead, for a page inside the dashboard, where a fixed bar would cover the sidebar. The 1 px top line is the one A5 allows on sticky layers; it shows only while content is still below the bar.
+// Fixed to the bottom, so the page needs bottom padding of about 5rem. The 1 px top line is the one A5 allows on sticky layers; it shows only while content is still below the bar.
 export function StickyFooter({
   onBack,
   skip,
   width = "max-w-xl",
-  inline = false,
   children,
 }: {
   onBack?: () => void
   skip?: ReactNode
   // Max width class of the buttons row, so it lines up with the page column.
   width?: string
-  inline?: boolean
   children: ReactNode
 }) {
   const { t } = useT()
@@ -25,7 +23,7 @@ export function StickyFooter({
     <>
       <div ref={sentinel} aria-hidden="true" className="h-px" />
       <div
-        className={`${inline ? "sticky -mx-4 md:mx-0" : "fixed inset-x-0"} bottom-0 z-30 border-t bg-card p-4 pb-[max(1rem,env(safe-area-inset-bottom))] motion-color ${contentBelow ? "border-border" : "border-transparent"}`}
+        className={`fixed inset-x-0 bottom-0 z-30 border-t bg-card p-4 pb-[max(1rem,env(safe-area-inset-bottom))] motion-color ${contentBelow ? "border-border" : "border-transparent"}`}
       >
         <div className={`mx-auto flex w-full ${width} items-center gap-3`}>
           {onBack && (

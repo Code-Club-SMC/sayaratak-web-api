@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router"
 
+import { requireRole } from "@/features/auth/guards"
 import { dashboardPage } from "@/features/dashboard/overview-route"
 import { taxonomyQuery } from "@/features/listings/queries"
 import { wizardSearchSchema } from "@/features/listings/wizard/wizard-config"
@@ -7,7 +8,10 @@ import { WizardPage } from "@/features/listings/wizard/wizard-page"
 
 const page = dashboardPage("/dealer/inventory/new", "post.new_listing")
 
-export const Route = createFileRoute("/$locale/dealer/inventory/new")({
+export const Route = createFileRoute("/$locale/dealer_/inventory/new")({
+  // Outside the dealer layout, so the wizard is a focused page with no sidebar; same guard as the dashboard.
+  ssr: false,
+  beforeLoad: requireRole("dealership"),
   validateSearch: wizardSearchSchema,
   ...page,
   loader: async (args) => {

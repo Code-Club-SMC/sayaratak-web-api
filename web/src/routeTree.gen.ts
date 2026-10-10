@@ -90,7 +90,7 @@ import { Route as LocaleDealerAdsNewRouteImport } from './routes/$locale/dealer/
 import { Route as LocaleDealerBillingIndexRouteImport } from './routes/$locale/dealer/billing/index'
 import { Route as LocaleDealerBillingCheckoutRouteImport } from './routes/$locale/dealer/billing/checkout'
 import { Route as LocaleDealerInventoryIndexRouteImport } from './routes/$locale/dealer/inventory/index'
-import { Route as LocaleDealerInventoryNewRouteImport } from './routes/$locale/dealer/inventory/new'
+import { Route as LocaleDealerInventoryNewRouteImport } from './routes/$locale/dealer_/inventory/new'
 import { Route as LocaleMechanicAdsIndexRouteImport } from './routes/$locale/mechanic/ads/index'
 import { Route as LocaleMechanicAdsNewRouteImport } from './routes/$locale/mechanic/ads/new'
 import { Route as LocaleMechanicBillingIndexRouteImport } from './routes/$locale/mechanic/billing/index'
@@ -100,7 +100,7 @@ import { Route as LocaleWorkshopAdsIndexRouteImport } from './routes/$locale/wor
 import { Route as LocaleWorkshopAdsNewRouteImport } from './routes/$locale/workshop/ads/new'
 import { Route as LocaleWorkshopBillingIndexRouteImport } from './routes/$locale/workshop/billing/index'
 import { Route as LocaleWorkshopBillingCheckoutRouteImport } from './routes/$locale/workshop/billing/checkout'
-import { Route as LocaleDealerInventoryIdEditRouteImport } from './routes/$locale/dealer/inventory/$id/edit'
+import { Route as LocaleDealerInventoryIdEditRouteImport } from './routes/$locale/dealer_/inventory/$id/edit'
 import { Route as LocalePublicVehiclesTypeIntentChar123CityChar125RouteImport } from './routes/$locale/_public/vehicles/$type/$intent/{-$city}'
 
 const IndexRoute = IndexRouteImport.update({
@@ -529,9 +529,9 @@ const LocaleDealerInventoryIndexRoute =
   } as any)
 const LocaleDealerInventoryNewRoute =
   LocaleDealerInventoryNewRouteImport.update({
-    id: '/inventory/new',
-    path: '/inventory/new',
-    getParentRoute: () => LocaleDealerRouteRoute,
+    id: '/dealer_/inventory/new',
+    path: '/dealer/inventory/new',
+    getParentRoute: () => LocaleRouteRoute,
   } as any)
 const LocaleMechanicAdsIndexRoute = LocaleMechanicAdsIndexRouteImport.update({
   id: '/ads/',
@@ -585,9 +585,9 @@ const LocaleWorkshopBillingCheckoutRoute =
   } as any)
 const LocaleDealerInventoryIdEditRoute =
   LocaleDealerInventoryIdEditRouteImport.update({
-    id: '/inventory/$id/edit',
-    path: '/inventory/$id/edit',
-    getParentRoute: () => LocaleDealerRouteRoute,
+    id: '/dealer_/inventory/$id/edit',
+    path: '/dealer/inventory/$id/edit',
+    getParentRoute: () => LocaleRouteRoute,
   } as any)
 const LocalePublicVehiclesTypeIntentChar123CityChar125Route =
   LocalePublicVehiclesTypeIntentChar123CityChar125RouteImport.update({
@@ -853,7 +853,7 @@ export interface FileRoutesById {
   '/$locale/account/billing/checkout': typeof LocaleAccountBillingCheckoutRoute
   '/$locale/dealer/ads/new': typeof LocaleDealerAdsNewRoute
   '/$locale/dealer/billing/checkout': typeof LocaleDealerBillingCheckoutRoute
-  '/$locale/dealer/inventory/new': typeof LocaleDealerInventoryNewRoute
+  '/$locale/dealer_/inventory/new': typeof LocaleDealerInventoryNewRoute
   '/$locale/mechanic/ads/new': typeof LocaleMechanicAdsNewRoute
   '/$locale/mechanic/billing/checkout': typeof LocaleMechanicBillingCheckoutRoute
   '/$locale/onboarding/$role/$step': typeof LocaleOnboardingRoleStepRoute
@@ -870,7 +870,7 @@ export interface FileRoutesById {
   '/$locale/mechanic/billing/': typeof LocaleMechanicBillingIndexRoute
   '/$locale/workshop/ads/': typeof LocaleWorkshopAdsIndexRoute
   '/$locale/workshop/billing/': typeof LocaleWorkshopBillingIndexRoute
-  '/$locale/dealer/inventory/$id/edit': typeof LocaleDealerInventoryIdEditRoute
+  '/$locale/dealer_/inventory/$id/edit': typeof LocaleDealerInventoryIdEditRoute
   '/$locale/_public/vehicles/$type/$intent/{-$city}': typeof LocalePublicVehiclesTypeIntentChar123CityChar125Route
 }
 export interface FileRouteTypes {
@@ -1131,7 +1131,7 @@ export interface FileRouteTypes {
     | '/$locale/account/billing/checkout'
     | '/$locale/dealer/ads/new'
     | '/$locale/dealer/billing/checkout'
-    | '/$locale/dealer/inventory/new'
+    | '/$locale/dealer_/inventory/new'
     | '/$locale/mechanic/ads/new'
     | '/$locale/mechanic/billing/checkout'
     | '/$locale/onboarding/$role/$step'
@@ -1148,7 +1148,7 @@ export interface FileRouteTypes {
     | '/$locale/mechanic/billing/'
     | '/$locale/workshop/ads/'
     | '/$locale/workshop/billing/'
-    | '/$locale/dealer/inventory/$id/edit'
+    | '/$locale/dealer_/inventory/$id/edit'
     | '/$locale/_public/vehicles/$type/$intent/{-$city}'
   fileRoutesById: FileRoutesById
 }
@@ -1729,12 +1729,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LocaleDealerInventoryIndexRouteImport
       parentRoute: typeof LocaleDealerRouteRoute
     }
-    '/$locale/dealer/inventory/new': {
-      id: '/$locale/dealer/inventory/new'
-      path: '/inventory/new'
+    '/$locale/dealer_/inventory/new': {
+      id: '/$locale/dealer_/inventory/new'
+      path: '/dealer/inventory/new'
       fullPath: '/$locale/dealer/inventory/new'
       preLoaderRoute: typeof LocaleDealerInventoryNewRouteImport
-      parentRoute: typeof LocaleDealerRouteRoute
+      parentRoute: typeof LocaleRouteRoute
     }
     '/$locale/mechanic/ads/': {
       id: '/$locale/mechanic/ads/'
@@ -1799,12 +1799,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LocaleWorkshopBillingCheckoutRouteImport
       parentRoute: typeof LocaleWorkshopRouteRoute
     }
-    '/$locale/dealer/inventory/$id/edit': {
-      id: '/$locale/dealer/inventory/$id/edit'
-      path: '/inventory/$id/edit'
+    '/$locale/dealer_/inventory/$id/edit': {
+      id: '/$locale/dealer_/inventory/$id/edit'
+      path: '/dealer/inventory/$id/edit'
       fullPath: '/$locale/dealer/inventory/$id/edit'
       preLoaderRoute: typeof LocaleDealerInventoryIdEditRouteImport
-      parentRoute: typeof LocaleDealerRouteRoute
+      parentRoute: typeof LocaleRouteRoute
     }
     '/$locale/_public/vehicles/$type/$intent/{-$city}': {
       id: '/$locale/_public/vehicles/$type/$intent/{-$city}'
@@ -1943,11 +1943,9 @@ interface LocaleDealerRouteRouteChildren {
   LocaleDealerIndexRoute: typeof LocaleDealerIndexRoute
   LocaleDealerAdsNewRoute: typeof LocaleDealerAdsNewRoute
   LocaleDealerBillingCheckoutRoute: typeof LocaleDealerBillingCheckoutRoute
-  LocaleDealerInventoryNewRoute: typeof LocaleDealerInventoryNewRoute
   LocaleDealerAdsIndexRoute: typeof LocaleDealerAdsIndexRoute
   LocaleDealerBillingIndexRoute: typeof LocaleDealerBillingIndexRoute
   LocaleDealerInventoryIndexRoute: typeof LocaleDealerInventoryIndexRoute
-  LocaleDealerInventoryIdEditRoute: typeof LocaleDealerInventoryIdEditRoute
 }
 
 const LocaleDealerRouteRouteChildren: LocaleDealerRouteRouteChildren = {
@@ -1963,11 +1961,9 @@ const LocaleDealerRouteRouteChildren: LocaleDealerRouteRouteChildren = {
   LocaleDealerIndexRoute: LocaleDealerIndexRoute,
   LocaleDealerAdsNewRoute: LocaleDealerAdsNewRoute,
   LocaleDealerBillingCheckoutRoute: LocaleDealerBillingCheckoutRoute,
-  LocaleDealerInventoryNewRoute: LocaleDealerInventoryNewRoute,
   LocaleDealerAdsIndexRoute: LocaleDealerAdsIndexRoute,
   LocaleDealerBillingIndexRoute: LocaleDealerBillingIndexRoute,
   LocaleDealerInventoryIndexRoute: LocaleDealerInventoryIndexRoute,
-  LocaleDealerInventoryIdEditRoute: LocaleDealerInventoryIdEditRoute,
 }
 
 const LocaleDealerRouteRouteWithChildren =
@@ -2046,7 +2042,9 @@ interface LocaleRouteRouteChildren {
   LocalePostRoute: typeof LocalePostRoute
   LocaleOnboardingRoleRoute: typeof LocaleOnboardingRoleRoute
   LocaleOnboardingIndexRoute: typeof LocaleOnboardingIndexRoute
+  LocaleDealerInventoryNewRoute: typeof LocaleDealerInventoryNewRoute
   LocaleOnboardingRoleStepRoute: typeof LocaleOnboardingRoleStepRoute
+  LocaleDealerInventoryIdEditRoute: typeof LocaleDealerInventoryIdEditRoute
 }
 
 const LocaleRouteRouteChildren: LocaleRouteRouteChildren = {
@@ -2060,7 +2058,9 @@ const LocaleRouteRouteChildren: LocaleRouteRouteChildren = {
   LocalePostRoute: LocalePostRoute,
   LocaleOnboardingRoleRoute: LocaleOnboardingRoleRoute,
   LocaleOnboardingIndexRoute: LocaleOnboardingIndexRoute,
+  LocaleDealerInventoryNewRoute: LocaleDealerInventoryNewRoute,
   LocaleOnboardingRoleStepRoute: LocaleOnboardingRoleStepRoute,
+  LocaleDealerInventoryIdEditRoute: LocaleDealerInventoryIdEditRoute,
 }
 
 const LocaleRouteRouteWithChildren = LocaleRouteRoute._addFileChildren(

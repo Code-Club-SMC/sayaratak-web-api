@@ -9,7 +9,7 @@ import { PhoneInput } from "@/components/app/phone-input"
 import { SubmitButton } from "@/components/app/submit-button"
 import { Input } from "@/components/ui/input"
 import { FieldDescription, FieldLegend, FieldSet } from "@/components/ui/field"
-import { useUpdateProfile } from "@/features/auth/queries"
+import { useSendOtp, useUpdateProfile } from "@/features/auth/queries"
 import { mediaFromUrl } from "@/features/onboarding/media"
 import { useT } from "@/lib/i18n/use-t"
 import type { User } from "@/schemas/user"
@@ -28,10 +28,11 @@ const valuesOf = (me: User): ProfileForm => ({
   avatarUrl: me.avatarUrl ?? "",
 })
 
-// Name, city and photo save at once. A new phone or email then asks for its code, one dialog each; a cleared one is removed (the schema keeps at least one).
+// Name, city and photo save at once. A new phone or email gets its code first: one another account owns, or a failed send, shows under its field and nothing is saved; otherwise a dialog asks for each code. A cleared one is removed (the schema keeps at least one).
 export function ProfileForm({ me }: { me: User }) {
   const { t } = useT()
   const update = useUpdateProfile()
+  const send = useSendOtp()
   const [saved, setSaved] = useState(false)
   const [waiting, setWaiting] = useState<Contact[]>([])
   const form = useAppForm<ProfileForm>({
@@ -43,9 +44,22 @@ export function ProfileForm({ me }: { me: User }) {
     form.reset(valuesOf(user))
     setSaved(true)
   }
-  const submit = form.handleSubmit((values) => {
+  const submit = form.handleSubmit(async (values) => {
     setSaved(false)
     const added = contacts.filter((k) => values[k] && values[k] !== me[k])
+    for (const k of added) {
+      const error = await send.mutateAsync({ identifier: values[k] }).then(
+        () => undefined,
+        (e: { code?: string }) => e
+      )
+      if (error) {
+        const message =
+          error.code === "exists"
+            ? "settings.contact_taken"
+            : "auth.otp_send_error"
+        return form.setError(k, { message }, { shouldFocus: true })
+      }
+    }
     const removed = contacts.filter((k) => !values[k] && me[k])
     update.mutate(
       {
@@ -147,7 +161,7 @@ export function ProfileForm({ me }: { me: User }) {
           )}
           <SubmitButton
             className="self-start"
-            pending={update.isPending}
+            pending={update.isPending || send.isPending}
             savedLabel={saved}
           >
             {t("common.save")}
@@ -159,6 +173,7 @@ export function ProfileForm({ me }: { me: User }) {
           key={next}
           field={next}
           value={form.getValues(next)}
+          sent
           onCancel={() => setWaiting([])}
           onVerified={(user) => {
             setWaiting(waiting.slice(1))

@@ -28,17 +28,19 @@ import type { User } from "@/schemas/user"
 const COOLDOWN = 30
 
 // A new phone or email is saved only with the code sent to it. The code goes out when the dialog opens; the right code saves the change.
-// `existing` confirms a contact the account already has: the code only marks it verified.
+// `existing` confirms a contact the account already has: the code only marks it verified. `sent` skips the first send when the caller already sent the code.
 export function VerifyContactDialog({
   field,
   value,
   existing = false,
+  sent: alreadySent = false,
   onVerified,
   onCancel,
 }: {
   field: "email" | "phone"
   value: string
   existing?: boolean
+  sent?: boolean
   onVerified: (user: User) => void
   onCancel: () => void
 }) {
@@ -49,7 +51,7 @@ export function VerifyContactDialog({
   const [code, setCode] = useState("")
   const [errorKey, setErrorKey] = useState<string>()
   const [resendIn, setResendIn] = useCountdown(COOLDOWN)
-  const sent = useRef(false)
+  const sent = useRef(alreadySent)
   useEffect(() => {
     if (sent.current) return
     sent.current = true

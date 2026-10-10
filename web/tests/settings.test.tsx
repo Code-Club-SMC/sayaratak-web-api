@@ -146,17 +146,20 @@ describe("SettingsPage", () => {
     expect(rowOf("user").phone).toBe(before)
   })
 
-  it("tells the person when another account has the number", async () => {
+  it("shows a number another account has under its field, with no code dialog, and saves nothing", async () => {
     const other = db.users.find((u) => u.phone && u.id !== rowOf("user").id)!
     await open()
+    const name = rowOf("user").fullName
+    type(await field(/Full name/), "Someone Else")
     type(await field("Phone number"), other.phone!.slice(4))
     save()
-    const dialog = await screen.findByRole("dialog")
     expect(
-      await within(dialog).findByText(
+      await screen.findByText(
         "Another account already uses this phone number or email"
       )
     ).toBeTruthy()
+    expect(screen.queryByRole("dialog")).toBeNull()
+    expect(rowOf("user").fullName).toBe(name)
   })
 
   it("changes the password after the right current one", async () => {

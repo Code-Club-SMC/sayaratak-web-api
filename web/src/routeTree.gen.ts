@@ -41,6 +41,8 @@ import { Route as LocaleAccountSavedSearchesRouteImport } from './routes/$locale
 import { Route as LocaleAccountSettingsRouteImport } from './routes/$locale/account/settings'
 import { Route as LocaleAdminIndexRouteImport } from './routes/$locale/admin/index'
 import { Route as LocaleAdminAccountRouteImport } from './routes/$locale/admin/account'
+import { Route as LocaleAdminAdPricesRouteImport } from './routes/$locale/admin/ad-prices'
+import { Route as LocaleAdminAdsRouteImport } from './routes/$locale/admin/ads'
 import { Route as LocaleAdminNotificationsRouteImport } from './routes/$locale/admin/notifications'
 import { Route as LocaleAuthIndexRouteImport } from './routes/$locale/auth/index'
 import { Route as LocaleAuthForgotRouteImport } from './routes/$locale/auth/forgot'
@@ -79,12 +81,18 @@ import { Route as LocalePublicWorkshopsIndexRouteImport } from './routes/$locale
 import { Route as LocalePublicWorkshopsSlugRouteImport } from './routes/$locale/_public/workshops/$slug'
 import { Route as LocaleAccountBillingIndexRouteImport } from './routes/$locale/account/billing/index'
 import { Route as LocaleAccountBillingCheckoutRouteImport } from './routes/$locale/account/billing/checkout'
+import { Route as LocaleDealerAdsIndexRouteImport } from './routes/$locale/dealer/ads/index'
+import { Route as LocaleDealerAdsNewRouteImport } from './routes/$locale/dealer/ads/new'
 import { Route as LocaleDealerBillingIndexRouteImport } from './routes/$locale/dealer/billing/index'
 import { Route as LocaleDealerBillingCheckoutRouteImport } from './routes/$locale/dealer/billing/checkout'
 import { Route as LocaleDealerInventoryIndexRouteImport } from './routes/$locale/dealer/inventory/index'
+import { Route as LocaleMechanicAdsIndexRouteImport } from './routes/$locale/mechanic/ads/index'
+import { Route as LocaleMechanicAdsNewRouteImport } from './routes/$locale/mechanic/ads/new'
 import { Route as LocaleMechanicBillingIndexRouteImport } from './routes/$locale/mechanic/billing/index'
 import { Route as LocaleMechanicBillingCheckoutRouteImport } from './routes/$locale/mechanic/billing/checkout'
 import { Route as LocaleOnboardingRoleStepRouteImport } from './routes/$locale/onboarding/$role/$step'
+import { Route as LocaleWorkshopAdsIndexRouteImport } from './routes/$locale/workshop/ads/index'
+import { Route as LocaleWorkshopAdsNewRouteImport } from './routes/$locale/workshop/ads/new'
 import { Route as LocaleWorkshopBillingIndexRouteImport } from './routes/$locale/workshop/billing/index'
 import { Route as LocaleWorkshopBillingCheckoutRouteImport } from './routes/$locale/workshop/billing/checkout'
 import { Route as LocalePublicVehiclesTypeIntentChar123CityChar125RouteImport } from './routes/$locale/_public/vehicles/$type/$intent/{-$city}'
@@ -248,6 +256,16 @@ const LocaleAdminIndexRoute = LocaleAdminIndexRouteImport.update({
 const LocaleAdminAccountRoute = LocaleAdminAccountRouteImport.update({
   id: '/account',
   path: '/account',
+  getParentRoute: () => LocaleAdminRouteRoute,
+} as any)
+const LocaleAdminAdPricesRoute = LocaleAdminAdPricesRouteImport.update({
+  id: '/ad-prices',
+  path: '/ad-prices',
+  getParentRoute: () => LocaleAdminRouteRoute,
+} as any)
+const LocaleAdminAdsRoute = LocaleAdminAdsRouteImport.update({
+  id: '/ads',
+  path: '/ads',
   getParentRoute: () => LocaleAdminRouteRoute,
 } as any)
 const LocaleAdminNotificationsRoute =
@@ -455,6 +473,16 @@ const LocaleAccountBillingCheckoutRoute =
     path: '/billing/checkout',
     getParentRoute: () => LocaleAccountRouteRoute,
   } as any)
+const LocaleDealerAdsIndexRoute = LocaleDealerAdsIndexRouteImport.update({
+  id: '/ads/',
+  path: '/ads/',
+  getParentRoute: () => LocaleDealerRouteRoute,
+} as any)
+const LocaleDealerAdsNewRoute = LocaleDealerAdsNewRouteImport.update({
+  id: '/ads/new',
+  path: '/ads/new',
+  getParentRoute: () => LocaleDealerRouteRoute,
+} as any)
 const LocaleDealerBillingIndexRoute =
   LocaleDealerBillingIndexRouteImport.update({
     id: '/billing/',
@@ -473,6 +501,16 @@ const LocaleDealerInventoryIndexRoute =
     path: '/inventory/',
     getParentRoute: () => LocaleDealerRouteRoute,
   } as any)
+const LocaleMechanicAdsIndexRoute = LocaleMechanicAdsIndexRouteImport.update({
+  id: '/ads/',
+  path: '/ads/',
+  getParentRoute: () => LocaleMechanicRouteRoute,
+} as any)
+const LocaleMechanicAdsNewRoute = LocaleMechanicAdsNewRouteImport.update({
+  id: '/ads/new',
+  path: '/ads/new',
+  getParentRoute: () => LocaleMechanicRouteRoute,
+} as any)
 const LocaleMechanicBillingIndexRoute =
   LocaleMechanicBillingIndexRouteImport.update({
     id: '/billing/',
@@ -491,6 +529,16 @@ const LocaleOnboardingRoleStepRoute =
     path: '/onboarding/$role/$step',
     getParentRoute: () => LocaleRouteRoute,
   } as any)
+const LocaleWorkshopAdsIndexRoute = LocaleWorkshopAdsIndexRouteImport.update({
+  id: '/ads/',
+  path: '/ads/',
+  getParentRoute: () => LocaleWorkshopRouteRoute,
+} as any)
+const LocaleWorkshopAdsNewRoute = LocaleWorkshopAdsNewRouteImport.update({
+  id: '/ads/new',
+  path: '/ads/new',
+  getParentRoute: () => LocaleWorkshopRouteRoute,
+} as any)
 const LocaleWorkshopBillingIndexRoute =
   LocaleWorkshopBillingIndexRouteImport.update({
     id: '/billing/',
@@ -539,6 +587,8 @@ export interface FileRoutesByFullPath {
   '/$locale/account/saved-searches': typeof LocaleAccountSavedSearchesRoute
   '/$locale/account/settings': typeof LocaleAccountSettingsRoute
   '/$locale/admin/account': typeof LocaleAdminAccountRoute
+  '/$locale/admin/ad-prices': typeof LocaleAdminAdPricesRoute
+  '/$locale/admin/ads': typeof LocaleAdminAdsRoute
   '/$locale/admin/notifications': typeof LocaleAdminNotificationsRoute
   '/$locale/auth/forgot': typeof LocaleAuthForgotRoute
   '/$locale/auth/login': typeof LocaleAuthLoginRoute
@@ -576,17 +626,23 @@ export interface FileRoutesByFullPath {
   '/$locale/mechanics/$slug': typeof LocalePublicMechanicsSlugRoute
   '/$locale/workshops/$slug': typeof LocalePublicWorkshopsSlugRoute
   '/$locale/account/billing/checkout': typeof LocaleAccountBillingCheckoutRoute
+  '/$locale/dealer/ads/new': typeof LocaleDealerAdsNewRoute
   '/$locale/dealer/billing/checkout': typeof LocaleDealerBillingCheckoutRoute
+  '/$locale/mechanic/ads/new': typeof LocaleMechanicAdsNewRoute
   '/$locale/mechanic/billing/checkout': typeof LocaleMechanicBillingCheckoutRoute
   '/$locale/onboarding/$role/$step': typeof LocaleOnboardingRoleStepRoute
+  '/$locale/workshop/ads/new': typeof LocaleWorkshopAdsNewRoute
   '/$locale/workshop/billing/checkout': typeof LocaleWorkshopBillingCheckoutRoute
   '/$locale/dealerships/': typeof LocalePublicDealershipsIndexRoute
   '/$locale/mechanics/': typeof LocalePublicMechanicsIndexRoute
   '/$locale/workshops/': typeof LocalePublicWorkshopsIndexRoute
   '/$locale/account/billing/': typeof LocaleAccountBillingIndexRoute
+  '/$locale/dealer/ads/': typeof LocaleDealerAdsIndexRoute
   '/$locale/dealer/billing/': typeof LocaleDealerBillingIndexRoute
   '/$locale/dealer/inventory/': typeof LocaleDealerInventoryIndexRoute
+  '/$locale/mechanic/ads/': typeof LocaleMechanicAdsIndexRoute
   '/$locale/mechanic/billing/': typeof LocaleMechanicBillingIndexRoute
+  '/$locale/workshop/ads/': typeof LocaleWorkshopAdsIndexRoute
   '/$locale/workshop/billing/': typeof LocaleWorkshopBillingIndexRoute
   '/$locale/vehicles/$type/$intent/{-$city}': typeof LocalePublicVehiclesTypeIntentChar123CityChar125Route
 }
@@ -614,6 +670,8 @@ export interface FileRoutesByTo {
   '/$locale/account/saved-searches': typeof LocaleAccountSavedSearchesRoute
   '/$locale/account/settings': typeof LocaleAccountSettingsRoute
   '/$locale/admin/account': typeof LocaleAdminAccountRoute
+  '/$locale/admin/ad-prices': typeof LocaleAdminAdPricesRoute
+  '/$locale/admin/ads': typeof LocaleAdminAdsRoute
   '/$locale/admin/notifications': typeof LocaleAdminNotificationsRoute
   '/$locale/auth/forgot': typeof LocaleAuthForgotRoute
   '/$locale/auth/login': typeof LocaleAuthLoginRoute
@@ -650,17 +708,23 @@ export interface FileRoutesByTo {
   '/$locale/mechanics/$slug': typeof LocalePublicMechanicsSlugRoute
   '/$locale/workshops/$slug': typeof LocalePublicWorkshopsSlugRoute
   '/$locale/account/billing/checkout': typeof LocaleAccountBillingCheckoutRoute
+  '/$locale/dealer/ads/new': typeof LocaleDealerAdsNewRoute
   '/$locale/dealer/billing/checkout': typeof LocaleDealerBillingCheckoutRoute
+  '/$locale/mechanic/ads/new': typeof LocaleMechanicAdsNewRoute
   '/$locale/mechanic/billing/checkout': typeof LocaleMechanicBillingCheckoutRoute
   '/$locale/onboarding/$role/$step': typeof LocaleOnboardingRoleStepRoute
+  '/$locale/workshop/ads/new': typeof LocaleWorkshopAdsNewRoute
   '/$locale/workshop/billing/checkout': typeof LocaleWorkshopBillingCheckoutRoute
   '/$locale/dealerships': typeof LocalePublicDealershipsIndexRoute
   '/$locale/mechanics': typeof LocalePublicMechanicsIndexRoute
   '/$locale/workshops': typeof LocalePublicWorkshopsIndexRoute
   '/$locale/account/billing': typeof LocaleAccountBillingIndexRoute
+  '/$locale/dealer/ads': typeof LocaleDealerAdsIndexRoute
   '/$locale/dealer/billing': typeof LocaleDealerBillingIndexRoute
   '/$locale/dealer/inventory': typeof LocaleDealerInventoryIndexRoute
+  '/$locale/mechanic/ads': typeof LocaleMechanicAdsIndexRoute
   '/$locale/mechanic/billing': typeof LocaleMechanicBillingIndexRoute
+  '/$locale/workshop/ads': typeof LocaleWorkshopAdsIndexRoute
   '/$locale/workshop/billing': typeof LocaleWorkshopBillingIndexRoute
   '/$locale/vehicles/$type/$intent/{-$city}': typeof LocalePublicVehiclesTypeIntentChar123CityChar125Route
 }
@@ -695,6 +759,8 @@ export interface FileRoutesById {
   '/$locale/account/saved-searches': typeof LocaleAccountSavedSearchesRoute
   '/$locale/account/settings': typeof LocaleAccountSettingsRoute
   '/$locale/admin/account': typeof LocaleAdminAccountRoute
+  '/$locale/admin/ad-prices': typeof LocaleAdminAdPricesRoute
+  '/$locale/admin/ads': typeof LocaleAdminAdsRoute
   '/$locale/admin/notifications': typeof LocaleAdminNotificationsRoute
   '/$locale/auth/forgot': typeof LocaleAuthForgotRoute
   '/$locale/auth/login': typeof LocaleAuthLoginRoute
@@ -732,17 +798,23 @@ export interface FileRoutesById {
   '/$locale/_public/mechanics/$slug': typeof LocalePublicMechanicsSlugRoute
   '/$locale/_public/workshops/$slug': typeof LocalePublicWorkshopsSlugRoute
   '/$locale/account/billing/checkout': typeof LocaleAccountBillingCheckoutRoute
+  '/$locale/dealer/ads/new': typeof LocaleDealerAdsNewRoute
   '/$locale/dealer/billing/checkout': typeof LocaleDealerBillingCheckoutRoute
+  '/$locale/mechanic/ads/new': typeof LocaleMechanicAdsNewRoute
   '/$locale/mechanic/billing/checkout': typeof LocaleMechanicBillingCheckoutRoute
   '/$locale/onboarding/$role/$step': typeof LocaleOnboardingRoleStepRoute
+  '/$locale/workshop/ads/new': typeof LocaleWorkshopAdsNewRoute
   '/$locale/workshop/billing/checkout': typeof LocaleWorkshopBillingCheckoutRoute
   '/$locale/_public/dealerships/': typeof LocalePublicDealershipsIndexRoute
   '/$locale/_public/mechanics/': typeof LocalePublicMechanicsIndexRoute
   '/$locale/_public/workshops/': typeof LocalePublicWorkshopsIndexRoute
   '/$locale/account/billing/': typeof LocaleAccountBillingIndexRoute
+  '/$locale/dealer/ads/': typeof LocaleDealerAdsIndexRoute
   '/$locale/dealer/billing/': typeof LocaleDealerBillingIndexRoute
   '/$locale/dealer/inventory/': typeof LocaleDealerInventoryIndexRoute
+  '/$locale/mechanic/ads/': typeof LocaleMechanicAdsIndexRoute
   '/$locale/mechanic/billing/': typeof LocaleMechanicBillingIndexRoute
+  '/$locale/workshop/ads/': typeof LocaleWorkshopAdsIndexRoute
   '/$locale/workshop/billing/': typeof LocaleWorkshopBillingIndexRoute
   '/$locale/_public/vehicles/$type/$intent/{-$city}': typeof LocalePublicVehiclesTypeIntentChar123CityChar125Route
 }
@@ -777,6 +849,8 @@ export interface FileRouteTypes {
     | '/$locale/account/saved-searches'
     | '/$locale/account/settings'
     | '/$locale/admin/account'
+    | '/$locale/admin/ad-prices'
+    | '/$locale/admin/ads'
     | '/$locale/admin/notifications'
     | '/$locale/auth/forgot'
     | '/$locale/auth/login'
@@ -814,17 +888,23 @@ export interface FileRouteTypes {
     | '/$locale/mechanics/$slug'
     | '/$locale/workshops/$slug'
     | '/$locale/account/billing/checkout'
+    | '/$locale/dealer/ads/new'
     | '/$locale/dealer/billing/checkout'
+    | '/$locale/mechanic/ads/new'
     | '/$locale/mechanic/billing/checkout'
     | '/$locale/onboarding/$role/$step'
+    | '/$locale/workshop/ads/new'
     | '/$locale/workshop/billing/checkout'
     | '/$locale/dealerships/'
     | '/$locale/mechanics/'
     | '/$locale/workshops/'
     | '/$locale/account/billing/'
+    | '/$locale/dealer/ads/'
     | '/$locale/dealer/billing/'
     | '/$locale/dealer/inventory/'
+    | '/$locale/mechanic/ads/'
     | '/$locale/mechanic/billing/'
+    | '/$locale/workshop/ads/'
     | '/$locale/workshop/billing/'
     | '/$locale/vehicles/$type/$intent/{-$city}'
   fileRoutesByTo: FileRoutesByTo
@@ -852,6 +932,8 @@ export interface FileRouteTypes {
     | '/$locale/account/saved-searches'
     | '/$locale/account/settings'
     | '/$locale/admin/account'
+    | '/$locale/admin/ad-prices'
+    | '/$locale/admin/ads'
     | '/$locale/admin/notifications'
     | '/$locale/auth/forgot'
     | '/$locale/auth/login'
@@ -888,17 +970,23 @@ export interface FileRouteTypes {
     | '/$locale/mechanics/$slug'
     | '/$locale/workshops/$slug'
     | '/$locale/account/billing/checkout'
+    | '/$locale/dealer/ads/new'
     | '/$locale/dealer/billing/checkout'
+    | '/$locale/mechanic/ads/new'
     | '/$locale/mechanic/billing/checkout'
     | '/$locale/onboarding/$role/$step'
+    | '/$locale/workshop/ads/new'
     | '/$locale/workshop/billing/checkout'
     | '/$locale/dealerships'
     | '/$locale/mechanics'
     | '/$locale/workshops'
     | '/$locale/account/billing'
+    | '/$locale/dealer/ads'
     | '/$locale/dealer/billing'
     | '/$locale/dealer/inventory'
+    | '/$locale/mechanic/ads'
     | '/$locale/mechanic/billing'
+    | '/$locale/workshop/ads'
     | '/$locale/workshop/billing'
     | '/$locale/vehicles/$type/$intent/{-$city}'
   id:
@@ -932,6 +1020,8 @@ export interface FileRouteTypes {
     | '/$locale/account/saved-searches'
     | '/$locale/account/settings'
     | '/$locale/admin/account'
+    | '/$locale/admin/ad-prices'
+    | '/$locale/admin/ads'
     | '/$locale/admin/notifications'
     | '/$locale/auth/forgot'
     | '/$locale/auth/login'
@@ -969,17 +1059,23 @@ export interface FileRouteTypes {
     | '/$locale/_public/mechanics/$slug'
     | '/$locale/_public/workshops/$slug'
     | '/$locale/account/billing/checkout'
+    | '/$locale/dealer/ads/new'
     | '/$locale/dealer/billing/checkout'
+    | '/$locale/mechanic/ads/new'
     | '/$locale/mechanic/billing/checkout'
     | '/$locale/onboarding/$role/$step'
+    | '/$locale/workshop/ads/new'
     | '/$locale/workshop/billing/checkout'
     | '/$locale/_public/dealerships/'
     | '/$locale/_public/mechanics/'
     | '/$locale/_public/workshops/'
     | '/$locale/account/billing/'
+    | '/$locale/dealer/ads/'
     | '/$locale/dealer/billing/'
     | '/$locale/dealer/inventory/'
+    | '/$locale/mechanic/ads/'
     | '/$locale/mechanic/billing/'
+    | '/$locale/workshop/ads/'
     | '/$locale/workshop/billing/'
     | '/$locale/_public/vehicles/$type/$intent/{-$city}'
   fileRoutesById: FileRoutesById
@@ -1216,6 +1312,20 @@ declare module '@tanstack/react-router' {
       path: '/account'
       fullPath: '/$locale/admin/account'
       preLoaderRoute: typeof LocaleAdminAccountRouteImport
+      parentRoute: typeof LocaleAdminRouteRoute
+    }
+    '/$locale/admin/ad-prices': {
+      id: '/$locale/admin/ad-prices'
+      path: '/ad-prices'
+      fullPath: '/$locale/admin/ad-prices'
+      preLoaderRoute: typeof LocaleAdminAdPricesRouteImport
+      parentRoute: typeof LocaleAdminRouteRoute
+    }
+    '/$locale/admin/ads': {
+      id: '/$locale/admin/ads'
+      path: '/ads'
+      fullPath: '/$locale/admin/ads'
+      preLoaderRoute: typeof LocaleAdminAdsRouteImport
       parentRoute: typeof LocaleAdminRouteRoute
     }
     '/$locale/admin/notifications': {
@@ -1484,6 +1594,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LocaleAccountBillingCheckoutRouteImport
       parentRoute: typeof LocaleAccountRouteRoute
     }
+    '/$locale/dealer/ads/': {
+      id: '/$locale/dealer/ads/'
+      path: '/ads'
+      fullPath: '/$locale/dealer/ads/'
+      preLoaderRoute: typeof LocaleDealerAdsIndexRouteImport
+      parentRoute: typeof LocaleDealerRouteRoute
+    }
+    '/$locale/dealer/ads/new': {
+      id: '/$locale/dealer/ads/new'
+      path: '/ads/new'
+      fullPath: '/$locale/dealer/ads/new'
+      preLoaderRoute: typeof LocaleDealerAdsNewRouteImport
+      parentRoute: typeof LocaleDealerRouteRoute
+    }
     '/$locale/dealer/billing/': {
       id: '/$locale/dealer/billing/'
       path: '/billing'
@@ -1505,6 +1629,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LocaleDealerInventoryIndexRouteImport
       parentRoute: typeof LocaleDealerRouteRoute
     }
+    '/$locale/mechanic/ads/': {
+      id: '/$locale/mechanic/ads/'
+      path: '/ads'
+      fullPath: '/$locale/mechanic/ads/'
+      preLoaderRoute: typeof LocaleMechanicAdsIndexRouteImport
+      parentRoute: typeof LocaleMechanicRouteRoute
+    }
+    '/$locale/mechanic/ads/new': {
+      id: '/$locale/mechanic/ads/new'
+      path: '/ads/new'
+      fullPath: '/$locale/mechanic/ads/new'
+      preLoaderRoute: typeof LocaleMechanicAdsNewRouteImport
+      parentRoute: typeof LocaleMechanicRouteRoute
+    }
     '/$locale/mechanic/billing/': {
       id: '/$locale/mechanic/billing/'
       path: '/billing'
@@ -1525,6 +1663,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/$locale/onboarding/$role/$step'
       preLoaderRoute: typeof LocaleOnboardingRoleStepRouteImport
       parentRoute: typeof LocaleRouteRoute
+    }
+    '/$locale/workshop/ads/': {
+      id: '/$locale/workshop/ads/'
+      path: '/ads'
+      fullPath: '/$locale/workshop/ads/'
+      preLoaderRoute: typeof LocaleWorkshopAdsIndexRouteImport
+      parentRoute: typeof LocaleWorkshopRouteRoute
+    }
+    '/$locale/workshop/ads/new': {
+      id: '/$locale/workshop/ads/new'
+      path: '/ads/new'
+      fullPath: '/$locale/workshop/ads/new'
+      preLoaderRoute: typeof LocaleWorkshopAdsNewRouteImport
+      parentRoute: typeof LocaleWorkshopRouteRoute
     }
     '/$locale/workshop/billing/': {
       id: '/$locale/workshop/billing/'
@@ -1629,12 +1781,16 @@ const LocaleAccountRouteRouteWithChildren =
 
 interface LocaleAdminRouteRouteChildren {
   LocaleAdminAccountRoute: typeof LocaleAdminAccountRoute
+  LocaleAdminAdPricesRoute: typeof LocaleAdminAdPricesRoute
+  LocaleAdminAdsRoute: typeof LocaleAdminAdsRoute
   LocaleAdminNotificationsRoute: typeof LocaleAdminNotificationsRoute
   LocaleAdminIndexRoute: typeof LocaleAdminIndexRoute
 }
 
 const LocaleAdminRouteRouteChildren: LocaleAdminRouteRouteChildren = {
   LocaleAdminAccountRoute: LocaleAdminAccountRoute,
+  LocaleAdminAdPricesRoute: LocaleAdminAdPricesRoute,
+  LocaleAdminAdsRoute: LocaleAdminAdsRoute,
   LocaleAdminNotificationsRoute: LocaleAdminNotificationsRoute,
   LocaleAdminIndexRoute: LocaleAdminIndexRoute,
 }
@@ -1650,7 +1806,9 @@ interface LocaleDealerRouteRouteChildren {
   LocaleDealerSettingsRoute: typeof LocaleDealerSettingsRoute
   LocaleDealerVerificationRoute: typeof LocaleDealerVerificationRoute
   LocaleDealerIndexRoute: typeof LocaleDealerIndexRoute
+  LocaleDealerAdsNewRoute: typeof LocaleDealerAdsNewRoute
   LocaleDealerBillingCheckoutRoute: typeof LocaleDealerBillingCheckoutRoute
+  LocaleDealerAdsIndexRoute: typeof LocaleDealerAdsIndexRoute
   LocaleDealerBillingIndexRoute: typeof LocaleDealerBillingIndexRoute
   LocaleDealerInventoryIndexRoute: typeof LocaleDealerInventoryIndexRoute
 }
@@ -1663,7 +1821,9 @@ const LocaleDealerRouteRouteChildren: LocaleDealerRouteRouteChildren = {
   LocaleDealerSettingsRoute: LocaleDealerSettingsRoute,
   LocaleDealerVerificationRoute: LocaleDealerVerificationRoute,
   LocaleDealerIndexRoute: LocaleDealerIndexRoute,
+  LocaleDealerAdsNewRoute: LocaleDealerAdsNewRoute,
   LocaleDealerBillingCheckoutRoute: LocaleDealerBillingCheckoutRoute,
+  LocaleDealerAdsIndexRoute: LocaleDealerAdsIndexRoute,
   LocaleDealerBillingIndexRoute: LocaleDealerBillingIndexRoute,
   LocaleDealerInventoryIndexRoute: LocaleDealerInventoryIndexRoute,
 }
@@ -1679,7 +1839,9 @@ interface LocaleMechanicRouteRouteChildren {
   LocaleMechanicSettingsRoute: typeof LocaleMechanicSettingsRoute
   LocaleMechanicVerificationRoute: typeof LocaleMechanicVerificationRoute
   LocaleMechanicIndexRoute: typeof LocaleMechanicIndexRoute
+  LocaleMechanicAdsNewRoute: typeof LocaleMechanicAdsNewRoute
   LocaleMechanicBillingCheckoutRoute: typeof LocaleMechanicBillingCheckoutRoute
+  LocaleMechanicAdsIndexRoute: typeof LocaleMechanicAdsIndexRoute
   LocaleMechanicBillingIndexRoute: typeof LocaleMechanicBillingIndexRoute
 }
 
@@ -1691,7 +1853,9 @@ const LocaleMechanicRouteRouteChildren: LocaleMechanicRouteRouteChildren = {
   LocaleMechanicSettingsRoute: LocaleMechanicSettingsRoute,
   LocaleMechanicVerificationRoute: LocaleMechanicVerificationRoute,
   LocaleMechanicIndexRoute: LocaleMechanicIndexRoute,
+  LocaleMechanicAdsNewRoute: LocaleMechanicAdsNewRoute,
   LocaleMechanicBillingCheckoutRoute: LocaleMechanicBillingCheckoutRoute,
+  LocaleMechanicAdsIndexRoute: LocaleMechanicAdsIndexRoute,
   LocaleMechanicBillingIndexRoute: LocaleMechanicBillingIndexRoute,
 }
 
@@ -1706,7 +1870,9 @@ interface LocaleWorkshopRouteRouteChildren {
   LocaleWorkshopSettingsRoute: typeof LocaleWorkshopSettingsRoute
   LocaleWorkshopVerificationRoute: typeof LocaleWorkshopVerificationRoute
   LocaleWorkshopIndexRoute: typeof LocaleWorkshopIndexRoute
+  LocaleWorkshopAdsNewRoute: typeof LocaleWorkshopAdsNewRoute
   LocaleWorkshopBillingCheckoutRoute: typeof LocaleWorkshopBillingCheckoutRoute
+  LocaleWorkshopAdsIndexRoute: typeof LocaleWorkshopAdsIndexRoute
   LocaleWorkshopBillingIndexRoute: typeof LocaleWorkshopBillingIndexRoute
 }
 
@@ -1718,7 +1884,9 @@ const LocaleWorkshopRouteRouteChildren: LocaleWorkshopRouteRouteChildren = {
   LocaleWorkshopSettingsRoute: LocaleWorkshopSettingsRoute,
   LocaleWorkshopVerificationRoute: LocaleWorkshopVerificationRoute,
   LocaleWorkshopIndexRoute: LocaleWorkshopIndexRoute,
+  LocaleWorkshopAdsNewRoute: LocaleWorkshopAdsNewRoute,
   LocaleWorkshopBillingCheckoutRoute: LocaleWorkshopBillingCheckoutRoute,
+  LocaleWorkshopAdsIndexRoute: LocaleWorkshopAdsIndexRoute,
   LocaleWorkshopBillingIndexRoute: LocaleWorkshopBillingIndexRoute,
 }
 

@@ -315,5 +315,8 @@
   "dashboard.saved_searches_name_label": "الاسم",
   "dashboard.saved_searches_delete": "حذف",
   "dashboard.saved_searches_delete_title": "حذف هذا البحث المحفوظ؟",
-  "dashboard.saved_searches_delete_body": "سيتم حذف \"{{name}}\" وتنبيهاته."
+  "dashboard.saved_searches_delete_body": "سيتم حذف \"{{name}}\" وتنبيهاته.",
+  "dashboard.nav_ads": "الإعلانات",
+  "dashboard.nav_ad_campaigns": "حملات الإعلانات",
+  "dashboard.nav_ad_prices": "أسعار الإعلانات"
 }

@@ -1564,3 +1564,87 @@ describe("mock", () => {
     expect(db.listings.length).toBe(count - 1)
   })
 })
+
+describe("banner ads", () => {
+  const tomorrow = () =>
+    new Date(Date.now() + 86_400_000).toISOString().slice(0, 10)
+  const creative = {
+    imageUrl: "/mock/banner-1.webp",
+    copy: {
+      en: { heading: "Big sale", body: "This week only", cta: "See cars" },
+      ar: { heading: "تخفيضات", body: "هذا الأسبوع فقط", cta: "شاهد" },
+    },
+  }
+  const targets = async (as: string) =>
+    (await call("GET", "/me/ad-targets", { as })).body as { href: string }[]
+
+  it("prices from the page table, links only to own pages, and runs after admin approval", async () => {
+    const as = "u-dealer"
+    const [profile] = await targets(as)
+    expect(profile!.href).toMatch(/^\/dealerships\//)
+    const bad = await call("POST", "/campaigns", {
+      as,
+      body: {
+        creative,
+        href: "https://evil.example",
+        pages: ["search_parts"],
+        startDate: tomorrow(),
+        weeks: 2,
+      },
+    })
+    expect(bad.body.fields.href).toBe("validation.ad_target")
+    const made = await call("POST", "/campaigns", {
+      as,
+      body: {
+        creative,
+        href: profile!.href,
+        pages: ["search_parts", "directory_mechanics"],
+        startDate: tomorrow(),
+        weeks: 2,
+      },
+    })
+    expect(made.body).toMatchObject({
+      status: "pending_payment",
+      amount: (80_000 + 50_000) * 2,
+    })
+    const checkout = await call(
+      "GET",
+      `/checkout?item=campaign:${made.body.id}`,
+      { as }
+    )
+    expect(checkout.body.amount).toBe(260_000)
+    const row = db.campaigns.find((c) => c.id === made.body.id)!
+    row.status = "under_review"
+    row.startsAt = new Date(Date.now() - 1000).toISOString()
+    expect((await call("GET", "/ads?page=search_parts")).body).toEqual([])
+    await call("POST", `/admin/campaigns/${row.id}/approve`, { as: "u-admin" })
+    const served = (await call("GET", "/ads?page=search_parts")).body
+    expect(served).toHaveLength(1)
+    expect(served[0]).toMatchObject({ id: row.id, sponsored: true })
+  })
+
+  it("refuses a page with no free slot for the dates", async () => {
+    const page = db.adPages.find((p) => p.id === "search_motorcycle")!
+    page.slots = 1
+    const as = "u-dealer"
+    const [profile] = await targets(as)
+    const body = {
+      creative,
+      href: profile!.href,
+      pages: ["search_motorcycle"],
+      startDate: tomorrow(),
+      weeks: 1,
+    }
+    const first = await call("POST", "/campaigns", { as, body })
+    db.campaigns.find((c) => c.id === first.body.id)!.status = "approved"
+    const free = (
+      await call("GET", `/ad-pages?startDate=${tomorrow()}&weeks=1`, { as })
+    ).body
+    expect(
+      free.find((p: { id: string }) => p.id === "search_motorcycle").free
+    ).toBe(0)
+    const second = await call("POST", "/campaigns", { as, body })
+    expect(second.status).toBe(409)
+    expect(second.body.pages).toEqual(["search_motorcycle"])
+  })
+})

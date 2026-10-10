@@ -49,7 +49,7 @@ export function HomePage({
       />
       <DealershipRow />
       <ServicesBand />
-      <BannerSlot placement="home_middle" />
+      <BannerSlot placement="home_middle" ad="home_middle" />
       <PostBand />
     </div>
   )

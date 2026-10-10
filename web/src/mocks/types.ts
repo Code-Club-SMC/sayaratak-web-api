@@ -6,6 +6,7 @@ import type {
   SitePage,
   VerificationRequest,
 } from "@/schemas/admin"
+import type { AdPage, Campaign } from "@/schemas/ads"
 import type { EventType, NotificationPrefs } from "@/schemas/api"
 import type { Bilingual, Locale } from "@/schemas/fields"
 import type { contactSubjects } from "@/schemas/inputs"
@@ -107,6 +108,8 @@ export type Db = {
   reports: Report[]
   verifications: VerificationRequest[]
   banners: Banner[]
+  adPages: AdPageRow[]
+  campaigns: CampaignRow[]
   pages: SitePageRow[]
   backups: Backup[]
   settings: Settings
@@ -128,3 +131,8 @@ export type EmailCode = {
   fails: number
   signup?: { fullName: string; password: string }
 }
+
+// Admin-set price and slot count of a page that sells banners; `free` is computed per request.
+export type AdPageRow = Omit<AdPage, "free">
+// `ownerName` is computed from the owner on the way out.
+export type CampaignRow = Omit<Campaign, "ownerName">

@@ -42,7 +42,7 @@ export function BannerCopy({
   copy,
   src,
 }: {
-  banner: Banner
+  banner: Pick<Banner, "sponsored" | "focus">
   copy: Copy
   src: string
 }) {

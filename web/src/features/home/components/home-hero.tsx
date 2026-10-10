@@ -6,7 +6,7 @@ import { QuickLinks } from "./quick-links"
 export function HomeHero({ searchCity }: { searchCity: string }) {
   return (
     <section className="flex flex-col gap-3">
-      <BannerSlot placement="home_top" variant="hero" />
+      <BannerSlot placement="home_top" ad="home_top" variant="hero" />
       <div className="relative z-10 [section+&]:mx-2 [section+&]:-mt-8 [section+&]:rounded-2xl [section+&]:shadow-floating md:[section+&]:mx-8 md:[section+&]:-mt-12">
         <HeroSearch city={searchCity} />
       </div>

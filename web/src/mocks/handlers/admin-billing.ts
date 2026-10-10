@@ -120,6 +120,9 @@ route("POST", "/admin/payments/:id/approve", (c) => {
       price: plan.price,
       usage: { used: 0, limit: plan.listingLimit ?? plan.vehicleLimit ?? null },
     })
+  } else if (row.itemType === "campaign") {
+    const campaign = find(db.campaigns, row.itemId)
+    if (campaign?.status === "under_review") campaign.status = "approved"
   } else {
     const promotion = find(db.promotions, row.itemId)
     if (!promotion) throw fail(404, "not_found")
@@ -146,6 +149,10 @@ route("POST", "/admin/payments/:id/reject", async (c) => {
   row.status = "rejected"
   row.rejectionReason = reason
   row.reviewedAt = nowIso()
+  // A refused receipt sends the campaign back to unpaid: the advertiser can pay again.
+  const campaign =
+    row.itemType === "campaign" ? find(db.campaigns, row.itemId) : undefined
+  if (campaign?.status === "under_review") campaign.status = "pending_payment"
   notify(
     row.userId,
     "payment_rejected",

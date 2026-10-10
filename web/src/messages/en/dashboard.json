@@ -311,5 +311,8 @@
   "dashboard.saved_searches_name_label": "Name",
   "dashboard.saved_searches_delete": "Delete",
   "dashboard.saved_searches_delete_title": "Delete this saved search?",
-  "dashboard.saved_searches_delete_body": "\"{{name}}\" and its alerts will be removed."
+  "dashboard.saved_searches_delete_body": "\"{{name}}\" and its alerts will be removed.",
+  "dashboard.nav_ads": "Advertising",
+  "dashboard.nav_ad_campaigns": "Ad campaigns",
+  "dashboard.nav_ad_prices": "Ad prices"
 }

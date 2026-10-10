@@ -14,6 +14,7 @@ import {
   seedPayments,
   seedSubscriptions,
 } from "./commerce"
+import { adPages, campaigns } from "./ads"
 import { seedListings } from "./listings"
 import { seedPeople } from "./people"
 import {
@@ -108,6 +109,14 @@ export function buildSeed({ empty = false }: { empty?: boolean } = {}): Db {
           )
         ),
     banners: empty ? [] : banners(),
+    adPages: adPages(),
+    campaigns: empty
+      ? []
+      : campaigns({
+          dealer: dealerships.find((d) => d.ownerId === "u-dealer")?.slug ?? "",
+          workshop:
+            workshops.find((w) => w.ownerId === "u-workshop")?.slug ?? "",
+        }),
     pages: pages(),
     backups: empty ? [] : backups(),
     settings: structuredClone(settings),

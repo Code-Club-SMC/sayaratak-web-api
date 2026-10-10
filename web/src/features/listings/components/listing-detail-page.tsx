@@ -24,6 +24,7 @@ import { KeyFacts } from "./key-facts"
 import { ListingJsonLd } from "./listing-json-ld"
 import { ListingRails } from "./listing-rails"
 import { OwnerPanel } from "./owner-panel"
+import { BannerSlot } from "@/components/app/banner-slot"
 import { SellerCard } from "./seller-card"
 import { StatusBanner } from "./status-banner"
 import { TitleBlock } from "./title-block"
@@ -157,6 +158,7 @@ export function ListingDetailPage({ slug }: { slug: string }) {
             </section>
             {!own && <SafetyTips />}
           </div>
+          {!own && <BannerSlot placement="listing_aside" ad="listing_detail" />}
         </div>
         <aside className="hidden lg:sticky lg:top-22 lg:block">
           {panel(true)}

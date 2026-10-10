@@ -4,6 +4,7 @@ import { defaultStringifySearch } from "@tanstack/react-router"
 import { taxonomyQuery } from "@/features/listings/queries"
 import { useT } from "@/lib/i18n/use-t"
 import { localeHref } from "@/lib/navigation"
+import { adPageOf } from "@/features/ads/ad-page-of"
 import { BannerSlot } from "@/components/app/banner-slot"
 import { Breadcrumbs } from "@/components/app/breadcrumbs"
 import { SaveSearchButton } from "@/components/app/save-search-button"
@@ -59,7 +60,7 @@ export function SearchPage({
 
   return (
     <div className="flex flex-col gap-4 pt-4 pb-12 md:pt-6">
-      <BannerSlot placement="search_top" />
+      <BannerSlot placement="search_top" ad={adPageOf(search)} />
       <Breadcrumbs items={crumbs} />
       <SearchBar search={search} onChange={onChange} />
       <SearchResults

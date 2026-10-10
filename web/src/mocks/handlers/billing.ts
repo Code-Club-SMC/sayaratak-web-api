@@ -28,6 +28,7 @@ import {
   promotionView,
 } from "../lib"
 import type { UserRow } from "../types"
+import { assertRoom } from "./ads"
 import { storeUpload } from "./uploads"
 
 // Enabled plans only. Individuals have none while individual subscriptions are off.
@@ -103,12 +104,23 @@ const pendingFor = (userId: string, itemId: string) =>
       p.status === "pending_review"
   )
 
-// What a payment is for: a plan, or an unpaid promotion of one of the payer's listings.
-function itemFor(
-  user: UserRow,
-  itemType: "plan" | "promotion",
-  itemId: string
-) {
+type ItemType = "plan" | "promotion" | "campaign"
+const isItemType = (v: unknown): v is ItemType =>
+  v === "plan" || v === "promotion" || v === "campaign"
+
+// What a payment is for: a plan, an unpaid promotion of one of the payer's listings, or an unpaid banner campaign of the payer.
+function itemFor(user: UserRow, itemType: ItemType, itemId: string) {
+  if (itemType === "campaign") {
+    const campaign = find(db.campaigns, itemId)
+    if (!campaign) throw fail(404, "not_found")
+    if (campaign.ownerId !== user.id) throw fail(403, "forbidden")
+    if (campaign.status !== "pending_payment") throw fail(409, "exists")
+    return {
+      label: { ar: "حملة بانر إعلاني", en: "Banner campaign" },
+      amount: campaign.amount,
+      durationDays: campaign.weeks * 7,
+    }
+  }
   if (itemType === "plan") {
     const plan = find(db.plans, itemId)
     if (!plan) throw fail(404, "not_found")
@@ -140,19 +152,22 @@ route("POST", "/payments", async (c) => {
   const payerName = String(form.get("payerName") ?? "").trim()
   const receipt = form.get("receipt")
   const fields: Record<string, string> = {}
-  if (itemType !== "plan" && itemType !== "promotion")
-    fields.itemType = "validation.required"
+  if (!isItemType(itemType)) fields.itemType = "validation.required"
   if (payerName.length < 2) fields.payerName = "validation.name_min"
   if (transactionRef.length < 4) fields.transactionRef = "validation.txn_min"
   if (!(receipt instanceof File)) fields.receipt = "validation.required"
   if (
     Object.keys(fields).length ||
     !(receipt instanceof File) ||
-    (itemType !== "plan" && itemType !== "promotion")
+    !isItemType(itemType)
   )
     throw fail(422, "validation", fields)
   const item = itemFor(user, itemType, itemId)
   if (pendingFor(user.id, itemId)) throw fail(409, "payment_pending")
+  const campaign =
+    itemType === "campaign" ? find(db.campaigns, itemId) : undefined
+  // The slots are taken only now, so check again that the pages still have room.
+  if (campaign) assertRoom(campaign)
   const upload = await storeUpload(receipt)
   const row = insert(db.payments, {
     id: newId("pay"),
@@ -169,6 +184,10 @@ route("POST", "/payments", async (c) => {
     status: "pending_review" as const,
     createdAt: nowIso(),
   })
+  if (campaign) {
+    campaign.status = "under_review"
+    delete campaign.rejectionReason
+  }
   return paymentSchema.parse(row)
 })
 
@@ -230,12 +249,11 @@ route("GET", "/me/promotions", (c) => {
   return myPromotionsSchema.parse({ items })
 })
 
-// `item` is `plan:<planId>` or `promotion:<promotionId>`.
+// `item` is `plan:<planId>`, `promotion:<promotionId>` or `campaign:<campaignId>`.
 route("GET", "/checkout", (c) => {
   const user = needUser(c)
   const [itemType, itemId = ""] = (c.query.get("item") ?? "").split(":")
-  if (itemType !== "plan" && itemType !== "promotion")
-    throw fail(404, "not_found")
+  if (!isItemType(itemType)) throw fail(404, "not_found")
   const item = itemFor(user, itemType, itemId)
   return checkoutSchema.parse({
     itemType,

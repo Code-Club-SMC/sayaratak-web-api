@@ -23,6 +23,9 @@ route("POST", "/events", async (c) => {
   const banner = find(db.banners, targetId)
   if (banner && type === "banner_click") banner.clicks += 1
   if (banner && type === "banner_view") banner.impressions += 1
+  const campaign = find(db.campaigns, targetId)
+  if (campaign && type === "banner_click") campaign.clicks += 1
+  if (campaign && type === "banner_view") campaign.impressions += 1
   const day = dayKey()
   const id = `ev-${targetId}-${day}`
   const row =

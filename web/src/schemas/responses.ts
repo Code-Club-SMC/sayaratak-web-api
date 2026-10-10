@@ -85,7 +85,7 @@ export const mapResponseSchema = z.object({
 }) // items is capped at 300
 
 export const checkoutSchema = z.object({
-  itemType: z.enum(["plan", "promotion"]),
+  itemType: z.enum(["plan", "promotion", "campaign"]),
   itemId: idSchema,
   itemLabel: bilingualSchema,
   amount: z.number().int(),

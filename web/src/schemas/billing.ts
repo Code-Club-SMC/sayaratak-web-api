@@ -38,7 +38,7 @@ export type Subscription = z.infer<typeof subscriptionSchema>
 export const paymentSchema = z.object({
   id: idSchema,
   userId: idSchema,
-  itemType: z.enum(["plan", "promotion"]),
+  itemType: z.enum(["plan", "promotion", "campaign"]),
   itemId: idSchema,
   itemLabel: bilingualSchema,
   amount: z.number().int(),

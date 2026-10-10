@@ -34,6 +34,7 @@ const fileOf: Record<string, string[]> = {
   reviews: ["listing", "error"],
   directory: ["directory"],
   auth: ["auth"],
+  ads: ["billing"],
   onboarding: ["onboarding"],
   dashboard: ["dashboard"],
   messages: ["dashboard"],

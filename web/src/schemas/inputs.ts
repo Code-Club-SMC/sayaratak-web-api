@@ -27,6 +27,7 @@ import {
   vehicleTypeSchema,
 } from "./listing"
 import { bannerCopySchema } from "./admin"
+import { adPageIdSchema, creativeSchema } from "./ads"
 import { extraFields } from "./listing-fields"
 import { targetTypeSchema } from "./review"
 import { interestSchema } from "./user"
@@ -323,3 +324,17 @@ export const pagePatchSchema = z
   })
   .partial()
 export const settingsPatchSchema = z.record(z.string(), z.unknown())
+
+// A self-serve banner campaign: the banner, its link, the pages, and 1 to 4 weeks from a start day (YYYY-MM-DD).
+export const campaignInputSchema = z.object({
+  creative: creativeSchema,
+  href: z.string().min(1, "validation.required"),
+  pages: z.array(adPageIdSchema).min(1, "validation.ad_pages"),
+  startDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "validation.required"),
+  weeks: z.number().int().min(1).max(4),
+})
+export const adPagePatchSchema = z.object({
+  weeklyPrice: z.number().int().min(0).optional(),
+  slots: z.number().int().min(1).max(10).optional(),
+  enabled: z.boolean().optional(),
+})

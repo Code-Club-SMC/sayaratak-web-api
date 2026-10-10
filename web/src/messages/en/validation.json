@@ -46,5 +46,8 @@
   "validation.chassis": "Use 5 to 25 letters, digits or dashes",
   "validation.year_order": "The first year must not be after the last",
   "validation.password_match": "The passwords do not match",
-  "validation.terms": "Accept the terms to continue"
+  "validation.terms": "Accept the terms to continue",
+  "validation.ad_photo": "Add a banner photo",
+  "validation.ad_target": "Choose where the banner opens",
+  "validation.ad_pages": "Choose at least one page"
 }

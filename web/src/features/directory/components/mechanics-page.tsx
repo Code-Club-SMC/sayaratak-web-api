@@ -29,7 +29,7 @@ export function MechanicsPage({
   )
   return (
     <div className="flex flex-col gap-4 pt-4 pb-12 md:gap-6 md:pt-6">
-      <BannerSlot placement="directory_top" />
+      <BannerSlot placement="directory_top" ad="directory_mechanics" />
       <PageHeader
         title={t("nav.mechanics")}
         count={list.data && formatNumber(list.data.total, locale)}

@@ -83,7 +83,7 @@ export const billingQueries = {
 export const useCreatePayment = () =>
   useApiMutation(
     (v: {
-      itemType: "plan" | "promotion"
+      itemType: "plan" | "promotion" | "campaign"
       itemId: string
       transactionRef: string
       payerName: string

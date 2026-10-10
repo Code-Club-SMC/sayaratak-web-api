@@ -67,6 +67,14 @@ export const keys = {
     site: ["content", "site"] as const,
     page: (slug: string) => ["content", "page", slug] as const,
     banners: (placement?: string) => ["content", "banners", placement] as const,
+    // The paid banner served on a page; public, picked at random per request.
+    ad: (page: string) => ["content", "ad", page] as const,
+  },
+  ads: {
+    all: ["ads"] as const,
+    pages: (f: Params) => ["ads", "pages", f] as const,
+    targets: ["ads", "targets"] as const,
+    mine: ["ads", "mine"] as const,
   },
   analytics: (range: string) => ["analytics", range] as const,
   admin: {

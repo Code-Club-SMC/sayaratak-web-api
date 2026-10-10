@@ -21,6 +21,7 @@ import {
   MapPinIcon,
   MegaphoneIcon,
   MessageSquareIcon,
+  PresentationIcon,
   SettingsIcon,
   ShieldCheckIcon,
   StarIcon,
@@ -62,6 +63,7 @@ const notifications = item(
   "unreadNotifications"
 )
 const billing = item("billing", "/billing", CreditCardIcon)
+const ads = item("ads", "/ads", PresentationIcon)
 const settings = item("settings", "/settings", SettingsIcon)
 const reviews = item("reviews", "/reviews", StarIcon)
 const analytics = item("analytics", "/analytics", BarChart3Icon)
@@ -100,6 +102,7 @@ export const navConfig: Record<Role, NavGroup[]> = {
         reviews,
         profile,
         verification,
+        ads,
         billing,
         notifications,
         settings,
@@ -117,6 +120,7 @@ export const navConfig: Record<Role, NavGroup[]> = {
         reviews,
         analytics,
         verification,
+        ads,
         billing,
         notifications,
         settings,
@@ -133,6 +137,7 @@ export const navConfig: Record<Role, NavGroup[]> = {
         reviews,
         analytics,
         verification,
+        ads,
         billing,
         notifications,
         settings,
@@ -168,6 +173,8 @@ export const navConfig: Record<Role, NavGroup[]> = {
       item("payments", "/payments", CircleDollarSignIcon, "pendingPayments"),
       item("plans", "/plans", LayersIcon),
       item("promotions", "/promotions", MegaphoneIcon),
+      item("ad_campaigns", "/ads", PresentationIcon),
+      item("ad_prices", "/ad-prices", TagsIcon),
     ]),
     group("catalog", [
       item("categories", "/categories", TagsIcon),

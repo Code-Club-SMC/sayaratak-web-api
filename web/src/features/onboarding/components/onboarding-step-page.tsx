@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useQuery } from "@tanstack/react-query"
 import { useRouter, useRouterState } from "@tanstack/react-router"
-import { FormProvider, useForm, type FieldValues } from "react-hook-form"
+import { FormProvider, type FieldValues } from "react-hook-form"
 import { z } from "zod"
 
 import { AuthShell } from "@/components/app/auth-shell"
@@ -30,6 +30,7 @@ import { onboardingDraftKey, type OnboardingRole } from "../schemas"
 import { OnboardingLayout } from "./onboarding-layout"
 import { PreviewSheetButton } from "./preview-sheet-button"
 import { StepPreview } from "./step-preview"
+import { useAppForm } from "@/hooks/use-app-form"
 
 const noSchema = z.object({})
 
@@ -56,7 +57,7 @@ export function OnboardingStepPage({
   const index = steps.findIndex((s) => s.id === stepId)
   const step = steps[index]
   const next = steps[index + 1]
-  const form = useForm<FieldValues>({
+  const form = useAppForm<FieldValues>({
     resolver: zodResolver(step?.schema ?? noSchema),
     values: { ...(me && step?.defaults?.(me)), ...stepValues(data, stepId) },
   })
@@ -206,9 +207,9 @@ export function OnboardingStepPage({
   return (
     <FormProvider {...form}>
       {role === "user" ? (
-        // The buyer's one step shares the sign up screen, so signing up and onboarding read as one flow.
+        // The buyer's one step shares the sign up screen's header and form column, so signing up and onboarding read as one flow.
         <AuthShell
-          panel="signup"
+          carousel={false}
           action={
             <Button type="button" variant="ghost" onClick={exit}>
               {t("onboarding.save_exit")}

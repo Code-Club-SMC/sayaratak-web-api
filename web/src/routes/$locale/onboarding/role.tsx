@@ -41,7 +41,7 @@ export const Route = createFileRoute("/$locale/onboarding/role")({
       : {},
   component: function Role() {
     return (
-      <AuthShell panel="signup">
+      <AuthShell carousel={false}>
         <RoleForm redirect={Route.useSearch().redirect} />
       </AuthShell>
     )

@@ -1,11 +1,12 @@
-import { useId, useRef } from "react"
+import { useId, useRef, useState } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { Controller, useForm } from "react-hook-form"
+import { Controller } from "react-hook-form"
 
 import { FieldError } from "@/components/app/field-error"
 import { FormField } from "@/components/app/form-field"
 import { PasswordHint } from "@/components/app/password-hint"
 import { PasswordInput } from "@/components/app/password-input"
+import { PasswordSuggest } from "@/components/app/password-suggest"
 import { ShellLink } from "@/components/app/shell-link"
 import { SubmitButton } from "@/components/app/submit-button"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -15,6 +16,7 @@ import { useEnterKeyHints } from "@/hooks/use-enter-key-hints"
 import type { ApiError } from "@/lib/api/client"
 import { useT } from "@/lib/i18n/use-t"
 import { signupFormSchema, type SignupForm as Values } from "../schemas"
+import { useAppForm } from "@/hooks/use-app-form"
 
 const linkClass = "font-medium text-primary underline"
 
@@ -34,10 +36,12 @@ export function SignupForm({
 }) {
   const { t } = useT()
   const hintId = useId()
+  // A suggested password shows in both fields.
+  const [shown, setShown] = useState(false)
   const termsId = useId()
   const root = useRef<HTMLFormElement>(null)
   useEnterKeyHints(root, "done")
-  const form = useForm<Values>({
+  const form = useAppForm<Values>({
     resolver: zodResolver(signupFormSchema),
     mode: "onTouched",
     defaultValues: values,
@@ -87,6 +91,8 @@ export function SignupForm({
             <PasswordInput
               {...control}
               {...form.register("password")}
+              shown={shown}
+              onShownChange={setShown}
               size="lg"
               autoComplete="new-password"
               aria-describedby={describe(control["aria-describedby"])}
@@ -94,6 +100,13 @@ export function SignupForm({
           )}
         </FormField>
         <PasswordHint id={hintId} value={form.watch("password")} />
+        <PasswordSuggest
+          onPick={(value) => {
+            form.setValue("password", value, { shouldValidate: true })
+            form.setValue("confirmPassword", value, { shouldValidate: true })
+            setShown(true)
+          }}
+        />
       </div>
       <FormField
         label={t("auth.confirm_password_label")}
@@ -103,6 +116,8 @@ export function SignupForm({
           <PasswordInput
             {...control}
             {...form.register("confirmPassword")}
+            shown={shown}
+            onShownChange={setShown}
             size="lg"
             autoComplete="new-password"
           />

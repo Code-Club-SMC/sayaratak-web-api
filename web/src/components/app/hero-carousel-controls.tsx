@@ -14,6 +14,7 @@ export function HeroCarouselControls({
   onSelect,
   onAdvance,
   onToggle,
+  className = "absolute end-3 top-3 z-20 md:end-4 md:top-4",
 }: {
   ids: string[]
   index: number
@@ -21,10 +22,17 @@ export function HeroCarouselControls({
   onSelect: (index: number) => void
   onAdvance: () => void
   onToggle: () => void
+  // Where the chip sits; the default is the hero's top end corner.
+  className?: string
 }) {
   const { t } = useT()
   return (
-    <div className="absolute end-3 top-3 z-20 flex items-center rounded-full bg-deep/70 px-1 text-deep-foreground md:end-4 md:top-4">
+    <div
+      className={cn(
+        "flex items-center rounded-full bg-deep/70 px-1 text-deep-foreground",
+        className
+      )}
+    >
       {ids.map((id, i) => (
         <button
           key={id}

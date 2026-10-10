@@ -411,6 +411,12 @@ img[data-fade] {
   animation-duration: var(--dur-sheet);
   animation-timing-function: var(--ease-standard);
 }
+/* The auth side panel cross fades its own headline and screenshot, so the page cross fade leaves it alone. */
+::view-transition-group(auth-panel),
+::view-transition-old(auth-panel),
+::view-transition-new(auth-panel) {
+  animation: none;
+}
 html[data-data-saver]::view-transition-group(*),
 html[data-data-saver]::view-transition-old(*),
 html[data-data-saver]::view-transition-new(*) {

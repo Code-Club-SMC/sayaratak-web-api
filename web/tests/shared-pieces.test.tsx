@@ -21,6 +21,8 @@ import { ListingPreview } from "@/components/app/listing-preview"
 import { ListingRail } from "@/components/app/listing-rail"
 import { LocationBlock } from "@/components/app/location-block"
 import { PasswordHint } from "@/components/app/password-hint"
+import { strongPassword } from "@/components/app/password-suggest"
+import { passwordSchema } from "@/schemas/fields"
 import { PhoneList, type PhoneRow } from "@/components/app/phone-list"
 import { PlansGrid } from "@/components/app/plans-grid"
 import { ProfilePreview } from "@/components/app/profile-preview"
@@ -318,7 +320,20 @@ describe("PasswordHint", () => {
     await swap(<PasswordHint value="abcdefg1" />)
     expect(rule("At least 8 characters").textContent).not.toContain("not met")
     expect(rule("A digit").textContent).not.toContain("not met")
-    expect(screen.getByRole("list").getAttribute("aria-live")).toBe("polite")
+    expect(
+      screen.getByRole("list").parentElement!.getAttribute("aria-live")
+    ).toBe("polite")
+    expect(screen.getByText("Good")).toBeTruthy()
+    await swap(<PasswordHint value="abcdefghijk1" />)
+    expect(screen.getByText("Strong")).toBeTruthy()
+  })
+
+  it("suggests a 16 character password that passes the rules", () => {
+    for (let i = 0; i < 20; i++) {
+      const pw = strongPassword()
+      expect(pw).toHaveLength(16)
+      expect(passwordSchema.safeParse(pw).success).toBe(true)
+    }
   })
 })
 
@@ -437,14 +452,23 @@ describe("focused flow pieces", () => {
     expect(onBack).toHaveBeenCalled()
   })
 
-  it("AuthShell has the form, the side panel copy and a language switch", async () => {
+  it("AuthShell has the form, the carousel and a language switch", async () => {
     await renderShell(
-      <AuthShell panel="login">
+      <AuthShell>
         <button>Go</button>
       </AuthShell>
     )
     expect(screen.getByRole("button", { name: "Go" })).toBeTruthy()
-    expect(screen.getByText("Welcome back to Sayaratak")).toBeTruthy()
+    expect(screen.getByText("See what is working")).toBeTruthy()
+    // Four slides, the second picked by its dot.
+    fireEvent.click(screen.getByRole("button", { name: "Go to slide 2" }))
+    expect(
+      screen
+        .getByText("A plan that grows with you")
+        .closest("[aria-hidden]")
+        ?.getAttribute("aria-hidden")
+    ).toBe("false")
+    expect(screen.getByRole("button", { name: /Pause/ })).toBeTruthy()
     await waitFor(() =>
       expect(screen.getByRole("link", { name: /Arabic/ })).toBeTruthy()
     )

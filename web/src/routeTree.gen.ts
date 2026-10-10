@@ -16,6 +16,7 @@ import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as LocalePublicRouteRouteImport } from './routes/$locale/_public/route'
 import { Route as LocaleAccountRouteRouteImport } from './routes/$locale/account/route'
 import { Route as LocaleAdminRouteRouteImport } from './routes/$locale/admin/route'
+import { Route as LocaleAuthRouteRouteImport } from './routes/$locale/auth/route'
 import { Route as LocaleDealerRouteRouteImport } from './routes/$locale/dealer/route'
 import { Route as LocaleMechanicRouteRouteImport } from './routes/$locale/mechanic/route'
 import { Route as LocalePostRouteImport } from './routes/$locale/post'
@@ -129,6 +130,11 @@ const LocaleAccountRouteRoute = LocaleAccountRouteRouteImport.update({
 const LocaleAdminRouteRoute = LocaleAdminRouteRouteImport.update({
   id: '/admin',
   path: '/admin',
+  getParentRoute: () => LocaleRouteRoute,
+} as any)
+const LocaleAuthRouteRoute = LocaleAuthRouteRouteImport.update({
+  id: '/auth',
+  path: '/auth',
   getParentRoute: () => LocaleRouteRoute,
 } as any)
 const LocaleDealerRouteRoute = LocaleDealerRouteRouteImport.update({
@@ -275,24 +281,24 @@ const LocaleAdminNotificationsRoute =
     getParentRoute: () => LocaleAdminRouteRoute,
   } as any)
 const LocaleAuthIndexRoute = LocaleAuthIndexRouteImport.update({
-  id: '/auth/',
-  path: '/auth/',
-  getParentRoute: () => LocaleRouteRoute,
+  id: '/',
+  path: '/',
+  getParentRoute: () => LocaleAuthRouteRoute,
 } as any)
 const LocaleAuthForgotRoute = LocaleAuthForgotRouteImport.update({
-  id: '/auth/forgot',
-  path: '/auth/forgot',
-  getParentRoute: () => LocaleRouteRoute,
+  id: '/forgot',
+  path: '/forgot',
+  getParentRoute: () => LocaleAuthRouteRoute,
 } as any)
 const LocaleAuthLoginRoute = LocaleAuthLoginRouteImport.update({
-  id: '/auth/login',
-  path: '/auth/login',
-  getParentRoute: () => LocaleRouteRoute,
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => LocaleAuthRouteRoute,
 } as any)
 const LocaleAuthSignupRoute = LocaleAuthSignupRouteImport.update({
-  id: '/auth/signup',
-  path: '/auth/signup',
-  getParentRoute: () => LocaleRouteRoute,
+  id: '/signup',
+  path: '/signup',
+  getParentRoute: () => LocaleAuthRouteRoute,
 } as any)
 const LocaleDealerIndexRoute = LocaleDealerIndexRouteImport.update({
   id: '/',
@@ -565,6 +571,7 @@ export interface FileRoutesByFullPath {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/$locale/account': typeof LocaleAccountRouteRouteWithChildren
   '/$locale/admin': typeof LocaleAdminRouteRouteWithChildren
+  '/$locale/auth': typeof LocaleAuthRouteRouteWithChildren
   '/$locale/dealer': typeof LocaleDealerRouteRouteWithChildren
   '/$locale/mechanic': typeof LocaleMechanicRouteRouteWithChildren
   '/$locale/workshop': typeof LocaleWorkshopRouteRouteWithChildren
@@ -737,6 +744,7 @@ export interface FileRoutesById {
   '/$locale/_public': typeof LocalePublicRouteRouteWithChildren
   '/$locale/account': typeof LocaleAccountRouteRouteWithChildren
   '/$locale/admin': typeof LocaleAdminRouteRouteWithChildren
+  '/$locale/auth': typeof LocaleAuthRouteRouteWithChildren
   '/$locale/dealer': typeof LocaleDealerRouteRouteWithChildren
   '/$locale/mechanic': typeof LocaleMechanicRouteRouteWithChildren
   '/$locale/workshop': typeof LocaleWorkshopRouteRouteWithChildren
@@ -827,6 +835,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/$locale/account'
     | '/$locale/admin'
+    | '/$locale/auth'
     | '/$locale/dealer'
     | '/$locale/mechanic'
     | '/$locale/workshop'
@@ -998,6 +1007,7 @@ export interface FileRouteTypes {
     | '/$locale/_public'
     | '/$locale/account'
     | '/$locale/admin'
+    | '/$locale/auth'
     | '/$locale/dealer'
     | '/$locale/mechanic'
     | '/$locale/workshop'
@@ -1137,6 +1147,13 @@ declare module '@tanstack/react-router' {
       path: '/admin'
       fullPath: '/$locale/admin'
       preLoaderRoute: typeof LocaleAdminRouteRouteImport
+      parentRoute: typeof LocaleRouteRoute
+    }
+    '/$locale/auth': {
+      id: '/$locale/auth'
+      path: '/auth'
+      fullPath: '/$locale/auth'
+      preLoaderRoute: typeof LocaleAuthRouteRouteImport
       parentRoute: typeof LocaleRouteRoute
     }
     '/$locale/dealer': {
@@ -1337,31 +1354,31 @@ declare module '@tanstack/react-router' {
     }
     '/$locale/auth/': {
       id: '/$locale/auth/'
-      path: '/auth'
+      path: '/'
       fullPath: '/$locale/auth/'
       preLoaderRoute: typeof LocaleAuthIndexRouteImport
-      parentRoute: typeof LocaleRouteRoute
+      parentRoute: typeof LocaleAuthRouteRoute
     }
     '/$locale/auth/forgot': {
       id: '/$locale/auth/forgot'
-      path: '/auth/forgot'
+      path: '/forgot'
       fullPath: '/$locale/auth/forgot'
       preLoaderRoute: typeof LocaleAuthForgotRouteImport
-      parentRoute: typeof LocaleRouteRoute
+      parentRoute: typeof LocaleAuthRouteRoute
     }
     '/$locale/auth/login': {
       id: '/$locale/auth/login'
-      path: '/auth/login'
+      path: '/login'
       fullPath: '/$locale/auth/login'
       preLoaderRoute: typeof LocaleAuthLoginRouteImport
-      parentRoute: typeof LocaleRouteRoute
+      parentRoute: typeof LocaleAuthRouteRoute
     }
     '/$locale/auth/signup': {
       id: '/$locale/auth/signup'
-      path: '/auth/signup'
+      path: '/signup'
       fullPath: '/$locale/auth/signup'
       preLoaderRoute: typeof LocaleAuthSignupRouteImport
-      parentRoute: typeof LocaleRouteRoute
+      parentRoute: typeof LocaleAuthRouteRoute
     }
     '/$locale/dealer/': {
       id: '/$locale/dealer/'
@@ -1798,6 +1815,24 @@ const LocaleAdminRouteRouteChildren: LocaleAdminRouteRouteChildren = {
 const LocaleAdminRouteRouteWithChildren =
   LocaleAdminRouteRoute._addFileChildren(LocaleAdminRouteRouteChildren)
 
+interface LocaleAuthRouteRouteChildren {
+  LocaleAuthForgotRoute: typeof LocaleAuthForgotRoute
+  LocaleAuthLoginRoute: typeof LocaleAuthLoginRoute
+  LocaleAuthSignupRoute: typeof LocaleAuthSignupRoute
+  LocaleAuthIndexRoute: typeof LocaleAuthIndexRoute
+}
+
+const LocaleAuthRouteRouteChildren: LocaleAuthRouteRouteChildren = {
+  LocaleAuthForgotRoute: LocaleAuthForgotRoute,
+  LocaleAuthLoginRoute: LocaleAuthLoginRoute,
+  LocaleAuthSignupRoute: LocaleAuthSignupRoute,
+  LocaleAuthIndexRoute: LocaleAuthIndexRoute,
+}
+
+const LocaleAuthRouteRouteWithChildren = LocaleAuthRouteRoute._addFileChildren(
+  LocaleAuthRouteRouteChildren,
+)
+
 interface LocaleDealerRouteRouteChildren {
   LocaleDealerAnalyticsRoute: typeof LocaleDealerAnalyticsRoute
   LocaleDealerMessagesRoute: typeof LocaleDealerMessagesRoute
@@ -1897,15 +1932,12 @@ interface LocaleRouteRouteChildren {
   LocalePublicRouteRoute: typeof LocalePublicRouteRouteWithChildren
   LocaleAccountRouteRoute: typeof LocaleAccountRouteRouteWithChildren
   LocaleAdminRouteRoute: typeof LocaleAdminRouteRouteWithChildren
+  LocaleAuthRouteRoute: typeof LocaleAuthRouteRouteWithChildren
   LocaleDealerRouteRoute: typeof LocaleDealerRouteRouteWithChildren
   LocaleMechanicRouteRoute: typeof LocaleMechanicRouteRouteWithChildren
   LocaleWorkshopRouteRoute: typeof LocaleWorkshopRouteRouteWithChildren
   LocalePostRoute: typeof LocalePostRoute
-  LocaleAuthForgotRoute: typeof LocaleAuthForgotRoute
-  LocaleAuthLoginRoute: typeof LocaleAuthLoginRoute
-  LocaleAuthSignupRoute: typeof LocaleAuthSignupRoute
   LocaleOnboardingRoleRoute: typeof LocaleOnboardingRoleRoute
-  LocaleAuthIndexRoute: typeof LocaleAuthIndexRoute
   LocaleOnboardingIndexRoute: typeof LocaleOnboardingIndexRoute
   LocaleOnboardingRoleStepRoute: typeof LocaleOnboardingRoleStepRoute
 }
@@ -1914,15 +1946,12 @@ const LocaleRouteRouteChildren: LocaleRouteRouteChildren = {
   LocalePublicRouteRoute: LocalePublicRouteRouteWithChildren,
   LocaleAccountRouteRoute: LocaleAccountRouteRouteWithChildren,
   LocaleAdminRouteRoute: LocaleAdminRouteRouteWithChildren,
+  LocaleAuthRouteRoute: LocaleAuthRouteRouteWithChildren,
   LocaleDealerRouteRoute: LocaleDealerRouteRouteWithChildren,
   LocaleMechanicRouteRoute: LocaleMechanicRouteRouteWithChildren,
   LocaleWorkshopRouteRoute: LocaleWorkshopRouteRouteWithChildren,
   LocalePostRoute: LocalePostRoute,
-  LocaleAuthForgotRoute: LocaleAuthForgotRoute,
-  LocaleAuthLoginRoute: LocaleAuthLoginRoute,
-  LocaleAuthSignupRoute: LocaleAuthSignupRoute,
   LocaleOnboardingRoleRoute: LocaleOnboardingRoleRoute,
-  LocaleAuthIndexRoute: LocaleAuthIndexRoute,
   LocaleOnboardingIndexRoute: LocaleOnboardingIndexRoute,
   LocaleOnboardingRoleStepRoute: LocaleOnboardingRoleStepRoute,
 }

@@ -1,6 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router"
 
-import { AuthShell } from "@/components/app/auth-shell"
 import { LoginForm } from "@/features/auth/components/login-form"
 import { authPage } from "@/features/auth/auth-page"
 import { useAuthDone } from "@/features/auth/use-auth-done"
@@ -12,9 +11,5 @@ export const Route = createFileRoute("/$locale/auth/login")({
 
 function LoginPage() {
   const { redirect } = Route.useSearch()
-  return (
-    <AuthShell panel="login">
-      <LoginForm onDone={useAuthDone(redirect)} redirect={redirect} />
-    </AuthShell>
-  )
+  return <LoginForm onDone={useAuthDone(redirect)} redirect={redirect} />
 }

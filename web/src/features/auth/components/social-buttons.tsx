@@ -17,6 +17,7 @@ export function SocialButtons({
       <Button
         type="button"
         variant="outline"
+        size="lg"
         disabled={disabled}
         onClick={() => onSelect("google")}
       >
@@ -26,6 +27,7 @@ export function SocialButtons({
       <Button
         type="button"
         variant="outline"
+        size="lg"
         disabled={disabled}
         onClick={() => onSelect("facebook")}
       >

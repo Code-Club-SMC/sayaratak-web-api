@@ -1,16 +1,17 @@
-import { useId, useRef } from "react"
+import { useId, useRef, useState } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
 
 import { FormField } from "@/components/app/form-field"
 import { PasswordHint } from "@/components/app/password-hint"
 import { PasswordInput } from "@/components/app/password-input"
+import { PasswordSuggest } from "@/components/app/password-suggest"
 import { SubmitButton } from "@/components/app/submit-button"
 import { useEnterKeyHints } from "@/hooks/use-enter-key-hints"
 import { useT } from "@/lib/i18n/use-t"
 import { useResetPassword } from "../queries"
 import { newPasswordFormSchema, type NewPasswordForm } from "../schemas"
 import { AuthHeading } from "./auth-heading"
+import { useAppForm } from "@/hooks/use-app-form"
 
 // The last step of a reset: the token came from a verified code.
 export function NewPasswordForm({
@@ -25,9 +26,11 @@ export function NewPasswordForm({
   const { t } = useT()
   const reset = useResetPassword()
   const hintId = useId()
+  // A suggested password shows in both fields.
+  const [shown, setShown] = useState(false)
   const root = useRef<HTMLFormElement>(null)
   useEnterKeyHints(root, "done")
-  const form = useForm<NewPasswordForm>({
+  const form = useAppForm<NewPasswordForm>({
     resolver: zodResolver(newPasswordFormSchema),
     mode: "onTouched",
     defaultValues: { password: "", confirmPassword: "" },
@@ -62,6 +65,8 @@ export function NewPasswordForm({
               <PasswordInput
                 {...control}
                 {...form.register("password")}
+                shown={shown}
+                onShownChange={setShown}
                 size="lg"
                 autoFocus
                 autoComplete="new-password"
@@ -72,6 +77,13 @@ export function NewPasswordForm({
             )}
           </FormField>
           <PasswordHint id={hintId} value={form.watch("password")} />
+          <PasswordSuggest
+            onPick={(value) => {
+              form.setValue("password", value, { shouldValidate: true })
+              form.setValue("confirmPassword", value, { shouldValidate: true })
+              setShown(true)
+            }}
+          />
         </div>
         <FormField
           label={t("auth.confirm_password_label")}
@@ -81,6 +93,8 @@ export function NewPasswordForm({
             <PasswordInput
               {...control}
               {...form.register("confirmPassword")}
+              shown={shown}
+              onShownChange={setShown}
               size="lg"
               autoComplete="new-password"
             />

@@ -1,27 +1,23 @@
 import type { ReactNode } from "react"
 
-import { useT } from "@/lib/i18n/use-t"
-import { usePrefs } from "@/lib/prefs"
+import { AuthCarousel } from "./auth-panel/auth-carousel"
 import { BrandLogo } from "./brand-logo"
 import { LanguageSwitcher } from "./language-switcher"
 
-export type AuthPanel = "login" | "signup" | "reset"
-
-// Sign in, sign up, password reset and the first onboarding pages: the form on the page background (so fields are white), and from lg a white side panel with a headline and a photo that runs off its end and bottom edges. The panel is `display: none` below lg, so its lazy photo never loads on a phone.
+// Sign in, sign up, password reset and the first onboarding pages: the form on the page background (so fields are white), and from lg a light green side panel with the product carousel (not on onboarding). The panel is `display: none` below lg, so its one photo never loads on a phone. The form sits at a fixed top (aligned with the headline), so a taller form never moves it. The auth routes share one shell through their layout route, so the carousel keeps running between them; its own view-transition-name keeps the page cross fade off it.
 export function AuthShell({
-  panel,
   action,
+  carousel = true,
   children,
 }: {
-  panel: AuthPanel
+  // Onboarding has no side panel: its form is centred on the page.
+  carousel?: boolean
   // Sits next to the language switch, e.g. onboarding's Save and exit.
   action?: ReactNode
   children: ReactNode
 }) {
-  const { t } = useT()
-  const { dataSaver } = usePrefs()
   return (
-    <div className="grid min-h-dvh lg:grid-cols-2">
+    <div className={`grid min-h-dvh ${carousel ? "lg:grid-cols-2" : ""}`}>
       <div className="flex flex-col px-4 md:px-6">
         <header className="flex h-16 items-center justify-between gap-3">
           <BrandLogo />
@@ -30,30 +26,15 @@ export function AuthShell({
             {action}
           </div>
         </header>
-        <main className="mx-auto flex w-full max-w-sm flex-1 flex-col gap-6 pt-8 pb-12 lg:justify-center">
+        <main className="mx-auto flex w-full max-w-sm flex-1 flex-col gap-6 pt-8 pb-12">
           {children}
         </main>
       </div>
-      <aside
-        aria-hidden="true"
-        className="sticky top-0 hidden h-dvh flex-col gap-4 overflow-hidden bg-card ps-12 pt-24 lg:flex"
-      >
-        <p className="max-w-lg pe-12 text-hero font-semibold">
-          {t(`auth.panel_${panel}_title`)}
-        </p>
-        <p className="max-w-lg pe-12 text-lead text-muted-foreground">
-          {t(`auth.panel_${panel}_text`)}
-        </p>
-        {!dataSaver && (
-          <img
-            src={`/images/auth/${panel}.webp`}
-            alt=""
-            loading="lazy"
-            decoding="async"
-            className="mt-8 min-h-0 w-full flex-1 rounded-ss-2xl object-cover"
-          />
-        )}
-      </aside>
+      {carousel && (
+        <aside className="sticky top-0 hidden h-dvh flex-col overflow-hidden bg-[color-mix(in_srgb,var(--primary)_14%,var(--card))] [view-transition-name:auth-panel] lg:flex">
+          <AuthCarousel />
+        </aside>
+      )}
     </div>
   )
 }

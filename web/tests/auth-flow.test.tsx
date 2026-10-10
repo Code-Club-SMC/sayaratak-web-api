@@ -78,6 +78,22 @@ describe("LoginForm", () => {
     await waitFor(() => expect(onDone).toHaveBeenCalled())
   })
 
+  it("stays quiet when an empty field loses focus, and flags it on submit", async () => {
+    await renderShell(<LoginForm onDone={vi.fn()} />)
+    const email = screen.getByLabelText("Email")
+    fireEvent.focus(email)
+    fireEvent.blur(email)
+    await new Promise((r) => setTimeout(r, 50))
+    expect(screen.queryByText("Enter a valid email address")).toBeNull()
+    expect(email.getAttribute("aria-invalid")).not.toBe("true")
+    type("Email", "abc")
+    fireEvent.blur(email)
+    expect(await screen.findByText("Enter a valid email address")).toBeTruthy()
+    type("Email", "")
+    fireEvent.click(screen.getByRole("button", { name: "Log in" }))
+    expect(await screen.findByText("Enter a valid email address")).toBeTruthy()
+  })
+
   it("says so on a wrong password and links to sign up and forgot", async () => {
     await renderShell(<LoginForm onDone={vi.fn()} redirect="/en/post" />)
     type("Email", "dealer@demo.sy")
@@ -112,6 +128,21 @@ describe("SignupFlow", () => {
     fireEvent.click(screen.getByRole("button", { name: "Create account" }))
     expect(await screen.findByText("The passwords do not match")).toBeTruthy()
     expect(screen.getByText("Accept the terms to continue")).toBeTruthy()
+  })
+
+  it("suggests a strong password, fills both fields and shows it", async () => {
+    await renderShell(<SignupFlow onDone={vi.fn()} />)
+    fireEvent.click(
+      screen.getByRole("button", { name: "Suggest a strong password" })
+    )
+    const pw = screen.getByLabelText<HTMLInputElement>("Password")
+    const confirm = screen.getByLabelText<HTMLInputElement>("Confirm password")
+    await waitFor(() => expect(pw.value).toHaveLength(16))
+    expect(confirm.value).toBe(pw.value)
+    expect(pw.type).toBe("text")
+    expect(confirm.type).toBe("text")
+    expect(await screen.findByText("Strong")).toBeTruthy()
+    expect(screen.getByRole("button", { name: "Copy password" })).toBeTruthy()
   })
 
   it("creates the account only after the code, then shows Email verified", async () => {

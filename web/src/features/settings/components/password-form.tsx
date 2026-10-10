@@ -1,10 +1,10 @@
 import { useId, useState } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
 
 import { FormField } from "@/components/app/form-field"
 import { PasswordHint } from "@/components/app/password-hint"
 import { PasswordInput } from "@/components/app/password-input"
+import { PasswordSuggest } from "@/components/app/password-suggest"
 import { SubmitButton } from "@/components/app/submit-button"
 import { useChangePassword } from "@/features/auth/queries"
 import { useT } from "@/lib/i18n/use-t"
@@ -13,14 +13,17 @@ import {
   passwordFormSchema,
   type PasswordForm,
 } from "../schemas"
+import { useAppForm } from "@/hooks/use-app-form"
 
 // Changes the password, or creates one for an account that signed up with Google or Facebook (no current password to ask for).
 export function PasswordForm({ hasPassword }: { hasPassword: boolean }) {
   const { t } = useT()
   const hintId = useId()
+  // A suggested password shows as text.
+  const [shown, setShown] = useState(false)
   const change = useChangePassword()
   const [saved, setSaved] = useState(false)
-  const form = useForm<PasswordForm>({
+  const form = useAppForm<PasswordForm>({
     resolver: zodResolver(
       hasPassword ? passwordFormSchema : newPasswordFormSchema
     ),
@@ -71,6 +74,8 @@ export function PasswordForm({ hasPassword }: { hasPassword: boolean }) {
           <PasswordInput
             {...c}
             {...form.register("newPassword")}
+            shown={shown}
+            onShownChange={setShown}
             aria-describedby={[c["aria-describedby"], hintId]
               .filter(Boolean)
               .join(" ")}
@@ -79,6 +84,12 @@ export function PasswordForm({ hasPassword }: { hasPassword: boolean }) {
         )}
       </FormField>
       <PasswordHint id={hintId} value={form.watch("newPassword")} />
+      <PasswordSuggest
+        onPick={(value) => {
+          form.setValue("newPassword", value, { shouldValidate: true })
+          setShown(true)
+        }}
+      />
       {change.isError && change.error.code !== "invalid_credentials" && (
         <p role="alert" className="text-ui text-destructive">
           {t("settings.password_error")}

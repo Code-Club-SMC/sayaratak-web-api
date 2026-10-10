@@ -117,11 +117,16 @@ describe("SetupChecklist", () => {
     await act(() => client.invalidateQueries())
     await waitFor(() => expect(screen.queryByRole("heading")).toBeNull())
     // A rejected request opens the item again.
-    db.verifications.at(-1)!.status = "rejected"
+    Object.assign(db.verifications.at(-1)!, {
+      status: "rejected",
+      rejectionReason: "The document is not readable",
+    })
     await act(() => client.invalidateQueries())
-    expect(
-      await screen.findByRole("link", { name: /Request verification/ })
-    ).toBeTruthy()
+    const again = await screen.findByRole("link", {
+      name: /Request verification again/,
+    })
+    expect(again.textContent).toContain("Reason: The document is not readable")
+    expect(again.getAttribute("href")).toBe("/en/workshop/verification")
   })
 
   it("stays hidden for the session once dismissed", async () => {

@@ -22,6 +22,7 @@
   "dashboard.setup_specializations": "اختر تخصصاتك",
   "dashboard.setup_portfolio": "أضف صور أعمالك",
   "dashboard.setup_verification": "اطلب التوثيق",
+  "dashboard.setup_verification_again": "اطلب التوثيق مرة أخرى",
   "dashboard.menu": "قائمة لوحة التحكم",
   "dashboard.toggle_menu": "إظهار القائمة أو إخفاؤها",
   "dashboard.role_user": "حساب شخصي",

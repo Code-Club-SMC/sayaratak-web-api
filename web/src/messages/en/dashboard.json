@@ -22,6 +22,7 @@
   "dashboard.setup_specializations": "Choose your specializations",
   "dashboard.setup_portfolio": "Add portfolio photos",
   "dashboard.setup_verification": "Request verification",
+  "dashboard.setup_verification_again": "Request verification again",
   "dashboard.menu": "Dashboard menu",
   "dashboard.toggle_menu": "Show or hide the menu",
   "dashboard.role_user": "Personal account",

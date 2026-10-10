@@ -24,6 +24,11 @@ export function SetupChecklist() {
     business.data,
     verification.data?.status === "pending"
   )
+  // A turned-down request reopens the item; its reason shows so the owner knows what to fix.
+  const rejected =
+    verification.data?.status === "rejected" && !business.data.verified
+      ? verification.data
+      : undefined
   const done = items.filter((i) => i.done).length
   if (done === items.length) return null
   return (
@@ -59,7 +64,23 @@ export function SetupChecklist() {
                 strokeWidth={1.5}
                 aria-hidden="true"
               />
-              <span>{t(item.key)}</span>
+              {rejected && item.key === "dashboard.setup_verification" ? (
+                <span className="flex flex-col">
+                  <span>{t("dashboard.setup_verification_again")}</span>
+                  {rejected.rejectionReason && (
+                    <span
+                      dir="auto"
+                      className="text-caption font-normal text-muted-foreground"
+                    >
+                      {t("verification.rejected_reason", {
+                        reason: rejected.rejectionReason,
+                      })}
+                    </span>
+                  )}
+                </span>
+              ) : (
+                <span>{t(item.key)}</span>
+              )}
               {item.done && (
                 <span className="sr-only">{t("dashboard.setup_done")}</span>
               )}

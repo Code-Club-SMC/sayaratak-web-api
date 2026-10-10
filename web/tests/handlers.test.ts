@@ -60,6 +60,16 @@ const carValues = {
 const car = toListingInput(carValues)
 const file = (name: string, size: number, type = "image/png") =>
   new File([new Uint8Array(size)], name, { type })
+const receipt = (itemType: string, itemId: string, extra = {}) => {
+  const form = new FormData()
+  form.set("itemType", itemType)
+  form.set("itemId", itemId)
+  form.set("transactionRef", "TX123456")
+  form.set("payerName", "Omar Hassan")
+  form.set("receipt", file("r.png", 100))
+  for (const [k, v] of Object.entries(extra)) form.set(k, String(v))
+  return form
+}
 
 beforeEach(() => {
   resetDb()
@@ -809,16 +819,6 @@ describe("billing, promotions and payments", () => {
       ).body.code
     ).toBe("no_credits")
   })
-  const receipt = (itemType: string, itemId: string, extra = {}) => {
-    const form = new FormData()
-    form.set("itemType", itemType)
-    form.set("itemId", itemId)
-    form.set("transactionRef", "TX123456")
-    form.set("payerName", "Omar Hassan")
-    form.set("receipt", file("r.png", 100))
-    for (const [k, v] of Object.entries(extra)) form.set(k, String(v))
-    return form
-  }
   it("a receipt creates a pending payment; approval activates the plan and notifies", async () => {
     const paid = await call("POST", "/payments", {
       as: "u-1",
@@ -1613,8 +1613,23 @@ describe("banner ads", () => {
       { as }
     )
     expect(checkout.body.amount).toBe(260_000)
+    const paid = await call("POST", "/payments", {
+      as,
+      form: receipt("campaign", made.body.id),
+    })
+    expect(paid.status).toBe(200)
+    // Under review now: the checkout shows the pending state and a second receipt is refused as pending.
+    const after = await call("GET", `/checkout?item=campaign:${made.body.id}`, {
+      as,
+    })
+    expect(after.body.pendingPaymentId).toBe(paid.body.id)
+    const again = await call("POST", "/payments", {
+      as,
+      form: receipt("campaign", made.body.id),
+    })
+    expect(again.body.code).toBe("payment_pending")
     const row = db.campaigns.find((c) => c.id === made.body.id)!
-    row.status = "under_review"
+    expect(row.status).toBe("under_review")
     row.startsAt = new Date(Date.now() - 1000).toISOString()
     expect((await call("GET", "/ads?page=search_parts")).body).toEqual([])
     await call("POST", `/admin/campaigns/${row.id}/approve`, { as: "u-admin" })

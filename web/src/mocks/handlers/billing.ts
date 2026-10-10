@@ -114,7 +114,12 @@ function itemFor(user: UserRow, itemType: ItemType, itemId: string) {
     const campaign = find(db.campaigns, itemId)
     if (!campaign) throw fail(404, "not_found")
     if (campaign.ownerId !== user.id) throw fail(403, "forbidden")
-    if (campaign.status !== "pending_payment") throw fail(409, "exists")
+    // Under review once its receipt is sent: the checkout then shows the pending state, and a second send gets `payment_pending`.
+    if (
+      campaign.status !== "pending_payment" &&
+      campaign.status !== "under_review"
+    )
+      throw fail(409, "exists")
     return {
       label: { ar: "حملة بانر إعلاني", en: "Banner campaign" },
       amount: campaign.amount,

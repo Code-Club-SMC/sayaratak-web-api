@@ -1,16 +1,14 @@
 import { useQuery } from "@tanstack/react-query"
-import { Controller, useFormContext, useWatch } from "react-hook-form"
+import { Controller, useFormContext } from "react-hook-form"
 
 import { CoverUpload } from "@/components/app/cover-upload"
 import { FieldError } from "@/components/app/field-error"
 import { FormField } from "@/components/app/form-field"
 import { SelectInput } from "@/components/app/select-input"
 import { Input } from "@/components/ui/input"
-import { meQuery } from "@/features/auth/me-query"
 import { useT } from "@/lib/i18n/use-t"
 import { adsQueries } from "../queries"
 import type { CampaignForm } from "../schemas"
-import { BannerPreview } from "./banner-preview"
 
 const langs = ["en", "ar"] as const
 
@@ -19,8 +17,6 @@ export function CreativeStep() {
   const { t, locale } = useT()
   const { control, register, formState } = useFormContext<CampaignForm>()
   const targets = useQuery(adsQueries.targets).data ?? []
-  const me = useQuery(meQuery).data
-  const [cover, copy] = useWatch({ control, name: ["cover", "copy"] })
   const errors = formState.errors
   return (
     <div className="flex flex-col gap-6">
@@ -113,20 +109,6 @@ export function CreativeStep() {
           </FormField>
         )}
       />
-      {cover && (
-        <section className="flex flex-col gap-3">
-          <h2 className="text-ui font-semibold">{t("ads.preview_title")}</h2>
-          {langs.map((lang) => (
-            <BannerPreview
-              key={lang}
-              lang={lang}
-              imageUrl={cover.url}
-              eyebrow={me?.fullName ?? ""}
-              copy={copy[lang]}
-            />
-          ))}
-        </section>
-      )}
     </div>
   )
 }

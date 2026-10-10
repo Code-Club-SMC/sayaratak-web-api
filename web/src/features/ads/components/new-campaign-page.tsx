@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useRouter } from "@tanstack/react-router"
-import { FormProvider, useForm } from "react-hook-form"
+import { FormProvider } from "react-hook-form"
 
 import { PageHeader } from "@/components/app/page-header"
 import { StepIndicator } from "@/components/app/step-indicator"
@@ -16,10 +16,12 @@ import { dashboardPath, localeHref } from "@/lib/navigation"
 import type { User } from "@/schemas/user"
 import { useCreateCampaign } from "../queries"
 import { campaignFormSchema, stepFields, type CampaignForm } from "../schemas"
+import { CreativePreview } from "./creative-preview"
 import { CreativeStep } from "./creative-step"
 import { DatesStep, toDay } from "./dates-step"
 import { PagesStep } from "./pages-step"
 import { ReviewStep } from "./review-step"
+import { useAppForm } from "@/hooks/use-app-form"
 
 const steps = [CreativeStep, DatesStep, PagesStep, ReviewStep]
 const titles = [
@@ -43,7 +45,7 @@ export function NewCampaignPage({ role }: { role: User["role"] }) {
   const create = useCreateCampaign()
   const [step, setStep] = useState(0)
   usePageTitle(t("ads.new_title"))
-  const form = useForm<CampaignForm>({
+  const form = useAppForm<CampaignForm>({
     resolver: zodResolver(campaignFormSchema),
     mode: "onTouched",
     defaultValues: {
@@ -83,14 +85,28 @@ export function NewCampaignPage({ role }: { role: User["role"] }) {
     }
   })
   return (
-    <div className="flex max-w-2xl flex-col gap-6">
+    <div className="flex flex-col gap-6">
       <PageHeader title={t("ads.new_title")} />
-      <StepIndicator current={step + 1} total={steps.length} />
-      <h2 className="text-title font-semibold">{t(titles[step] ?? "")}</h2>
       <FormProvider {...form}>
-        <form noValidate onSubmit={submit} className="flex flex-col gap-6">
-          <Step />
-          <div className="flex items-center gap-3">
+        {/* Below xl: steps, preview, buttons. From xl the preview is a sticky column beside the steps and buttons. */}
+        <form
+          noValidate
+          onSubmit={submit}
+          className="grid items-start gap-6 xl:grid-cols-[minmax(0,42rem)_minmax(0,1fr)] xl:gap-x-12"
+        >
+          <div className="flex max-w-2xl flex-col gap-6">
+            <StepIndicator current={step + 1} total={steps.length} />
+            <h2 className="text-title font-semibold">
+              {t(titles[step] ?? "")}
+            </h2>
+            <Step />
+          </div>
+          {step === 0 && (
+            <div className="xl:sticky xl:top-20 xl:col-start-2 xl:row-span-2 xl:row-start-1">
+              <CreativePreview />
+            </div>
+          )}
+          <div className="flex max-w-2xl items-center gap-3 xl:col-start-1">
             {step > 0 && (
               <Button
                 type="button"

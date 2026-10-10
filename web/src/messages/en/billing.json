@@ -134,6 +134,7 @@
   "ads.per_week": "week",
   "ads.photo_label": "Banner photo",
   "ads.preview_title": "Preview",
+  "ads.preview_empty": "Add a photo to see your banner in English and Arabic.",
   "ads.prices_hint": "Weekly price and how many advertisers share each page. Changes apply to new campaigns.",
   "ads.reject": "Reject",
   "ads.rejected": "Campaign rejected",

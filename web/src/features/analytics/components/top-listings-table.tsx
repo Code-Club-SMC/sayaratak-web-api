@@ -1,9 +1,10 @@
 import { useId } from "react"
 import { Link } from "@tanstack/react-router"
-import { CarIcon } from "lucide-react"
+import { CarIcon, PencilIcon } from "lucide-react"
 
 import { EmptyState } from "@/components/app/empty-state"
 import { MediaImage } from "@/components/app/media-image"
+import { buttonVariants } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 import {
   Table,
@@ -21,7 +22,7 @@ import type { Analytics } from "@/schemas/responses"
 const conversion = (contacts: number, views: number) =>
   views ? Math.round((contacts / views) * 100) : undefined
 
-// The ten listings with the most views in the period. The title opens the public page.
+// The ten listings with the most views in the period. The title opens the public page, Edit opens the editor.
 export function TopListingsTable({
   rows,
   loading,
@@ -62,6 +63,9 @@ export function TopListingsTable({
               <TableHead className="hidden text-end md:table-cell">
                 {t("analytics.col_conversion")}
               </TableHead>
+              <TableHead>
+                <span className="sr-only">{t("manager.col_actions")}</span>
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -69,7 +73,7 @@ export function TopListingsTable({
               const rate = conversion(row.contacts, row.views)
               return (
                 <TableRow key={row.id}>
-                  <TableCell>
+                  <TableCell className="whitespace-normal md:whitespace-nowrap">
                     <div className="flex min-w-0 items-center gap-3">
                       <MediaImage
                         src={row.coverUrl}
@@ -81,7 +85,7 @@ export function TopListingsTable({
                         <Link
                           to="/$locale/listing/$slug"
                           params={{ locale, slug: row.slug }}
-                          className="truncate text-ui font-medium hover:text-primary md:max-w-xs"
+                          className="text-ui font-medium hover:text-primary md:max-w-xs md:truncate"
                         >
                           <bdi>{row.title}</bdi>
                         </Link>
@@ -111,6 +115,21 @@ export function TopListingsTable({
                     ) : (
                       <bdi dir="ltr">{formatNumber(rate, locale)}%</bdi>
                     )}
+                  </TableCell>
+                  <TableCell className="text-end">
+                    <Link
+                      to="/$locale/dealer/inventory/$id/edit"
+                      params={{ locale, id: row.id }}
+                      aria-label={t("analytics.edit_listing", {
+                        name: row.title,
+                      })}
+                      className={buttonVariants({ variant: "ghost" })}
+                    >
+                      <PencilIcon aria-hidden="true" />
+                      <span className="hidden md:inline">
+                        {t("common.edit")}
+                      </span>
+                    </Link>
                   </TableCell>
                 </TableRow>
               )

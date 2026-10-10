@@ -2,6 +2,7 @@ import { Suspense } from "react"
 import { fireEvent, screen, waitFor, within } from "@testing-library/react"
 import { beforeEach, describe, expect, it, vi } from "vitest"
 
+import { ContactActions } from "@/components/app/contact-actions"
 import { AnalyticsPage } from "@/features/analytics/components/analytics-page"
 import { analyticsSearchSchema } from "@/features/analytics/schemas"
 import { WorkshopProfilePage } from "@/features/directory/components/workshop-profile-page"
@@ -140,13 +141,53 @@ describe("dealership analytics", () => {
     expect(cells[0]).toContain(a!.title)
     // Below md the same numbers sit under the title.
     expect(cells[0]).toContain("25 views, 5 contacts, 20% conversion")
-    expect(cells.slice(1)).toEqual(["25", "5", "20%"])
+    expect(cells.slice(1, 4)).toEqual(["25", "5", "20%"])
+    // Edit opens the listing in the dealer editor.
+    expect(
+      first.getByRole("link", { name: `Edit ${a!.title}` }).getAttribute("href")
+    ).toBe(`/en/dealer/inventory/${a!.id}/edit`)
     expect(within(rows[1]!).getByRole("link", { name: b!.title })).toBeTruthy()
     // A listing nobody opened has no conversion.
     const unseen = rows.find(
       (r) => within(r).getAllByRole("cell")[1]?.textContent === "0"
     )
     expect(within(unseen!).getByLabelText("No views yet")).toBeTruthy()
+  })
+
+  it("a call and a WhatsApp tap on a public listing raise its contacts", async () => {
+    const [a] = dealerListings()
+    setEvents(
+      [dealerBiz().id, ...dealerListings().map((l) => l.id)],
+      [[a!.id, 0, { view: 10 }]]
+    )
+    const visit = await renderShell(
+      <ContactActions
+        target={{ type: "listing", id: a!.id, title: a!.title }}
+        phone="+249912345678"
+        whatsapp="+249912345678"
+      />
+    )
+    fireEvent.click(screen.getByRole("button", { name: "Call" }))
+    fireEvent.click(screen.getByRole("link", { name: "WhatsApp" }))
+    await waitFor(() =>
+      expect(db.events.find((e) => e.targetId === a!.id)?.counts).toMatchObject(
+        { phone_click: 1, whatsapp_click: 1 }
+      )
+    )
+    visit.unmount()
+    await renderShell(<AnalyticsPage role="dealership" />, {
+      role: "dealership",
+      path: "/en/dealer/analytics",
+    })
+    const table = await screen.findByRole("table")
+    const row = within(table).getAllByRole("row")[1]!
+    expect(within(row).getByRole("link", { name: a!.title })).toBeTruthy()
+    expect(
+      within(row)
+        .getAllByRole("cell")
+        .slice(1, 4)
+        .map((c) => c.textContent)
+    ).toEqual(["10", "2", "20%"])
   })
 
   it("a failed load shows one error with Retry", async () => {

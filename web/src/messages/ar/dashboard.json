@@ -210,6 +210,7 @@
   "analytics.col_contacts": "التواصل",
   "analytics.col_conversion": "نسبة التواصل",
   "analytics.no_conversion": "لا مشاهدات بعد",
+  "analytics.edit_listing": "تعديل {{name}}",
   "analytics.load_error": "تعذّر تحميل الإحصائيات",
   "analytics.row_summary": "{{views}} مشاهدة، {{contacts}} تواصل، نسبة التواصل {{rate}}",
   "settings.account_title": "الحساب",

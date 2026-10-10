@@ -425,6 +425,32 @@ describe("listings", () => {
     expect(res.status).toBe(200)
     expect(res.body.moderation).toBe("approved")
   })
+  it("a verified dealer's new vehicle goes live on its inventory until the plan limit", async () => {
+    db.settings.autoApproveVerifiedDealers = true
+    db.dealerships.find((d) => d.ownerId === "u-dealer")!.verified = true
+    const created = await call("POST", "/listings", {
+      as: "u-dealer",
+      body: car,
+    })
+    expect(created.body.moderation).toBe("approved")
+    const inventory = await call(
+      "GET",
+      "/listings?seller=u-dealer&pageSize=100"
+    )
+    const ids = inventory.body.items.map((l: { id: string }) => l.id)
+    expect(ids).toContain(created.body.id)
+    const own = new Set(
+      db.listings.filter((l) => l.ownerUserId === "u-dealer").map((l) => l.id)
+    )
+    expect(ids.every((id: string) => own.has(id))).toBe(true)
+    const sub = db.subscriptions.find((s) => s.userId === "u-dealer")!
+    sub.usage.limit = (
+      await call("GET", "/me/subscription", { as: "u-dealer" })
+    ).body.usage.used
+    const over = await call("POST", "/listings", { as: "u-dealer", body: car })
+    expect(over.status).toBe(403)
+    expect(over.body.code).toBe("limit_reached")
+  })
 })
 
 describe("directory", () => {

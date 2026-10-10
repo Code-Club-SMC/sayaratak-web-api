@@ -2,11 +2,12 @@ import type { Dealership, Mechanic, Workshop } from "@/schemas/profile"
 
 export type SetupItem = { key: string; done: boolean; href: string }
 
-// What each dashboard overview asks for (A9 10.2, 11.2, 12.2). Paths are locale-free. `asked` is whether a verification request exists.
+// What each dashboard overview asks for (A9 10.2, 11.2, 12.2). Paths are locale-free. Verification is done once a request exists (`asked`) or the business already has the badge (a seed or admin can verify with no request).
 export function setupItems(
   b: Dealership | Workshop | Mechanic,
   asked: boolean
 ): SetupItem[] {
+  const verified = asked || b.verified
   const item = (key: string, done: boolean, href: string) => ({
     key,
     done,
@@ -30,7 +31,7 @@ export function setupItems(
         b.portfolio.length >= 3,
         "/mechanic/portfolio"
       ),
-      item("dashboard.setup_verification", asked, "/mechanic/verification"),
+      item("dashboard.setup_verification", verified, "/mechanic/verification"),
     ]
   const hours = b.hours.some((d) => !d.closed)
   if ("services" in b)
@@ -48,7 +49,7 @@ export function setupItems(
         "/workshop/services"
       ),
       item("dashboard.setup_photos", b.images.length >= 3, "/workshop/photos"),
-      item("dashboard.setup_verification", asked, "/workshop/verification"),
+      item("dashboard.setup_verification", verified, "/workshop/verification"),
     ]
   return [
     item("dashboard.setup_logo", Boolean(b.logoUrl), "/dealer/profile"),
@@ -64,6 +65,6 @@ export function setupItems(
       b.inventoryCount > 0,
       "/dealer/inventory/new"
     ),
-    item("dashboard.setup_verification", asked, "/dealer/verification"),
+    item("dashboard.setup_verification", verified, "/dealer/verification"),
   ]
 }

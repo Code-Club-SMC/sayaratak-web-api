@@ -44,7 +44,7 @@ describe("setupItems", () => {
   })
 
   it("counts an item only once the profile has it", () => {
-    const shop = { ...workshop() }
+    const shop = { ...workshop(), verified: false }
     expect(todo({ ...shop, logoUrl: "", services: [], images: [] })).toEqual(
       expect.arrayContaining([
         "dashboard.setup_logo",
@@ -68,6 +68,7 @@ describe("setupItems", () => {
     }
     expect(todo(done)).toEqual(["dashboard.setup_verification"])
     expect(todo(done, true)).toEqual([])
+    expect(todo({ ...done, verified: true })).toEqual([])
   })
 })
 

@@ -1,3 +1,4 @@
+import { useQuery } from "@tanstack/react-query"
 import { Link } from "@tanstack/react-router"
 
 import { Button, buttonVariants } from "@/components/ui/button"
@@ -7,6 +8,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { meQuery } from "@/features/auth/me-query"
 import {
   statusOptions,
   type useListingActions,
@@ -18,7 +20,7 @@ import { cn } from "@/lib/utils"
 import type { Listing } from "@/schemas/listing"
 import { daysSince, type Attention } from "../attention"
 
-// One listing and the one thing to do about it: edit and resubmit, renew, or change the status of a long reservation.
+// One listing and the one thing to do about it: edit and resubmit, edit while in review, renew, or change the status of a long reservation.
 export function AttentionRow({
   listing,
   reason,
@@ -30,7 +32,9 @@ export function AttentionRow({
 }) {
   const { t, locale } = useT()
   const now = useNow()
+  const dealer = useQuery(meQuery).data?.role === "dealership"
   const note = {
+    pending: t("status.pending"),
     rejected: listing.rejectionReason
       ? t("manager.reason", { reason: `⁨${listing.rejectionReason}⁩` })
       : t("manager.no_reason"),
@@ -52,15 +56,27 @@ export function AttentionRow({
         </p>
         <p className="text-caption text-muted-foreground">{note}</p>
       </div>
-      {reason === "rejected" && (
+      {(reason === "rejected" || reason === "pending") && (
         <Link
-          to="/$locale/post"
-          params={{ locale }}
-          search={{ edit: listing.id }}
+          // A dealership edits on its own wizard route, everyone else on /post.
+          {...(dealer
+            ? {
+                to: "/$locale/dealer/inventory/$id/edit",
+                params: { locale, id: listing.id },
+              }
+            : {
+                to: "/$locale/post",
+                params: { locale },
+                search: { edit: listing.id },
+              })}
           // `cn` drops the base `border-transparent`, which would otherwise hide the outline border on a link.
           className={cn(buttonVariants({ variant: "outline" }))}
         >
-          {t("dashboard.overview_edit_resubmit")}
+          {t(
+            reason === "rejected"
+              ? "dashboard.overview_edit_resubmit"
+              : "common.edit"
+          )}
         </Link>
       )}
       {reason === "expiring" && (

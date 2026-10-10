@@ -104,10 +104,12 @@ export const listingQueries = {
     }),
 }
 
+// `business.mine` carries the live inventory count the setup checklist reads.
 const touched = [
   keys.listings.all,
   keys.counts,
   keys.billing.subscription,
+  keys.business.mine,
 ] as const
 export const useCreateListing = () =>
   useApiMutation(

@@ -15,18 +15,39 @@ import { AttentionRow } from "./attention-row"
 
 const SHOWN = 5
 
-// Rejected listings, listings ending within a week, and listings reserved for two weeks. The first five; the rest wait behind the link.
-export function NeedsAttentionCard() {
+// Rejected listings, listings ending within a week, and listings reserved for two weeks; on the dealer overview (`withPending`) also listings waiting for review. The first five; the rest wait behind the link.
+export function NeedsAttentionCard({
+  withPending = false,
+}: {
+  withPending?: boolean
+}) {
   const { t, locale } = useT()
   const now = useNow()
   const actions = useListingActions()
-  const { data, isPending, isError, refetch } = useQuery(
+  const attention = useQuery(
     listingQueries.mine({ needsAttention: true, pageSize: SHOWN })
   )
-  const rows = (data?.items ?? []).flatMap((listing) => {
-    const reason = attentionOf(listing, now)
-    return reason ? [{ listing, reason }] : []
+  const pending = useQuery({
+    ...listingQueries.mine({ tab: "pending", pageSize: SHOWN }),
+    enabled: withPending,
   })
+  const isPending = attention.isPending || (withPending && pending.isPending)
+  const isError = attention.isError || pending.isError
+  const refetch = () => {
+    void attention.refetch()
+    if (withPending) void pending.refetch()
+  }
+  const rows = [
+    ...(attention.data?.items ?? []).flatMap((listing) => {
+      const reason = attentionOf(listing, now)
+      return reason ? [{ listing, reason }] : []
+    }),
+    ...(pending.data?.items ?? []).map((listing) => ({
+      listing,
+      reason: "pending" as const,
+    })),
+  ].slice(0, SHOWN)
+  const total = (attention.data?.total ?? 0) + (pending.data?.total ?? 0)
   return (
     <section
       aria-labelledby="overview-attention"
@@ -38,7 +59,7 @@ export function NeedsAttentionCard() {
       {isError ? (
         <SectionError
           message={t("dashboard.overview_attention_error")}
-          onRetry={() => void refetch()}
+          onRetry={refetch}
         />
       ) : isPending ? (
         <div aria-hidden="true" className="flex flex-col gap-3 py-3">
@@ -64,9 +85,13 @@ export function NeedsAttentionCard() {
               />
             ))}
           </ul>
-          {data.total > SHOWN && (
+          {total > SHOWN && (
             <Link
-              to="/$locale/account/listings"
+              to={
+                withPending
+                  ? "/$locale/dealer/inventory"
+                  : "/$locale/account/listings"
+              }
               params={{ locale }}
               className={buttonVariants({ variant: "ghost" })}
             >

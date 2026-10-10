@@ -65,9 +65,12 @@ export function useListingActions() {
   ) => {
     const results = await Promise.allSettled(rows.map(call))
     await Promise.all(
-      [keys.listings.all, keys.counts, keys.billing.subscription].map(
-        (queryKey) => qc.invalidateQueries({ queryKey })
-      )
+      [
+        keys.listings.all,
+        keys.counts,
+        keys.billing.subscription,
+        keys.business.mine,
+      ].map((queryKey) => qc.invalidateQueries({ queryKey }))
     )
     const ok = results.filter((r) => r.status === "fulfilled").length
     toast.add({ title: t(`manager.${done}`, { count: ok }) })

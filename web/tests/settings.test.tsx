@@ -10,6 +10,7 @@ import {
 import { db, resetDb } from "@/mocks/db"
 import { DEMO_PASSWORD } from "@/mocks/seed/people"
 import type { Role } from "@/schemas/fields"
+import { pick } from "./pick"
 import { renderShell } from "./shell-render"
 
 Element.prototype.scrollIntoView = () => {}
@@ -191,6 +192,17 @@ describe("SettingsPage", () => {
       expect(toggle.getAttribute("aria-checked")).toBe("true")
     )
     expect(document.cookie).toContain("data_saver=1")
+  })
+
+  it("remembers a new language on the account and reloads the page in it", async () => {
+    const assign = vi.fn()
+    vi.stubGlobal("location", { ...window.location, assign })
+    await open()
+    await pick(screen.getByRole("combobox", { name: "Language" }), "العربية")
+    await waitFor(() => expect(assign).toHaveBeenCalled())
+    expect(rowOf("user").locale).toBe("ar")
+    expect(String(assign.mock.lastCall?.[0])).toContain("/ar/account/settings")
+    vi.unstubAllGlobals()
   })
 
   it("deletes only after the word is typed", async () => {

@@ -11,13 +11,8 @@ import { wizardDraftKey } from "@/features/listings/wizard/wizard-config"
 import { useT } from "@/lib/i18n/use-t"
 
 const key = wizardDraftKey()
-// The wizard saves every field, so a draft counts as started once it has a title or a photo.
-const started = z.object({
-  values: z.object({
-    title: z.string().optional(),
-    media: z.array(z.unknown()).optional(),
-  }),
-})
+// The server copy is written only on a step change or Save draft and exit, so any saved values mean the person started. Publish and Discard write `{}`.
+const started = z.object({ values: z.record(z.string(), z.unknown()) })
 
 // The unfinished wizard draft, above the Drafts table: continue it or throw it away.
 export function DraftBanner({ dealer }: { dealer: boolean }) {
@@ -25,8 +20,7 @@ export function DraftBanner({ dealer }: { dealer: boolean }) {
   const [asking, setAsking] = useState(false)
   const draft = useQuery(draftQuery(key))
   const save = useSaveDraft(key)
-  const values = started.safeParse(draft.data?.data).data?.values
-  if (!values?.title && !values?.media?.length) return null
+  if (!started.safeParse(draft.data?.data).success) return null
   return (
     <section className="flex flex-col items-start gap-3 rounded-xl bg-accent p-4 text-accent-foreground">
       <h2 className="text-body font-semibold">{t("manager.draft_title")}</h2>

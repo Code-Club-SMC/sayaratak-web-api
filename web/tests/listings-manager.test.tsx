@@ -246,7 +246,10 @@ describe("ListingsManager", () => {
       id: "u-omar:listing:new",
       userId: "u-omar",
       key: "listing:new",
-      data: { savedAt: new Date().toISOString(), values: { title: "Hilux" } },
+      data: {
+        savedAt: new Date().toISOString(),
+        values: { vehicleType: "car" },
+      },
     })
     await client.invalidateQueries()
     fireEvent.click(await screen.findByRole("button", { name: "Discard" }))

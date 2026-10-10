@@ -40,12 +40,7 @@ export function ListingRowActions({
     {
       key: "edit",
       label: t("common.edit"),
-      onSelect: () =>
-        void navigate({
-          to: "/$locale/post",
-          params: { locale },
-          search: { edit: listing.id },
-        }),
+      onSelect: () => actions.edit(listing),
     },
     {
       key: "renew",

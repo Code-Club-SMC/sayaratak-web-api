@@ -141,6 +141,7 @@ export function ListingWizard({
             </div>
             <StickyFooter
               width="max-w-152 lg:max-w-212"
+              inline={context === "dealer"}
               onBack={() => (prev ? go(prev.id) : leave())}
             >
               <SubmitButton

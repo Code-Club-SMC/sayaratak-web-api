@@ -149,6 +149,36 @@ describe("ListingsManager", () => {
     )
   })
 
+  it("sends a dealership to its own wizard routes to post and edit", async () => {
+    const { router } = await renderShell(
+      <NowProvider serverNow={Date.now()}>
+        <TooltipProvider>
+          <ListingsManager
+            scope="dealer"
+            search={listingsManagerSearchSchema.parse({})}
+            onNavigate={vi.fn()}
+          />
+        </TooltipProvider>
+      </NowProvider>,
+      { role: "dealership", path: "/en/dealer/inventory" }
+    )
+    expect(
+      (
+        await screen.findByRole("link", { name: "Post a listing" })
+      ).getAttribute("href")
+    ).toBe("/en/dealer/inventory/new")
+    const [menu] = await screen.findAllByRole("button", {
+      name: /^Actions for /,
+    })
+    fireEvent.click(menu!)
+    fireEvent.click(await screen.findByRole("menuitem", { name: "Edit" }))
+    await waitFor(() =>
+      expect(router.state.location.pathname).toMatch(
+        /^\/en\/dealer\/inventory\/[^/]+\/edit$/
+      )
+    )
+  })
+
   it("keeps Renew off while the listing has more than a week left", async () => {
     const target = newestActive()
     target.expiresAt = new Date(Date.now() + 25 * 86_400_000).toISOString()

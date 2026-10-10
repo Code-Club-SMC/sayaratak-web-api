@@ -160,7 +160,11 @@ export function ListingsManager({
           </Button>
         ) : (
           <Link
-            to="/$locale/post"
+            to={
+              scope === "dealer"
+                ? "/$locale/dealer/inventory/new"
+                : "/$locale/post"
+            }
             params={{ locale }}
             className={buttonVariants()}
           >
@@ -196,7 +200,7 @@ export function ListingsManager({
           ))}
         </TabsList>
         <TabsContent value={tab} className="flex flex-col gap-4">
-          {tab === "drafts" && <DraftBanner />}
+          {tab === "drafts" && <DraftBanner dealer={scope === "dealer"} />}
           <DataTable
             columns={columns}
             data={rows}

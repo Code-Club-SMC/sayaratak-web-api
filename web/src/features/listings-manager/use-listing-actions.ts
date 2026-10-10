@@ -1,7 +1,8 @@
-import { useQueryClient } from "@tanstack/react-query"
+import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { useNavigate } from "@tanstack/react-router"
 
 import { toast } from "@/components/ui/toast"
+import { meQuery } from "@/features/auth/me-query"
 import { apiFetch } from "@/lib/api/client"
 import { errorText } from "@/lib/api/error-text"
 import { keys } from "@/lib/api/query-keys"
@@ -42,6 +43,19 @@ export function useListingActions() {
   const duplicate = useDuplicateListing()
   const remove = useDeleteListing()
   const fail = (error: unknown) => toast.add({ title: errorText(t, error) })
+  // A dealership edits inside its dashboard, everyone else on /post.
+  const dealer = useQuery(meQuery).data?.role === "dealership"
+  const edit = (id: string) =>
+    void (dealer
+      ? navigate({
+          to: "/$locale/dealer/inventory/$id/edit",
+          params: { locale, id },
+        })
+      : navigate({
+          to: "/$locale/post",
+          params: { locale },
+          search: { edit: id },
+        }))
 
   // Bulk runs the single-row endpoints side by side, refreshes once, and reports the count that worked.
   const bulk = async (
@@ -70,6 +84,7 @@ export function useListingActions() {
     })
 
   return {
+    edit: (l: Listing) => edit(l.id),
     setStatus: (l: Listing, next: ListingStatus) =>
       status.mutate(
         { id: l.id, status: next },
@@ -87,11 +102,7 @@ export function useListingActions() {
       duplicate.mutate(l.id, {
         onSuccess: (copy) => {
           toast.add({ title: t("manager.duplicated") })
-          void navigate({
-            to: "/$locale/post",
-            params: { locale },
-            search: { edit: copy.id },
-          })
+          edit(copy.id)
         },
         onError: fail,
       }),

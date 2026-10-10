@@ -20,7 +20,7 @@ const started = z.object({
 })
 
 // The unfinished wizard draft, above the Drafts table: continue it or throw it away.
-export function DraftBanner() {
+export function DraftBanner({ dealer }: { dealer: boolean }) {
   const { t, locale } = useT()
   const [asking, setAsking] = useState(false)
   const draft = useQuery(draftQuery(key))
@@ -33,7 +33,7 @@ export function DraftBanner() {
       <p className="text-ui">{t("manager.draft_body")}</p>
       <div className="flex flex-wrap gap-2">
         <Link
-          to="/$locale/post"
+          to={dealer ? "/$locale/dealer/inventory/new" : "/$locale/post"}
           params={{ locale }}
           className={buttonVariants()}
         >

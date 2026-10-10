@@ -39,7 +39,7 @@ const nameOf = (thread: ReturnType<typeof toThread>) =>
 
 async function open(
   search = "",
-  role: "user" | "workshop" = "user",
+  role: "user" | "workshop" | "dealership" = "user",
   labelKey: "messages" | "inquiries" = "messages"
 ) {
   const view = await renderShell(
@@ -197,6 +197,41 @@ describe("MessagesPage", () => {
         )
       ).toBe(true)
     )
+  })
+
+  it("a dealership's inbox gets threads from its listing and from its profile", async () => {
+    const dealer = db.users.find(
+      (u) => u.role === "dealership" && u.onboardingDone
+    )!
+    const business = db.dealerships.find((b) => b.ownerId === dealer.id)!
+    const listing = db.listings.find(
+      (l) => l.ownerUserId === dealer.id && l.moderation === "approved"
+    )!
+    const buyer = me()
+    const start = (subjectType: string, subjectId: string, body: string) =>
+      handleMock(
+        new Request("http://localhost/api/threads", {
+          method: "POST",
+          headers: {
+            cookie: `sy_session=${buyer.id}`,
+            "content-type": "application/json",
+          },
+          body: JSON.stringify({ subjectType, subjectId, body }),
+        })
+      )
+    expect((await start("listing", listing.id, "Price for cash?")).ok).toBe(
+      true
+    )
+    expect((await start("dealership", business.id, "Open on Friday?")).ok).toBe(
+      true
+    )
+    await open("", "dealership")
+    for (const text of ["Price for cash?", "Open on Friday?"]) {
+      const row = within(await list())
+        .getAllByRole("button")
+        .find((b) => b.textContent.includes(text))!
+      expect(within(row).getByText("1 new")).toBeTruthy()
+    }
   })
 
   it("sends at once, on Enter, and clears the box", async () => {

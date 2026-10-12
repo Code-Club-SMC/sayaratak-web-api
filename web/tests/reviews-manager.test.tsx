@@ -1,6 +1,15 @@
-import { fireEvent, screen, waitFor, within } from "@testing-library/react"
+import { Suspense } from "react"
+import {
+  cleanup,
+  fireEvent,
+  screen,
+  waitFor,
+  within,
+} from "@testing-library/react"
 import { beforeEach, describe, expect, it, vi } from "vitest"
 
+import { DealershipProfilePage } from "@/features/directory/components/dealership-profile-page"
+import { dealershipProfileSearchSchema } from "@/features/directory/schemas"
 import { ReviewsManagerPage } from "@/features/reviews/components/reviews-manager-page"
 import {
   pruneReviewsSearch,
@@ -144,6 +153,33 @@ describe("ReviewsManagerPage", () => {
     ).toBe("We are glad you came")
   })
 
+  it("a reply shows on the public profile's Reviews tab", async () => {
+    await open()
+    const row = await item("Ali")
+    fireEvent.click(within(row).getByRole("button", { name: "Reply" }))
+    fireEvent.change(within(row).getByRole("textbox", { name: "Your reply" }), {
+      target: { value: "Come back any time" },
+    })
+    fireEvent.click(within(row).getByRole("button", { name: "Post reply" }))
+    expect(await within(row).findByText("Come back any time")).toBeTruthy()
+    cleanup()
+    await renderShell(
+      <Suspense fallback={null}>
+        <DealershipProfilePage
+          slug={biz().slug}
+          search={dealershipProfileSearchSchema.parse({ tab: "reviews" })}
+        />
+      </Suspense>
+    )
+    const card = (await screen.findByText("Body of Ali")).closest("li")!
+    expect(within(card).getByText("Reply from the owner")).toBeTruthy()
+    expect(within(card).getByText("Come back any time")).toBeTruthy()
+    // The visitor sees the reply, not the owner's controls.
+    expect(
+      within(card).queryByRole("button", { name: "Edit reply" })
+    ).toBeNull()
+    expect(screen.queryByText("Body of Chadi")).toBeNull()
+  })
   it("Report asks first, then marks the review Reported", async () => {
     await open()
     const row = await item("Ali")

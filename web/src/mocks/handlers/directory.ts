@@ -239,6 +239,7 @@ route("PATCH", "/me/services/:id", async (c) => {
   const row = w.services.find((s) => s.id === c.params.id)
   if (!row) throw fail(404, "not_found")
   Object.assign(row, await c.body(serviceInputSchema.partial()))
+  row.priceFrom ??= undefined // a cleared price comes as null; the wire field is optional
   return row
 })
 route("DELETE", "/me/services/:id", (c) => {

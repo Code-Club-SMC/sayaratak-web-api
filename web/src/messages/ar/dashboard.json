@@ -357,5 +357,20 @@
   "dashboard.welcome_ready_workshop": "تم إعداد ورشتك وصفحتها العامة متاحة الآن. يمكن للعملاء العثور عليك والتواصل معك.",
   "dashboard.welcome_ready_mechanic": "تم إعداد ملفك كميكانيكي وهو متاح الآن. يمكن للعملاء العثور عليك والتواصل معك.",
   "dashboard.welcome_cta_dealership": "أضف أول سيارة",
-  "dashboard.welcome_cta_verify": "وثّق حسابك"
+  "dashboard.welcome_cta_verify": "وثّق حسابك",
+  "dashboard.services_hint": "يرى العملاء خدماتك بهذا الترتيب في صفحتك العامة.",
+  "dashboard.services_add": "أضف خدمة",
+  "dashboard.services_from_templates": "أضف من القوالب",
+  "dashboard.services_add_title": "أضف خدمة",
+  "dashboard.services_edit_title": "عدّل الخدمة",
+  "dashboard.services_name": "اسم الخدمة",
+  "dashboard.services_description": "الوصف",
+  "dashboard.services_list_title": "خدماتك",
+  "dashboard.services_load_error": "تعذّر تحميل خدماتك.",
+  "dashboard.services_empty_title": "لا توجد خدمات بعد",
+  "dashboard.services_empty_body": "أضف ما تقدّمه ورشتك، ليجدك العملاء حسب الخدمة.",
+  "dashboard.services_move_up": "انقل {{name}} لأعلى",
+  "dashboard.services_move_down": "انقل {{name}} لأسفل",
+  "dashboard.services_delete_title": "حذف هذه الخدمة؟",
+  "dashboard.services_delete_body": "لن تظهر {{name}} في صفحتك العامة بعد الآن."
 }

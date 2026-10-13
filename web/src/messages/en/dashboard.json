@@ -353,5 +353,20 @@
   "dashboard.welcome_ready_workshop": "Your workshop is set up and its public page is live. Customers can find you and get in touch now.",
   "dashboard.welcome_ready_mechanic": "Your mechanic profile is set up and live. Customers can find you and get in touch now.",
   "dashboard.welcome_cta_dealership": "Add your first vehicle",
-  "dashboard.welcome_cta_verify": "Get verified"
+  "dashboard.welcome_cta_verify": "Get verified",
+  "dashboard.services_hint": "Customers see your services in this order on your public page.",
+  "dashboard.services_add": "Add service",
+  "dashboard.services_from_templates": "Add from templates",
+  "dashboard.services_add_title": "Add service",
+  "dashboard.services_edit_title": "Edit service",
+  "dashboard.services_name": "Service name",
+  "dashboard.services_description": "Description",
+  "dashboard.services_list_title": "Your services",
+  "dashboard.services_load_error": "Could not load your services.",
+  "dashboard.services_empty_title": "No services yet",
+  "dashboard.services_empty_body": "Add what your workshop does, so customers can find you by service.",
+  "dashboard.services_move_up": "Move {{name}} up",
+  "dashboard.services_move_down": "Move {{name}} down",
+  "dashboard.services_delete_title": "Delete this service?",
+  "dashboard.services_delete_body": "{{name}} will no longer show on your public page."
 }

@@ -15,5 +15,8 @@
   "toast.reply_saved": "Reply saved",
   "toast.review_reported": "Review reported",
   "toast.search_renamed": "Search renamed",
-  "toast.search_deleted": "Search deleted"
+  "toast.search_deleted": "Search deleted",
+  "toast.service_added": "Service added",
+  "toast.service_saved": "Service saved",
+  "toast.service_deleted": "Service deleted"
 }

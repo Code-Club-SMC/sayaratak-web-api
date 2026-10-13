@@ -1,7 +1,12 @@
-import { keepPreviousData, queryOptions } from "@tanstack/react-query"
+import {
+  keepPreviousData,
+  queryOptions,
+  useMutation,
+  useQueryClient,
+} from "@tanstack/react-query"
 import { z } from "zod"
 
-import { apiFetch } from "@/lib/api/client"
+import { apiFetch, type ApiError } from "@/lib/api/client"
 import { useApiMutation } from "@/lib/api/mutation"
 import { keys } from "@/lib/api/query-keys"
 import { okSchema } from "@/schemas/api"
@@ -81,6 +86,7 @@ const touched = [
 const serviceRow = workshopSchema.shape.services.element
 const portfolioRow = mechanicSchema.shape.portfolio.element
 type Input<T extends z.ZodType> = z.input<T>
+type Services = z.infer<typeof workshopSchema.shape.services>
 
 export const useUpdateBusiness = () =>
   useApiMutation(
@@ -134,16 +140,34 @@ export const useDeleteService = () =>
       apiFetch(`/me/services/${id}`, { method: "DELETE", schema: okSchema }),
     touched
   )
-export const useReorderServices = () =>
-  useApiMutation(
-    (ids: string[]) =>
+// Optimistic: the list takes the new order at once and goes back if the save fails.
+export function useReorderServices() {
+  const qc = useQueryClient()
+  const key = businessQueries.services.queryKey
+  return useMutation<Services, ApiError, string[], Services | undefined>({
+    mutationFn: (ids) =>
       apiFetch("/me/services/reorder", {
         method: "POST",
         body: { ids },
         schema: workshopSchema.shape.services,
       }),
-    touched
-  )
+    onMutate: async (ids) => {
+      await qc.cancelQueries({ queryKey: key })
+      const prev = qc.getQueryData(key)
+      if (prev)
+        qc.setQueryData(
+          key,
+          ids.flatMap((id) => prev.filter((s) => s.id === id))
+        )
+      return prev
+    },
+    onError: (_error, _ids, prev) => qc.setQueryData(key, prev),
+    onSettled: () =>
+      Promise.all(
+        touched.map((queryKey) => qc.invalidateQueries({ queryKey }))
+      ),
+  })
+}
 
 export const useAddPortfolioItem = () =>
   useApiMutation(

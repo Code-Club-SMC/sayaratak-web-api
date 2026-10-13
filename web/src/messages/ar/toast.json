@@ -15,5 +15,8 @@
   "toast.reply_saved": "تم حفظ الرد",
   "toast.review_reported": "تم الإبلاغ عن التقييم",
   "toast.search_renamed": "تمت إعادة تسمية البحث",
-  "toast.search_deleted": "تم حذف البحث"
+  "toast.search_deleted": "تم حذف البحث",
+  "toast.service_added": "أُضيفت الخدمة",
+  "toast.service_saved": "حُفظت الخدمة",
+  "toast.service_deleted": "حُذفت الخدمة"
 }

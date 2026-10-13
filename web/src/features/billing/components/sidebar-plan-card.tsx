@@ -10,7 +10,7 @@ import { billingQueries } from "../queries"
 import { PlanHeader } from "./plan-header"
 import { PlanSummary } from "./plan-summary"
 
-// The plan at the foot of the dashboard sidebar. In order: a plan picked in onboarding and not paid, a payment under review for a plan the account is not on yet, else the shared summary of the current plan (a renewal in review shows as a note in it). Hidden while the sidebar is collapsed; Billing is right above it.
+// The plan at the foot of the dashboard sidebar: a plan picked in onboarding and not paid, else the shared summary of the current plan (a payment in review shows as a note in it, and an upgrade in review links to the payment). Hidden while the sidebar is collapsed; Billing is right above it.
 export function SidebarPlanCard({ me }: { me: User }) {
   const { t, locale } = useT()
   const subscription = useQuery(billingQueries.subscription)
@@ -22,10 +22,7 @@ export function SidebarPlanCard({ me }: { me: User }) {
   const chosen = data.reviewPlan
     ? undefined
     : plans.data.find((p) => p.id === me.chosenPlanId)
-  const waiting =
-    data.reviewPlan && data.reviewPlan.id !== current?.id
-      ? data.reviewPlan
-      : undefined
+  const upgrading = !!data.reviewPlan && data.reviewPlan.id !== current?.id
 
   const link = (href: string, label: string, primary: boolean) => (
     <a
@@ -41,39 +38,24 @@ export function SidebarPlanCard({ me }: { me: User }) {
   const card =
     "mx-2 mb-6 flex flex-col gap-4 rounded-xl bg-card p-4 group-data-[collapsible=icon]:hidden"
 
-  const pending = chosen ?? waiting
-  if (pending)
+  if (chosen)
     return (
       <div className={card}>
         <PlanHeader
-          name={pending.name[locale]}
+          name={chosen.name[locale]}
           size="sm"
-          badge={
-            chosen ? (
-              <Badge variant="warning">{t("billing.sidebar_unpaid")}</Badge>
-            ) : (
-              <Badge variant="muted">{t("billing.pending_badge")}</Badge>
-            )
-          }
+          badge={<Badge variant="warning">{t("billing.sidebar_unpaid")}</Badge>}
         />
         <p className="text-ui text-muted-foreground">
-          {chosen
-            ? t("billing.sidebar_unpaid_note", {
-                free: current?.name[locale] ?? "",
-              })
-            : t("billing.sidebar_review_note")}
+          {t("billing.sidebar_unpaid_note", {
+            free: current?.name[locale] ?? "",
+          })}
         </p>
-        {chosen
-          ? link(
-              `${base}/billing/checkout?${new URLSearchParams({ item: `plan:${chosen.id}` })}`,
-              t("billing.promos_pay_now"),
-              true
-            )
-          : link(
-              `${base}/billing?tab=history`,
-              t("billing.sidebar_view_payment"),
-              false
-            )}
+        {link(
+          `${base}/billing/checkout?${new URLSearchParams({ item: `plan:${chosen.id}` })}`,
+          t("billing.promos_pay_now"),
+          true
+        )}
       </div>
     )
 
@@ -81,13 +63,21 @@ export function SidebarPlanCard({ me }: { me: User }) {
     // A plain block, not a region: the overview page has its own "Your plan" section.
     <div className={card}>
       <PlanSummary data={data} plan={current} audience={me.role} size="sm" />
-      {link(
-        `${base}/billing`,
-        t(
-          current?.price ? "billing.sidebar_manage" : "billing.sidebar_upgrade"
-        ),
-        !current?.price
-      )}
+      {upgrading
+        ? link(
+            `${base}/billing?tab=history`,
+            t("billing.sidebar_view_payment"),
+            false
+          )
+        : link(
+            `${base}/billing`,
+            t(
+              current?.price
+                ? "billing.sidebar_manage"
+                : "billing.sidebar_upgrade"
+            ),
+            !current?.price
+          )}
     </div>
   )
 }

@@ -44,7 +44,7 @@ export function PlanSummary({
   const now = useNow()
   const { subscription, usage, credits, reviewPlan } = data
   const ends = subscription ? Date.parse(subscription.endsAt) : null
-  const days = ends === null ? null : Math.ceil((ends - now) / DAY_MS)
+  const days = ends === null ? null : Math.round((ends - now) / DAY_MS)
   const left =
     subscription && ends !== null
       ? Math.min(

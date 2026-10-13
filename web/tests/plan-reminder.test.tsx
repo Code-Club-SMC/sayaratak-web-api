@@ -114,7 +114,7 @@ describe("SidebarPlanCard", () => {
     ).toBe("/en/dealer/billing/checkout?item=plan%3Aplan-dealer-growth")
   })
 
-  it("a plan payment under review shows the plan and links to the history", async () => {
+  it("an upgrade under review keeps the current plan, adds a note and links to the history", async () => {
     pickGrowth()
     dealer().chosenPlanId = undefined
     db.payments.push({
@@ -126,8 +126,11 @@ describe("SidebarPlanCard", () => {
       status: "pending_review",
     })
     await openCard()
-    expect(await screen.findByText("Payment under review")).toBeTruthy()
-    expect(screen.getByText("Growth")).toBeTruthy()
+    expect(
+      await screen.findByText(/Your payment for Growth is under review/)
+    ).toBeTruthy()
+    expect(screen.getByText("Starter")).toBeTruthy()
+    expect(screen.getByText("Active")).toBeTruthy()
     expect(
       screen.getByRole("link", { name: "View payment" }).getAttribute("href")
     ).toBe("/en/dealer/billing?tab=history")

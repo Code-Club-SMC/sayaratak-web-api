@@ -28,6 +28,8 @@ export function SubscriptionCard({
   const plans = useQuery(billingQueries.plans(role))
   const data = subscription.data
   const plan = data?.plan ?? plans.data?.find((p) => p.price === 0)
+  // An upgrade in review: a second payment is blocked, so the button opens the payment.
+  const upgrading = !!data?.reviewPlan && data.reviewPlan.id !== plan?.id
   return (
     <section
       aria-labelledby={id}
@@ -56,14 +58,21 @@ export function SubscriptionCard({
           <Link
             to={billing[role]}
             params={{ locale }}
+            search={upgrading ? { tab: "history" } : undefined}
             // `cn` drops the base `border-transparent`, which would otherwise hide the outline border on a link.
             className={cn(
-              buttonVariants({ variant: plan?.price ? "outline" : "default" }),
+              buttonVariants({
+                variant: plan?.price || upgrading ? "outline" : "default",
+              }),
               "self-start"
             )}
           >
             {t(
-              plan?.price ? "billing.sidebar_manage" : "billing.sidebar_upgrade"
+              upgrading
+                ? "billing.sidebar_view_payment"
+                : plan?.price
+                  ? "billing.sidebar_manage"
+                  : "billing.sidebar_upgrade"
             )}
           </Link>
         </>

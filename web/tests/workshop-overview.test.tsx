@@ -108,4 +108,27 @@ describe("WorkshopOverviewPage", () => {
       )
     ).toBe("/en/workshop/billing")
   })
+
+  it("an upgrade under review keeps Basic and links to the payment", async () => {
+    const sub = db.subscriptions.find(
+      (s) => s.userId === owner().id && s.status === "active"
+    )!
+    sub.planId = "plan-workshop-basic"
+    db.payments.push({
+      ...db.payments[0]!,
+      id: "pay-upgrade",
+      userId: owner().id,
+      itemType: "plan",
+      itemId: "plan-workshop-plus",
+      status: "pending_review",
+    })
+    await open()
+    expect(
+      await screen.findByText(/Your payment for Plus is under review/)
+    ).toBeTruthy()
+    expect(screen.getByText("Basic")).toBeTruthy()
+    expect(
+      screen.getByRole("link", { name: "View payment" }).getAttribute("href")
+    ).toBe("/en/workshop/billing?tab=history")
+  })
 })

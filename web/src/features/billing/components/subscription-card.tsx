@@ -12,14 +12,23 @@ import { useNow } from "@/lib/now"
 import { cn } from "@/lib/utils"
 
 const DAY_MS = 24 * 60 * 60 * 1000
+const billing = {
+  dealership: "/$locale/dealer/billing",
+  workshop: "/$locale/workshop/billing",
+  mechanic: "/$locale/mechanic/billing",
+} as const
 
-// The plan, days left, the vehicle meter and the way to billing. With no subscription it names the free plan.
-export function SubscriptionCard() {
+// The plan, days left, the vehicle (or listing) meter and the way to billing. With no subscription it names the free plan of the role. The dealer, workshop and mechanic overviews show it.
+export function SubscriptionCard({
+  role,
+}: {
+  role: "dealership" | "workshop" | "mechanic"
+}) {
   const { t, locale } = useT()
   const now = useNow()
   const id = useId()
   const subscription = useQuery(billingQueries.subscription)
-  const plans = useQuery(billingQueries.plans("dealership"))
+  const plans = useQuery(billingQueries.plans(role))
   const data = subscription.data
   const plan = data?.plan ?? plans.data?.find((p) => p.price === 0)
   const days = data?.subscription
@@ -53,12 +62,16 @@ export function SubscriptionCard() {
             </p>
           </div>
           <UsageMeter
-            label={t("billing.usage_vehicles")}
+            label={t(
+              role === "dealership"
+                ? "billing.usage_vehicles"
+                : "billing.usage_listings"
+            )}
             used={data.usage.used}
             limit={data.usage.limit}
           />
           <Link
-            to="/$locale/dealer/billing"
+            to={billing[role]}
             params={{ locale }}
             // `cn` drops the base `border-transparent`, which would otherwise hide the outline border on a link.
             className={cn(buttonVariants({ variant: "outline" }), "self-start")}

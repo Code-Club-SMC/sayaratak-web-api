@@ -15,7 +15,7 @@ import { useT } from "@/lib/i18n/use-t"
 import type { Range } from "@/schemas/api"
 import { DealerStats } from "./dealer-stats"
 import { FunnelCard } from "./funnel-card"
-import { SubscriptionCard } from "./subscription-card"
+import { SubscriptionCard } from "@/features/billing/components/subscription-card"
 import { TopListingsCard } from "./top-listings-card"
 
 // The first screen of a dealership: setup until done, five numbers, the contact funnel, the plan, the best listings and what needs doing. The period lives in the URL and drives every card that counts events.
@@ -56,7 +56,7 @@ export function DealerOverviewPage() {
         ) : (
           <FunnelCard range={range} data={analytics.data} />
         )}
-        <SubscriptionCard />
+        <SubscriptionCard role="dealership" />
       </div>
       {!analytics.isError && (
         <TopListingsCard range={range} data={analytics.data} />

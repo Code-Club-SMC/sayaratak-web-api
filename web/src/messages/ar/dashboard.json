@@ -285,6 +285,8 @@
   "dashboard.dealer_funnel_of_contacts": "{{rate}} من التواصل",
   "dashboard.dealer_see_analytics": "عرض الإحصائيات",
   "dashboard.dealer_change_plan": "تغيير الباقة",
+  "dashboard.workshop_stat_inquiries": "استفسارات غير مقروءة",
+  "dashboard.recent_reviews_title": "أحدث التقييمات",
   "dashboard.dealer_top_counts": "{{views}} مشاهدة، {{contacts}} تواصل",
   "dashboard.favorites_filter_label": "تصفية حسب النوع",
   "dashboard.favorites_all": "الكل",

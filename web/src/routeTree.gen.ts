@@ -60,9 +60,12 @@ import { Route as LocaleDealerReviewsRouteImport } from './routes/$locale/dealer
 import { Route as LocaleDealerSettingsRouteImport } from './routes/$locale/dealer/settings'
 import { Route as LocaleDealerVerificationRouteImport } from './routes/$locale/dealer/verification'
 import { Route as LocaleMechanicIndexRouteImport } from './routes/$locale/mechanic/index'
+import { Route as LocaleMechanicSplatRouteImport } from './routes/$locale/mechanic/$'
 import { Route as LocaleMechanicAnalyticsRouteImport } from './routes/$locale/mechanic/analytics'
 import { Route as LocaleMechanicInquiriesRouteImport } from './routes/$locale/mechanic/inquiries'
 import { Route as LocaleMechanicNotificationsRouteImport } from './routes/$locale/mechanic/notifications'
+import { Route as LocaleMechanicPortfolioRouteImport } from './routes/$locale/mechanic/portfolio'
+import { Route as LocaleMechanicProfileRouteImport } from './routes/$locale/mechanic/profile'
 import { Route as LocaleMechanicReviewsRouteImport } from './routes/$locale/mechanic/reviews'
 import { Route as LocaleMechanicSettingsRouteImport } from './routes/$locale/mechanic/settings'
 import { Route as LocaleMechanicVerificationRouteImport } from './routes/$locale/mechanic/verification'
@@ -366,6 +369,11 @@ const LocaleMechanicIndexRoute = LocaleMechanicIndexRouteImport.update({
   path: '/',
   getParentRoute: () => LocaleMechanicRouteRoute,
 } as any)
+const LocaleMechanicSplatRoute = LocaleMechanicSplatRouteImport.update({
+  id: '/$',
+  path: '/$',
+  getParentRoute: () => LocaleMechanicRouteRoute,
+} as any)
 const LocaleMechanicAnalyticsRoute = LocaleMechanicAnalyticsRouteImport.update({
   id: '/analytics',
   path: '/analytics',
@@ -382,6 +390,16 @@ const LocaleMechanicNotificationsRoute =
     path: '/notifications',
     getParentRoute: () => LocaleMechanicRouteRoute,
   } as any)
+const LocaleMechanicPortfolioRoute = LocaleMechanicPortfolioRouteImport.update({
+  id: '/portfolio',
+  path: '/portfolio',
+  getParentRoute: () => LocaleMechanicRouteRoute,
+} as any)
+const LocaleMechanicProfileRoute = LocaleMechanicProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => LocaleMechanicRouteRoute,
+} as any)
 const LocaleMechanicReviewsRoute = LocaleMechanicReviewsRouteImport.update({
   id: '/reviews',
   path: '/reviews',
@@ -665,9 +683,12 @@ export interface FileRoutesByFullPath {
   '/$locale/dealer/reviews': typeof LocaleDealerReviewsRoute
   '/$locale/dealer/settings': typeof LocaleDealerSettingsRoute
   '/$locale/dealer/verification': typeof LocaleDealerVerificationRoute
+  '/$locale/mechanic/$': typeof LocaleMechanicSplatRoute
   '/$locale/mechanic/analytics': typeof LocaleMechanicAnalyticsRoute
   '/$locale/mechanic/inquiries': typeof LocaleMechanicInquiriesRoute
   '/$locale/mechanic/notifications': typeof LocaleMechanicNotificationsRoute
+  '/$locale/mechanic/portfolio': typeof LocaleMechanicPortfolioRoute
+  '/$locale/mechanic/profile': typeof LocaleMechanicProfileRoute
   '/$locale/mechanic/reviews': typeof LocaleMechanicReviewsRoute
   '/$locale/mechanic/settings': typeof LocaleMechanicSettingsRoute
   '/$locale/mechanic/verification': typeof LocaleMechanicVerificationRoute
@@ -757,9 +778,12 @@ export interface FileRoutesByTo {
   '/$locale/dealer/reviews': typeof LocaleDealerReviewsRoute
   '/$locale/dealer/settings': typeof LocaleDealerSettingsRoute
   '/$locale/dealer/verification': typeof LocaleDealerVerificationRoute
+  '/$locale/mechanic/$': typeof LocaleMechanicSplatRoute
   '/$locale/mechanic/analytics': typeof LocaleMechanicAnalyticsRoute
   '/$locale/mechanic/inquiries': typeof LocaleMechanicInquiriesRoute
   '/$locale/mechanic/notifications': typeof LocaleMechanicNotificationsRoute
+  '/$locale/mechanic/portfolio': typeof LocaleMechanicPortfolioRoute
+  '/$locale/mechanic/profile': typeof LocaleMechanicProfileRoute
   '/$locale/mechanic/reviews': typeof LocaleMechanicReviewsRoute
   '/$locale/mechanic/settings': typeof LocaleMechanicSettingsRoute
   '/$locale/mechanic/verification': typeof LocaleMechanicVerificationRoute
@@ -856,9 +880,12 @@ export interface FileRoutesById {
   '/$locale/dealer/reviews': typeof LocaleDealerReviewsRoute
   '/$locale/dealer/settings': typeof LocaleDealerSettingsRoute
   '/$locale/dealer/verification': typeof LocaleDealerVerificationRoute
+  '/$locale/mechanic/$': typeof LocaleMechanicSplatRoute
   '/$locale/mechanic/analytics': typeof LocaleMechanicAnalyticsRoute
   '/$locale/mechanic/inquiries': typeof LocaleMechanicInquiriesRoute
   '/$locale/mechanic/notifications': typeof LocaleMechanicNotificationsRoute
+  '/$locale/mechanic/portfolio': typeof LocaleMechanicPortfolioRoute
+  '/$locale/mechanic/profile': typeof LocaleMechanicProfileRoute
   '/$locale/mechanic/reviews': typeof LocaleMechanicReviewsRoute
   '/$locale/mechanic/settings': typeof LocaleMechanicSettingsRoute
   '/$locale/mechanic/verification': typeof LocaleMechanicVerificationRoute
@@ -956,9 +983,12 @@ export interface FileRouteTypes {
     | '/$locale/dealer/reviews'
     | '/$locale/dealer/settings'
     | '/$locale/dealer/verification'
+    | '/$locale/mechanic/$'
     | '/$locale/mechanic/analytics'
     | '/$locale/mechanic/inquiries'
     | '/$locale/mechanic/notifications'
+    | '/$locale/mechanic/portfolio'
+    | '/$locale/mechanic/profile'
     | '/$locale/mechanic/reviews'
     | '/$locale/mechanic/settings'
     | '/$locale/mechanic/verification'
@@ -1048,9 +1078,12 @@ export interface FileRouteTypes {
     | '/$locale/dealer/reviews'
     | '/$locale/dealer/settings'
     | '/$locale/dealer/verification'
+    | '/$locale/mechanic/$'
     | '/$locale/mechanic/analytics'
     | '/$locale/mechanic/inquiries'
     | '/$locale/mechanic/notifications'
+    | '/$locale/mechanic/portfolio'
+    | '/$locale/mechanic/profile'
     | '/$locale/mechanic/reviews'
     | '/$locale/mechanic/settings'
     | '/$locale/mechanic/verification'
@@ -1146,9 +1179,12 @@ export interface FileRouteTypes {
     | '/$locale/dealer/reviews'
     | '/$locale/dealer/settings'
     | '/$locale/dealer/verification'
+    | '/$locale/mechanic/$'
     | '/$locale/mechanic/analytics'
     | '/$locale/mechanic/inquiries'
     | '/$locale/mechanic/notifications'
+    | '/$locale/mechanic/portfolio'
+    | '/$locale/mechanic/profile'
     | '/$locale/mechanic/reviews'
     | '/$locale/mechanic/settings'
     | '/$locale/mechanic/verification'
@@ -1567,6 +1603,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LocaleMechanicIndexRouteImport
       parentRoute: typeof LocaleMechanicRouteRoute
     }
+    '/$locale/mechanic/$': {
+      id: '/$locale/mechanic/$'
+      path: '/$'
+      fullPath: '/$locale/mechanic/$'
+      preLoaderRoute: typeof LocaleMechanicSplatRouteImport
+      parentRoute: typeof LocaleMechanicRouteRoute
+    }
     '/$locale/mechanic/analytics': {
       id: '/$locale/mechanic/analytics'
       path: '/analytics'
@@ -1586,6 +1629,20 @@ declare module '@tanstack/react-router' {
       path: '/notifications'
       fullPath: '/$locale/mechanic/notifications'
       preLoaderRoute: typeof LocaleMechanicNotificationsRouteImport
+      parentRoute: typeof LocaleMechanicRouteRoute
+    }
+    '/$locale/mechanic/portfolio': {
+      id: '/$locale/mechanic/portfolio'
+      path: '/portfolio'
+      fullPath: '/$locale/mechanic/portfolio'
+      preLoaderRoute: typeof LocaleMechanicPortfolioRouteImport
+      parentRoute: typeof LocaleMechanicRouteRoute
+    }
+    '/$locale/mechanic/profile': {
+      id: '/$locale/mechanic/profile'
+      path: '/profile'
+      fullPath: '/$locale/mechanic/profile'
+      preLoaderRoute: typeof LocaleMechanicProfileRouteImport
       parentRoute: typeof LocaleMechanicRouteRoute
     }
     '/$locale/mechanic/reviews': {
@@ -2046,9 +2103,12 @@ const LocaleDealerRouteRouteWithChildren =
   LocaleDealerRouteRoute._addFileChildren(LocaleDealerRouteRouteChildren)
 
 interface LocaleMechanicRouteRouteChildren {
+  LocaleMechanicSplatRoute: typeof LocaleMechanicSplatRoute
   LocaleMechanicAnalyticsRoute: typeof LocaleMechanicAnalyticsRoute
   LocaleMechanicInquiriesRoute: typeof LocaleMechanicInquiriesRoute
   LocaleMechanicNotificationsRoute: typeof LocaleMechanicNotificationsRoute
+  LocaleMechanicPortfolioRoute: typeof LocaleMechanicPortfolioRoute
+  LocaleMechanicProfileRoute: typeof LocaleMechanicProfileRoute
   LocaleMechanicReviewsRoute: typeof LocaleMechanicReviewsRoute
   LocaleMechanicSettingsRoute: typeof LocaleMechanicSettingsRoute
   LocaleMechanicVerificationRoute: typeof LocaleMechanicVerificationRoute
@@ -2060,9 +2120,12 @@ interface LocaleMechanicRouteRouteChildren {
 }
 
 const LocaleMechanicRouteRouteChildren: LocaleMechanicRouteRouteChildren = {
+  LocaleMechanicSplatRoute: LocaleMechanicSplatRoute,
   LocaleMechanicAnalyticsRoute: LocaleMechanicAnalyticsRoute,
   LocaleMechanicInquiriesRoute: LocaleMechanicInquiriesRoute,
   LocaleMechanicNotificationsRoute: LocaleMechanicNotificationsRoute,
+  LocaleMechanicPortfolioRoute: LocaleMechanicPortfolioRoute,
+  LocaleMechanicProfileRoute: LocaleMechanicProfileRoute,
   LocaleMechanicReviewsRoute: LocaleMechanicReviewsRoute,
   LocaleMechanicSettingsRoute: LocaleMechanicSettingsRoute,
   LocaleMechanicVerificationRoute: LocaleMechanicVerificationRoute,

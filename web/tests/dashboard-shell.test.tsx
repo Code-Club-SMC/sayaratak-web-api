@@ -269,3 +269,32 @@ describe("workshop routes", () => {
     }
   })
 })
+
+describe("mechanic routes", () => {
+  it("every sidebar link and the not-found splat have a route file", () => {
+    const base = "src/routes/$locale/mechanic"
+    for (const { path } of navConfig.mechanic.flatMap((g) => g.items)) {
+      const dir = `${base}${path}`
+      expect(
+        existsSync(`${dir}.tsx`) || existsSync(`${dir}/index.tsx`),
+        path
+      ).toBe(true)
+    }
+    expect(existsSync(`${base}/$.tsx`)).toBe(true)
+  })
+  it("sends a workshop away from /mechanic to its own dashboard", () => {
+    const workshop = db.users.find(
+      (u) => u.role === "workshop" && u.onboardingDone
+    )!
+    try {
+      requireRole("mechanic")({
+        context: { me: publicUser(workshop), locale: "en" as const },
+        location: { href: "/en/mechanic/portfolio" },
+      })
+      throw new Error("no redirect")
+    } catch (e) {
+      if (!isRedirect(e)) throw e
+      expect(e.options.href).toBe("/en/workshop")
+    }
+  })
+})

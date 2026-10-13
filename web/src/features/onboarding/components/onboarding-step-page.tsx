@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useQuery } from "@tanstack/react-query"
+import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { useRouter, useRouterState } from "@tanstack/react-router"
 import { FormProvider, type FieldValues } from "react-hook-form"
 import { z } from "zod"
@@ -12,6 +12,7 @@ import { StickyFooter } from "@/components/app/sticky-footer"
 import { SubmitButton } from "@/components/app/submit-button"
 import { Button } from "@/components/ui/button"
 import { withRedirect } from "@/features/auth/destination"
+import { billingQueries } from "@/features/billing/queries"
 import {
   draftQuery,
   saveDraftOnExit,
@@ -52,6 +53,7 @@ export function OnboardingStepPage({
   const key = onboardingDraftKey(role)
   const data = useQuery(draftQuery(key)).data?.data ?? {}
   const me = useQuery(meQuery).data
+  const queryClient = useQueryClient()
   const save = useSaveDraft(key)
   const complete = useCompleteOnboarding()
   const index = steps.findIndex((s) => s.id === stepId)
@@ -105,11 +107,20 @@ export function OnboardingStepPage({
   const prev = steps[index - 1]
   const go = (path: string) => router.history.push(localeHref(path, locale))
   const goStep = (path: string) => go(withRedirect(path, redirect))
-  const finish = (all: DraftData) =>
-    complete.mutate(
-      { role, payload: flatValues(steps, all) },
-      { onSuccess: () => go(redirect ?? `${dashboardPath(role)}?welcome=1`) }
+  // A paid plan picked here goes along to the welcome notice, which links to its checkout. The plan step has loaded the plans.
+  const finish = (all: DraftData) => {
+    const payload = flatValues(steps, all)
+    const paid = queryClient
+      .getQueryData(billingQueries.plans(role).queryKey)
+      ?.find((p) => p.id === payload.planId && p.price > 0)
+    const welcome = new URLSearchParams(
+      paid ? { welcome: "1", plan: paid.id } : { welcome: "1" }
     )
+    complete.mutate(
+      { role, payload },
+      { onSuccess: () => go(redirect ?? `${dashboardPath(role)}?${welcome}`) }
+    )
+  }
   const advance = (all: DraftData) =>
     next ? goStep(`/onboarding/${role}/${next.id}`) : finish(all)
   const draftWith = (values: FieldValues) => ({ ...data, [step.id]: values })

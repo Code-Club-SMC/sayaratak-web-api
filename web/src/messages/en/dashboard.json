@@ -345,5 +345,14 @@
   "dashboard.profile_name_ar": "Name in Arabic",
   "dashboard.profile_name_en": "Name in English",
   "dashboard.profile_about_ar": "Description in Arabic",
-  "dashboard.profile_about_en": "Description in English"
+  "dashboard.profile_about_en": "Description in English",
+  "dashboard.welcome_title": "Welcome to Sayaratak",
+  "dashboard.welcome_ready_dealership": "Your dealership is set up and its public page is live. Add your vehicles so buyers can find them.",
+  "dashboard.welcome_ready_workshop": "Your workshop is set up and its public page is live. Customers can find you and get in touch now.",
+  "dashboard.welcome_ready_mechanic": "Your mechanic profile is set up and live. Customers can find you and get in touch now.",
+  "dashboard.welcome_plan": "You picked the {{plan}} plan: {{price}} for {{days}} days. Pay by Bankak transfer and upload the receipt; the plan starts as soon as we approve the payment. Until then you are on {{free}}.",
+  "dashboard.welcome_pay": "Pay for {{plan}}",
+  "dashboard.welcome_later": "Pay later",
+  "dashboard.welcome_cta_dealership": "Add your first vehicle",
+  "dashboard.welcome_cta_verify": "Get verified"
 }

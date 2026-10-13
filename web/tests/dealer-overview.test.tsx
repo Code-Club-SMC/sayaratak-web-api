@@ -1,4 +1,4 @@
-import { screen, waitFor, within } from "@testing-library/react"
+import { fireEvent, screen, waitFor, within } from "@testing-library/react"
 import { beforeEach, describe, expect, it, vi } from "vitest"
 
 import { DealerOverviewPage } from "@/features/dealer-overview/components/dealer-overview-page"
@@ -94,5 +94,31 @@ describe("DealerOverviewPage", () => {
         .getByRole("link", { name: "Edit and resubmit" })
         .getAttribute("href")
     ).toBe(`/en/dealer/inventory/${rejected!.id}/edit`)
+  })
+
+  it("welcomes a new dealer with a pay link for the plan picked in onboarding, and Pay later drops the params", async () => {
+    const { router } = await open(
+      "/en/dealer?range=7d&welcome=1&plan=plan-dealer-growth"
+    )
+    const pay = await screen.findByRole("link", { name: "Pay for Growth" })
+    expect(pay.getAttribute("href")).toBe(
+      "/en/dealer/billing/checkout?item=plan%3Aplan-dealer-growth"
+    )
+    expect(screen.getByText(/350,000 SDG for 30 days/)).toBeTruthy()
+    expect(screen.getByText(/Until then you are on Starter/)).toBeTruthy()
+    fireEvent.click(screen.getByRole("button", { name: "Pay later" }))
+    await waitFor(() =>
+      expect(screen.queryByRole("link", { name: "Pay for Growth" })).toBeNull()
+    )
+    expect(router.state.location.search).toEqual({ range: "7d" })
+  })
+
+  it("without a paid plan the welcome points to the first vehicle", async () => {
+    await open("/en/dealer?welcome=1&plan=plan-dealer-starter")
+    const add = await screen.findByRole("link", {
+      name: "Add your first vehicle",
+    })
+    expect(add.getAttribute("href")).toBe("/en/dealer/inventory/new")
+    expect(screen.queryByRole("button", { name: "Pay later" })).toBeNull()
   })
 })

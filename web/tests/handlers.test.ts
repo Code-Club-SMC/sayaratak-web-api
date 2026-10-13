@@ -881,6 +881,36 @@ describe("billing, promotions and payments", () => {
       )
     ).toBe(true)
   })
+  it("a dealership's plan payment goes through the admin queue and raises its vehicle limit", async () => {
+    await call("POST", "/onboarding/complete", {
+      as: "u-new",
+      body: { role: "dealership", payload: { name: "Fresh Motors" } },
+    })
+    const usage = async () =>
+      (await call("GET", "/me/subscription", { as: "u-new" })).body.usage
+    expect(await usage()).toMatchObject({ used: 0, limit: 10 })
+    for (let i = 0; i < 10; i++)
+      await call("POST", "/listings", { as: "u-new", body: car })
+    const over = await call("POST", "/listings", { as: "u-new", body: car })
+    expect(over.body.code).toBe("limit_reached")
+    const paid = await call("POST", "/payments", {
+      as: "u-new",
+      form: receipt("plan", "plan-dealer-growth"),
+    })
+    const queue = await call("GET", "/admin/payments?status=pending_review", {
+      as: "u-admin",
+    })
+    expect(
+      queue.body.items.some((p: { id: string }) => p.id === paid.body.id)
+    ).toBe(true)
+    await call("POST", `/admin/payments/${paid.body.id}/approve`, {
+      as: "u-admin",
+    })
+    expect((await usage()).limit).toBe(80)
+    expect(
+      (await call("POST", "/listings", { as: "u-new", body: car })).status
+    ).toBe(200)
+  })
   it("a payment needs the payer name", async () => {
     const res = await call("POST", "/payments", {
       as: "u-1",

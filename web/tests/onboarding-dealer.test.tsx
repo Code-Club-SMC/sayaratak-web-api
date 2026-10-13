@@ -288,14 +288,16 @@ describe("plan step and finish", () => {
     ).toContain("Desert Motors")
   })
 
-  it("keeps a chosen paid plan in the draft and still starts on the free plan", async () => {
+  it("keeps a chosen paid plan in the draft, starts on the free plan and passes the plan to the welcome", async () => {
     const { router } = await open("plan", saved)
     fireEvent.click(await screen.findByRole("radio", { name: /Growth/ }))
     fireEvent.click(
       screen.getByRole("button", { name: "Create my dealership" })
     )
     await waitFor(() =>
-      expect(router.state.location.pathname).toBe("/en/dealer")
+      expect(router.state.location.href).toBe(
+        "/en/dealer?welcome=1&plan=plan-dealer-growth"
+      )
     )
     expect(draft()).toMatchObject({ plan: { planId: "plan-dealer-growth" } })
     expect(await planOnFile()).toBe("plan-dealer-starter")

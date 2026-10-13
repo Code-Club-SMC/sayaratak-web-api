@@ -4,6 +4,8 @@ import { useNavigate, useSearch } from "@tanstack/react-router"
 import { DateRangeSelect } from "@/components/app/date-range-select"
 import { PageHeader } from "@/components/app/page-header"
 import { SectionError } from "@/components/app/section-error"
+import { WelcomeNotice } from "@/features/account-overview/components/welcome-notice"
+import { overviewSearchSchema } from "@/features/account-overview/schemas"
 import { NeedsAttentionCard } from "@/features/account-overview/components/needs-attention-card"
 import { analyticsQuery } from "@/features/analytics/queries"
 import { analyticsSearchSchema } from "@/features/analytics/schemas"
@@ -21,13 +23,18 @@ export function DealerOverviewPage() {
   const { t } = useT()
   const title = t("dashboard.nav_overview")
   usePageTitle(title)
-  const { range } = analyticsSearchSchema.parse(useSearch({ strict: false }))
+  const search = useSearch({ strict: false })
+  const { range } = analyticsSearchSchema.parse(search)
+  const { welcome, plan } = overviewSearchSchema.parse(search)
   const navigate = useNavigate()
   const analytics = useQuery(analyticsQuery(range))
   const setRange = (next: Range) =>
     void navigate({
       to: ".",
-      search: next === "30d" ? {} : { range: next },
+      search: (prev: Record<string, unknown>) => ({
+        ...prev,
+        range: next === "30d" ? undefined : next,
+      }),
       replace: true,
       resetScroll: false,
       viewTransition: false,
@@ -37,6 +44,7 @@ export function DealerOverviewPage() {
       <PageHeader title={title}>
         <DateRangeSelect value={range} onChange={setRange} />
       </PageHeader>
+      {welcome === 1 && <WelcomeNotice role="dealership" planId={plan} />}
       <SetupChecklist />
       <DealerStats range={range} analytics={analytics} />
       <div className="grid items-start gap-6 lg:grid-cols-2">

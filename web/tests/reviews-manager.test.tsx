@@ -9,7 +9,9 @@ import {
 import { beforeEach, describe, expect, it, vi } from "vitest"
 
 import { DealershipProfilePage } from "@/features/directory/components/dealership-profile-page"
+import { WorkshopProfilePage } from "@/features/directory/components/workshop-profile-page"
 import { dealershipProfileSearchSchema } from "@/features/directory/schemas"
+import { workshopProfileSearchSchema } from "@/features/directory/workshop-schemas"
 import { ReviewsManagerPage } from "@/features/reviews/components/reviews-manager-page"
 import {
   pruneReviewsSearch,
@@ -180,6 +182,47 @@ describe("ReviewsManagerPage", () => {
     ).toBeNull()
     expect(screen.queryByText("Body of Chadi")).toBeNull()
   })
+  it("a workshop's reply shows on its public profile's Reviews tab", async () => {
+    const shop = db.workshops.find((w) =>
+      db.users.some((u) => u.id === w.ownerId && u.onboardingDone)
+    )!
+    db.reviews = db.reviews.filter((r) => r.targetId !== shop.id)
+    db.reviews.push({
+      id: "t-w",
+      targetType: "workshop",
+      targetId: shop.id,
+      authorId: "u-omar",
+      authorName: "Ali",
+      rating: 5,
+      body: "Body of Ali",
+      createdAt: new Date().toISOString(),
+      status: "visible",
+    })
+    await renderShell(<ReviewsManagerPage targetType="workshop" />, {
+      role: "workshop",
+      path: "/en/workshop/reviews",
+    })
+    const row = await item("Ali")
+    fireEvent.click(within(row).getByRole("button", { name: "Reply" }))
+    fireEvent.change(within(row).getByRole("textbox", { name: "Your reply" }), {
+      target: { value: "Thanks for trusting us" },
+    })
+    fireEvent.click(within(row).getByRole("button", { name: "Post reply" }))
+    expect(await within(row).findByText("Thanks for trusting us")).toBeTruthy()
+    cleanup()
+    await renderShell(
+      <Suspense fallback={null}>
+        <WorkshopProfilePage
+          slug={shop.slug}
+          search={workshopProfileSearchSchema.parse({ tab: "reviews" })}
+        />
+      </Suspense>
+    )
+    const card = (await screen.findByText("Body of Ali")).closest("li")!
+    expect(within(card).getByText("Reply from the owner")).toBeTruthy()
+    expect(within(card).getByText("Thanks for trusting us")).toBeTruthy()
+  })
+
   it("Report asks first, then marks the review Reported", async () => {
     await open()
     const row = await item("Ali")

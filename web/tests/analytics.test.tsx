@@ -250,4 +250,38 @@ describe("workshop and mechanic analytics", () => {
     await visit()
     expect(db.events.find((e) => e.targetId === shop.id)?.counts.view).toBe(1)
   })
+  it("a call and a WhatsApp tap on the public profile show in the owner's cards", async () => {
+    const owner = db.users.find(
+      (u) => u.role === "workshop" && u.onboardingDone
+    )!
+    const shop = db.workshops.find((w) => w.ownerId === owner.id)!
+    setEvents([shop.id], [])
+    const visit = await renderShell(
+      <NowProvider serverNow={Date.UTC(2026, 9, 6, 10, 0)}>
+        <Suspense fallback={null}>
+          <WorkshopProfilePage
+            slug={shop.slug}
+            search={workshopProfileSearchSchema.parse({})}
+          />
+        </Suspense>
+      </NowProvider>
+    )
+    await screen.findByRole("heading", { level: 1 })
+    fireEvent.click(screen.getAllByRole("button", { name: "Call" })[0]!)
+    fireEvent.click(screen.getAllByRole("link", { name: "WhatsApp" })[0]!)
+    await waitFor(() =>
+      expect(
+        db.events.find((e) => e.targetId === shop.id)?.counts
+      ).toMatchObject({ phone_click: 1, whatsapp_click: 1 })
+    )
+    visit.unmount()
+    await renderShell(<AnalyticsPage role="workshop" />, {
+      role: "workshop",
+      path: "/en/workshop/analytics",
+    })
+    await waitFor(async () =>
+      expect((await card("Calls")).textContent).toContain("1")
+    )
+    expect((await card("WhatsApp clicks")).textContent).toContain("1")
+  })
 })

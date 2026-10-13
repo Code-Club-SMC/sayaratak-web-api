@@ -8,6 +8,7 @@ import {
   notificationsSearchSchema,
   pruneNotificationsSearch,
 } from "@/features/notifications/schemas"
+import { dashboardPath } from "@/lib/navigation"
 import { NowProvider } from "@/lib/now"
 import { db, resetDb } from "@/mocks/db"
 import { renderShell } from "./shell-render"
@@ -156,50 +157,54 @@ describe("NotificationsPage", () => {
   })
 })
 
-// 10.11: the dealer mounts the same page; its rows open dealer pages.
-describe("dealer notifications", () => {
-  const dealer = () =>
-    db.users.find((u) => u.role === "dealership" && u.onboardingDone)!
-  const theirs = () => db.notifications.filter((n) => n.userId === dealer().id)
+// 10.11 and 11.11: dealer and workshop mount the same page; their rows open their own dashboard pages.
+describe.each(["dealership", "workshop"] as const)(
+  "%s notifications",
+  (role) => {
+    const base = dashboardPath(role)
+    const owner = () =>
+      db.users.find((u) => u.role === role && u.onboardingDone)!
+    const theirs = () => db.notifications.filter((n) => n.userId === owner().id)
 
-  it("every page a dealer's notification opens is a dealer route", () => {
-    const hrefs = [
-      ...new Set(
-        theirs()
-          .map((n) => n.href)
-          .filter(Boolean)
-      ),
-    ]
-    expect(hrefs.length).toBeGreaterThan(0)
-    for (const href of hrefs) {
-      expect(href!.startsWith("/dealer/"), href).toBe(true)
-      const dir = `src/routes/$locale${href!}`
-      expect(
-        existsSync(`${dir}.tsx`) || existsSync(`${dir}/index.tsx`),
-        href
-      ).toBe(true)
-    }
-  })
+    it("every page a notification opens is a route of the role's dashboard", () => {
+      const hrefs = [
+        ...new Set(
+          theirs()
+            .map((n) => n.href)
+            .filter(Boolean)
+        ),
+      ]
+      expect(hrefs.length).toBeGreaterThan(0)
+      for (const href of hrefs) {
+        expect(href!.startsWith(`${base}/`), href).toBe(true)
+        const dir = `src/routes/$locale${href!.split("?")[0]}`
+        expect(
+          existsSync(`${dir}.tsx`) || existsSync(`${dir}/index.tsx`),
+          href
+        ).toBe(true)
+      }
+    })
 
-  it("lists the dealer's rows; a click marks one read and opens its page", async () => {
-    const { router } = await renderShell(
-      <NowProvider serverNow={Date.now()}>
-        <NotificationsPage />
-      </NowProvider>,
-      { role: "dealership", path: "/en/dealer/notifications" }
-    )
-    expect(await rows()).toHaveLength(theirs().length)
-    const before = theirs().filter((n) => !n.readAt).length
-    const link = await unreadLink()
-    const target = link.getAttribute("href")!
-    expect(target.startsWith("/en/dealer/")).toBe(true)
-    fireEvent.click(link)
-    await waitFor(() =>
-      expect(theirs().filter((n) => !n.readAt)).toHaveLength(before - 1)
-    )
-    expect(router.state.location.pathname).toBe(target)
-  })
-})
+    it("lists the rows; a click marks one read and opens its page", async () => {
+      const { router } = await renderShell(
+        <NowProvider serverNow={Date.now()}>
+          <NotificationsPage />
+        </NowProvider>,
+        { role, path: `/en${base}/notifications` }
+      )
+      expect(await rows()).toHaveLength(theirs().length)
+      const before = theirs().filter((n) => !n.readAt).length
+      const link = await unreadLink()
+      const target = link.getAttribute("href")!
+      expect(target.startsWith(`/en${base}/`)).toBe(true)
+      fireEvent.click(link)
+      await waitFor(() =>
+        expect(theirs().filter((n) => !n.readAt)).toHaveLength(before - 1)
+      )
+      expect(router.state.location.pathname).toBe(target.split("?")[0])
+    })
+  }
+)
 
 describe("NotificationPrefsForm", () => {
   it("has one switch per kind, each saving at once", async () => {

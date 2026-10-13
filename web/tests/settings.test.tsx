@@ -88,17 +88,20 @@ describe("SettingsPage", () => {
     ).toBe("/en/account/notifications")
   })
 
-  it("gives the dealer the same five sections, linked to the dealer notifications", async () => {
-    await open("dealership")
-    expect(
-      await screen.findByRole("heading", { name: "Delete account" })
-    ).toBeTruthy()
-    expect(
-      screen
-        .getByRole("link", { name: "Go to notifications" })
-        .getAttribute("href")
-    ).toBe("/en/dealer/notifications")
-  })
+  it.each(["dealership", "workshop"] as const)(
+    "gives the %s the same five sections, linked to its own notifications",
+    async (role) => {
+      await open(role)
+      expect(
+        await screen.findByRole("heading", { name: "Delete account" })
+      ).toBeTruthy()
+      expect(
+        screen
+          .getByRole("link", { name: "Go to notifications" })
+          .getAttribute("href")
+      ).toBe(`/en${dashboardPath(role)}/notifications`)
+    }
+  )
 
   it("gives the admin an account page without the delete section", async () => {
     await open("admin")

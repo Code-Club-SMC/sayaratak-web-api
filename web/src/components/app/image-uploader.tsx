@@ -12,6 +12,8 @@ export type ImageUploaderProps = {
   max?: number
   shape?: "wide" | "square" | "round"
   label?: string
+  // Multi mode: photo 1 is badged "Cover". False says "First" where the page has a separate cover image.
+  cover?: boolean
 }
 
 // `shape` only crops the single-mode preview; multi mode always shows 4:3 photos.

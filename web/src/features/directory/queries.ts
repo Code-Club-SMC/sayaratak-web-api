@@ -10,6 +10,7 @@ import { apiFetch, type ApiError } from "@/lib/api/client"
 import { useApiMutation } from "@/lib/api/mutation"
 import { keys } from "@/lib/api/query-keys"
 import { okSchema } from "@/schemas/api"
+import type { Media } from "@/schemas/listing"
 import { pageOf } from "@/schemas/fields"
 import type { portfolioInputSchema, serviceInputSchema } from "@/schemas/inputs"
 import {
@@ -94,26 +95,32 @@ export const useUpdateBusiness = () =>
       apiFetch("/me/business", { method: "PATCH", body, schema: mineSchema }),
     touched
   )
-export const useAddBusinessImage = () =>
-  useApiMutation(
-    (url: string) =>
-      apiFetch("/me/business/images", {
-        method: "POST",
-        body: { url },
-        schema: workshopSchema,
-      }),
-    touched
-  )
-export const useReorderBusinessImages = () =>
-  useApiMutation(
-    (ids: string[]) =>
+// Optimistic: the photos take the new list at once and go back if the save fails.
+export function useSaveBusinessImages() {
+  const qc = useQueryClient()
+  const key = businessQueries.mine.queryKey
+  type Mine = z.infer<typeof mineSchema>
+  return useMutation<unknown, ApiError, Media[], Mine | undefined>({
+    mutationFn: (images) =>
       apiFetch("/me/business/images", {
         method: "PUT",
-        body: { ids },
+        body: { ids: images.map((i) => i.id) },
         schema: workshopSchema,
       }),
-    touched
-  )
+    onMutate: async (images) => {
+      await qc.cancelQueries({ queryKey: key })
+      const prev = qc.getQueryData(key)
+      const w = workshopSchema.safeParse(prev).data
+      if (w) qc.setQueryData(keys.business.mine, { ...w, images })
+      return prev
+    },
+    onError: (_error, _images, prev) => qc.setQueryData(key, prev),
+    onSettled: () =>
+      Promise.all(
+        touched.map((queryKey) => qc.invalidateQueries({ queryKey }))
+      ),
+  })
+}
 
 export const useAddService = () =>
   useApiMutation(

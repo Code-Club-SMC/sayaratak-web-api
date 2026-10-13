@@ -56,18 +56,18 @@ route("POST", "/uploads", async (c) => {
     video && poster instanceof File
       ? await storeUpload(poster, POSTER_BYTES)
       : null
-  return Response.json(
-    mediaSchema.parse({
-      id: stored.id,
-      type: video ? "video" : "image",
-      url: template(stored.id),
-      width: Number(form.get("width")) || 0,
-      height: Number(form.get("height")) || 0,
-      placeholderColor: String(form.get("placeholderColor") ?? "#c9d3cf"),
-      posterUrl: posterRow ? template(posterRow.id) : null,
-    }),
-    { status: 201 }
-  )
+  const media = mediaSchema.parse({
+    id: stored.id,
+    type: video ? "video" : "image",
+    url: template(stored.id),
+    width: Number(form.get("width")) || 0,
+    height: Number(form.get("height")) || 0,
+    placeholderColor: String(form.get("placeholderColor") ?? "#c9d3cf"),
+    posterUrl: posterRow ? template(posterRow.id) : null,
+  })
+  const row = db.uploads.get(stored.id)
+  if (row) row.media = media
+  return Response.json(media, { status: 201 })
 })
 
 route("GET", "/uploads/:id", (c) => {

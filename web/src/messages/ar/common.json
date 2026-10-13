@@ -96,6 +96,8 @@
   "common.count_min": "{{min}} على الأقل",
   "common.set_cover": "تعيين كصورة رئيسية",
   "common.cover": "الرئيسية",
+  "common.first": "الأولى",
+  "common.move_first": "نقل إلى البداية",
   "common.move_earlier": "تقديم",
   "common.move_later": "تأخير",
   "common.remove": "إزالة",

@@ -92,6 +92,8 @@
   "common.count_min": "At least {{min}}",
   "common.set_cover": "Set as cover",
   "common.cover": "Cover",
+  "common.first": "First",
+  "common.move_first": "Move to first",
   "common.move_earlier": "Move earlier",
   "common.move_later": "Move later",
   "common.remove": "Remove",

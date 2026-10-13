@@ -11,6 +11,7 @@ export function MediaTile({
   media,
   index,
   count,
+  cover,
   onMove,
   onRemove,
   onDragStart,
@@ -19,6 +20,7 @@ export function MediaTile({
   media: Media
   index: number
   count: number
+  cover: boolean
   onMove: (to: number) => void
   onRemove: () => void
   onDragStart: () => void
@@ -42,7 +44,7 @@ export function MediaTile({
         />
         {index === 0 && (
           <span className="absolute start-2 top-2 rounded-full bg-card px-2 text-caption font-medium">
-            {t("common.cover")}
+            {t(cover ? "common.cover" : "common.first")}
           </span>
         )}
       </div>
@@ -77,7 +79,7 @@ export function MediaTile({
       </div>
       {index > 0 && (
         <Button variant="secondary" onClick={() => onMove(0)}>
-          {t("common.set_cover")}
+          {t(cover ? "common.set_cover" : "common.move_first")}
         </Button>
       )}
     </div>

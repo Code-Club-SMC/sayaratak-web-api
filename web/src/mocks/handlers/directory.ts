@@ -216,7 +216,13 @@ route("POST", "/me/business/images", async (c) => {
 route("PUT", "/me/business/images", async (c) => {
   const w = workshop(c)
   const { ids } = await c.body(idsInputSchema)
-  w.images = ids.flatMap((id) => w.images.filter((i) => i.id === id))
+  if (ids.length > 20)
+    throw fail(422, "validation", { ids: "validation.media_max" })
+  // Each id is a kept photo or a new image upload; unknown ids are dropped.
+  w.images = ids.flatMap((id) => {
+    const media = w.images.find((i) => i.id === id) ?? db.uploads.get(id)?.media
+    return media?.type === "image" ? [media] : []
+  })
   return workshopSchema.parse(w)
 })
 

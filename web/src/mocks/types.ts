@@ -10,7 +10,7 @@ import type { AdPage, Campaign } from "@/schemas/ads"
 import type { EventType, NotificationPrefs } from "@/schemas/api"
 import type { Bilingual, Locale } from "@/schemas/fields"
 import type { contactSubjects } from "@/schemas/inputs"
-import type { Listing } from "@/schemas/listing"
+import type { Listing, Media } from "@/schemas/listing"
 import type { Message, Notification } from "@/schemas/messaging"
 import type {
   Payment,
@@ -81,6 +81,8 @@ export type UploadRow = {
   name: string
   type: string
   bytes: ArrayBuffer
+  // Set by POST /uploads, so a later save by id (PUT /me/business/images) can build the Media.
+  media?: Media
 }
 export type Country = { id: string; name: Bilingual; dialCode: string }
 export type PromotionPriceRow = PromotionPrice & { id: string }

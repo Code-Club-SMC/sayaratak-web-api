@@ -20,6 +20,7 @@ export function ImageUploaderImpl({
   max = mode === "single" ? 1 : 20,
   shape = "wide",
   label,
+  cover = true,
 }: ImageUploaderProps) {
   const { t } = useT()
   const single = mode === "single"
@@ -134,6 +135,7 @@ export function ImageUploaderImpl({
               media={media}
               index={index}
               count={value.length}
+              cover={cover}
               onMove={(to) => move(index, to)}
               onRemove={() => commit(value.filter((m) => m.id !== media.id))}
               onDragStart={() => {

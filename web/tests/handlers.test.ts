@@ -1412,6 +1412,32 @@ describe("verification, owner side", () => {
     ).toBe(true)
   })
 
+  it("a dealership made through onboarding gets the public badge after approval", async () => {
+    await call("POST", "/onboarding/complete", {
+      as: "u-new",
+      body: { role: "dealership", payload: { name: "Fresh Motors" } },
+    })
+    const slug = db.dealerships.find((d) => d.ownerId === "u-new")!.slug
+    const badge = async () =>
+      (await call("GET", `/dealerships/${slug}`)).body.verified
+    expect(await badge()).toBe(false)
+    const sent = await send("u-new", [
+      ["commercial_registration", file("cr.png", 20)],
+      ["shop_photo", file("shop.png", 30)],
+    ])
+    expect(sent.body).toMatchObject({
+      status: "pending",
+      targetType: "dealership",
+    })
+    await call("POST", `/admin/verifications/${sent.body.id}/approve`, {
+      as: "u-admin",
+    })
+    expect(await badge()).toBe(true)
+    expect(
+      (await call("GET", "/me/verification", { as: "u-new" })).body.status
+    ).toBe("approved")
+  })
+
   it("refuses bad input, a second pending request and an already verified business", async () => {
     const png = () => file("a.png", 10)
     const bad = await send("u-dealer", [["selfie", png()]])

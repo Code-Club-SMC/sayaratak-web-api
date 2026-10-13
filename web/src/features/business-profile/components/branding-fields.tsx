@@ -5,12 +5,18 @@ import { LogoUpload } from "@/components/app/logo-upload"
 import { ProfilePreview } from "@/components/app/profile-preview"
 import { mediaFromUrl } from "@/features/onboarding/media"
 import { useT } from "@/lib/i18n/use-t"
-import type { Dealership } from "@/schemas/profile"
+import type { Dealership, Workshop } from "@/schemas/profile"
 
 type Branding = { logoUrl: string; coverUrl: string }
 
 // Logo and cover, with the public profile header beside them that follows each change before it is saved.
-export function BrandingFields({ dealership: d }: { dealership: Dealership }) {
+export function BrandingFields({
+  variant,
+  business: d,
+}: {
+  variant: "dealership" | "workshop"
+  business: Dealership | Workshop
+}) {
   const { t, locale } = useT()
   const { control } = useFormContext<Branding>()
   const [logoUrl, coverUrl] = useWatch({
@@ -43,7 +49,7 @@ export function BrandingFields({ dealership: d }: { dealership: Dealership }) {
         ))}
       </div>
       <ProfilePreview
-        variant="dealership"
+        variant={variant}
         name={d.name[locale] || d.name.ar}
         imageUrl={logoUrl}
         coverUrl={coverUrl}

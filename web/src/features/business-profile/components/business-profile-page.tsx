@@ -14,21 +14,29 @@ import { HoursStep } from "@/features/onboarding/components/hours-step"
 import { PlaceFields } from "@/features/onboarding/components/place-fields"
 import { useT } from "@/lib/i18n/use-t"
 import { cn } from "@/lib/utils"
-import { dealershipSchema } from "@/schemas/profile"
+import { dealershipSchema, workshopSchema } from "@/schemas/profile"
 import * as s from "../schemas"
 import { BrandingFields } from "./branding-fields"
 import { ContactFields } from "./contact-fields"
 import { DetailsFields } from "./details-fields"
 import { PublicAddress } from "./public-address"
 import { SectionForm } from "./section-form"
+import { WorkshopContactFields } from "./workshop-contact-fields"
 
-// The dealership's public profile, one section per form. Leaving with any section unsaved asks first.
-export function DealerProfilePage() {
+// A dealership's or workshop's public profile, one section per form. Leaving with any section unsaved asks first.
+export function BusinessProfilePage({
+  variant,
+}: {
+  variant: "dealership" | "workshop"
+}) {
   const { t } = useT()
   const title = t("dashboard.nav_profile")
   usePageTitle(title)
   const mine = useQuery(businessQueries.mine)
-  const d = dealershipSchema.safeParse(mine.data).data
+  const d = (
+    variant === "dealership" ? dealershipSchema : workshopSchema
+  ).safeParse(mine.data).data
+  const path = d && `/${variant}s/${d.slug}`
   const [dirty, setDirty] = useState<Record<string, boolean>>({})
   const onDirty = useCallback(
     (id: string, value: boolean) =>
@@ -46,9 +54,9 @@ export function DealerProfilePage() {
   return (
     <div className="flex flex-col gap-4">
       <PageHeader title={title}>
-        {d && (
+        {path && (
           <ShellLink
-            path={`/dealerships/${d.slug}`}
+            path={path}
             newTab
             className={cn(buttonVariants({ variant: "outline" }))}
           >
@@ -69,14 +77,14 @@ export function DealerProfilePage() {
         </div>
       ) : (
         <>
-          <PublicAddress slug={d.slug} />
+          <PublicAddress path={`/${variant}s/${d.slug}`} />
           <div>
             <SectionForm
               {...section("branding")}
               schema={s.brandingSchema}
               values={s.brandingValues(d)}
             >
-              <BrandingFields dealership={d} />
+              <BrandingFields variant={variant} business={d} />
             </SectionForm>
             <SectionForm
               {...section("details")}
@@ -85,14 +93,25 @@ export function DealerProfilePage() {
             >
               <DetailsFields />
             </SectionForm>
-            <SectionForm
-              {...section("contact")}
-              schema={s.contactSchema}
-              values={s.contactValues(d)}
-              toBody={s.contactBody}
-            >
-              <ContactFields />
-            </SectionForm>
+            {"phones" in d ? (
+              <SectionForm
+                {...section("contact")}
+                schema={s.contactSchema}
+                values={s.contactValues(d)}
+                toBody={s.contactBody}
+              >
+                <ContactFields />
+              </SectionForm>
+            ) : (
+              <SectionForm
+                {...section("contact")}
+                schema={s.workshopContactSchema}
+                values={s.workshopContactValues(d)}
+                toBody={s.workshopContactBody}
+              >
+                <WorkshopContactFields />
+              </SectionForm>
+            )}
             <SectionForm
               {...section("location")}
               schema={s.locationSchema}

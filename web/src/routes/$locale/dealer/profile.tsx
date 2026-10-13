@@ -1,9 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router"
 
+import { BusinessProfilePage } from "@/features/business-profile/components/business-profile-page"
 import { dashboardPage } from "@/features/dashboard/overview-route"
-import { DealerProfilePage } from "@/features/dealer-profile/components/dealer-profile-page"
 
 export const Route = createFileRoute("/$locale/dealer/profile")({
   ...dashboardPage("/dealer/profile", "dashboard.nav_profile"),
-  component: DealerProfilePage,
+  component: () => <BusinessProfilePage variant="dealership" />,
 })

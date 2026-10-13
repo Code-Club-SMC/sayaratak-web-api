@@ -1,7 +1,7 @@
 import { act, fireEvent, screen, waitFor, within } from "@testing-library/react"
 import { beforeEach, describe, expect, it, vi } from "vitest"
 
-import { DealerProfilePage } from "@/features/dealer-profile/components/dealer-profile-page"
+import { BusinessProfilePage } from "@/features/business-profile/components/business-profile-page"
 import { db, resetDb } from "@/mocks/db"
 import { renderShell } from "./shell-render"
 
@@ -25,7 +25,7 @@ const dealership = () => {
   return db.dealerships.find((d) => d.ownerId === owner.id)!
 }
 const open = () =>
-  renderShell(<DealerProfilePage />, {
+  renderShell(<BusinessProfilePage variant="dealership" />, {
     role: "dealership",
     path: "/en/dealer/profile",
   })
@@ -34,7 +34,7 @@ const section = async (title: string) =>
     (await screen.findByRole("heading", { name: title })).closest("section")!
   )
 
-describe("DealerProfilePage", () => {
+describe("BusinessProfilePage, dealership", () => {
   it("saves one section without touching the others", async () => {
     const before = structuredClone(dealership())
     await open()
@@ -81,5 +81,32 @@ describe("DealerProfilePage", () => {
     fireEvent.click(within(dialog).getByRole("button", { name: "Cancel" }))
     await waitFor(() => expect(screen.queryByRole("alertdialog")).toBeNull())
     expect(router.state.location.pathname).toBe("/en/dealer/profile")
+  })
+})
+
+const workshop = () => {
+  const owner = db.users.find((u) => u.role === "workshop" && u.onboardingDone)!
+  return db.workshops.find((w) => w.ownerId === owner.id)!
+}
+
+describe("BusinessProfilePage, workshop", () => {
+  it("saves the one phone and links to the public workshop page", async () => {
+    const before = structuredClone(workshop())
+    await renderShell(<BusinessProfilePage variant="workshop" />, {
+      role: "workshop",
+      path: "/en/workshop/profile",
+    })
+    expect(
+      (
+        await screen.findByRole("link", { name: /View public profile/ })
+      ).getAttribute("href")
+    ).toBe(`/en/workshops/${before.slug}`)
+    const contact = await section("Contact")
+    const phone = contact.getByLabelText("Phone number")
+    fireEvent.change(phone, { target: { value: "0912345678" } })
+    fireEvent.click(contact.getByRole("button", { name: "Save" }))
+    await waitFor(() => expect(workshop().phone).not.toBe(before.phone))
+    expect(workshop().name).toEqual(before.name)
+    expect(workshop().services).toEqual(before.services)
   })
 })

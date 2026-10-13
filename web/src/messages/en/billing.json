@@ -205,6 +205,7 @@
   "billing.sidebar_unpaid_note": "You are on {{free}} until the payment is approved.",
   "billing.sidebar_review_note": "Starts once we approve your transfer.",
   "billing.sidebar_view_payment": "View payment",
+  "billing.review_renewal": "Your renewal payment is under review.",
   "billing.sidebar_upgrade": "Upgrade",
   "billing.sidebar_manage": "Manage plan",
   "billing.reminder_title": "Your {{plan}} plan is one step away",

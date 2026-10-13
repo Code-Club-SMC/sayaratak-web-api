@@ -280,7 +280,6 @@
   "dashboard.dealer_funnel_of_views": "{{rate}} of views",
   "dashboard.dealer_funnel_of_contacts": "{{rate}} of contacts",
   "dashboard.dealer_see_analytics": "View analytics",
-  "dashboard.dealer_change_plan": "Change plan",
   "dashboard.workshop_stat_inquiries": "Unread inquiries",
   "dashboard.recent_reviews_title": "Recent reviews",
   "dashboard.dealer_top_counts": "{{views}} views, {{contacts}} contacts",

@@ -13,6 +13,7 @@ import {
   SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
+  SidebarSeparator,
 } from "@/components/ui/sidebar"
 import { SidebarPlanCard } from "@/features/billing/components/sidebar-plan-card"
 import { countsQuery } from "@/features/notifications/counts-query"
@@ -74,7 +75,12 @@ export function DashboardSidebar({ me }: { me: User }) {
           ))}
         </nav>
       </SidebarContent>
-      {me.role !== "admin" && <SidebarPlanCard me={me} />}
+      {me.role !== "admin" && (
+        <>
+          <SidebarPlanCard me={me} />
+          <SidebarSeparator className="group-data-[collapsible=icon]:hidden" />
+        </>
+      )}
       <SidebarUser me={me} />
     </Sidebar>
   )

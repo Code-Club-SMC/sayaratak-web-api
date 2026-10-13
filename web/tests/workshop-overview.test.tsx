@@ -100,10 +100,10 @@ describe("WorkshopOverviewPage", () => {
     ).toBe("/en/workshop/reviews")
   })
 
-  it("shows the plan with a Change plan link to workshop billing", async () => {
+  it("shows the plan with a Manage plan link to workshop billing", async () => {
     await open()
     expect(
-      (await screen.findByRole("link", { name: "Change plan" })).getAttribute(
+      (await screen.findByRole("link", { name: "Manage plan" })).getAttribute(
         "href"
       )
     ).toBe("/en/workshop/billing")

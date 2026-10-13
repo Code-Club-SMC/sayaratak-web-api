@@ -126,11 +126,33 @@ describe("SidebarPlanCard", () => {
       status: "pending_review",
     })
     await openCard()
-    expect(await screen.findByText("Payment in review")).toBeTruthy()
+    expect(await screen.findByText("Payment under review")).toBeTruthy()
     expect(screen.getByText("Growth")).toBeTruthy()
     expect(
       screen.getByRole("link", { name: "View payment" }).getAttribute("href")
     ).toBe("/en/dealer/billing?tab=history")
+  })
+
+  it("a renewal under review keeps the active plan and adds a note", async () => {
+    const row = dealer()
+    row.chosenPlanId = undefined
+    const active = db.subscriptions.find(
+      (s) => s.userId === row.id && s.status === "active"
+    )!
+    db.payments.push({
+      ...db.payments[0]!,
+      id: "pay-renewal",
+      userId: row.id,
+      itemType: "plan",
+      itemId: active.planId,
+      status: "pending_review",
+    })
+    await openCard()
+    expect(
+      await screen.findByText("Your renewal payment is under review.")
+    ).toBeTruthy()
+    expect(screen.getByText("Active")).toBeTruthy()
+    expect(screen.getByRole("link", { name: "Manage plan" })).toBeTruthy()
   })
 
   it("the free plan shows its usage and an Upgrade link", async () => {

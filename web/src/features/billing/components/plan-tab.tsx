@@ -13,7 +13,7 @@ import { billingQueries } from "../queries"
 import { CurrentPlanCard } from "./current-plan-card"
 import { PAYMENTS_PAGE_SIZE } from "./payment-history-table"
 
-// The current plan, then every plan the audience can buy. Choosing one opens its checkout; a plan with a payment under review shows a badge and cannot be paid twice.
+// The current plan (its summary also names a payment under review), then every plan the audience can buy. Choosing one opens its checkout; a plan with a payment under review shows a disabled button and cannot be paid twice.
 export function PlanTab({
   audience,
   onHistory,
@@ -60,7 +60,6 @@ export function PlanTab({
       .filter((p) => p.itemType === "plan" && p.status === "pending_review")
       .map((p) => p.itemId)
   )
-  const pending = plans.data.filter((p) => pendingIds.has(p.id))
   const choose = (id: string) =>
     router.history.push(
       localeHref(
@@ -78,21 +77,12 @@ export function PlanTab({
       />
       <section className="flex flex-col gap-3">
         <h2 className="text-title font-semibold">{t("billing.plans_title")}</h2>
-        {pending.map((p) => (
-          <p
-            key={p.id}
-            role="status"
-            className="rounded-lg bg-muted px-4 py-3 text-ui"
-          >
-            {t("billing.pending_notice", { name: p.name[locale] })}
-          </p>
-        ))}
         <PlansGrid
           mode="action"
           plans={plans.data}
           currentId={(subscription.data.plan ?? free)?.id}
           onAction={choose}
-          pendingIds={pending.map((p) => p.id)}
+          pendingIds={[...pendingIds]}
         />
       </section>
     </div>

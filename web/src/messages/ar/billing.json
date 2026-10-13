@@ -233,6 +233,7 @@
   "billing.sidebar_unpaid_note": "أنت على باقة {{free}} حتى تتم الموافقة على الدفع.",
   "billing.sidebar_review_note": "تبدأ فور موافقتنا على تحويلك.",
   "billing.sidebar_view_payment": "عرض الدفعة",
+  "billing.review_renewal": "دفعة التجديد قيد المراجعة.",
   "billing.sidebar_upgrade": "ترقية",
   "billing.sidebar_manage": "إدارة الباقة",
   "billing.reminder_title": "باقة {{plan}} على بُعد خطوة واحدة",

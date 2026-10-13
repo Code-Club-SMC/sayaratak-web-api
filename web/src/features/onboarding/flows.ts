@@ -35,6 +35,8 @@ export type FlowStep = {
   helperKey: string
   schema: z.ZodType<FieldValues, FieldValues>
   optional?: boolean
+  // Uses the full page width with no preview beside it (the plan cards).
+  wide?: boolean
   // Starting values for a step with no saved draft, e.g. the account name.
   defaults?: (me: User) => FieldValues
   Component: ComponentType
@@ -93,6 +95,7 @@ export const flows = {
       ...step("dealership", "plan"),
       schema: planStepSchema,
       defaults: () => ({ planId: "" }),
+      wide: true,
       Component: planStep("dealership"),
     },
   ],
@@ -126,6 +129,7 @@ export const flows = {
       ...step("workshop", "plan"),
       schema: planStepSchema,
       defaults: () => ({ planId: "" }),
+      wide: true,
       Component: planStep("workshop"),
     },
   ],

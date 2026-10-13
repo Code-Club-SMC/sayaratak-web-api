@@ -6,14 +6,17 @@ import { Textarea } from "@/components/ui/textarea"
 import { useT } from "@/lib/i18n/use-t"
 import type { Bilingual } from "@/schemas/fields"
 
-type Details = { name: Bilingual; description: Bilingual }
+type Details = { name: Bilingual; description: Bilingual; bio: Bilingual }
 const langs = ["ar", "en"] as const
 
-// Name and description in both languages: the public page shows the one that matches the visitor's language.
-export function DetailsFields() {
+// Name and description (a mechanic's bio) in both languages: the public page shows the one that matches the visitor's language.
+export function DetailsFields({ person = false }: { person?: boolean }) {
   const { t } = useT()
+  // A mechanic's form holds `bio` where a business has `description`.
+  const text = person ? "bio" : "description"
+  const max = person ? 600 : 1000
   const { register, control, formState } = useFormContext<Details>()
-  const description = useWatch({ control, name: "description" })
+  const description = useWatch({ control, name: text })
   const { errors } = formState
   return (
     <>
@@ -28,7 +31,7 @@ export function DetailsFields() {
               {...c}
               {...register(`name.${lang}`)}
               dir={lang === "ar" ? "rtl" : "ltr"}
-              autoComplete="organization"
+              autoComplete={person ? "name" : "organization"}
             />
           )}
         </FormField>
@@ -36,14 +39,14 @@ export function DetailsFields() {
       {langs.map((lang) => (
         <FormField
           key={`description-${lang}`}
-          label={t(`dashboard.profile_about_${lang}`)}
-          error={errors.description?.[lang]?.message}
-          description={`${description[lang].length}/1000`}
+          label={t(`dashboard.profile_${person ? "bio" : "about"}_${lang}`)}
+          error={errors[text]?.[lang]?.message}
+          description={`${description[lang].length}/${max}`}
         >
           {(c) => (
             <Textarea
               {...c}
-              {...register(`description.${lang}`)}
+              {...register(`${text}.${lang}`)}
               dir={lang === "ar" ? "rtl" : "ltr"}
               rows={5}
             />

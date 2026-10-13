@@ -14,28 +14,36 @@ import { HoursStep } from "@/features/onboarding/components/hours-step"
 import { PlaceFields } from "@/features/onboarding/components/place-fields"
 import { useT } from "@/lib/i18n/use-t"
 import { cn } from "@/lib/utils"
-import { dealershipSchema, workshopSchema } from "@/schemas/profile"
+import {
+  dealershipSchema,
+  mechanicSchema,
+  workshopSchema,
+} from "@/schemas/profile"
 import * as s from "../schemas"
 import { BrandingFields } from "./branding-fields"
 import { ContactFields } from "./contact-fields"
 import { DetailsFields } from "./details-fields"
+import { MechanicSections } from "./mechanic-sections"
 import { PublicAddress } from "./public-address"
 import { SectionForm } from "./section-form"
 import { WorkshopContactFields } from "./workshop-contact-fields"
 
-// A dealership's or workshop's public profile, one section per form. Leaving with any section unsaved asks first.
+// A dealership's, workshop's or mechanic's public profile, one section per form. Leaving with any section unsaved asks first.
 export function BusinessProfilePage({
   variant,
 }: {
-  variant: "dealership" | "workshop"
+  variant: "dealership" | "workshop" | "mechanic"
 }) {
   const { t } = useT()
   const title = t("dashboard.nav_profile")
   usePageTitle(title)
   const mine = useQuery(businessQueries.mine)
-  const d = (
-    variant === "dealership" ? dealershipSchema : workshopSchema
-  ).safeParse(mine.data).data
+  const schemas = {
+    dealership: dealershipSchema,
+    workshop: workshopSchema,
+    mechanic: mechanicSchema,
+  }
+  const d = schemas[variant].safeParse(mine.data).data
   const path = d && `/${variant}s/${d.slug}`
   const [dirty, setDirty] = useState<Record<string, boolean>>({})
   const onDirty = useCallback(
@@ -78,55 +86,59 @@ export function BusinessProfilePage({
       ) : (
         <>
           <PublicAddress path={`/${variant}s/${d.slug}`} />
-          <div>
-            <SectionForm
-              {...section("branding")}
-              schema={s.brandingSchema}
-              values={s.brandingValues(d)}
-            >
-              <BrandingFields variant={variant} business={d} />
-            </SectionForm>
-            <SectionForm
-              {...section("details")}
-              schema={s.detailsSchema}
-              values={s.detailsValues(d)}
-            >
-              <DetailsFields />
-            </SectionForm>
-            {"phones" in d ? (
+          {"portfolio" in d ? (
+            <MechanicSections mechanic={d} section={section} />
+          ) : (
+            <div>
               <SectionForm
-                {...section("contact")}
-                schema={s.contactSchema}
-                values={s.contactValues(d)}
-                toBody={s.contactBody}
+                {...section("branding")}
+                schema={s.brandingSchema}
+                values={s.brandingValues(d)}
               >
-                <ContactFields />
+                <BrandingFields business={d} />
               </SectionForm>
-            ) : (
               <SectionForm
-                {...section("contact")}
-                schema={s.workshopContactSchema}
-                values={s.workshopContactValues(d)}
-                toBody={s.workshopContactBody}
+                {...section("details")}
+                schema={s.detailsSchema}
+                values={s.detailsValues(d)}
               >
-                <WorkshopContactFields />
+                <DetailsFields />
               </SectionForm>
-            )}
-            <SectionForm
-              {...section("location")}
-              schema={s.locationSchema}
-              values={s.locationValues(d)}
-            >
-              <PlaceFields />
-            </SectionForm>
-            <SectionForm
-              {...section("hours")}
-              schema={s.hoursSchema}
-              values={s.hoursValues(d)}
-            >
-              <HoursStep />
-            </SectionForm>
-          </div>
+              {"phones" in d ? (
+                <SectionForm
+                  {...section("contact")}
+                  schema={s.contactSchema}
+                  values={s.contactValues(d)}
+                  toBody={s.contactBody}
+                >
+                  <ContactFields />
+                </SectionForm>
+              ) : (
+                <SectionForm
+                  {...section("contact")}
+                  schema={s.workshopContactSchema}
+                  values={s.workshopContactValues(d)}
+                  toBody={s.workshopContactBody}
+                >
+                  <WorkshopContactFields />
+                </SectionForm>
+              )}
+              <SectionForm
+                {...section("location")}
+                schema={s.locationSchema}
+                values={s.locationValues(d)}
+              >
+                <PlaceFields />
+              </SectionForm>
+              <SectionForm
+                {...section("hours")}
+                schema={s.hoursSchema}
+                values={s.hoursValues(d)}
+              >
+                <HoursStep />
+              </SectionForm>
+            </div>
+          )}
         </>
       )}
       <LeaveGuard when={Object.values(dirty).some(Boolean)} />

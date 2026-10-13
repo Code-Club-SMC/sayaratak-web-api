@@ -4,9 +4,11 @@ import {
   dealerBusinessSchema,
   dealerLocationSchema,
   hoursStepSchema,
+  mechanicAboutSchema,
+  mechanicExpertiseSchema,
   workshopLocationSchema,
 } from "@/features/onboarding/schemas"
-import type { Dealership, Workshop } from "@/schemas/profile"
+import type { Dealership, Mechanic, Workshop } from "@/schemas/profile"
 
 type Business = Dealership | Workshop
 
@@ -51,7 +53,9 @@ export const contactValues = (d: Dealership) => ({
   phones: d.phones.map((value) => ({ value })),
   whatsapp: d.whatsapp ?? "",
 })
-export const workshopContactValues = (w: Workshop) => ({
+export const workshopContactValues = (
+  w: Pick<Workshop, "phone" | "whatsapp">
+) => ({
   phone: w.phone,
   whatsapp: w.whatsapp ?? "",
 })
@@ -70,3 +74,30 @@ export const contactBody = (v: z.output<typeof contactSchema>) => ({
 export const workshopContactBody = (
   v: z.output<typeof workshopContactSchema>
 ) => ({ phone: v.phone, whatsapp: v.whatsapp || null })
+
+// Mechanic sections. The name and bio have both languages like a business's details; the photo is a url.
+const about = mechanicAboutSchema.shape
+export const mechanicAboutSectionSchema = z.object({
+  photoUrl: z.string(),
+  name: z.object({ ar: about.name, en: about.name }),
+  yearsOfExperience: about.yearsOfExperience,
+  bio: z.object({ ar: about.bio, en: about.bio }),
+})
+export const expertiseSchema = mechanicExpertiseSchema
+
+export const mechanicAboutValues = (m: Mechanic) => ({
+  photoUrl: m.photoUrl,
+  name: m.name,
+  yearsOfExperience: m.yearsOfExperience,
+  bio: m.bio,
+})
+// The saved list holds the home city too (the directory filters on it); the form lists only the others.
+export const expertiseValues = (m: Mechanic) => ({
+  specializationIds: m.specializationIds,
+  cityId: m.cityId,
+  servedCityIds: m.servedCityIds.filter((id) => id !== m.cityId),
+})
+export const expertiseBody = (v: z.output<typeof expertiseSchema>) => ({
+  ...v,
+  servedCityIds: [v.cityId, ...v.servedCityIds],
+})

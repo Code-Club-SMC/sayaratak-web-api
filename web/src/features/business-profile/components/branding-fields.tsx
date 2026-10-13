@@ -11,10 +11,8 @@ type Branding = { logoUrl: string; coverUrl: string }
 
 // Logo and cover, with the public profile header beside them that follows each change before it is saved.
 export function BrandingFields({
-  variant,
   business: d,
 }: {
-  variant: "dealership" | "workshop"
   business: Dealership | Workshop
 }) {
   const { t, locale } = useT()
@@ -49,7 +47,7 @@ export function BrandingFields({
         ))}
       </div>
       <ProfilePreview
-        variant={variant}
+        variant={"phones" in d ? "dealership" : "workshop"}
         name={d.name[locale] || d.name.ar}
         imageUrl={logoUrl}
         coverUrl={coverUrl}

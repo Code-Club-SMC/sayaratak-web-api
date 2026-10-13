@@ -69,10 +69,14 @@ import { Route as LocaleMechanicVerificationRouteImport } from './routes/$locale
 import { Route as LocaleOnboardingIndexRouteImport } from './routes/$locale/onboarding/index'
 import { Route as LocaleOnboardingRoleRouteImport } from './routes/$locale/onboarding/role'
 import { Route as LocaleWorkshopIndexRouteImport } from './routes/$locale/workshop/index'
+import { Route as LocaleWorkshopSplatRouteImport } from './routes/$locale/workshop/$'
 import { Route as LocaleWorkshopAnalyticsRouteImport } from './routes/$locale/workshop/analytics'
 import { Route as LocaleWorkshopInquiriesRouteImport } from './routes/$locale/workshop/inquiries'
 import { Route as LocaleWorkshopNotificationsRouteImport } from './routes/$locale/workshop/notifications'
+import { Route as LocaleWorkshopPhotosRouteImport } from './routes/$locale/workshop/photos'
+import { Route as LocaleWorkshopProfileRouteImport } from './routes/$locale/workshop/profile'
 import { Route as LocaleWorkshopReviewsRouteImport } from './routes/$locale/workshop/reviews'
+import { Route as LocaleWorkshopServicesRouteImport } from './routes/$locale/workshop/services'
 import { Route as LocaleWorkshopSettingsRouteImport } from './routes/$locale/workshop/settings'
 import { Route as LocaleWorkshopVerificationRouteImport } from './routes/$locale/workshop/verification'
 import { Route as LocalePublicDealershipsIndexRouteImport } from './routes/$locale/_public/dealerships/index'
@@ -409,6 +413,11 @@ const LocaleWorkshopIndexRoute = LocaleWorkshopIndexRouteImport.update({
   path: '/',
   getParentRoute: () => LocaleWorkshopRouteRoute,
 } as any)
+const LocaleWorkshopSplatRoute = LocaleWorkshopSplatRouteImport.update({
+  id: '/$',
+  path: '/$',
+  getParentRoute: () => LocaleWorkshopRouteRoute,
+} as any)
 const LocaleWorkshopAnalyticsRoute = LocaleWorkshopAnalyticsRouteImport.update({
   id: '/analytics',
   path: '/analytics',
@@ -425,9 +434,24 @@ const LocaleWorkshopNotificationsRoute =
     path: '/notifications',
     getParentRoute: () => LocaleWorkshopRouteRoute,
   } as any)
+const LocaleWorkshopPhotosRoute = LocaleWorkshopPhotosRouteImport.update({
+  id: '/photos',
+  path: '/photos',
+  getParentRoute: () => LocaleWorkshopRouteRoute,
+} as any)
+const LocaleWorkshopProfileRoute = LocaleWorkshopProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => LocaleWorkshopRouteRoute,
+} as any)
 const LocaleWorkshopReviewsRoute = LocaleWorkshopReviewsRouteImport.update({
   id: '/reviews',
   path: '/reviews',
+  getParentRoute: () => LocaleWorkshopRouteRoute,
+} as any)
+const LocaleWorkshopServicesRoute = LocaleWorkshopServicesRouteImport.update({
+  id: '/services',
+  path: '/services',
   getParentRoute: () => LocaleWorkshopRouteRoute,
 } as any)
 const LocaleWorkshopSettingsRoute = LocaleWorkshopSettingsRouteImport.update({
@@ -648,10 +672,14 @@ export interface FileRoutesByFullPath {
   '/$locale/mechanic/settings': typeof LocaleMechanicSettingsRoute
   '/$locale/mechanic/verification': typeof LocaleMechanicVerificationRoute
   '/$locale/onboarding/role': typeof LocaleOnboardingRoleRoute
+  '/$locale/workshop/$': typeof LocaleWorkshopSplatRoute
   '/$locale/workshop/analytics': typeof LocaleWorkshopAnalyticsRoute
   '/$locale/workshop/inquiries': typeof LocaleWorkshopInquiriesRoute
   '/$locale/workshop/notifications': typeof LocaleWorkshopNotificationsRoute
+  '/$locale/workshop/photos': typeof LocaleWorkshopPhotosRoute
+  '/$locale/workshop/profile': typeof LocaleWorkshopProfileRoute
   '/$locale/workshop/reviews': typeof LocaleWorkshopReviewsRoute
+  '/$locale/workshop/services': typeof LocaleWorkshopServicesRoute
   '/$locale/workshop/settings': typeof LocaleWorkshopSettingsRoute
   '/$locale/workshop/verification': typeof LocaleWorkshopVerificationRoute
   '/$locale/': typeof LocalePublicIndexRoute
@@ -736,10 +764,14 @@ export interface FileRoutesByTo {
   '/$locale/mechanic/settings': typeof LocaleMechanicSettingsRoute
   '/$locale/mechanic/verification': typeof LocaleMechanicVerificationRoute
   '/$locale/onboarding/role': typeof LocaleOnboardingRoleRoute
+  '/$locale/workshop/$': typeof LocaleWorkshopSplatRoute
   '/$locale/workshop/analytics': typeof LocaleWorkshopAnalyticsRoute
   '/$locale/workshop/inquiries': typeof LocaleWorkshopInquiriesRoute
   '/$locale/workshop/notifications': typeof LocaleWorkshopNotificationsRoute
+  '/$locale/workshop/photos': typeof LocaleWorkshopPhotosRoute
+  '/$locale/workshop/profile': typeof LocaleWorkshopProfileRoute
   '/$locale/workshop/reviews': typeof LocaleWorkshopReviewsRoute
+  '/$locale/workshop/services': typeof LocaleWorkshopServicesRoute
   '/$locale/workshop/settings': typeof LocaleWorkshopSettingsRoute
   '/$locale/workshop/verification': typeof LocaleWorkshopVerificationRoute
   '/$locale/account': typeof LocaleAccountIndexRoute
@@ -831,10 +863,14 @@ export interface FileRoutesById {
   '/$locale/mechanic/settings': typeof LocaleMechanicSettingsRoute
   '/$locale/mechanic/verification': typeof LocaleMechanicVerificationRoute
   '/$locale/onboarding/role': typeof LocaleOnboardingRoleRoute
+  '/$locale/workshop/$': typeof LocaleWorkshopSplatRoute
   '/$locale/workshop/analytics': typeof LocaleWorkshopAnalyticsRoute
   '/$locale/workshop/inquiries': typeof LocaleWorkshopInquiriesRoute
   '/$locale/workshop/notifications': typeof LocaleWorkshopNotificationsRoute
+  '/$locale/workshop/photos': typeof LocaleWorkshopPhotosRoute
+  '/$locale/workshop/profile': typeof LocaleWorkshopProfileRoute
   '/$locale/workshop/reviews': typeof LocaleWorkshopReviewsRoute
+  '/$locale/workshop/services': typeof LocaleWorkshopServicesRoute
   '/$locale/workshop/settings': typeof LocaleWorkshopSettingsRoute
   '/$locale/workshop/verification': typeof LocaleWorkshopVerificationRoute
   '/$locale/_public/': typeof LocalePublicIndexRoute
@@ -927,10 +963,14 @@ export interface FileRouteTypes {
     | '/$locale/mechanic/settings'
     | '/$locale/mechanic/verification'
     | '/$locale/onboarding/role'
+    | '/$locale/workshop/$'
     | '/$locale/workshop/analytics'
     | '/$locale/workshop/inquiries'
     | '/$locale/workshop/notifications'
+    | '/$locale/workshop/photos'
+    | '/$locale/workshop/profile'
     | '/$locale/workshop/reviews'
+    | '/$locale/workshop/services'
     | '/$locale/workshop/settings'
     | '/$locale/workshop/verification'
     | '/$locale/'
@@ -1015,10 +1055,14 @@ export interface FileRouteTypes {
     | '/$locale/mechanic/settings'
     | '/$locale/mechanic/verification'
     | '/$locale/onboarding/role'
+    | '/$locale/workshop/$'
     | '/$locale/workshop/analytics'
     | '/$locale/workshop/inquiries'
     | '/$locale/workshop/notifications'
+    | '/$locale/workshop/photos'
+    | '/$locale/workshop/profile'
     | '/$locale/workshop/reviews'
+    | '/$locale/workshop/services'
     | '/$locale/workshop/settings'
     | '/$locale/workshop/verification'
     | '/$locale/account'
@@ -1109,10 +1153,14 @@ export interface FileRouteTypes {
     | '/$locale/mechanic/settings'
     | '/$locale/mechanic/verification'
     | '/$locale/onboarding/role'
+    | '/$locale/workshop/$'
     | '/$locale/workshop/analytics'
     | '/$locale/workshop/inquiries'
     | '/$locale/workshop/notifications'
+    | '/$locale/workshop/photos'
+    | '/$locale/workshop/profile'
     | '/$locale/workshop/reviews'
+    | '/$locale/workshop/services'
     | '/$locale/workshop/settings'
     | '/$locale/workshop/verification'
     | '/$locale/_public/'
@@ -1582,6 +1630,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LocaleWorkshopIndexRouteImport
       parentRoute: typeof LocaleWorkshopRouteRoute
     }
+    '/$locale/workshop/$': {
+      id: '/$locale/workshop/$'
+      path: '/$'
+      fullPath: '/$locale/workshop/$'
+      preLoaderRoute: typeof LocaleWorkshopSplatRouteImport
+      parentRoute: typeof LocaleWorkshopRouteRoute
+    }
     '/$locale/workshop/analytics': {
       id: '/$locale/workshop/analytics'
       path: '/analytics'
@@ -1603,11 +1658,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LocaleWorkshopNotificationsRouteImport
       parentRoute: typeof LocaleWorkshopRouteRoute
     }
+    '/$locale/workshop/photos': {
+      id: '/$locale/workshop/photos'
+      path: '/photos'
+      fullPath: '/$locale/workshop/photos'
+      preLoaderRoute: typeof LocaleWorkshopPhotosRouteImport
+      parentRoute: typeof LocaleWorkshopRouteRoute
+    }
+    '/$locale/workshop/profile': {
+      id: '/$locale/workshop/profile'
+      path: '/profile'
+      fullPath: '/$locale/workshop/profile'
+      preLoaderRoute: typeof LocaleWorkshopProfileRouteImport
+      parentRoute: typeof LocaleWorkshopRouteRoute
+    }
     '/$locale/workshop/reviews': {
       id: '/$locale/workshop/reviews'
       path: '/reviews'
       fullPath: '/$locale/workshop/reviews'
       preLoaderRoute: typeof LocaleWorkshopReviewsRouteImport
+      parentRoute: typeof LocaleWorkshopRouteRoute
+    }
+    '/$locale/workshop/services': {
+      id: '/$locale/workshop/services'
+      path: '/services'
+      fullPath: '/$locale/workshop/services'
+      preLoaderRoute: typeof LocaleWorkshopServicesRouteImport
       parentRoute: typeof LocaleWorkshopRouteRoute
     }
     '/$locale/workshop/settings': {
@@ -2001,10 +2077,14 @@ const LocaleMechanicRouteRouteWithChildren =
   LocaleMechanicRouteRoute._addFileChildren(LocaleMechanicRouteRouteChildren)
 
 interface LocaleWorkshopRouteRouteChildren {
+  LocaleWorkshopSplatRoute: typeof LocaleWorkshopSplatRoute
   LocaleWorkshopAnalyticsRoute: typeof LocaleWorkshopAnalyticsRoute
   LocaleWorkshopInquiriesRoute: typeof LocaleWorkshopInquiriesRoute
   LocaleWorkshopNotificationsRoute: typeof LocaleWorkshopNotificationsRoute
+  LocaleWorkshopPhotosRoute: typeof LocaleWorkshopPhotosRoute
+  LocaleWorkshopProfileRoute: typeof LocaleWorkshopProfileRoute
   LocaleWorkshopReviewsRoute: typeof LocaleWorkshopReviewsRoute
+  LocaleWorkshopServicesRoute: typeof LocaleWorkshopServicesRoute
   LocaleWorkshopSettingsRoute: typeof LocaleWorkshopSettingsRoute
   LocaleWorkshopVerificationRoute: typeof LocaleWorkshopVerificationRoute
   LocaleWorkshopIndexRoute: typeof LocaleWorkshopIndexRoute
@@ -2015,10 +2095,14 @@ interface LocaleWorkshopRouteRouteChildren {
 }
 
 const LocaleWorkshopRouteRouteChildren: LocaleWorkshopRouteRouteChildren = {
+  LocaleWorkshopSplatRoute: LocaleWorkshopSplatRoute,
   LocaleWorkshopAnalyticsRoute: LocaleWorkshopAnalyticsRoute,
   LocaleWorkshopInquiriesRoute: LocaleWorkshopInquiriesRoute,
   LocaleWorkshopNotificationsRoute: LocaleWorkshopNotificationsRoute,
+  LocaleWorkshopPhotosRoute: LocaleWorkshopPhotosRoute,
+  LocaleWorkshopProfileRoute: LocaleWorkshopProfileRoute,
   LocaleWorkshopReviewsRoute: LocaleWorkshopReviewsRoute,
+  LocaleWorkshopServicesRoute: LocaleWorkshopServicesRoute,
   LocaleWorkshopSettingsRoute: LocaleWorkshopSettingsRoute,
   LocaleWorkshopVerificationRoute: LocaleWorkshopVerificationRoute,
   LocaleWorkshopIndexRoute: LocaleWorkshopIndexRoute,

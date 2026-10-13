@@ -1,3 +1,4 @@
+import { existsSync } from "node:fs"
 import { fireEvent, screen, waitFor, within } from "@testing-library/react"
 import { isRedirect } from "@tanstack/react-router"
 import { beforeEach, describe, expect, it } from "vitest"
@@ -237,5 +238,34 @@ describe("dashboard not found", () => {
         .getByRole("link", { name: "Back to overview" })
         .getAttribute("href")
     ).toBe("/en/account")
+  })
+})
+
+describe("workshop routes", () => {
+  it("every sidebar link and the not-found splat have a route file", () => {
+    const base = "src/routes/$locale/workshop"
+    for (const { path } of navConfig.workshop.flatMap((g) => g.items)) {
+      const dir = `${base}${path}`
+      expect(
+        existsSync(`${dir}.tsx`) || existsSync(`${dir}/index.tsx`),
+        path
+      ).toBe(true)
+    }
+    expect(existsSync(`${base}/$.tsx`)).toBe(true)
+  })
+  it("sends a dealership away from /workshop to its own dashboard", () => {
+    const dealer = db.users.find(
+      (u) => u.role === "dealership" && u.onboardingDone
+    )!
+    try {
+      requireRole("workshop")({
+        context: { me: publicUser(dealer), locale: "en" as const },
+        location: { href: "/en/workshop/services" },
+      })
+      throw new Error("no redirect")
+    } catch (e) {
+      if (!isRedirect(e)) throw e
+      expect(e.options.href).toBe("/en/dealer")
+    }
   })
 })

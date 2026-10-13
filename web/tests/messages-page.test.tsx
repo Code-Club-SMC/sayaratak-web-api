@@ -234,6 +234,31 @@ describe("MessagesPage", () => {
     }
   })
 
+  it("a workshop's inquiries get a thread from its public page", async () => {
+    const owner = db.users.find((u) => u.id === "u-workshop")!
+    const business = db.workshops.find((b) => b.ownerId === owner.id)!
+    const res = await handleMock(
+      new Request("http://localhost/api/threads", {
+        method: "POST",
+        headers: {
+          cookie: `sy_session=${me().id}`,
+          "content-type": "application/json",
+        },
+        body: JSON.stringify({
+          subjectType: "workshop",
+          subjectId: business.id,
+          body: "Can you fix brakes today?",
+        }),
+      })
+    )
+    expect(res.ok).toBe(true)
+    await open("", "workshop", "inquiries")
+    const row = within(await list())
+      .getAllByRole("button")
+      .find((b) => b.textContent.includes("Can you fix brakes today?"))!
+    expect(within(row).getByText("1 new")).toBeTruthy()
+  })
+
   it("sends at once, on Enter, and clears the box", async () => {
     await open(`?thread=${mine()[0]!.id}`)
     const box = await screen.findByRole("textbox", { name: "Write a message" })

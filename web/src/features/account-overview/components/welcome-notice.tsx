@@ -1,17 +1,14 @@
-import { useQuery } from "@tanstack/react-query"
 import { useNavigate } from "@tanstack/react-router"
 import { XIcon } from "lucide-react"
 
 import { Button, buttonVariants } from "@/components/ui/button"
-import { billingQueries } from "@/features/billing/queries"
-import { formatPrice } from "@/lib/format"
 import { useT } from "@/lib/i18n/use-t"
-import { dashboardPath, localeHref } from "@/lib/navigation"
+import { localeHref } from "@/lib/navigation"
 import type { User } from "@/schemas/user"
 
 type Role = Exclude<User["role"], "admin">
 
-// Where the first step goes when no paid plan waits.
+// The first thing to do after onboarding, per role.
 const firstStep: Record<Role, { href: string; key: string }> = {
   user: { href: "/post", key: "dashboard.overview_welcome_cta" },
   dealership: {
@@ -28,39 +25,11 @@ const firstStep: Record<Role, { href: string; key: string }> = {
   },
 }
 
-// Shown once after onboarding (`?welcome=1`). A paid plan picked in onboarding (`&plan=<id>`) turns the first step into its checkout. Closing it drops both params from the URL.
-export function WelcomeNotice({
-  role = "user",
-  planId,
-}: {
-  role?: Role
-  planId?: string
-}) {
+// Shown once after onboarding on the free plan (`?welcome=1`; a paid pick goes to its checkout instead). Closing it drops the param from the URL.
+export function WelcomeNotice({ role = "user" }: { role?: Role }) {
   const { t, locale } = useT()
   const navigate = useNavigate()
-  const plans = useQuery({
-    ...billingQueries.plans(role),
-    enabled: Boolean(planId),
-  })
-  if (planId && plans.isPending) return null
-  const plan = plans.data?.find((p) => p.id === planId && p.price > 0)
-  const free = plans.data?.find((p) => p.price === 0)
-  const close = () =>
-    void navigate({
-      to: ".",
-      search: (prev: Record<string, unknown>) => ({
-        ...prev,
-        welcome: undefined,
-        plan: undefined,
-      }),
-      replace: true,
-      resetScroll: false,
-    })
   const step = firstStep[role]
-  const href = plan
-    ? `${dashboardPath(role)}/billing/checkout?${new URLSearchParams({ item: `plan:${plan.id}` })}`
-    : step.href
-  const price = plan && formatPrice(plan.price, locale)
   return (
     <section
       aria-labelledby="welcome-title"
@@ -75,35 +44,26 @@ export function WelcomeNotice({
             ? t("dashboard.overview_welcome")
             : t(`dashboard.welcome_ready_${role}`)}
         </p>
-        {plan && price && (
-          <p className="text-body">
-            {t("dashboard.welcome_plan", {
-              plan: plan.name[locale],
-              price: `${price.amount} ${price.unit}`,
-              days: plan.durationDays,
-              free: free?.name[locale] ?? "",
-            })}
-          </p>
-        )}
-        <div className="flex flex-wrap gap-2">
-          <a href={localeHref(href, locale)} className={buttonVariants()}>
-            {plan
-              ? t("dashboard.welcome_pay", { plan: plan.name[locale] })
-              : t(step.key)}
-          </a>
-          {plan && (
-            <Button type="button" variant="ghost" onClick={close}>
-              {t("dashboard.welcome_later")}
-            </Button>
-          )}
-        </div>
+        <a href={localeHref(step.href, locale)} className={buttonVariants()}>
+          {t(step.key)}
+        </a>
       </div>
       <Button
         type="button"
         variant="ghost"
         size="icon"
         aria-label={t("common.close")}
-        onClick={close}
+        onClick={() =>
+          void navigate({
+            to: ".",
+            search: (prev: Record<string, unknown>) => ({
+              ...prev,
+              welcome: undefined,
+            }),
+            replace: true,
+            resetScroll: false,
+          })
+        }
       >
         <XIcon aria-hidden="true" />
       </Button>

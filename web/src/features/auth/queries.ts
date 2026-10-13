@@ -8,6 +8,7 @@ import type { ApiError } from "@/lib/api/client"
 import { apiFetch } from "@/lib/api/client"
 import { useApiMutation } from "@/lib/api/mutation"
 import { keys, publicKeyRoots } from "@/lib/api/query-keys"
+import { markSignIn } from "@/lib/sign-in-flag"
 import {
   codeSentSchema,
   draftSchema,
@@ -48,10 +49,11 @@ export const draftQuery = (key: string) =>
     staleTime: 0,
   })
 
-// After sign in the cache holds the user and personal queries refetch.
-function useSignedIn() {
+// After sign in the cache holds the user and personal queries refetch. A sign in (not a sign up) also arms the once-per-sign-in reminders.
+function useSignedIn(signIn = true) {
   const qc = useQueryClient()
   return (user: User) => {
+    if (signIn) markSignIn()
     qc.setQueryData(keys.me, user)
     void qc.invalidateQueries({
       predicate: (q) => q.queryKey[0] !== "me" && q.queryKey[0] !== "taxonomy",
@@ -76,7 +78,7 @@ export const useSignup = () =>
     post("/auth/signup", codeSentSchema)(body)
   )
 export function useVerifySignup() {
-  const signedIn = useSignedIn()
+  const signedIn = useSignedIn(false)
   return useApiMutation((body: z.input<typeof codeInputSchema>) =>
     post("/auth/signup/verify", userSchema)(body).then(signedIn)
   )
@@ -104,7 +106,11 @@ export function useVerifyOtp() {
       "/auth/otp/verify",
       userSchema.or(okSchema)
     )(body).then((r) => {
-      if ("id" in r) qc.setQueryData(keys.me, r)
+      // Signed out, the code signs in; signed in, it only verifies a contact.
+      if ("id" in r) {
+        if (!qc.getQueryData(keys.me)) markSignIn()
+        qc.setQueryData(keys.me, r)
+      }
       return r
     })
   )

@@ -14,6 +14,7 @@ import {
   SidebarHeader,
   SidebarMenu,
 } from "@/components/ui/sidebar"
+import { SidebarPlanCard } from "@/features/billing/components/sidebar-plan-card"
 import { countsQuery } from "@/features/notifications/counts-query"
 import { navConfig, navHref } from "../nav-config"
 import { SidebarNavItem } from "./sidebar-nav-item"
@@ -73,6 +74,7 @@ export function DashboardSidebar({ me }: { me: User }) {
           ))}
         </nav>
       </SidebarContent>
+      {me.role !== "admin" && <SidebarPlanCard me={me} />}
       <SidebarUser me={me} />
     </Sidebar>
   )

@@ -228,5 +228,15 @@
   "billing.promos_status_ended": "منتهٍ",
   "billing.promos_status_in_review": "الدفع قيد المراجعة",
   "billing.promos_pay_now": "ادفع الآن",
-  "billing.promos_payment_rejected": "رُفض آخر دفع"
+  "billing.promos_payment_rejected": "رُفض آخر دفع",
+  "billing.sidebar_unpaid": "غير مدفوعة",
+  "billing.sidebar_unpaid_note": "أنت على باقة {{free}} حتى تتم الموافقة على الدفع.",
+  "billing.sidebar_review_note": "تبدأ فور موافقتنا على تحويلك.",
+  "billing.sidebar_view_payment": "عرض الدفعة",
+  "billing.sidebar_upgrade": "ترقية",
+  "billing.sidebar_manage": "إدارة الباقة",
+  "billing.reminder_title": "باقة {{plan}} على بُعد خطوة واحدة",
+  "billing.reminder_body": "اخترت باقة {{plan}} عند إعداد حسابك. ادفع {{price}} بتحويل بنكك وارفع الإيصال، وتستمر {{days}} يومًا من يوم موافقتنا. حتى ذلك الحين تبقى على باقة {{free}} ويبقى كل ما لديك كما هو.",
+  "billing.reminder_keep_free": "البقاء على باقة {{plan}}",
+  "billing.reminder_later": "ليس الآن"
 }

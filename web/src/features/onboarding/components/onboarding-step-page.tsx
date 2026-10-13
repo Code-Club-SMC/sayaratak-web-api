@@ -107,19 +107,16 @@ export function OnboardingStepPage({
   const prev = steps[index - 1]
   const go = (path: string) => router.history.push(localeHref(path, locale))
   const goStep = (path: string) => go(withRedirect(path, redirect))
-  // A paid plan picked here goes along to the welcome notice, which links to its checkout. The plan step has loaded the plans.
+  // A paid plan picked here goes straight to its checkout; the account stays on the free plan until the receipt is approved. The plan step has loaded the plans.
   const finish = (all: DraftData) => {
     const payload = flatValues(steps, all)
     const paid = queryClient
       .getQueryData(billingQueries.plans(role).queryKey)
       ?.find((p) => p.id === payload.planId && p.price > 0)
-    const welcome = new URLSearchParams(
-      paid ? { welcome: "1", plan: paid.id } : { welcome: "1" }
-    )
-    complete.mutate(
-      { role, payload },
-      { onSuccess: () => go(redirect ?? `${dashboardPath(role)}?${welcome}`) }
-    )
+    const landing = paid
+      ? `${dashboardPath(role)}/billing/checkout?${new URLSearchParams({ item: `plan:${paid.id}` })}`
+      : (redirect ?? `${dashboardPath(role)}?welcome=1`)
+    complete.mutate({ role, payload }, { onSuccess: () => go(landing) })
   }
   const advance = (all: DraftData) =>
     next ? goStep(`/onboarding/${role}/${next.id}`) : finish(all)
@@ -142,7 +139,7 @@ export function OnboardingStepPage({
     () => focusFirstInvalid(formRef.current)
   )
   const preview =
-    role === "user" ? null : (
+    role === "user" || step.wide ? null : (
       <StepPreview role={role} steps={steps} stepId={step.id} data={data} />
     )
 
@@ -231,7 +228,12 @@ export function OnboardingStepPage({
           {body}
         </AuthShell>
       ) : (
-        <OnboardingLayout progress={progress} preview={preview} onExit={exit}>
+        <OnboardingLayout
+          progress={progress}
+          preview={preview}
+          wide={step.wide}
+          onExit={exit}
+        >
           {body}
         </OnboardingLayout>
       )}

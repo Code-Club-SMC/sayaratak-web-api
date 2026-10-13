@@ -96,29 +96,19 @@ describe("DealerOverviewPage", () => {
     ).toBe(`/en/dealer/inventory/${rejected!.id}/edit`)
   })
 
-  it("welcomes a new dealer with a pay link for the plan picked in onboarding, and Pay later drops the params", async () => {
-    const { router } = await open(
-      "/en/dealer?range=7d&welcome=1&plan=plan-dealer-growth"
-    )
-    const pay = await screen.findByRole("link", { name: "Pay for Growth" })
-    expect(pay.getAttribute("href")).toBe(
-      "/en/dealer/billing/checkout?item=plan%3Aplan-dealer-growth"
-    )
-    expect(screen.getByText(/350,000 SDG for 30 days/)).toBeTruthy()
-    expect(screen.getByText(/Until then you are on Starter/)).toBeTruthy()
-    fireEvent.click(screen.getByRole("button", { name: "Pay later" }))
-    await waitFor(() =>
-      expect(screen.queryByRole("link", { name: "Pay for Growth" })).toBeNull()
-    )
-    expect(router.state.location.search).toEqual({ range: "7d" })
-  })
-
-  it("without a paid plan the welcome points to the first vehicle", async () => {
-    await open("/en/dealer?welcome=1&plan=plan-dealer-starter")
+  it("welcomes a new dealer with the first vehicle, and closing keeps the range", async () => {
+    const { router } = await open("/en/dealer?range=7d&welcome=1")
     const add = await screen.findByRole("link", {
       name: "Add your first vehicle",
     })
     expect(add.getAttribute("href")).toBe("/en/dealer/inventory/new")
-    expect(screen.queryByRole("button", { name: "Pay later" })).toBeNull()
+    expect(screen.getByText(/Your dealership is set up/)).toBeTruthy()
+    fireEvent.click(screen.getByRole("button", { name: "Close" }))
+    await waitFor(() =>
+      expect(
+        screen.queryByRole("link", { name: "Add your first vehicle" })
+      ).toBeNull()
+    )
+    expect(router.state.location.search).toEqual({ range: "7d" })
   })
 })

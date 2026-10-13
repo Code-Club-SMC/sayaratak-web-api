@@ -131,6 +131,10 @@ route("POST", "/onboarding/complete", async (c) => {
       usage: { used: 0, limit: free.vehicleLimit ?? free.listingLimit ?? null },
     })
   }
+  const chosen = db.plans.find(
+    (p) => p.id === payload.planId && p.audience === role && p.price > 0
+  )
+  user.chosenPlanId = chosen?.id
   user.role = role
   user.cityId = city
   user.onboardingDone = true

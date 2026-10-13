@@ -881,6 +881,47 @@ describe("billing, promotions and payments", () => {
       )
     ).toBe(true)
   })
+  it("a paid plan picked in onboarding waits on the account until a receipt, comes back after a rejection, and Keep the free plan drops it", async () => {
+    await call("POST", "/onboarding/complete", {
+      as: "u-new",
+      body: {
+        role: "dealership",
+        payload: { name: "Fresh Motors", planId: "plan-dealer-growth" },
+      },
+    })
+    const me = async () => (await call("GET", "/me", { as: "u-new" })).body
+    expect((await me()).chosenPlanId).toBe("plan-dealer-growth")
+    const sub = async () =>
+      (await call("GET", "/me/subscription", { as: "u-new" })).body
+    expect((await sub()).reviewPlan).toBeNull()
+    const paid = await call("POST", "/payments", {
+      as: "u-new",
+      form: receipt("plan", "plan-dealer-growth"),
+    })
+    expect((await me()).chosenPlanId).toBeUndefined()
+    expect((await sub()).reviewPlan.id).toBe("plan-dealer-growth")
+    await call("POST", `/admin/payments/${paid.body.id}/reject`, {
+      as: "u-admin",
+      body: { reason: "Blurry" },
+    })
+    expect((await me()).chosenPlanId).toBe("plan-dealer-growth")
+    expect((await sub()).reviewPlan).toBeNull()
+    const kept = await call("DELETE", "/me/chosen-plan", { as: "u-new" })
+    expect(kept.body.chosenPlanId).toBeUndefined()
+    expect((await me()).chosenPlanId).toBeUndefined()
+  })
+
+  it("a free plan pick leaves nothing waiting", async () => {
+    await call("POST", "/onboarding/complete", {
+      as: "u-new",
+      body: {
+        role: "dealership",
+        payload: { name: "Fresh Motors", planId: "plan-dealer-starter" },
+      },
+    })
+    expect(db.users.find((u) => u.id === "u-new")!.chosenPlanId).toBeUndefined()
+  })
+
   it("a dealership's plan payment goes through the admin queue and raises its vehicle limit", async () => {
     await call("POST", "/onboarding/complete", {
       as: "u-new",

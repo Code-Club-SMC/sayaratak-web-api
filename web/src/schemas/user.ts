@@ -31,5 +31,7 @@ export const userSchema = z.object({
   createdAt: z.string(),
   onboardingDone: z.boolean(),
   interests: z.array(interestSchema),
+  // A paid plan picked in onboarding and not paid for yet. Cleared when a receipt is sent or the owner keeps the free plan; a rejected receipt sets it again.
+  chosenPlanId: idSchema.optional(),
 })
 export type User = z.infer<typeof userSchema>

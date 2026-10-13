@@ -12,6 +12,7 @@ import {
   promotionSchema,
 } from "@/schemas/billing"
 import type { promotionInputSchema } from "@/schemas/inputs"
+import { userSchema } from "@/schemas/user"
 import {
   checkoutSchema,
   meSubscriptionSchema,
@@ -97,7 +98,8 @@ export const useCreatePayment = () =>
         schema: paymentSchema,
       })
     },
-    [keys.billing.all, keys.counts]
+    // A plan receipt clears the account's waiting plan.
+    [keys.billing.all, keys.counts, keys.me]
   )
 export const useCreatePromotion = () =>
   useApiMutation(
@@ -109,4 +111,11 @@ export const useCreatePromotion = () =>
       }),
     // A credit pin starts at once, so listings show the badge and the credit count drops.
     [keys.billing.all, keys.listings.all]
+  )
+
+// "Keep the free plan": the plan picked in onboarding stops waiting for payment.
+export const useKeepFreePlan = () =>
+  useApiMutation(
+    () => apiFetch("/me/chosen-plan", { method: "DELETE", schema: userSchema }),
+    [keys.me]
   )

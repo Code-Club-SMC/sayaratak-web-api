@@ -26,6 +26,7 @@ import {
   paymentReference,
   promotionPrice,
   promotionView,
+  publicUser,
 } from "../lib"
 import type { UserRow } from "../types"
 import { assertRoom } from "./ads"
@@ -81,7 +82,23 @@ route("GET", "/me/subscription", (c) => {
     plan: sub ? (find(db.plans, sub.planId) ?? null) : null,
     usage: { used, limit: listingLimit(user.id) },
     credits: credits(user.id),
+    reviewPlan: find(
+      db.plans,
+      db.payments.find(
+        (p) =>
+          p.userId === user.id &&
+          p.itemType === "plan" &&
+          p.status === "pending_review"
+      )?.itemId ?? ""
+    ),
   })
+})
+
+// "Keep the free plan": the paid plan picked in onboarding stops waiting for payment.
+route("DELETE", "/me/chosen-plan", (c) => {
+  const user = needUser(c)
+  user.chosenPlanId = undefined
+  return publicUser(user)
 })
 
 route("GET", "/me/payments", (c) => {
@@ -174,6 +191,7 @@ route("POST", "/payments", async (c) => {
   // The slots are taken only now, so check again that the pages still have room.
   if (campaign) assertRoom(campaign)
   const upload = await storeUpload(receipt)
+  if (itemType === "plan") user.chosenPlanId = undefined
   const row = insert(db.payments, {
     id: newId("pay"),
     userId: user.id,

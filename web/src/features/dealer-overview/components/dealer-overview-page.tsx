@@ -25,7 +25,7 @@ export function DealerOverviewPage() {
   usePageTitle(title)
   const search = useSearch({ strict: false })
   const { range } = analyticsSearchSchema.parse(search)
-  const { welcome, plan } = overviewSearchSchema.parse(search)
+  const { welcome } = overviewSearchSchema.parse(search)
   const navigate = useNavigate()
   const analytics = useQuery(analyticsQuery(range))
   const setRange = (next: Range) =>
@@ -44,7 +44,7 @@ export function DealerOverviewPage() {
       <PageHeader title={title}>
         <DateRangeSelect value={range} onChange={setRange} />
       </PageHeader>
-      {welcome === 1 && <WelcomeNotice role="dealership" planId={plan} />}
+      {welcome === 1 && <WelcomeNotice role="dealership" />}
       <SetupChecklist />
       <DealerStats range={range} analytics={analytics} />
       <div className="grid items-start gap-6 lg:grid-cols-2">

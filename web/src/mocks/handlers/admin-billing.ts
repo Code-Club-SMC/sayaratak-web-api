@@ -153,6 +153,9 @@ route("POST", "/admin/payments/:id/reject", async (c) => {
   const campaign =
     row.itemType === "campaign" ? find(db.campaigns, row.itemId) : undefined
   if (campaign?.status === "under_review") campaign.status = "pending_payment"
+  // A refused plan receipt brings the plan back as the one waiting for payment.
+  const payer = find(db.users, row.userId)
+  if (row.itemType === "plan" && payer) payer.chosenPlanId = row.itemId
   notify(
     row.userId,
     "payment_rejected",

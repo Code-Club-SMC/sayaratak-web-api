@@ -354,9 +354,6 @@
   "dashboard.welcome_ready_dealership": "تم إعداد معرضك وصفحته العامة متاحة الآن. أضف سياراتك ليجدها المشترون.",
   "dashboard.welcome_ready_workshop": "تم إعداد ورشتك وصفحتها العامة متاحة الآن. يمكن للعملاء العثور عليك والتواصل معك.",
   "dashboard.welcome_ready_mechanic": "تم إعداد ملفك كميكانيكي وهو متاح الآن. يمكن للعملاء العثور عليك والتواصل معك.",
-  "dashboard.welcome_plan": "اخترت باقة {{plan}}: {{price}} لمدة {{days}} يومًا. ادفع بتحويل بنكك وارفع الإيصال، وتبدأ الباقة فور موافقتنا على الدفع. حتى ذلك الحين أنت على باقة {{free}}.",
-  "dashboard.welcome_pay": "ادفع لباقة {{plan}}",
-  "dashboard.welcome_later": "الدفع لاحقًا",
   "dashboard.welcome_cta_dealership": "أضف أول سيارة",
   "dashboard.welcome_cta_verify": "وثّق حسابك"
 }

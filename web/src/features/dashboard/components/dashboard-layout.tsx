@@ -4,6 +4,7 @@ import { Outlet } from "@tanstack/react-router"
 import { useT } from "@/lib/i18n/use-t"
 import { SidebarProvider } from "@/components/ui/sidebar"
 import { meQuery } from "@/features/auth/me-query"
+import { PlanReminderDialog } from "@/features/billing/components/plan-reminder-dialog"
 import { DashboardSidebar } from "./dashboard-sidebar"
 import { DashboardTopbar } from "./dashboard-topbar"
 import { PageTitleProvider } from "./page-title"
@@ -27,6 +28,7 @@ export function DashboardLayout() {
           {t("nav.skip_to_content")}
         </a>
         <DashboardSidebar me={me} />
+        {me.role !== "admin" && <PlanReminderDialog me={me} />}
         <div className="flex min-w-0 flex-1 flex-col">
           <DashboardTopbar role={me.role} />
           <main

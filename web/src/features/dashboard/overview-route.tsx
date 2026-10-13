@@ -14,15 +14,13 @@ import { usePageTitle } from "./components/page-title"
 function Overview() {
   const { t } = useT()
   usePageTitle(t("dashboard.nav_overview"))
-  const { welcome, plan } = overviewSearchSchema.parse(
-    useSearch({ strict: false })
-  )
+  const { welcome } = overviewSearchSchema.parse(useSearch({ strict: false }))
   const role = useQuery(meQuery).data?.role
   return (
     <div className="flex flex-col gap-6">
       <PageHeader title={t("dashboard.nav_overview")} />
       {welcome === 1 && role && role !== "admin" && (
-        <WelcomeNotice role={role} planId={plan} />
+        <WelcomeNotice role={role} />
       )}
     </div>
   )

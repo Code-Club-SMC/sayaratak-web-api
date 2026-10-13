@@ -145,7 +145,9 @@ function itemFor(user: UserRow, itemType: ItemType, itemId: string) {
   }
   if (itemType === "plan") {
     const plan = find(db.plans, itemId)
-    if (!plan) throw fail(404, "not_found")
+    // Only an enabled plan of the payer's own role: a workshop cannot buy a dealer plan from a typed URL.
+    if (!plan || !plan.enabled || plan.audience !== user.role)
+      throw fail(404, "not_found")
     return {
       label: plan.name,
       amount: plan.price,

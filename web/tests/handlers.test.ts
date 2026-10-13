@@ -952,6 +952,47 @@ describe("billing, promotions and payments", () => {
       (await call("POST", "/listings", { as: "u-new", body: car })).status
     ).toBe(200)
   })
+  it("a workshop's plan payment goes through the admin queue and activates its plan", async () => {
+    await call("POST", "/onboarding/complete", {
+      as: "u-new",
+      body: { role: "workshop", payload: { name: "Test Garage" } },
+    })
+    const sub = async () =>
+      (await call("GET", "/me/subscription", { as: "u-new" })).body
+    expect((await sub()).plan.id).toBe("plan-workshop-basic")
+    expect(
+      (
+        await call("POST", "/payments", {
+          as: "u-new",
+          form: receipt("plan", "plan-dealer-growth"),
+        })
+      ).status
+    ).toBe(404)
+    const paid = await call("POST", "/payments", {
+      as: "u-new",
+      form: receipt("plan", "plan-workshop-plus"),
+    })
+    expect(paid.body.status).toBe("pending_review")
+    expect((await sub()).reviewPlan.id).toBe("plan-workshop-plus")
+    const queue = await call("GET", "/admin/payments?status=pending_review", {
+      as: "u-admin",
+    })
+    expect(
+      queue.body.items.some((p: { id: string }) => p.id === paid.body.id)
+    ).toBe(true)
+    await call("POST", `/admin/payments/${paid.body.id}/approve`, {
+      as: "u-admin",
+    })
+    const after = await sub()
+    expect(after.plan.id).toBe("plan-workshop-plus")
+    expect(after.subscription.price).toBe(120_000)
+    expect(after.reviewPlan).toBeNull()
+    expect(
+      db.notifications.some(
+        (n) => n.userId === "u-new" && n.type === "payment_approved"
+      )
+    ).toBe(true)
+  })
   it("a payment needs the payer name", async () => {
     const res = await call("POST", "/payments", {
       as: "u-1",

@@ -1509,6 +1509,32 @@ describe("verification, owner side", () => {
     ).toBe("approved")
   })
 
+  it("the demo workshop starts unverified and gets the public badge after approval", async () => {
+    const shop = db.workshops.find((w) => w.ownerId === "u-workshop")!
+    const badge = async () =>
+      (await call("GET", `/workshops/${shop.slug}`)).body.verified
+    expect(await badge()).toBe(false)
+    expect(
+      (await call("GET", "/me/verification", { as: "u-workshop" })).body
+    ).toBeNull()
+    const sent = await send("u-workshop", [
+      ["workshop_license", file("license.png", 20)],
+      ["shop_photo", file("shop.png", 30)],
+    ])
+    expect(sent.body).toMatchObject({
+      status: "pending",
+      targetType: "workshop",
+      targetId: shop.id,
+    })
+    await call("POST", `/admin/verifications/${sent.body.id}/approve`, {
+      as: "u-admin",
+    })
+    expect(await badge()).toBe(true)
+    expect(
+      (await call("GET", "/me/verification", { as: "u-workshop" })).body.status
+    ).toBe("approved")
+  })
+
   it("refuses bad input, a second pending request and an already verified business", async () => {
     const png = () => file("a.png", 10)
     const bad = await send("u-dealer", [["selfie", png()]])

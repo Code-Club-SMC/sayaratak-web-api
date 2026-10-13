@@ -277,5 +277,8 @@
   "common.remove_file_title": "Remove this file?",
   "form.remove_pin_title": "Remove the pin?",
   "form.remove_phone_title": "Remove phone number {{number}}?",
-  "form.remove_service_title": "Remove service {{number}}?"
+  "form.remove_service_title": "Remove service {{number}}?",
+  "common.leave_title": "Leave without saving?",
+  "common.leave_body": "Your unsaved changes will be lost.",
+  "common.leave_confirm": "Leave"
 }

@@ -12,7 +12,7 @@ export function PlaceFields() {
   const { register, setValue, watch, formState } =
     useFormContext<DealerLocation>()
   const { errors, isSubmitted } = formState
-  const set = { shouldValidate: isSubmitted }
+  const set = { shouldValidate: isSubmitted, shouldDirty: true }
   return (
     <>
       <LocationPicker

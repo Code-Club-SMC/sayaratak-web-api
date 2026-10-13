@@ -285,5 +285,8 @@
   "common.remove_file_title": "إزالة هذا الملف؟",
   "form.remove_pin_title": "إزالة الدبوس؟",
   "form.remove_phone_title": "حذف رقم الهاتف {{number}}؟",
-  "form.remove_service_title": "حذف الخدمة {{number}}؟"
+  "form.remove_service_title": "حذف الخدمة {{number}}؟",
+  "common.leave_title": "المغادرة دون حفظ؟",
+  "common.leave_body": "ستفقد التغييرات غير المحفوظة.",
+  "common.leave_confirm": "مغادرة"
 }

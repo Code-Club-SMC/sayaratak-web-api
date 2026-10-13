@@ -11,6 +11,9 @@ export const planSchema = z.object({
   durationDays: z.number().int(),
   listingLimit: z.number().int().optional(),
   vehicleLimit: z.number().int().optional(),
+  // Workshop caps; none means no cap.
+  serviceLimit: z.number().int().optional(),
+  photoLimit: z.number().int().optional(),
   features: z.array(bilingualSchema),
   // Free 7-day pins per period; they do not carry over.
   featuredCredits: z.number().int().min(0).default(0),

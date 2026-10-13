@@ -19,7 +19,7 @@ import type { z } from "zod"
 import { db, insert, newId, paginate } from "../db"
 import { fail, needRole, pageParams, route } from "../http"
 import { both } from "@/mocks/seed/util"
-import { byNewest, businessOf, textOf } from "../lib"
+import { activePlan, byNewest, businessOf, textOf } from "../lib"
 import { haversineKm } from "../search"
 
 const inventory = (ownerId: string, dealerId: string) =>
@@ -218,6 +218,10 @@ route("PUT", "/me/business/images", async (c) => {
   const { ids } = await c.body(idsInputSchema)
   if (ids.length > 20)
     throw fail(422, "validation", { ids: "validation.media_max" })
+  // Over the plan's cap only reorder and remove pass, so a downgraded workshop keeps its photos.
+  const cap = activePlan(w.ownerId)?.photoLimit
+  if (cap !== undefined && ids.length > cap && ids.length > w.images.length)
+    throw fail(403, "limit_reached")
   // Each id is a kept photo or a new image upload; unknown ids are dropped.
   w.images = ids.flatMap((id) => {
     const media = w.images.find((i) => i.id === id) ?? db.uploads.get(id)?.media
@@ -230,6 +234,9 @@ route("GET", "/me/services", (c) => workshop(c).services)
 route("POST", "/me/services", async (c) => {
   const w = workshop(c)
   const input = await c.body(serviceInputSchema)
+  const cap = activePlan(w.ownerId)?.serviceLimit
+  if (cap !== undefined && w.services.length >= cap)
+    throw fail(403, "limit_reached")
   const row = {
     id: newId("svc"),
     name: input.name,

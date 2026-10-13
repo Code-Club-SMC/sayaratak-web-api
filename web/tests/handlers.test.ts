@@ -960,6 +960,34 @@ describe("billing, promotions and payments", () => {
     const sub = async () =>
       (await call("GET", "/me/subscription", { as: "u-new" })).body
     expect((await sub()).plan.id).toBe("plan-workshop-basic")
+    // Basic caps services at 10 and photos at 1.
+    const addService = async () =>
+      (
+        await call("POST", "/me/services", {
+          as: "u-new",
+          body: { name: "Oil change", priceFrom: 20000 },
+        })
+      ).status
+    for (let i = 0; i < 10; i++) expect(await addService()).toBe(200)
+    expect(await addService()).toBe(403)
+    const upload = async () => {
+      const form = new FormData()
+      form.set("file", file("a.png", 20))
+      form.set("width", "100")
+      form.set("height", "80")
+      form.set("placeholderColor", "#112233")
+      return (await call("POST", "/uploads", { as: "u-new", form })).body.id
+    }
+    const photos = async (ids: string[]) =>
+      (
+        await call("PUT", "/me/business/images", {
+          as: "u-new",
+          body: { ids },
+        })
+      ).status
+    const first = await upload()
+    expect(await photos([first])).toBe(200)
+    expect(await photos([first, await upload()])).toBe(403)
     expect(
       (
         await call("POST", "/payments", {
@@ -987,6 +1015,8 @@ describe("billing, promotions and payments", () => {
     expect(after.plan.id).toBe("plan-workshop-plus")
     expect(after.subscription.price).toBe(120_000)
     expect(after.reviewPlan).toBeNull()
+    expect(await addService()).toBe(200)
+    expect(await photos([first, await upload()])).toBe(200)
     expect(
       db.notifications.some(
         (n) => n.userId === "u-new" && n.type === "payment_approved"

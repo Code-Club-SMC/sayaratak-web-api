@@ -121,4 +121,20 @@ describe("ServicesPage", () => {
       expect(workshop().services.some((s) => s.id === a.id)).toBe(false)
     )
   })
+
+  it("on Basic, a full list hides Add and offers the plans", async () => {
+    const w = workshop()
+    db.subscriptions.find(
+      (s) => s.userId === w.ownerId && s.status === "active"
+    )!.planId = "plan-workshop-basic"
+    w.services = w.services.concat(w.services).slice(0, 10)
+    await open()
+    expect(
+      await screen.findByText("You reached the limit of your plan")
+    ).toBeTruthy()
+    expect(
+      screen.getByRole("link", { name: "See plans" }).getAttribute("href")
+    ).toBe("/en/workshop/billing")
+    expect(screen.queryByRole("button", { name: "Add service" })).toBeNull()
+  })
 })

@@ -3,11 +3,13 @@ import { useQuery } from "@tanstack/react-query"
 import { PlusIcon, WrenchIcon } from "lucide-react"
 
 import { EmptyState } from "@/components/app/empty-state"
+import { LimitMeter } from "@/components/app/limit-meter"
 import { PageHeader } from "@/components/app/page-header"
 import { SectionError } from "@/components/app/section-error"
-import { Button } from "@/components/ui/button"
+import { Button, buttonVariants } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 import { toast } from "@/components/ui/toast"
+import { billingQueries } from "@/features/billing/queries"
 import { usePageTitle } from "@/features/dashboard/components/page-title"
 import {
   businessQueries,
@@ -18,6 +20,7 @@ import { taxonomyQuery } from "@/features/listings/queries"
 import { errorText } from "@/lib/api/error-text"
 import { formatNumber } from "@/lib/format"
 import { useT } from "@/lib/i18n/use-t"
+import { localeHref } from "@/lib/navigation"
 import { ServiceFormDialog, type ServiceDraft } from "./service-form-dialog"
 import { ServiceRow } from "./service-row"
 import { TemplateMenu } from "./template-menu"
@@ -35,6 +38,8 @@ export function ServicesPage() {
   const remove = useDeleteService()
   const [draft, setDraft] = useState<ServiceDraft>()
   const { data } = list
+  const cap = useQuery(billingQueries.subscription).data?.plan?.serviceLimit
+  const reached = cap !== undefined && (data?.length ?? 0) >= cap
   const fail = (error: unknown) => toast.add({ title: errorText(t, error) })
 
   // A moved row is re-inserted in the DOM, which drops focus; put it back on the same arrow, or on the other one when the row reached an end.
@@ -149,13 +154,28 @@ export function ServicesPage() {
         count={data?.length ? formatNumber(data.length, locale) : undefined}
         hint={t("dashboard.services_hint")}
       >
-        {!!data?.length && (
+        {!!data?.length && !reached && (
           <>
             {templateMenu}
             {addButton}
           </>
         )}
       </PageHeader>
+      {data && cap !== undefined && (
+        <LimitMeter
+          label={t("dashboard.services_limit_label")}
+          used={data.length}
+          limit={cap}
+          action={
+            <a
+              href={localeHref("/workshop/billing", locale)}
+              className={buttonVariants({ variant: "link", size: "sm" })}
+            >
+              {t("post.limit_upgrade")}
+            </a>
+          }
+        />
+      )}
       {body}
       <ServiceFormDialog draft={draft} onClose={() => setDraft(undefined)} />
     </div>

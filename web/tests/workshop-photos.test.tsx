@@ -87,4 +87,16 @@ describe("PhotosPage", () => {
     })
     await waitFor(() => expect(ids()).toEqual([...before, "up_new"]))
   })
+
+  it("on Basic, the uploader takes one photo and the plans are offered", async () => {
+    const w = workshop()
+    db.subscriptions.find(
+      (s) => s.userId === w.ownerId && s.status === "active"
+    )!.planId = "plan-workshop-basic"
+    w.images = w.images.slice(0, 1)
+    await open()
+    expect(await screen.findByText(/Your plan includes 1 photo/)).toBeTruthy()
+    expect(screen.getByRole("link", { name: "See plans" })).toBeTruthy()
+    expect(screen.getByText("1 of 1")).toBeTruthy()
+  })
 })

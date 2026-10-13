@@ -123,6 +123,14 @@ export function listingLimit(userId: string) {
   return sub ? sub.usage.limit : db.settings.freeListingLimit
 }
 
+// The plan of the active subscription, if any.
+export const activePlan = (userId: string) =>
+  find(
+    db.plans,
+    db.subscriptions.find((s) => s.userId === userId && s.status === "active")
+      ?.planId ?? ""
+  )
+
 // A stable reference per payer and item, so the checkout shows the same code the payment keeps.
 export const paymentReference = (userId: string, itemId: string) => {
   let hash = 0

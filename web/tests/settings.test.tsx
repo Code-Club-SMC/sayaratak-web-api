@@ -9,6 +9,7 @@ import {
 } from "@/features/settings/schemas"
 import { db, resetDb } from "@/mocks/db"
 import { DEMO_PASSWORD } from "@/mocks/seed/people"
+import { dashboardPath } from "@/lib/navigation"
 import type { Role } from "@/schemas/fields"
 import { pick } from "./pick"
 import { renderShell } from "./shell-render"
@@ -33,7 +34,7 @@ const rowOf = (role: Role) =>
 const open = (role: Role = "user") =>
   renderShell(<SettingsPage role={role} />, {
     role,
-    path: `/en/${role === "user" ? "account" : role}/settings`,
+    path: `/en${dashboardPath(role)}/settings`,
   })
 const field = (name: string | RegExp) => screen.findByLabelText(name)
 const type = (el: HTMLElement, value: string) =>
@@ -85,6 +86,18 @@ describe("SettingsPage", () => {
         .getByRole("link", { name: "Go to notifications" })
         .getAttribute("href")
     ).toBe("/en/account/notifications")
+  })
+
+  it("gives the dealer the same five sections, linked to the dealer notifications", async () => {
+    await open("dealership")
+    expect(
+      await screen.findByRole("heading", { name: "Delete account" })
+    ).toBeTruthy()
+    expect(
+      screen
+        .getByRole("link", { name: "Go to notifications" })
+        .getAttribute("href")
+    ).toBe("/en/dealer/notifications")
   })
 
   it("gives the admin an account page without the delete section", async () => {

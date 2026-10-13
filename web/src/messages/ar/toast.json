@@ -19,5 +19,6 @@
   "toast.service_added": "أُضيفت الخدمة",
   "toast.service_saved": "حُفظت الخدمة",
   "toast.photos_updated": "حُدّثت الصور",
-  "toast.service_deleted": "حُذفت الخدمة"
+  "toast.service_deleted": "حُذفت الخدمة",
+  "toast.availability_saved": "تم تحديث حالة التوفر"
 }

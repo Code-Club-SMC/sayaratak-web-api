@@ -4,6 +4,7 @@ import { useNavigate, useSearch } from "@tanstack/react-router"
 import { AreaChartCard } from "@/components/app/area-chart-card"
 import { DateRangeSelect } from "@/components/app/date-range-select"
 import { PageHeader } from "@/components/app/page-header"
+import { AvailabilityCard } from "@/features/mechanic-overview/components/availability-card"
 import { WelcomeNotice } from "@/features/account-overview/components/welcome-notice"
 import { overviewSearchSchema } from "@/features/account-overview/schemas"
 import { analyticsQuery } from "@/features/analytics/queries"
@@ -16,8 +17,12 @@ import { useT } from "@/lib/i18n/use-t"
 import type { Range } from "@/schemas/api"
 import { WorkshopStats } from "./workshop-stats"
 
-// The first screen of a workshop: setup until done, five numbers, profile views over the period, the newest reviews with a reply in place, and the plan. The period lives in the URL.
-export function WorkshopOverviewPage() {
+// The first screen of a workshop or a mechanic: availability (mechanic only), setup until done, five numbers, profile views over the period, the newest reviews with a reply in place, and the plan. The period lives in the URL.
+export function WorkshopOverviewPage({
+  role = "workshop",
+}: {
+  role?: "workshop" | "mechanic"
+}) {
   const { t } = useT()
   const title = t("dashboard.nav_overview")
   usePageTitle(title)
@@ -42,9 +47,10 @@ export function WorkshopOverviewPage() {
       <PageHeader title={title}>
         <DateRangeSelect value={range} onChange={setRange} />
       </PageHeader>
-      {welcome === 1 && <WelcomeNotice role="workshop" />}
+      {welcome === 1 && <WelcomeNotice role={role} />}
+      {role === "mechanic" && <AvailabilityCard />}
       <SetupChecklist />
-      <WorkshopStats range={range} analytics={analytics} />
+      <WorkshopStats role={role} range={range} analytics={analytics} />
       {!analytics.isError && (
         <AreaChartCard
           title={t("analytics.chart_profile_views")}
@@ -57,8 +63,8 @@ export function WorkshopOverviewPage() {
         />
       )}
       <div className="grid items-start gap-6 lg:grid-cols-2">
-        <RecentReviewsCard targetType="workshop" />
-        <SubscriptionCard role="workshop" />
+        <RecentReviewsCard targetType={role} />
+        <SubscriptionCard role={role} />
       </div>
     </div>
   )

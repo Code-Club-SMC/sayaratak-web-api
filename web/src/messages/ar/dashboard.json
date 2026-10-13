@@ -381,5 +381,9 @@
   "dashboard.services_move_up": "انقل {{name}} لأعلى",
   "dashboard.services_move_down": "انقل {{name}} لأسفل",
   "dashboard.services_delete_title": "حذف هذه الخدمة؟",
-  "dashboard.services_delete_body": "لن تظهر {{name}} في صفحتك العامة بعد الآن."
+  "dashboard.services_delete_body": "لن تظهر {{name}} في صفحتك العامة بعد الآن.",
+  "dashboard.availability_title": "التوفر",
+  "dashboard.availability_label": "متاح لأعمال جديدة",
+  "dashboard.availability_public": "يرى الزوار",
+  "dashboard.availability_error": "تعذر تحميل حالة التوفر"
 }

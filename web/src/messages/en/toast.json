@@ -19,5 +19,6 @@
   "toast.service_added": "Service added",
   "toast.service_saved": "Service saved",
   "toast.photos_updated": "Photos updated",
-  "toast.service_deleted": "Service deleted"
+  "toast.service_deleted": "Service deleted",
+  "toast.availability_saved": "Availability updated"
 }

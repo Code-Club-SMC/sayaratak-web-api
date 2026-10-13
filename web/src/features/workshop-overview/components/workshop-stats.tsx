@@ -8,11 +8,26 @@ import { useT } from "@/lib/i18n/use-t"
 import type { Range } from "@/schemas/api"
 import type { Analytics } from "@/schemas/responses"
 
-// Five numbers, each a link to the page that explains it. Views and contacts follow the range; unread inquiries and the rating are counts of now.
+const paths = {
+  workshop: {
+    analytics: "/$locale/workshop/analytics",
+    inquiries: "/$locale/workshop/inquiries",
+    reviews: "/$locale/workshop/reviews",
+  },
+  mechanic: {
+    analytics: "/$locale/mechanic/analytics",
+    inquiries: "/$locale/mechanic/inquiries",
+    reviews: "/$locale/mechanic/reviews",
+  },
+} as const
+
+// Five numbers on the workshop and mechanic overviews, each a link to the page that explains it. Views and contacts follow the range; unread inquiries and the rating are counts of now.
 export function WorkshopStats({
+  role = "workshop",
   range,
   analytics,
 }: {
+  role?: "workshop" | "mechanic"
   range: Range
   analytics: UseQueryResult<Analytics>
 }) {
@@ -34,7 +49,7 @@ export function WorkshopStats({
       ? business.data.rating
       : undefined
   const toAnalytics = {
-    to: "/$locale/workshop/analytics",
+    to: paths[role].analytics,
     params: { locale },
     search: { range },
   } as const
@@ -61,14 +76,14 @@ export function WorkshopStats({
       <StatCard
         label={t("dashboard.workshop_stat_inquiries")}
         value={counts.data?.unreadMessages}
-        link={{ to: "/$locale/workshop/inquiries", params: { locale } }}
+        link={{ to: paths[role].inquiries, params: { locale } }}
       />
       <StatCard
         label={t("dashboard.dealer_stat_rating")}
         // One decimal, like the stars on the public profile.
         value={rating && Math.round(rating.avg * 10) / 10}
         detail={rating && t("directory.reviews_count", { count: rating.count })}
-        link={{ to: "/$locale/workshop/reviews", params: { locale } }}
+        link={{ to: paths[role].reviews, params: { locale } }}
       />
     </div>
   )

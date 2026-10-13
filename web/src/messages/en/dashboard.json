@@ -373,5 +373,9 @@
   "dashboard.services_move_up": "Move {{name}} up",
   "dashboard.services_move_down": "Move {{name}} down",
   "dashboard.services_delete_title": "Delete this service?",
-  "dashboard.services_delete_body": "{{name}} will no longer show on your public page."
+  "dashboard.services_delete_body": "{{name}} will no longer show on your public page.",
+  "dashboard.availability_title": "Availability",
+  "dashboard.availability_label": "Available for new work",
+  "dashboard.availability_public": "Visitors see",
+  "dashboard.availability_error": "Could not load your availability"
 }

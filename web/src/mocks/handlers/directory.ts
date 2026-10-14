@@ -101,6 +101,8 @@ route("GET", "/workshops/:slug", (c) => {
   return workshopSchema.parse(row)
 })
 
+const isPaid = (userId: string) => (activePlan(userId)?.price ?? 0) > 0
+
 route("GET", "/mechanics", (c) => {
   const q = c.query.get("q")?.toLowerCase()
   const spec = c.query.get("specialization")
@@ -124,6 +126,8 @@ route("GET", "/mechanics", (c) => {
     .filter((m) => c.query.get("verified") !== "true" || m.verified)
     .filter((m) => c.query.get("available") !== "true" || m.available)
     .sort(sorts[c.query.get("sort") ?? "rating"] ?? rating)
+    // Plus promises "Top of search": mechanics on a paid plan lead every sort.
+    .sort((a, b) => Number(isPaid(b.ownerId)) - Number(isPaid(a.ownerId)))
   const { page, pageSize } = pageParams(c.query, 12)
   return pageOf(mechanicSchema).parse(paginate(rows, page, pageSize))
 })

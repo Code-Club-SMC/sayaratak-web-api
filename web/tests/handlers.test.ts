@@ -896,7 +896,7 @@ describe("billing, promotions and payments", () => {
       form: receipt("plan", "plan-user-plus"),
     })
     expect(paid.status).toBe(200)
-    expect(paid.body.status).toBe("pending_review")
+    expect(paid.body).toMatchObject({ status: "pending_review" })
     expect(paid.body.payerName).toBe("Omar Hassan")
     expect(
       (
@@ -1045,7 +1045,7 @@ describe("billing, promotions and payments", () => {
       as: "u-new",
       form: receipt("plan", "plan-workshop-plus"),
     })
-    expect(paid.body.status).toBe("pending_review")
+    expect(paid.body).toMatchObject({ status: "pending_review" })
     expect((await sub()).reviewPlan.id).toBe("plan-workshop-plus")
     const queue = await call("GET", "/admin/payments?status=pending_review", {
       as: "u-admin",
@@ -1067,6 +1067,57 @@ describe("billing, promotions and payments", () => {
         (n) => n.userId === "u-new" && n.type === "payment_approved"
       )
     ).toBe(true)
+  })
+  it("a mechanic's Plus payment goes through the admin queue and puts them at the top of search", async () => {
+    const mechanic = db.mechanics.find((m) => m.ownerId === "u-mechanic")!
+    const sub = async () =>
+      (await call("GET", "/me/subscription", { as: "u-mechanic" })).body
+    const top = async () =>
+      (await call("GET", "/mechanics?sort=newest")).body.items[0].id
+    expect((await sub()).plan.id).toBe("plan-mechanic-basic")
+    expect(await top()).not.toBe(mechanic.id)
+    expect(
+      (
+        await call("POST", "/payments", {
+          as: "u-mechanic",
+          form: receipt("plan", "plan-workshop-plus"),
+        })
+      ).status
+    ).toBe(404)
+    // The demo mechanic's Plus receipt is already waiting in the seed, so a second one is refused.
+    expect(
+      (
+        await call("POST", "/payments", {
+          as: "u-mechanic",
+          form: receipt("plan", "plan-mechanic-plus"),
+        })
+      ).body.code
+    ).toBe("payment_pending")
+    const pending = db.payments.find(
+      (p) =>
+        p.userId === "u-mechanic" &&
+        p.itemId === "plan-mechanic-plus" &&
+        p.status === "pending_review"
+    )!
+    expect((await sub()).reviewPlan.id).toBe("plan-mechanic-plus")
+    // Under review is not paid yet, so the order is unchanged.
+    expect(await top()).not.toBe(mechanic.id)
+    const queue = await call("GET", "/admin/payments?status=pending_review", {
+      as: "u-admin",
+    })
+    expect(
+      queue.body.items.some((p: { id: string }) => p.id === pending.id)
+    ).toBe(true)
+    await call("POST", `/admin/payments/${pending.id}/approve`, {
+      as: "u-admin",
+    })
+    const after = await sub()
+    expect(after.plan.id).toBe("plan-mechanic-plus")
+    expect(after.subscription.price).toBe(60_000)
+    expect(await top()).toBe(mechanic.id)
+    expect(
+      (await call("GET", "/mechanics?sort=experience")).body.items[0].id
+    ).toBe(mechanic.id)
   })
   it("a payment needs the payer name", async () => {
     const res = await call("POST", "/payments", {

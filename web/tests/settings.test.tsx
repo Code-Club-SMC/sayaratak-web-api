@@ -88,7 +88,7 @@ describe("SettingsPage", () => {
     ).toBe("/en/account/notifications")
   })
 
-  it.each(["dealership", "workshop"] as const)(
+  it.each(["dealership", "workshop", "mechanic"] as const)(
     "gives the %s the same five sections, linked to its own notifications",
     async (role) => {
       await open(role)

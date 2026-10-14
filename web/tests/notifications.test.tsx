@@ -157,8 +157,8 @@ describe("NotificationsPage", () => {
   })
 })
 
-// 10.11 and 11.11: dealer and workshop mount the same page; their rows open their own dashboard pages.
-describe.each(["dealership", "workshop"] as const)(
+// 10.11, 11.11 and 12.10: dealer, workshop and mechanic mount the same page; their rows open their own dashboard pages.
+describe.each(["dealership", "workshop", "mechanic"] as const)(
   "%s notifications",
   (role) => {
     const base = dashboardPath(role)

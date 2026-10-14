@@ -1651,6 +1651,32 @@ describe("verification, owner side", () => {
     ).toBe("approved")
   })
 
+  it("the demo mechanic starts unverified and gets the public badge after approval", async () => {
+    const mechanic = db.mechanics.find((m) => m.ownerId === "u-mechanic")!
+    const badge = async () =>
+      (await call("GET", `/mechanics/${mechanic.slug}`)).body.verified
+    expect(await badge()).toBe(false)
+    expect(
+      (await call("GET", "/me/verification", { as: "u-mechanic" })).body
+    ).toBeNull()
+    const sent = await send("u-mechanic", [
+      ["national_id", file("id.png", 20)],
+      ["certificate", file("certificate.png", 30)],
+    ])
+    expect(sent.body).toMatchObject({
+      status: "pending",
+      targetType: "mechanic",
+      targetId: mechanic.id,
+    })
+    await call("POST", `/admin/verifications/${sent.body.id}/approve`, {
+      as: "u-admin",
+    })
+    expect(await badge()).toBe(true)
+    expect(
+      (await call("GET", "/me/verification", { as: "u-mechanic" })).body.status
+    ).toBe("approved")
+  })
+
   it("refuses bad input, a second pending request and an already verified business", async () => {
     const png = () => file("a.png", 10)
     const bad = await send("u-dealer", [["selfie", png()]])

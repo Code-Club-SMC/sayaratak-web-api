@@ -12,7 +12,7 @@ import {
 import { errorText } from "@/lib/api/error-text"
 import { useT } from "@/lib/i18n/use-t"
 
-// "Available for new work": saves on each toggle and shows the badge visitors see on the public profile. While the save runs the switch shows the new state.
+// "Available for new work": saves on each toggle and shows the badge visitors see on the public profile. While the save runs the switch shows the new state and ignores presses (still focusable, `aria-busy`), so two saves never race.
 export function AvailabilitySwitch() {
   const { t } = useT()
   const business = useQuery(businessQueries.mine)
@@ -36,7 +36,9 @@ export function AvailabilitySwitch() {
       <label className="flex items-center gap-3 text-ui">
         <Switch
           checked={available}
+          aria-busy={update.isPending}
           onCheckedChange={(next) =>
+            !update.isPending &&
             update.mutate(
               { available: next },
               {

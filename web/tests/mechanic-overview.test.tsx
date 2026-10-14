@@ -51,6 +51,20 @@ describe("WorkshopOverviewPage role=mechanic", () => {
     expect(((await res.json()) as { available: boolean }).available).toBe(false)
   })
 
+  it("ignores a second press while the save runs", async () => {
+    biz().available = true
+    await open()
+    const toggle = await screen.findByRole("switch", {
+      name: "Available for new work",
+    })
+    fireEvent.click(toggle)
+    await waitFor(() => expect(toggle.getAttribute("aria-busy")).toBe("true"))
+    fireEvent.click(toggle)
+    await waitFor(() => expect(toggle.getAttribute("aria-busy")).toBe("false"))
+    expect(biz().available).toBe(false)
+    expect(screen.getByText("Not taking work now")).toBeTruthy()
+  })
+
   it("links every number to the mechanic page that explains it", async () => {
     await open("/en/mechanic?range=7d")
     const hrefs = {

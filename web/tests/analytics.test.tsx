@@ -5,7 +5,9 @@ import { beforeEach, describe, expect, it, vi } from "vitest"
 import { ContactActions } from "@/components/app/contact-actions"
 import { AnalyticsPage } from "@/features/analytics/components/analytics-page"
 import { analyticsSearchSchema } from "@/features/analytics/schemas"
+import { MechanicProfilePage } from "@/features/directory/components/mechanic-profile-page"
 import { WorkshopProfilePage } from "@/features/directory/components/workshop-profile-page"
+import { mechanicProfileSearchSchema } from "@/features/directory/mechanic-schemas"
 import { workshopProfileSearchSchema } from "@/features/directory/workshop-schemas"
 import { NowProvider } from "@/lib/now"
 import { db, resetDb } from "@/mocks/db"
@@ -283,5 +285,41 @@ describe("workshop and mechanic analytics", () => {
       expect((await card("Calls")).textContent).toContain("1")
     )
     expect((await card("WhatsApp clicks")).textContent).toContain("1")
+  })
+
+  it("a call and a WhatsApp tap on a mechanic's public profile show in the mechanic's cards", async () => {
+    const owner = db.users.find(
+      (u) => u.role === "mechanic" && u.onboardingDone
+    )!
+    const mechanic = db.mechanics.find((m) => m.ownerId === owner.id)!
+    setEvents([mechanic.id], [])
+    const visit = await renderShell(
+      <NowProvider serverNow={Date.UTC(2026, 9, 6, 10, 0)}>
+        <Suspense fallback={null}>
+          <MechanicProfilePage
+            slug={mechanic.slug}
+            search={mechanicProfileSearchSchema.parse({})}
+          />
+        </Suspense>
+      </NowProvider>
+    )
+    await screen.findByRole("heading", { level: 1 })
+    fireEvent.click(screen.getAllByRole("button", { name: "Call" })[0]!)
+    fireEvent.click(screen.getAllByRole("link", { name: "WhatsApp" })[0]!)
+    await waitFor(() =>
+      expect(
+        db.events.find((e) => e.targetId === mechanic.id)?.counts
+      ).toMatchObject({ view: 1, phone_click: 1, whatsapp_click: 1 })
+    )
+    visit.unmount()
+    await renderShell(<AnalyticsPage role="mechanic" />, {
+      role: "mechanic",
+      path: "/en/mechanic/analytics",
+    })
+    await waitFor(async () =>
+      expect((await card("Calls")).textContent).toContain("1")
+    )
+    expect((await card("WhatsApp clicks")).textContent).toContain("1")
+    expect((await card("Profile views")).textContent).toContain("1")
   })
 })

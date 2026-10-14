@@ -480,6 +480,51 @@ describe("directory", () => {
       403
     )
   })
+  it("a mechanic on Basic adds portfolio photos up to 5", async () => {
+    const sub = db.subscriptions.find(
+      (s) => s.userId === "u-mechanic" && s.status === "active"
+    )!
+    sub.planId = "plan-mechanic-basic"
+    const m = db.mechanics.find((r) => r.ownerId === "u-mechanic")!
+    m.portfolio = []
+    const add = async () => {
+      const form = new FormData()
+      form.set("file", file("a.png", 20))
+      form.set("width", "100")
+      form.set("height", "80")
+      form.set("placeholderColor", "#112233")
+      const imageId = (
+        await call("POST", "/uploads", { as: "u-mechanic", form })
+      ).body.id
+      return call("POST", "/me/portfolio", {
+        as: "u-mechanic",
+        body: { imageId, caption: "Brake job" },
+      })
+    }
+    const first = await add()
+    expect(first.body).toMatchObject({ caption: "Brake job", width: 100 })
+    for (let i = 0; i < 4; i++) expect((await add()).status).toBe(200)
+    expect((await add()).status).toBe(403)
+    expect(
+      (
+        await call("POST", "/me/portfolio", {
+          as: "u-mechanic",
+          body: { imageId: "nope", caption: "x" },
+        })
+      ).status
+    ).toBe(403)
+    sub.planId = "plan-mechanic-plus"
+    expect((await add()).status).toBe(200)
+    m.portfolio = []
+    expect(
+      (
+        await call("POST", "/me/portfolio", {
+          as: "u-mechanic",
+          body: { imageId: "nope", caption: "x" },
+        })
+      ).status
+    ).toBe(422)
+  })
 })
 
 describe("reviews", () => {

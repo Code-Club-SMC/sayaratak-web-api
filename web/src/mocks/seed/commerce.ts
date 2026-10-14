@@ -132,11 +132,14 @@ const credits: Record<string, number> = {
   "plan-dealer-pro": 10,
 }
 // A9: the first plan of each audience costs nothing and is its free plan.
-// What a workshop plan caps; Plus has none.
-const workshopCaps: Record<
+// What a workshop or mechanic plan caps; Plus has none.
+const planCaps: Record<
   string,
-  Pick<Plan, "serviceLimit" | "photoLimit">
-> = { "plan-workshop-basic": { serviceLimit: 10, photoLimit: 1 } }
+  Pick<Plan, "serviceLimit" | "photoLimit" | "portfolioLimit">
+> = {
+  "plan-workshop-basic": { serviceLimit: 10, photoLimit: 1 },
+  "plan-mechanic-basic": { portfolioLimit: 5 },
+}
 
 export const plans: Plan[] = planRows.map(
   ([id, audience, en, ar, price, durationDays, limit, features], i) => ({
@@ -152,7 +155,7 @@ export const plans: Plan[] = planRows.map(
       const [fen = "", far = ""] = f.split("|")
       return { en: fen, ar: far }
     }),
-    ...workshopCaps[id],
+    ...planCaps[id],
     featuredCredits: credits[id] ?? 0,
     enabled: true,
     sortOrder: i,

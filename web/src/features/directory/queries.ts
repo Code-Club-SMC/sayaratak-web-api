@@ -87,7 +87,6 @@ const touched = [
 const serviceRow = workshopSchema.shape.services.element
 const portfolioRow = mechanicSchema.shape.portfolio.element
 type Input<T extends z.ZodType> = z.input<T>
-type Services = z.infer<typeof workshopSchema.shape.services>
 
 export const useUpdateBusiness = () =>
   useApiMutation(
@@ -148,19 +147,18 @@ export const useDeleteService = () =>
     touched
   )
 // Optimistic: the list takes the new order at once and goes back if the save fails.
-export function useReorderServices() {
+function useReorder<T extends { id: string }>(
+  path: string,
+  key: readonly string[],
+  schema: z.ZodType<T[]>
+) {
   const qc = useQueryClient()
-  const key = businessQueries.services.queryKey
-  return useMutation<Services, ApiError, string[], Services | undefined>({
+  return useMutation<T[], ApiError, string[], T[] | undefined>({
     mutationFn: (ids) =>
-      apiFetch("/me/services/reorder", {
-        method: "POST",
-        body: { ids },
-        schema: workshopSchema.shape.services,
-      }),
+      apiFetch(path, { method: "POST", body: { ids }, schema }),
     onMutate: async (ids) => {
       await qc.cancelQueries({ queryKey: key })
-      const prev = qc.getQueryData(key)
+      const prev = qc.getQueryData<T[]>(key)
       if (prev)
         qc.setQueryData(
           key,
@@ -175,6 +173,12 @@ export function useReorderServices() {
       ),
   })
 }
+export const useReorderServices = () =>
+  useReorder(
+    "/me/services/reorder",
+    businessQueries.services.queryKey,
+    workshopSchema.shape.services
+  )
 
 export const useAddPortfolioItem = () =>
   useApiMutation(
@@ -202,12 +206,8 @@ export const useDeletePortfolioItem = () =>
     touched
   )
 export const useReorderPortfolio = () =>
-  useApiMutation(
-    (ids: string[]) =>
-      apiFetch("/me/portfolio/reorder", {
-        method: "POST",
-        body: { ids },
-        schema: mechanicSchema.shape.portfolio,
-      }),
-    touched
+  useReorder(
+    "/me/portfolio/reorder",
+    businessQueries.portfolio.queryKey,
+    mechanicSchema.shape.portfolio
   )

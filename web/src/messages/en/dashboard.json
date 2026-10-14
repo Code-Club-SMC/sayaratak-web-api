@@ -384,5 +384,21 @@
   "dashboard.availability_title": "Availability",
   "dashboard.availability_label": "Available for new work",
   "dashboard.availability_public": "Visitors see",
-  "dashboard.availability_error": "Could not load your availability"
+  "dashboard.availability_error": "Could not load your availability",
+  "dashboard.portfolio_hint": "Customers see your work in this order on your public page.",
+  "dashboard.portfolio_add": "Add work",
+  "dashboard.portfolio_add_title": "Add work",
+  "dashboard.portfolio_edit_title": "Edit caption",
+  "dashboard.portfolio_edit_caption": "Edit caption",
+  "dashboard.portfolio_photo": "Photo of the finished job",
+  "dashboard.portfolio_caption": "Caption",
+  "dashboard.portfolio_list_title": "Your work",
+  "dashboard.portfolio_load_error": "Could not load your portfolio.",
+  "dashboard.portfolio_limit_label": "Photos on your plan",
+  "dashboard.portfolio_empty_title": "No work yet",
+  "dashboard.portfolio_empty_body": "Photos of finished jobs build trust.",
+  "dashboard.portfolio_move_earlier": "Move {{name}} earlier",
+  "dashboard.portfolio_move_later": "Move {{name}} later",
+  "dashboard.portfolio_delete_title": "Delete this photo?",
+  "dashboard.portfolio_delete_body": "It will no longer show on your public page."
 }

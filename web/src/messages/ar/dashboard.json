@@ -392,5 +392,21 @@
   "dashboard.availability_title": "التوفر",
   "dashboard.availability_label": "متاح لأعمال جديدة",
   "dashboard.availability_public": "يرى الزوار",
-  "dashboard.availability_error": "تعذر تحميل حالة التوفر"
+  "dashboard.availability_error": "تعذر تحميل حالة التوفر",
+  "dashboard.portfolio_hint": "يرى العملاء أعمالك بهذا الترتيب في صفحتك العامة.",
+  "dashboard.portfolio_add": "أضف عملًا",
+  "dashboard.portfolio_add_title": "أضف عملًا",
+  "dashboard.portfolio_edit_title": "تعديل الوصف",
+  "dashboard.portfolio_edit_caption": "تعديل الوصف",
+  "dashboard.portfolio_photo": "صورة العمل المنجز",
+  "dashboard.portfolio_caption": "الوصف",
+  "dashboard.portfolio_list_title": "أعمالك",
+  "dashboard.portfolio_load_error": "تعذّر تحميل معرض أعمالك.",
+  "dashboard.portfolio_limit_label": "الصور في باقتك",
+  "dashboard.portfolio_empty_title": "لا أعمال بعد",
+  "dashboard.portfolio_empty_body": "صور الأعمال المنجزة تبني الثقة.",
+  "dashboard.portfolio_move_earlier": "تقديم {{name}}",
+  "dashboard.portfolio_move_later": "تأخير {{name}}",
+  "dashboard.portfolio_delete_title": "حذف هذه الصورة؟",
+  "dashboard.portfolio_delete_body": "لن تظهر في صفحتك العامة بعد الآن."
 }

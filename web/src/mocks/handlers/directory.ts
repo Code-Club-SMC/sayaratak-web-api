@@ -271,13 +271,19 @@ route("GET", "/me/portfolio", (c) => mechanic(c).portfolio)
 route("POST", "/me/portfolio", async (c) => {
   const m = mechanic(c)
   const input = await c.body(portfolioInputSchema)
+  const cap = activePlan(m.ownerId)?.portfolioLimit
+  if (cap !== undefined && m.portfolio.length >= cap)
+    throw fail(403, "limit_reached")
+  const media = db.uploads.get(input.imageId)?.media
+  if (media?.type !== "image")
+    throw fail(422, "validation", { imageId: "validation.required" })
   const row = {
     id: newId("pf"),
-    url: input.url,
-    caption: input.caption ?? "",
-    width: input.width,
-    height: input.height,
-    placeholderColor: "#c9d3cf",
+    url: media.url,
+    caption: input.caption,
+    width: media.width,
+    height: media.height,
+    placeholderColor: media.placeholderColor,
   }
   insert(m.portfolio, row)
   return row
@@ -286,7 +292,7 @@ route("PATCH", "/me/portfolio/:id", async (c) => {
   const m = mechanic(c)
   const row = m.portfolio.find((p) => p.id === c.params.id)
   if (!row) throw fail(404, "not_found")
-  Object.assign(row, await c.body(portfolioInputSchema.partial()))
+  Object.assign(row, await c.body(portfolioInputSchema.pick({ caption: true })))
   return row
 })
 route("DELETE", "/me/portfolio/:id", (c) => {

@@ -248,10 +248,8 @@ export const serviceInputSchema = z.object({
   templateId: z.string().nullable().default(null), // kept from the template, never edited by hand
 })
 export const portfolioInputSchema = z.object({
-  url: z.string().min(1, "validation.required"),
-  caption: optionalText(120),
-  width: z.number().default(1280),
-  height: z.number().default(853),
+  imageId: z.string().min(1, "validation.required"), // an image upload
+  caption: requiredText(120),
 })
 export const idsInputSchema = z.object({ ids: z.array(z.string()) })
 export const imagesInputSchema = z.object({

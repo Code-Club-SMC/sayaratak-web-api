@@ -9,8 +9,10 @@ import {
 import { beforeEach, describe, expect, it, vi } from "vitest"
 
 import { DealershipProfilePage } from "@/features/directory/components/dealership-profile-page"
+import { MechanicProfilePage } from "@/features/directory/components/mechanic-profile-page"
 import { WorkshopProfilePage } from "@/features/directory/components/workshop-profile-page"
 import { dealershipProfileSearchSchema } from "@/features/directory/schemas"
+import { mechanicProfileSearchSchema } from "@/features/directory/mechanic-schemas"
 import { workshopProfileSearchSchema } from "@/features/directory/workshop-schemas"
 import { ReviewsManagerPage } from "@/features/reviews/components/reviews-manager-page"
 import {
@@ -221,6 +223,47 @@ describe("ReviewsManagerPage", () => {
     const card = (await screen.findByText("Body of Ali")).closest("li")!
     expect(within(card).getByText("Reply from the owner")).toBeTruthy()
     expect(within(card).getByText("Thanks for trusting us")).toBeTruthy()
+  })
+
+  it("a mechanic's reply shows on its public profile's Reviews tab", async () => {
+    const mechanic = db.mechanics.find((m) =>
+      db.users.some((u) => u.id === m.ownerId && u.onboardingDone)
+    )!
+    db.reviews = db.reviews.filter((r) => r.targetId !== mechanic.id)
+    db.reviews.push({
+      id: "t-m",
+      targetType: "mechanic",
+      targetId: mechanic.id,
+      authorId: "u-omar",
+      authorName: "Hassan",
+      rating: 4,
+      body: "Body of Hassan",
+      createdAt: new Date().toISOString(),
+      status: "visible",
+    })
+    await renderShell(<ReviewsManagerPage targetType="mechanic" />, {
+      role: "mechanic",
+      path: "/en/mechanic/reviews",
+    })
+    const row = await item("Hassan")
+    fireEvent.click(within(row).getByRole("button", { name: "Reply" }))
+    fireEvent.change(within(row).getByRole("textbox", { name: "Your reply" }), {
+      target: { value: "Glad the car runs well" },
+    })
+    fireEvent.click(within(row).getByRole("button", { name: "Post reply" }))
+    expect(await within(row).findByText("Glad the car runs well")).toBeTruthy()
+    cleanup()
+    await renderShell(
+      <Suspense fallback={null}>
+        <MechanicProfilePage
+          slug={mechanic.slug}
+          search={mechanicProfileSearchSchema.parse({ tab: "reviews" })}
+        />
+      </Suspense>
+    )
+    const card = (await screen.findByText("Body of Hassan")).closest("li")!
+    expect(within(card).getByText("Reply from the owner")).toBeTruthy()
+    expect(within(card).getByText("Glad the car runs well")).toBeTruthy()
   })
 
   it("Report asks first, then marks the review Reported", async () => {

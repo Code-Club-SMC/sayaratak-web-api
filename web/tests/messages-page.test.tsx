@@ -39,7 +39,7 @@ const nameOf = (thread: ReturnType<typeof toThread>) =>
 
 async function open(
   search = "",
-  role: "user" | "workshop" | "dealership" = "user",
+  role: "user" | "workshop" | "dealership" | "mechanic" = "user",
   labelKey: "messages" | "inquiries" = "messages"
 ) {
   const view = await renderShell(
@@ -256,6 +256,33 @@ describe("MessagesPage", () => {
     const row = within(await list())
       .getAllByRole("button")
       .find((b) => b.textContent.includes("Can you fix brakes today?"))!
+    expect(within(row).getByText("1 new")).toBeTruthy()
+  })
+
+  it("a mechanic's inquiries get a thread from its public page", async () => {
+    const owner = db.users.find(
+      (u) => u.role === "mechanic" && u.onboardingDone
+    )!
+    const business = db.mechanics.find((b) => b.ownerId === owner.id)!
+    const res = await handleMock(
+      new Request("http://localhost/api/threads", {
+        method: "POST",
+        headers: {
+          cookie: `sy_session=${me().id}`,
+          "content-type": "application/json",
+        },
+        body: JSON.stringify({
+          subjectType: "mechanic",
+          subjectId: business.id,
+          body: "Can you come to Bahri tomorrow?",
+        }),
+      })
+    )
+    expect(res.ok).toBe(true)
+    await open("", "mechanic", "inquiries")
+    const row = within(await list())
+      .getAllByRole("button")
+      .find((b) => b.textContent.includes("Can you come to Bahri tomorrow?"))!
     expect(within(row).getByText("1 new")).toBeTruthy()
   })
 

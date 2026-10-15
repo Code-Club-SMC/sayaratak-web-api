@@ -155,7 +155,7 @@
   "table.columns": "الأعمدة",
   "table.select_row": "تحديد الصف",
   "table.select_all": "تحديد كل صفوف هذه الصفحة",
-  "table.error": "تعذّر تحميل الجدول. حاول مرة أخرى.",
+  "table.error": "تعذّر تحميل الجدول.",
   "common.breadcrumb": "مسار التنقل",
   "common.skip": "تخطي",
   "common.view_on_map": "عرض على الخريطة",

@@ -147,7 +147,7 @@
   "table.columns": "Columns",
   "table.select_row": "Select row",
   "table.select_all": "Select all rows on this page",
-  "table.error": "Could not load the table. Try again.",
+  "table.error": "Could not load the table.",
   "common.breadcrumb": "Breadcrumb",
   "common.skip": "Skip",
   "common.view_on_map": "View on map",

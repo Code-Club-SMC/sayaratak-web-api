@@ -5,7 +5,12 @@ import {
   type RowData,
   type RowSelectionState,
 } from "@tanstack/react-table"
-import { ArrowDownIcon, ArrowUpIcon } from "lucide-react"
+import {
+  ArrowDownIcon,
+  ArrowUpIcon,
+  RefreshCwIcon,
+  TriangleAlertIcon,
+} from "lucide-react"
 
 import { dataTableFeatures, type DataColumn } from "@/lib/table"
 import { useT } from "@/lib/i18n/use-t"
@@ -114,9 +119,14 @@ export function DataTable<T extends RowData>({
     />
   )
   const message = error ? (
-    <div role="alert" className="flex flex-col items-start gap-3 py-8">
-      <p className="text-body text-muted-foreground">{t("table.error")}</p>
+    <div
+      role="alert"
+      className="flex flex-col items-center gap-3 px-4 py-12 text-center"
+    >
+      <TriangleAlertIcon aria-hidden className="size-6 text-muted-foreground" />
+      <p className="text-ui font-medium">{t("table.error")}</p>
       <Button type="button" variant="outline" onClick={onRetry}>
+        <RefreshCwIcon data-icon="inline-start" />
         {t("common.retry")}
       </Button>
     </div>

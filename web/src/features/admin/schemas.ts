@@ -31,9 +31,11 @@ export const adminListingsSearchSchema = z.object({
   tab: tabOf(["all", "approved", "pending", "rejected", "removed"]),
   kind: optional(z.enum(["vehicle", "part"])),
 })
-export const reportsSearchSchema = z.object({
-  tab: tabOf(["open", "resolved"]),
+export const reportTabs = ["open", "resolved"] as const
+export const reportsSearchSchema = adminTableSearchSchema.extend({
+  tab: tabOf(reportTabs),
 })
+export type ReportsSearch = z.infer<typeof reportsSearchSchema>
 export const verificationsSearchSchema = z.object({
   tab: tabOf(["pending", "approved", "rejected"]),
 })

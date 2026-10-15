@@ -1,6 +1,7 @@
 import { z } from "zod"
 
 import { bilingualSchema, idSchema, localeSchema } from "./fields"
+import { listingSchema } from "./listing"
 import { targetTypeSchema } from "./review"
 
 // A banner is a photo with real text on top, one set of text per language (so it reads on a phone, to a screen reader and in the admin form). `focus` is the photo's vertical focal point in percent: the crop keeps it in view. A banner without `copy` is a finished image (the older form) and shows as is.
@@ -52,6 +53,14 @@ export const reportSchema = z.object({
   resolutionNote: z.string().optional(),
 })
 export type Report = z.infer<typeof reportSchema>
+// A row of `GET /admin/reports`: the report with what the table and the sheet show next to it. `listing` is null once the listing is deleted.
+export const adminReportSchema = reportSchema.extend({
+  listing: listingSchema.nullable(),
+  reporterName: z.string(),
+  listingReports: z.number().int(), // every report on the same listing, this one included
+  sellerBanned: z.boolean(),
+})
+export type AdminReport = z.infer<typeof adminReportSchema>
 
 export const verificationLabels = [
   "commercial_registration",

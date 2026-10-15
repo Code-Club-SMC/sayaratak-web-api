@@ -5,9 +5,9 @@ import { apiFetch } from "@/lib/api/client"
 import { useApiMutation } from "@/lib/api/mutation"
 import { keys } from "@/lib/api/query-keys"
 import {
+  adminReportSchema,
   backupSchema,
   bannerSchema,
-  reportSchema,
   settingsSchema,
   sitePageSchema,
   verificationRequestSchema,
@@ -43,6 +43,7 @@ import type {
   grantInputSchema,
   adminListingPatchSchema,
   pagePatchSchema,
+  reportActionInputSchema,
 } from "@/schemas/inputs"
 import { listingSchema, type PromotionType } from "@/schemas/listing"
 import { reviewSchema } from "@/schemas/review"
@@ -117,7 +118,7 @@ export const adminQueries = {
   reviews: (p?: Params) =>
     adminList("reviews", "/admin/reviews", reviewSchema, p),
   reports: (p?: Params) =>
-    adminList("reports", "/admin/reports", reportSchema, p),
+    adminList("reports", "/admin/reports", adminReportSchema, p),
   taxonomy: (type: z.infer<typeof taxonomyTypeSchema>) =>
     adminPlain(
       `taxonomy-${type}`,
@@ -337,14 +338,18 @@ export const useShowReview = () =>
   )
 export const useDismissReport = () =>
   useApiMutation(
-    ({ id, note }: { id: string; note?: string }) =>
-      post(reportSchema)(`/admin/reports/${id}/dismiss`, { note }),
+    ({ id, note }: { id: string; note: string }) =>
+      post(adminReportSchema)(`/admin/reports/${id}/dismiss`, { note }),
     touched
   )
+// Removes the listing, or with `ban` bans its seller; either closes every open report on the listing.
 export const useActionReport = () =>
   useApiMutation(
-    ({ id, note }: { id: string; note?: string }) =>
-      post(reportSchema)(`/admin/reports/${id}/action`, { note }),
+    ({
+      id,
+      ...body
+    }: { id: string } & z.input<typeof reportActionInputSchema>) =>
+      post(adminReportSchema)(`/admin/reports/${id}/action`, body),
     withListings
   )
 

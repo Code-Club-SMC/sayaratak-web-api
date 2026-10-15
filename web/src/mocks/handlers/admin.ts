@@ -16,6 +16,7 @@ import {
 import { listingSchema, typeFilterSchema } from "@/schemas/listing"
 import { pageOf } from "@/schemas/fields"
 import { userSchema } from "@/schemas/user"
+import type { z } from "zod"
 import { both } from "@/mocks/seed/util"
 
 import { db, find, insert, newId } from "../db"
@@ -34,7 +35,7 @@ import {
   textOf,
 } from "../lib"
 import { matches } from "../search"
-import type { ListingRow } from "../types"
+import type { ListingRow, UserRow } from "../types"
 
 const admin = (c: Ctx) => needRole(c, "admin")
 const listingOf = (id: string) => {
@@ -322,21 +323,24 @@ route("GET", "/admin/users", (c) => {
     items: page.items.map(publicUser),
   })
 })
+// No notification: the banned person finds out on their next request (403 `banned`, then the suspended page).
+export function setBan(user: UserRow, input?: z.infer<typeof banInputSchema>) {
+  user.banned = !!input
+  user.bannedReason = input?.reason
+  user.bannedUntil =
+    input && input.duration !== "permanent"
+      ? new Date(
+          Date.now() + (input.duration === "7d" ? 7 : 30) * DAY_MS
+        ).toISOString()
+      : undefined
+}
 for (const ban of [true, false]) {
   route("POST", `/admin/users/:id/${ban ? "ban" : "unban"}`, async (c) => {
     admin(c)
     const user = find(db.users, c.params.id ?? "")
     if (!user) throw fail(404, "not_found")
     if (user.role === "admin") throw fail(403, "forbidden")
-    const input = ban ? await c.body(banInputSchema) : undefined
-    user.banned = ban
-    user.bannedReason = input?.reason
-    user.bannedUntil =
-      input && input.duration !== "permanent"
-        ? new Date(
-            Date.now() + (input.duration === "7d" ? 7 : 30) * DAY_MS
-          ).toISOString()
-        : undefined
+    setBan(user, ban ? await c.body(banInputSchema) : undefined)
     return publicUser(user)
   })
 }

@@ -269,6 +269,10 @@ export const banInputSchema = z.object({
   reason: requiredText(300),
   duration: z.enum(["7d", "30d", "permanent"]),
 })
+// `POST /admin/reports/:id/action`: with `ban` the seller is banned, otherwise the listing is removed. Either way every open report on the listing closes.
+export const reportActionInputSchema = noteInputSchema.extend({
+  ban: banInputSchema.optional(),
+})
 export const businessAdminPatchSchema = z
   .object({ status: z.enum(["active", "suspended"]), verified: z.boolean() })
   .partial()

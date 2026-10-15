@@ -1,8 +1,9 @@
 import {
   backupSchema,
   bannerSchema,
-  reportSchema,
+  adminReportSchema,
   settingsSchema,
+  type Report,
   sitePageSchema,
 } from "@/schemas/admin"
 import { okSchema, taxonomyTypeSchema } from "@/schemas/api"
@@ -11,6 +12,7 @@ import {
   bannerInputSchema,
   noteInputSchema,
   pagePatchSchema,
+  reportActionInputSchema,
 } from "@/schemas/inputs"
 import { vehicleTypeSchema } from "@/schemas/listing"
 import { reviewSchema } from "@/schemas/review"
@@ -19,6 +21,7 @@ import { z } from "zod"
 import { db, find, insert, newId, remove } from "../db"
 import { fail, needRole, route, type Ctx } from "../http"
 import { byNewest, listPage, nowIso, notify } from "../lib"
+import { setBan } from "./admin"
 import { recomputeRating } from "./reviews"
 
 const admin = (c: Ctx) => needRole(c, "admin")
@@ -47,34 +50,72 @@ for (const [action, status] of [
   })
 }
 
+// `status` is open or resolved (dismissed and actioned); `id` returns that one report, for a sheet opened from a link.
+const reportRow = (r: Report) => {
+  const listing = find(db.listings, r.listingId)
+  const seller = listing && find(db.users, listing.ownerUserId)
+  return {
+    ...r,
+    listing: listing ?? null,
+    reporterName: find(db.users, r.reporterId)?.fullName ?? "",
+    listingReports: db.reports.filter((o) => o.listingId === r.listingId)
+      .length,
+    sellerBanned: !!seller?.banned,
+  }
+}
 route("GET", "/admin/reports", (c) => {
   admin(c)
+  const status = c.query.get("status")
+  const id = c.query.get("id")
   const rows = db.reports
-    .filter((r) => !c.query.get("status") || r.status === c.query.get("status"))
+    .filter((r) => !id || r.id === id)
+    .filter(
+      (r) =>
+        !status ||
+        (status === "resolved" ? r.status !== "open" : r.status === status)
+    )
     .sort(byNewest)
-  return pageOf(reportSchema).parse(listPage(c, rows))
+    .map(reportRow)
+  return pageOf(adminReportSchema).parse(
+    listPage(c, rows, (r) => `${r.listing?.title ?? ""} ${r.reporterName}`)
+  )
 })
-// Action removes the reported listing and tells its owner; dismiss only closes the report.
-for (const action of ["dismiss", "action"] as const) {
-  route("POST", `/admin/reports/:id/${action}`, async (c) => {
-    admin(c)
-    const row = find(db.reports, c.params.id ?? "")
-    if (!row) throw fail(404, "not_found")
-    row.status = action === "dismiss" ? "dismissed" : "actioned"
-    row.resolutionNote = (await c.body(noteInputSchema)).note
-    const listing = find(db.listings, row.listingId)
-    if (action === "action" && listing) {
-      listing.moderation = "removed"
-      notify(
-        listing.ownerUserId,
-        "listing_rejected",
-        { ar: "تمت إزالة إعلانك", en: "Your listing was removed" },
-        { ar: listing.title, en: listing.title }
-      )
+route("POST", "/admin/reports/:id/dismiss", async (c) => {
+  admin(c)
+  const row = find(db.reports, c.params.id ?? "")
+  if (!row) throw fail(404, "not_found")
+  row.status = "dismissed"
+  row.resolutionNote = (await c.body(noteInputSchema)).note
+  return adminReportSchema.parse(reportRow(row))
+})
+// Removes the listing and tells its owner, or (with `ban`) bans the owner and tells nobody. Every open report on the listing closes with the same note.
+route("POST", "/admin/reports/:id/action", async (c) => {
+  admin(c)
+  const row = find(db.reports, c.params.id ?? "")
+  if (!row) throw fail(404, "not_found")
+  const { note, ban } = await c.body(reportActionInputSchema)
+  const listing = find(db.listings, row.listingId)
+  if (ban) {
+    const seller = listing && find(db.users, listing.ownerUserId)
+    if (!seller) throw fail(404, "not_found")
+    if (seller.role === "admin") throw fail(403, "forbidden")
+    setBan(seller, ban)
+  } else if (listing) {
+    listing.moderation = "removed"
+    notify(
+      listing.ownerUserId,
+      "listing_rejected",
+      { ar: "تمت إزالة إعلانك", en: "Your listing was removed" },
+      { ar: listing.title, en: listing.title }
+    )
+  }
+  for (const r of db.reports)
+    if (r.listingId === row.listingId && (r === row || r.status === "open")) {
+      r.status = "actioned"
+      r.resolutionNote = note
     }
-    return reportSchema.parse(row)
-  })
-}
+  return adminReportSchema.parse(reportRow(row))
+})
 
 // Taxonomy: one generic CRUD over the seven admin-managed lists.
 type Loose = { id: string; [key: string]: unknown }

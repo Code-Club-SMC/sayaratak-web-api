@@ -176,7 +176,7 @@ export function ModerationPage() {
               listing={current}
               actions={
                 <ReviewActions
-                  hints={shortcuts}
+                  shortcuts={shortcuts}
                   onApprove={() => approveOne(current)}
                   onReject={() => setRejecting(current)}
                   onRemove={() => {

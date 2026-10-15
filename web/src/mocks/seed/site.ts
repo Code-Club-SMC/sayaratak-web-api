@@ -271,9 +271,10 @@ export function seedReports(
     "inappropriate",
     "other",
   ]
+  // The first two open reports share a listing, so the admin sees a count above one.
   return reasons.map((reason, i) => ({
     id: `rp-${i + 1}`,
-    listingId: approved[i * 7]?.id ?? "",
+    listingId: approved[i === 1 ? 0 : i * 7]?.id ?? "",
     reporterId: reporters[i + 1]?.id ?? "u-1",
     reason,
     details: i % 2 ? "الإعلان مكرر أكثر من مرة" : undefined,

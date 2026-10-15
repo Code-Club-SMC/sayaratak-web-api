@@ -22,3 +22,23 @@ export const adminTableSearchSchema = z.object({
 })
 export const adminTableSearchDefaults = { page: 1 } as const
 export type AdminTableSearch = z.infer<typeof adminTableSearchSchema>
+
+// A tab kept in the URL; an unknown value falls back to the first tab. Pages that the overview links to (13.2) carry one before their own step builds them.
+const tabOf = <T extends readonly [string, ...string[]]>(tabs: T) =>
+  z.enum(tabs).default(tabs[0]).catch(tabs[0])
+export const adminListingsSearchSchema = z.object({
+  tab: tabOf(["all", "approved", "pending", "rejected", "removed"]),
+  kind: optional(z.enum(["vehicle", "part"])),
+})
+export const reportsSearchSchema = z.object({
+  tab: tabOf(["open", "resolved"]),
+})
+export const verificationsSearchSchema = z.object({
+  tab: tabOf(["pending", "approved", "rejected"]),
+})
+export const paymentsSearchSchema = z.object({
+  tab: tabOf(["pending", "approved", "rejected", "all"]),
+})
+export const plansSearchSchema = z.object({
+  tab: tabOf(["user", "dealership", "workshop", "mechanic", "subscribers"]),
+})

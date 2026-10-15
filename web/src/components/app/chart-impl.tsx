@@ -55,7 +55,8 @@ export function ChartImpl({
           tickFormatter={(v: string) => formatShortDate(v, locale)}
         />
         <YAxis
-          width={44}
+          // Fits the widest tick, so six-figure SDG amounts are not cut off.
+          width="auto"
           tickLine={false}
           axisLine={false}
           tickFormatter={(v: number) => formatNumber(v, locale)}

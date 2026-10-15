@@ -9,9 +9,9 @@ import {
   adminReviewSchema,
   backupSchema,
   bannerSchema,
+  adminVerificationSchema,
   settingsSchema,
   sitePageSchema,
-  verificationRequestSchema,
   type Settings,
 } from "@/schemas/admin"
 import {
@@ -91,7 +91,7 @@ export const adminQueries = {
     adminList(
       "verifications",
       "/admin/verifications",
-      verificationRequestSchema,
+      adminVerificationSchema,
       p
     ),
   // A page plus the summary strip (approved this month, pending count and amount).
@@ -235,12 +235,14 @@ export const useAssignPlan = () =>
       post(okSchema)(`/admin/businesses/${id}/assign-plan`, { planId }),
     touched
   )
+// The badge shows on the business page, in directories and on its listings.
 export const useApproveVerification = () =>
   useApiMutation(
     (id: string) =>
-      post(verificationRequestSchema)(`/admin/verifications/${id}/approve`),
+      post(adminVerificationSchema)(`/admin/verifications/${id}/approve`),
     [
-      ...touched,
+      ...withListings,
+      keys.business.all,
       keys.directory.all("dealerships"),
       keys.directory.all("workshops"),
       keys.directory.all("mechanics"),
@@ -249,7 +251,7 @@ export const useApproveVerification = () =>
 export const useRejectVerification = () =>
   useApiMutation(
     ({ id, reason }: { id: string; reason: string }) =>
-      post(verificationRequestSchema)(`/admin/verifications/${id}/reject`, {
+      post(adminVerificationSchema)(`/admin/verifications/${id}/reject`, {
         reason,
       }),
     touched

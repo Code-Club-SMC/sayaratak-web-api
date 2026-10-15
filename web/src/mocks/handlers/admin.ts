@@ -4,7 +4,10 @@ import {
   adminSearchSchema,
   adminStatsSchema,
 } from "@/schemas/responses"
-import { verificationRequestSchema } from "@/schemas/admin"
+import {
+  adminVerificationSchema,
+  type VerificationRequest,
+} from "@/schemas/admin"
 import {
   assignPlanInputSchema,
   adminListingPatchSchema,
@@ -397,16 +400,46 @@ route("POST", "/admin/businesses/:id/assign-plan", async (c) => {
   return okSchema.parse({ ok: true })
 })
 
+// `status` filters the tab; `id` returns that one request, for a sheet opened from a link; `q` matches the business and owner names.
+const verificationRow = (v: VerificationRequest) => {
+  const biz = findBusiness(v.targetId)
+  const owner = find(db.users, v.ownerId)
+  return {
+    ...v,
+    target: biz
+      ? {
+          name: biz.name,
+          slug: biz.slug,
+          imageUrl: "logoUrl" in biz ? biz.logoUrl : biz.photoUrl,
+          cityId: biz.cityId,
+        }
+      : null,
+    owner: owner
+      ? { name: owner.fullName, phone: owner.phone, email: owner.email }
+      : null,
+  }
+}
 route("GET", "/admin/verifications", (c) => {
   admin(c)
+  const status = c.query.get("status")
+  const id = c.query.get("id")
   const rows = db.verifications
-    .filter((v) => !c.query.get("status") || v.status === c.query.get("status"))
+    .filter((v) => (!status || v.status === status) && (!id || v.id === id))
     .sort(byNewest)
-  return pageOf(verificationRequestSchema).parse(listPage(c, rows))
+    .map(verificationRow)
+  return pageOf(adminVerificationSchema).parse(
+    listPage(
+      c,
+      rows,
+      (v) => `${v.target ? textOf(v.target.name) : ""} ${v.owner?.name ?? ""}`
+    )
+  )
 })
+// Only a pending request can be decided.
 const verificationOf = (id: string) => {
   const row = find(db.verifications, id)
   if (!row) throw fail(404, "not_found")
+  if (row.status !== "pending") throw fail(409, "conflict")
   return row
 }
 route("POST", "/admin/verifications/:id/approve", (c) => {
@@ -415,6 +448,11 @@ route("POST", "/admin/verifications/:id/approve", (c) => {
   row.status = "approved"
   const target = findBusiness(row.targetId)
   if (target) target.verified = true
+  // Listings copy their dealership's badge when posted, so the copies follow.
+  if (row.targetType === "dealership")
+    for (const l of db.listings)
+      if (l.ownerUserId === row.ownerId && l.owner.type === "dealership")
+        l.owner.verified = true
   notify(
     row.ownerId,
     "verification_result",
@@ -422,7 +460,7 @@ route("POST", "/admin/verifications/:id/approve", (c) => {
     { ar: "ظهرت الشارة على صفحتك.", en: "The badge now shows on your page." },
     "/verification"
   )
-  return verificationRequestSchema.parse(row)
+  return adminVerificationSchema.parse(verificationRow(row))
 })
 route("POST", "/admin/verifications/:id/reject", async (c) => {
   admin(c)
@@ -437,5 +475,5 @@ route("POST", "/admin/verifications/:id/reject", async (c) => {
     { ar: reason, en: reason },
     "/verification"
   )
-  return verificationRequestSchema.parse(row)
+  return adminVerificationSchema.parse(verificationRow(row))
 })

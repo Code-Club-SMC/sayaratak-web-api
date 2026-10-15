@@ -47,6 +47,7 @@ export function buildSeed({ empty = false }: { empty?: boolean } = {}): Db {
       name: b.name,
       type: "dealership" as const,
       photo: b.logoUrl,
+      verified: b.verified,
     })),
     ...workshops.map((b) => ({
       id: b.id,
@@ -54,6 +55,7 @@ export function buildSeed({ empty = false }: { empty?: boolean } = {}): Db {
       name: b.name,
       type: "workshop" as const,
       photo: b.logoUrl,
+      verified: b.verified,
     })),
     ...mechanics.map((b) => ({
       id: b.id,
@@ -61,6 +63,7 @@ export function buildSeed({ empty = false }: { empty?: boolean } = {}): Db {
       name: b.name,
       type: "mechanic" as const,
       photo: b.photoUrl,
+      verified: b.verified,
     })),
   ]
   const { listings, promotions } = empty

@@ -92,6 +92,26 @@ export const verificationRequestSchema = z.object({
 })
 export type VerificationRequest = z.infer<typeof verificationRequestSchema>
 
+// A row of `GET /admin/verifications`: the request with its business and owner. Either is null once deleted.
+export const adminVerificationSchema = verificationRequestSchema.extend({
+  target: z
+    .object({
+      name: bilingualSchema,
+      slug: z.string(),
+      imageUrl: z.string(),
+      cityId: z.string(),
+    })
+    .nullable(),
+  owner: z
+    .object({
+      name: z.string(),
+      phone: z.string().optional(),
+      email: z.string().optional(),
+    })
+    .nullable(),
+})
+export type AdminVerification = z.infer<typeof adminVerificationSchema>
+
 export const sitePageSchema = z.object({
   slug: z.enum(["about", "contact", "privacy", "terms"]),
   title: bilingualSchema,

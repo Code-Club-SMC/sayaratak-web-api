@@ -282,5 +282,6 @@
   "form.remove_service_title": "Remove service {{number}}?",
   "common.leave_title": "Leave without saving?",
   "common.leave_body": "Your unsaved changes will be lost.",
-  "common.leave_confirm": "Leave"
+  "common.leave_confirm": "Leave",
+  "common.zoom": "Zoom"
 }

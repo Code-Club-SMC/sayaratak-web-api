@@ -290,5 +290,6 @@
   "form.remove_service_title": "حذف الخدمة {{number}}؟",
   "common.leave_title": "المغادرة دون حفظ؟",
   "common.leave_body": "ستفقد التغييرات غير المحفوظة.",
-  "common.leave_confirm": "مغادرة"
+  "common.leave_confirm": "مغادرة",
+  "common.zoom": "تكبير"
 }

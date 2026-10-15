@@ -45,9 +45,11 @@ export const reviewsSearchSchema = adminTableSearchSchema.extend({
   rating: optional(z.coerce.number().int().min(1).max(5)),
 })
 export type ReviewsSearch = z.infer<typeof reviewsSearchSchema>
-export const verificationsSearchSchema = z.object({
-  tab: tabOf(["pending", "approved", "rejected"]),
+export const verificationTabs = ["pending", "approved", "rejected"] as const
+export const verificationsSearchSchema = adminTableSearchSchema.extend({
+  tab: tabOf(verificationTabs),
 })
+export type VerificationsSearch = z.infer<typeof verificationsSearchSchema>
 export const paymentsSearchSchema = z.object({
   tab: tabOf(["pending", "approved", "rejected", "all"]),
 })

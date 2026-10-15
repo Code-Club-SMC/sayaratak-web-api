@@ -290,30 +290,59 @@ const documentLabel = {
   mechanic: "national_id",
 } as const
 
+// Four pending requests from unverified businesses of each type, one approved (its business is verified) and one rejected.
 export function seedVerifications(
   targets: {
     id: string
     ownerId: string
     type: VerificationRequest["targetType"]
+    verified: boolean
   }[]
 ): VerificationRequest[] {
-  return targets.slice(0, 6).map((t, i) => ({
-    id: `vr-${i + 1}`,
-    targetType: t.type,
-    targetId: t.id,
-    ownerId: t.ownerId,
-    documents: [
-      {
-        id: `doc-${i + 1}-1`,
-        label: documentLabel[t.type],
-        url: `/mock/doc-0${(i % 3) + 1}.webp`,
-      },
-    ],
-    note: i % 2 ? "نرجو المراجعة" : undefined,
-    status: i < 4 ? "pending" : i === 4 ? "approved" : "rejected",
-    rejectionReason: i === 5 ? "المستند غير واضح" : undefined,
-    createdAt: ago((i + 1) * 9 * HOUR),
-  }))
+  const open = (type: VerificationRequest["targetType"], n: number) =>
+    targets.filter((t) => t.type === type && !t.verified)[n]
+  const picks = [
+    [open("dealership", 0), "pending"],
+    [open("workshop", 0), "pending"],
+    [open("mechanic", 0), "pending"],
+    [open("dealership", 1), "pending"],
+    [targets.find((t) => t.verified), "approved"],
+    [open("mechanic", 1), "rejected"],
+  ] as const
+  return picks.flatMap(([t, status], i) =>
+    t
+      ? [
+          {
+            id: `vr-${i + 1}`,
+            targetType: t.type,
+            targetId: t.id,
+            ownerId: t.ownerId,
+            documents: [
+              {
+                id: `doc-${i + 1}-1`,
+                label: documentLabel[t.type],
+                url: `/mock/doc-0${(i % 3) + 1}.svg`,
+              },
+              ...(i % 2
+                ? []
+                : [
+                    {
+                      id: `doc-${i + 1}-2`,
+                      label:
+                        t.type === "mechanic" ? "certificate" : "shop_photo",
+                      url: `/mock/doc-0${((i + 1) % 3) + 1}.svg`,
+                    },
+                  ]),
+            ],
+            note: i % 2 ? "نرجو المراجعة" : undefined,
+            status,
+            rejectionReason:
+              status === "rejected" ? "المستند غير واضح" : undefined,
+            createdAt: ago((i + 1) * 9 * HOUR),
+          },
+        ]
+      : []
+  )
 }
 
 // Daily counts for ninety days so every analytics chart has a real series.

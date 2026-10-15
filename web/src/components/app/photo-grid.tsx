@@ -9,7 +9,15 @@ const Lightbox = lazy(() =>
 )
 
 // Thumbnails in a grid; a press opens the full-screen viewer (the listing gallery's lightbox) on that photo. A caption shows under its thumbnail and in the viewer.
-export function PhotoGrid({ items, alt }: { items: Captioned[]; alt: string }) {
+export function PhotoGrid({
+  items,
+  alt,
+  zoomable,
+}: {
+  items: Captioned[]
+  alt: string
+  zoomable?: boolean
+}) {
   const { t } = useT()
   const [open, setOpen] = useState<number | null>(null)
   return (
@@ -47,6 +55,7 @@ export function PhotoGrid({ items, alt }: { items: Captioned[]; alt: string }) {
             index={open}
             onIndex={setOpen}
             onClose={() => setOpen(null)}
+            zoomable={zoomable}
           />
         </Suspense>
       )}

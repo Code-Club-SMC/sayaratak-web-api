@@ -1422,6 +1422,59 @@ describe("trust, content, map, uploads, analytics", () => {
 })
 
 describe("admin", () => {
+  it("a ban needs a reason; 7 days lifts itself on the first request after its end, permanent stays", async () => {
+    const login = () =>
+      call("POST", "/auth/login", {
+        body: { email: "user@demo.sy", password: "Demo1234" },
+      })
+    expect(
+      (
+        await call("POST", "/admin/users/u-omar/ban", {
+          as: "u-admin",
+          body: { reason: " ", duration: "7d" },
+        })
+      ).status
+    ).toBe(422)
+    const banned = await call("POST", "/admin/users/u-omar/ban", {
+      as: "u-admin",
+      body: { reason: "Spam", duration: "7d" },
+    })
+    expect(banned.body).toMatchObject({ banned: true, bannedReason: "Spam" })
+    const until = Date.parse(banned.body.bannedUntil)
+    expect(Math.round((until - Date.now()) / 86_400_000)).toBe(7)
+    expect((await login()).body.code).toBe("banned")
+    vi.useFakeTimers({ now: until + 1000, toFake: ["Date"] })
+    try {
+      expect((await login()).status).toBe(200)
+      expect(db.users.find((u) => u.id === "u-omar")).toMatchObject({
+        banned: false,
+        bannedUntil: undefined,
+      })
+    } finally {
+      vi.useRealTimers()
+    }
+    const forever = await call("POST", "/admin/users/u-omar/ban", {
+      as: "u-admin",
+      body: { reason: "Fraud", duration: "permanent" },
+    })
+    expect(forever.body.bannedUntil).toBeUndefined()
+    expect((await login()).body.code).toBe("banned")
+  })
+
+  it("filters all listings by owner, for the seller panel's counts", async () => {
+    const page = await call(
+      "GET",
+      "/admin/listings?ownerId=u-omar&moderation=approved&pageSize=1",
+      { as: "u-admin" }
+    )
+    const expected = db.listings.filter(
+      (l) => l.ownerUserId === "u-omar" && l.moderation === "approved"
+    ).length
+    expect(expected).toBeGreaterThan(0)
+    expect(page.body.total).toBe(expected)
+    expect(page.body.items).toHaveLength(1)
+  })
+
   it("approving a listing notifies the owner and matches saved searches; non-admins are refused", async () => {
     const created = await call("POST", "/listings", { as: "u-1", body: car })
     const alertsBefore =

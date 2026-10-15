@@ -277,6 +277,9 @@ route("GET", "/admin/listings", (c) => {
         !c.query.get("moderation") || l.moderation === c.query.get("moderation")
     )
     .filter((l) => !c.query.get("status") || l.status === c.query.get("status"))
+    .filter(
+      (l) => !c.query.get("ownerId") || l.ownerUserId === c.query.get("ownerId")
+    )
     .sort(byNewest)
   return pageOf(listingSchema).parse(
     listPage(c, rows, (l) => `${l.title} ${l.id} ${textOf(l.owner.name)}`)
@@ -312,8 +315,15 @@ for (const ban of [true, false]) {
     const user = find(db.users, c.params.id ?? "")
     if (!user) throw fail(404, "not_found")
     if (user.role === "admin") throw fail(403, "forbidden")
+    const input = ban ? await c.body(banInputSchema) : undefined
     user.banned = ban
-    user.bannedReason = ban ? (await c.body(banInputSchema)).reason : undefined
+    user.bannedReason = input?.reason
+    user.bannedUntil =
+      input && input.duration !== "permanent"
+        ? new Date(
+            Date.now() + (input.duration === "7d" ? 7 : 30) * DAY_MS
+          ).toISOString()
+        : undefined
     return publicUser(user)
   })
 }

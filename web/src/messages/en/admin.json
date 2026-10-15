@@ -1,1 +1,15 @@
-{}
+{
+  "admin.quick_reasons": "Common reasons",
+  "admin.reason": "Reason",
+  "admin.ban": "Ban",
+  "admin.ban_title": "Ban {{name}}",
+  "admin.ban_body": "They cannot sign in and their listings are hidden until the ban ends. They see the reason.",
+  "admin.ban_duration": "Duration",
+  "admin.ban_7d": "7 days",
+  "admin.ban_30d": "30 days",
+  "admin.ban_permanent": "Permanent",
+  "admin.seller": "Seller",
+  "admin.approved_listings": "Approved listings",
+  "admin.rejected_listings": "Rejected listings",
+  "admin.open_user": "Open user"
+}

@@ -1,1 +1,15 @@
-{}
+{
+  "admin.quick_reasons": "أسباب شائعة",
+  "admin.reason": "السبب",
+  "admin.ban": "حظر",
+  "admin.ban_title": "حظر {{name}}",
+  "admin.ban_body": "لا يمكنه تسجيل الدخول وتُخفى إعلاناته حتى انتهاء الحظر. يرى السبب.",
+  "admin.ban_duration": "المدة",
+  "admin.ban_7d": "7 أيام",
+  "admin.ban_30d": "30 يومًا",
+  "admin.ban_permanent": "دائم",
+  "admin.seller": "البائع",
+  "admin.approved_listings": "إعلانات مقبولة",
+  "admin.rejected_listings": "إعلانات مرفوضة",
+  "admin.open_user": "فتح المستخدم"
+}

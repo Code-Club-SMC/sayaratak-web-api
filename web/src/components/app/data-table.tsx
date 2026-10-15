@@ -25,7 +25,7 @@ import { BulkActionBar } from "./bulk-action-bar"
 import { DataTableToolbar } from "./data-table-toolbar"
 import { ResultsPagination } from "./results-pagination"
 
-type DataTableProps<T extends RowData> = {
+export type DataTableProps<T extends RowData> = {
   columns: DataColumn<T>[]
   data: T[] | undefined
   getRowId: (row: T) => string

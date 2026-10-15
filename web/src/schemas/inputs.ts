@@ -266,7 +266,8 @@ export const bulkInputSchema = z.object({
   reason: z.string().optional(),
 })
 export const banInputSchema = z.object({
-  reason: z.string().max(300).optional(),
+  reason: requiredText(300),
+  duration: z.enum(["7d", "30d", "permanent"]),
 })
 export const businessAdminPatchSchema = z
   .object({ status: z.enum(["active", "suspended"]), verified: z.boolean() })

@@ -41,10 +41,30 @@ import { Route as LocaleAccountNotificationsRouteImport } from './routes/$locale
 import { Route as LocaleAccountSavedSearchesRouteImport } from './routes/$locale/account/saved-searches'
 import { Route as LocaleAccountSettingsRouteImport } from './routes/$locale/account/settings'
 import { Route as LocaleAdminIndexRouteImport } from './routes/$locale/admin/index'
+import { Route as LocaleAdminSplatRouteImport } from './routes/$locale/admin/$'
 import { Route as LocaleAdminAccountRouteImport } from './routes/$locale/admin/account'
 import { Route as LocaleAdminAdPricesRouteImport } from './routes/$locale/admin/ad-prices'
 import { Route as LocaleAdminAdsRouteImport } from './routes/$locale/admin/ads'
+import { Route as LocaleAdminBackupsRouteImport } from './routes/$locale/admin/backups'
+import { Route as LocaleAdminBannersRouteImport } from './routes/$locale/admin/banners'
+import { Route as LocaleAdminCategoriesRouteImport } from './routes/$locale/admin/categories'
+import { Route as LocaleAdminDealershipsRouteImport } from './routes/$locale/admin/dealerships'
+import { Route as LocaleAdminListingsRouteImport } from './routes/$locale/admin/listings'
+import { Route as LocaleAdminLocationsRouteImport } from './routes/$locale/admin/locations'
+import { Route as LocaleAdminMakesRouteImport } from './routes/$locale/admin/makes'
+import { Route as LocaleAdminMechanicsRouteImport } from './routes/$locale/admin/mechanics'
+import { Route as LocaleAdminModerationRouteImport } from './routes/$locale/admin/moderation'
 import { Route as LocaleAdminNotificationsRouteImport } from './routes/$locale/admin/notifications'
+import { Route as LocaleAdminPagesRouteImport } from './routes/$locale/admin/pages'
+import { Route as LocaleAdminPaymentsRouteImport } from './routes/$locale/admin/payments'
+import { Route as LocaleAdminPlansRouteImport } from './routes/$locale/admin/plans'
+import { Route as LocaleAdminPromotionsRouteImport } from './routes/$locale/admin/promotions'
+import { Route as LocaleAdminReportsRouteImport } from './routes/$locale/admin/reports'
+import { Route as LocaleAdminReviewsRouteImport } from './routes/$locale/admin/reviews'
+import { Route as LocaleAdminSettingsRouteImport } from './routes/$locale/admin/settings'
+import { Route as LocaleAdminUsersRouteImport } from './routes/$locale/admin/users'
+import { Route as LocaleAdminVerificationsRouteImport } from './routes/$locale/admin/verifications'
+import { Route as LocaleAdminWorkshopsRouteImport } from './routes/$locale/admin/workshops'
 import { Route as LocaleAuthIndexRouteImport } from './routes/$locale/auth/index'
 import { Route as LocaleAuthForgotRouteImport } from './routes/$locale/auth/forgot'
 import { Route as LocaleAuthLoginRouteImport } from './routes/$locale/auth/login'
@@ -271,6 +291,11 @@ const LocaleAdminIndexRoute = LocaleAdminIndexRouteImport.update({
   path: '/',
   getParentRoute: () => LocaleAdminRouteRoute,
 } as any)
+const LocaleAdminSplatRoute = LocaleAdminSplatRouteImport.update({
+  id: '/$',
+  path: '/$',
+  getParentRoute: () => LocaleAdminRouteRoute,
+} as any)
 const LocaleAdminAccountRoute = LocaleAdminAccountRouteImport.update({
   id: '/account',
   path: '/account',
@@ -286,12 +311,108 @@ const LocaleAdminAdsRoute = LocaleAdminAdsRouteImport.update({
   path: '/ads',
   getParentRoute: () => LocaleAdminRouteRoute,
 } as any)
+const LocaleAdminBackupsRoute = LocaleAdminBackupsRouteImport.update({
+  id: '/backups',
+  path: '/backups',
+  getParentRoute: () => LocaleAdminRouteRoute,
+} as any)
+const LocaleAdminBannersRoute = LocaleAdminBannersRouteImport.update({
+  id: '/banners',
+  path: '/banners',
+  getParentRoute: () => LocaleAdminRouteRoute,
+} as any)
+const LocaleAdminCategoriesRoute = LocaleAdminCategoriesRouteImport.update({
+  id: '/categories',
+  path: '/categories',
+  getParentRoute: () => LocaleAdminRouteRoute,
+} as any)
+const LocaleAdminDealershipsRoute = LocaleAdminDealershipsRouteImport.update({
+  id: '/dealerships',
+  path: '/dealerships',
+  getParentRoute: () => LocaleAdminRouteRoute,
+} as any)
+const LocaleAdminListingsRoute = LocaleAdminListingsRouteImport.update({
+  id: '/listings',
+  path: '/listings',
+  getParentRoute: () => LocaleAdminRouteRoute,
+} as any)
+const LocaleAdminLocationsRoute = LocaleAdminLocationsRouteImport.update({
+  id: '/locations',
+  path: '/locations',
+  getParentRoute: () => LocaleAdminRouteRoute,
+} as any)
+const LocaleAdminMakesRoute = LocaleAdminMakesRouteImport.update({
+  id: '/makes',
+  path: '/makes',
+  getParentRoute: () => LocaleAdminRouteRoute,
+} as any)
+const LocaleAdminMechanicsRoute = LocaleAdminMechanicsRouteImport.update({
+  id: '/mechanics',
+  path: '/mechanics',
+  getParentRoute: () => LocaleAdminRouteRoute,
+} as any)
+const LocaleAdminModerationRoute = LocaleAdminModerationRouteImport.update({
+  id: '/moderation',
+  path: '/moderation',
+  getParentRoute: () => LocaleAdminRouteRoute,
+} as any)
 const LocaleAdminNotificationsRoute =
   LocaleAdminNotificationsRouteImport.update({
     id: '/notifications',
     path: '/notifications',
     getParentRoute: () => LocaleAdminRouteRoute,
   } as any)
+const LocaleAdminPagesRoute = LocaleAdminPagesRouteImport.update({
+  id: '/pages',
+  path: '/pages',
+  getParentRoute: () => LocaleAdminRouteRoute,
+} as any)
+const LocaleAdminPaymentsRoute = LocaleAdminPaymentsRouteImport.update({
+  id: '/payments',
+  path: '/payments',
+  getParentRoute: () => LocaleAdminRouteRoute,
+} as any)
+const LocaleAdminPlansRoute = LocaleAdminPlansRouteImport.update({
+  id: '/plans',
+  path: '/plans',
+  getParentRoute: () => LocaleAdminRouteRoute,
+} as any)
+const LocaleAdminPromotionsRoute = LocaleAdminPromotionsRouteImport.update({
+  id: '/promotions',
+  path: '/promotions',
+  getParentRoute: () => LocaleAdminRouteRoute,
+} as any)
+const LocaleAdminReportsRoute = LocaleAdminReportsRouteImport.update({
+  id: '/reports',
+  path: '/reports',
+  getParentRoute: () => LocaleAdminRouteRoute,
+} as any)
+const LocaleAdminReviewsRoute = LocaleAdminReviewsRouteImport.update({
+  id: '/reviews',
+  path: '/reviews',
+  getParentRoute: () => LocaleAdminRouteRoute,
+} as any)
+const LocaleAdminSettingsRoute = LocaleAdminSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => LocaleAdminRouteRoute,
+} as any)
+const LocaleAdminUsersRoute = LocaleAdminUsersRouteImport.update({
+  id: '/users',
+  path: '/users',
+  getParentRoute: () => LocaleAdminRouteRoute,
+} as any)
+const LocaleAdminVerificationsRoute =
+  LocaleAdminVerificationsRouteImport.update({
+    id: '/verifications',
+    path: '/verifications',
+    getParentRoute: () => LocaleAdminRouteRoute,
+  } as any)
+const LocaleAdminWorkshopsRoute = LocaleAdminWorkshopsRouteImport.update({
+  id: '/workshops',
+  path: '/workshops',
+  getParentRoute: () => LocaleAdminRouteRoute,
+} as any)
 const LocaleAuthIndexRoute = LocaleAuthIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -667,10 +788,30 @@ export interface FileRoutesByFullPath {
   '/$locale/account/notifications': typeof LocaleAccountNotificationsRoute
   '/$locale/account/saved-searches': typeof LocaleAccountSavedSearchesRoute
   '/$locale/account/settings': typeof LocaleAccountSettingsRoute
+  '/$locale/admin/$': typeof LocaleAdminSplatRoute
   '/$locale/admin/account': typeof LocaleAdminAccountRoute
   '/$locale/admin/ad-prices': typeof LocaleAdminAdPricesRoute
   '/$locale/admin/ads': typeof LocaleAdminAdsRoute
+  '/$locale/admin/backups': typeof LocaleAdminBackupsRoute
+  '/$locale/admin/banners': typeof LocaleAdminBannersRoute
+  '/$locale/admin/categories': typeof LocaleAdminCategoriesRoute
+  '/$locale/admin/dealerships': typeof LocaleAdminDealershipsRoute
+  '/$locale/admin/listings': typeof LocaleAdminListingsRoute
+  '/$locale/admin/locations': typeof LocaleAdminLocationsRoute
+  '/$locale/admin/makes': typeof LocaleAdminMakesRoute
+  '/$locale/admin/mechanics': typeof LocaleAdminMechanicsRoute
+  '/$locale/admin/moderation': typeof LocaleAdminModerationRoute
   '/$locale/admin/notifications': typeof LocaleAdminNotificationsRoute
+  '/$locale/admin/pages': typeof LocaleAdminPagesRoute
+  '/$locale/admin/payments': typeof LocaleAdminPaymentsRoute
+  '/$locale/admin/plans': typeof LocaleAdminPlansRoute
+  '/$locale/admin/promotions': typeof LocaleAdminPromotionsRoute
+  '/$locale/admin/reports': typeof LocaleAdminReportsRoute
+  '/$locale/admin/reviews': typeof LocaleAdminReviewsRoute
+  '/$locale/admin/settings': typeof LocaleAdminSettingsRoute
+  '/$locale/admin/users': typeof LocaleAdminUsersRoute
+  '/$locale/admin/verifications': typeof LocaleAdminVerificationsRoute
+  '/$locale/admin/workshops': typeof LocaleAdminWorkshopsRoute
   '/$locale/auth/forgot': typeof LocaleAuthForgotRoute
   '/$locale/auth/login': typeof LocaleAuthLoginRoute
   '/$locale/auth/signup': typeof LocaleAuthSignupRoute
@@ -762,10 +903,30 @@ export interface FileRoutesByTo {
   '/$locale/account/notifications': typeof LocaleAccountNotificationsRoute
   '/$locale/account/saved-searches': typeof LocaleAccountSavedSearchesRoute
   '/$locale/account/settings': typeof LocaleAccountSettingsRoute
+  '/$locale/admin/$': typeof LocaleAdminSplatRoute
   '/$locale/admin/account': typeof LocaleAdminAccountRoute
   '/$locale/admin/ad-prices': typeof LocaleAdminAdPricesRoute
   '/$locale/admin/ads': typeof LocaleAdminAdsRoute
+  '/$locale/admin/backups': typeof LocaleAdminBackupsRoute
+  '/$locale/admin/banners': typeof LocaleAdminBannersRoute
+  '/$locale/admin/categories': typeof LocaleAdminCategoriesRoute
+  '/$locale/admin/dealerships': typeof LocaleAdminDealershipsRoute
+  '/$locale/admin/listings': typeof LocaleAdminListingsRoute
+  '/$locale/admin/locations': typeof LocaleAdminLocationsRoute
+  '/$locale/admin/makes': typeof LocaleAdminMakesRoute
+  '/$locale/admin/mechanics': typeof LocaleAdminMechanicsRoute
+  '/$locale/admin/moderation': typeof LocaleAdminModerationRoute
   '/$locale/admin/notifications': typeof LocaleAdminNotificationsRoute
+  '/$locale/admin/pages': typeof LocaleAdminPagesRoute
+  '/$locale/admin/payments': typeof LocaleAdminPaymentsRoute
+  '/$locale/admin/plans': typeof LocaleAdminPlansRoute
+  '/$locale/admin/promotions': typeof LocaleAdminPromotionsRoute
+  '/$locale/admin/reports': typeof LocaleAdminReportsRoute
+  '/$locale/admin/reviews': typeof LocaleAdminReviewsRoute
+  '/$locale/admin/settings': typeof LocaleAdminSettingsRoute
+  '/$locale/admin/users': typeof LocaleAdminUsersRoute
+  '/$locale/admin/verifications': typeof LocaleAdminVerificationsRoute
+  '/$locale/admin/workshops': typeof LocaleAdminWorkshopsRoute
   '/$locale/auth/forgot': typeof LocaleAuthForgotRoute
   '/$locale/auth/login': typeof LocaleAuthLoginRoute
   '/$locale/auth/signup': typeof LocaleAuthSignupRoute
@@ -864,10 +1025,30 @@ export interface FileRoutesById {
   '/$locale/account/notifications': typeof LocaleAccountNotificationsRoute
   '/$locale/account/saved-searches': typeof LocaleAccountSavedSearchesRoute
   '/$locale/account/settings': typeof LocaleAccountSettingsRoute
+  '/$locale/admin/$': typeof LocaleAdminSplatRoute
   '/$locale/admin/account': typeof LocaleAdminAccountRoute
   '/$locale/admin/ad-prices': typeof LocaleAdminAdPricesRoute
   '/$locale/admin/ads': typeof LocaleAdminAdsRoute
+  '/$locale/admin/backups': typeof LocaleAdminBackupsRoute
+  '/$locale/admin/banners': typeof LocaleAdminBannersRoute
+  '/$locale/admin/categories': typeof LocaleAdminCategoriesRoute
+  '/$locale/admin/dealerships': typeof LocaleAdminDealershipsRoute
+  '/$locale/admin/listings': typeof LocaleAdminListingsRoute
+  '/$locale/admin/locations': typeof LocaleAdminLocationsRoute
+  '/$locale/admin/makes': typeof LocaleAdminMakesRoute
+  '/$locale/admin/mechanics': typeof LocaleAdminMechanicsRoute
+  '/$locale/admin/moderation': typeof LocaleAdminModerationRoute
   '/$locale/admin/notifications': typeof LocaleAdminNotificationsRoute
+  '/$locale/admin/pages': typeof LocaleAdminPagesRoute
+  '/$locale/admin/payments': typeof LocaleAdminPaymentsRoute
+  '/$locale/admin/plans': typeof LocaleAdminPlansRoute
+  '/$locale/admin/promotions': typeof LocaleAdminPromotionsRoute
+  '/$locale/admin/reports': typeof LocaleAdminReportsRoute
+  '/$locale/admin/reviews': typeof LocaleAdminReviewsRoute
+  '/$locale/admin/settings': typeof LocaleAdminSettingsRoute
+  '/$locale/admin/users': typeof LocaleAdminUsersRoute
+  '/$locale/admin/verifications': typeof LocaleAdminVerificationsRoute
+  '/$locale/admin/workshops': typeof LocaleAdminWorkshopsRoute
   '/$locale/auth/forgot': typeof LocaleAuthForgotRoute
   '/$locale/auth/login': typeof LocaleAuthLoginRoute
   '/$locale/auth/signup': typeof LocaleAuthSignupRoute
@@ -967,10 +1148,30 @@ export interface FileRouteTypes {
     | '/$locale/account/notifications'
     | '/$locale/account/saved-searches'
     | '/$locale/account/settings'
+    | '/$locale/admin/$'
     | '/$locale/admin/account'
     | '/$locale/admin/ad-prices'
     | '/$locale/admin/ads'
+    | '/$locale/admin/backups'
+    | '/$locale/admin/banners'
+    | '/$locale/admin/categories'
+    | '/$locale/admin/dealerships'
+    | '/$locale/admin/listings'
+    | '/$locale/admin/locations'
+    | '/$locale/admin/makes'
+    | '/$locale/admin/mechanics'
+    | '/$locale/admin/moderation'
     | '/$locale/admin/notifications'
+    | '/$locale/admin/pages'
+    | '/$locale/admin/payments'
+    | '/$locale/admin/plans'
+    | '/$locale/admin/promotions'
+    | '/$locale/admin/reports'
+    | '/$locale/admin/reviews'
+    | '/$locale/admin/settings'
+    | '/$locale/admin/users'
+    | '/$locale/admin/verifications'
+    | '/$locale/admin/workshops'
     | '/$locale/auth/forgot'
     | '/$locale/auth/login'
     | '/$locale/auth/signup'
@@ -1062,10 +1263,30 @@ export interface FileRouteTypes {
     | '/$locale/account/notifications'
     | '/$locale/account/saved-searches'
     | '/$locale/account/settings'
+    | '/$locale/admin/$'
     | '/$locale/admin/account'
     | '/$locale/admin/ad-prices'
     | '/$locale/admin/ads'
+    | '/$locale/admin/backups'
+    | '/$locale/admin/banners'
+    | '/$locale/admin/categories'
+    | '/$locale/admin/dealerships'
+    | '/$locale/admin/listings'
+    | '/$locale/admin/locations'
+    | '/$locale/admin/makes'
+    | '/$locale/admin/mechanics'
+    | '/$locale/admin/moderation'
     | '/$locale/admin/notifications'
+    | '/$locale/admin/pages'
+    | '/$locale/admin/payments'
+    | '/$locale/admin/plans'
+    | '/$locale/admin/promotions'
+    | '/$locale/admin/reports'
+    | '/$locale/admin/reviews'
+    | '/$locale/admin/settings'
+    | '/$locale/admin/users'
+    | '/$locale/admin/verifications'
+    | '/$locale/admin/workshops'
     | '/$locale/auth/forgot'
     | '/$locale/auth/login'
     | '/$locale/auth/signup'
@@ -1163,10 +1384,30 @@ export interface FileRouteTypes {
     | '/$locale/account/notifications'
     | '/$locale/account/saved-searches'
     | '/$locale/account/settings'
+    | '/$locale/admin/$'
     | '/$locale/admin/account'
     | '/$locale/admin/ad-prices'
     | '/$locale/admin/ads'
+    | '/$locale/admin/backups'
+    | '/$locale/admin/banners'
+    | '/$locale/admin/categories'
+    | '/$locale/admin/dealerships'
+    | '/$locale/admin/listings'
+    | '/$locale/admin/locations'
+    | '/$locale/admin/makes'
+    | '/$locale/admin/mechanics'
+    | '/$locale/admin/moderation'
     | '/$locale/admin/notifications'
+    | '/$locale/admin/pages'
+    | '/$locale/admin/payments'
+    | '/$locale/admin/plans'
+    | '/$locale/admin/promotions'
+    | '/$locale/admin/reports'
+    | '/$locale/admin/reviews'
+    | '/$locale/admin/settings'
+    | '/$locale/admin/users'
+    | '/$locale/admin/verifications'
+    | '/$locale/admin/workshops'
     | '/$locale/auth/forgot'
     | '/$locale/auth/login'
     | '/$locale/auth/signup'
@@ -1470,6 +1711,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LocaleAdminIndexRouteImport
       parentRoute: typeof LocaleAdminRouteRoute
     }
+    '/$locale/admin/$': {
+      id: '/$locale/admin/$'
+      path: '/$'
+      fullPath: '/$locale/admin/$'
+      preLoaderRoute: typeof LocaleAdminSplatRouteImport
+      parentRoute: typeof LocaleAdminRouteRoute
+    }
     '/$locale/admin/account': {
       id: '/$locale/admin/account'
       path: '/account'
@@ -1491,11 +1739,144 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LocaleAdminAdsRouteImport
       parentRoute: typeof LocaleAdminRouteRoute
     }
+    '/$locale/admin/backups': {
+      id: '/$locale/admin/backups'
+      path: '/backups'
+      fullPath: '/$locale/admin/backups'
+      preLoaderRoute: typeof LocaleAdminBackupsRouteImport
+      parentRoute: typeof LocaleAdminRouteRoute
+    }
+    '/$locale/admin/banners': {
+      id: '/$locale/admin/banners'
+      path: '/banners'
+      fullPath: '/$locale/admin/banners'
+      preLoaderRoute: typeof LocaleAdminBannersRouteImport
+      parentRoute: typeof LocaleAdminRouteRoute
+    }
+    '/$locale/admin/categories': {
+      id: '/$locale/admin/categories'
+      path: '/categories'
+      fullPath: '/$locale/admin/categories'
+      preLoaderRoute: typeof LocaleAdminCategoriesRouteImport
+      parentRoute: typeof LocaleAdminRouteRoute
+    }
+    '/$locale/admin/dealerships': {
+      id: '/$locale/admin/dealerships'
+      path: '/dealerships'
+      fullPath: '/$locale/admin/dealerships'
+      preLoaderRoute: typeof LocaleAdminDealershipsRouteImport
+      parentRoute: typeof LocaleAdminRouteRoute
+    }
+    '/$locale/admin/listings': {
+      id: '/$locale/admin/listings'
+      path: '/listings'
+      fullPath: '/$locale/admin/listings'
+      preLoaderRoute: typeof LocaleAdminListingsRouteImport
+      parentRoute: typeof LocaleAdminRouteRoute
+    }
+    '/$locale/admin/locations': {
+      id: '/$locale/admin/locations'
+      path: '/locations'
+      fullPath: '/$locale/admin/locations'
+      preLoaderRoute: typeof LocaleAdminLocationsRouteImport
+      parentRoute: typeof LocaleAdminRouteRoute
+    }
+    '/$locale/admin/makes': {
+      id: '/$locale/admin/makes'
+      path: '/makes'
+      fullPath: '/$locale/admin/makes'
+      preLoaderRoute: typeof LocaleAdminMakesRouteImport
+      parentRoute: typeof LocaleAdminRouteRoute
+    }
+    '/$locale/admin/mechanics': {
+      id: '/$locale/admin/mechanics'
+      path: '/mechanics'
+      fullPath: '/$locale/admin/mechanics'
+      preLoaderRoute: typeof LocaleAdminMechanicsRouteImport
+      parentRoute: typeof LocaleAdminRouteRoute
+    }
+    '/$locale/admin/moderation': {
+      id: '/$locale/admin/moderation'
+      path: '/moderation'
+      fullPath: '/$locale/admin/moderation'
+      preLoaderRoute: typeof LocaleAdminModerationRouteImport
+      parentRoute: typeof LocaleAdminRouteRoute
+    }
     '/$locale/admin/notifications': {
       id: '/$locale/admin/notifications'
       path: '/notifications'
       fullPath: '/$locale/admin/notifications'
       preLoaderRoute: typeof LocaleAdminNotificationsRouteImport
+      parentRoute: typeof LocaleAdminRouteRoute
+    }
+    '/$locale/admin/pages': {
+      id: '/$locale/admin/pages'
+      path: '/pages'
+      fullPath: '/$locale/admin/pages'
+      preLoaderRoute: typeof LocaleAdminPagesRouteImport
+      parentRoute: typeof LocaleAdminRouteRoute
+    }
+    '/$locale/admin/payments': {
+      id: '/$locale/admin/payments'
+      path: '/payments'
+      fullPath: '/$locale/admin/payments'
+      preLoaderRoute: typeof LocaleAdminPaymentsRouteImport
+      parentRoute: typeof LocaleAdminRouteRoute
+    }
+    '/$locale/admin/plans': {
+      id: '/$locale/admin/plans'
+      path: '/plans'
+      fullPath: '/$locale/admin/plans'
+      preLoaderRoute: typeof LocaleAdminPlansRouteImport
+      parentRoute: typeof LocaleAdminRouteRoute
+    }
+    '/$locale/admin/promotions': {
+      id: '/$locale/admin/promotions'
+      path: '/promotions'
+      fullPath: '/$locale/admin/promotions'
+      preLoaderRoute: typeof LocaleAdminPromotionsRouteImport
+      parentRoute: typeof LocaleAdminRouteRoute
+    }
+    '/$locale/admin/reports': {
+      id: '/$locale/admin/reports'
+      path: '/reports'
+      fullPath: '/$locale/admin/reports'
+      preLoaderRoute: typeof LocaleAdminReportsRouteImport
+      parentRoute: typeof LocaleAdminRouteRoute
+    }
+    '/$locale/admin/reviews': {
+      id: '/$locale/admin/reviews'
+      path: '/reviews'
+      fullPath: '/$locale/admin/reviews'
+      preLoaderRoute: typeof LocaleAdminReviewsRouteImport
+      parentRoute: typeof LocaleAdminRouteRoute
+    }
+    '/$locale/admin/settings': {
+      id: '/$locale/admin/settings'
+      path: '/settings'
+      fullPath: '/$locale/admin/settings'
+      preLoaderRoute: typeof LocaleAdminSettingsRouteImport
+      parentRoute: typeof LocaleAdminRouteRoute
+    }
+    '/$locale/admin/users': {
+      id: '/$locale/admin/users'
+      path: '/users'
+      fullPath: '/$locale/admin/users'
+      preLoaderRoute: typeof LocaleAdminUsersRouteImport
+      parentRoute: typeof LocaleAdminRouteRoute
+    }
+    '/$locale/admin/verifications': {
+      id: '/$locale/admin/verifications'
+      path: '/verifications'
+      fullPath: '/$locale/admin/verifications'
+      preLoaderRoute: typeof LocaleAdminVerificationsRouteImport
+      parentRoute: typeof LocaleAdminRouteRoute
+    }
+    '/$locale/admin/workshops': {
+      id: '/$locale/admin/workshops'
+      path: '/workshops'
+      fullPath: '/$locale/admin/workshops'
+      preLoaderRoute: typeof LocaleAdminWorkshopsRouteImport
       parentRoute: typeof LocaleAdminRouteRoute
     }
     '/$locale/auth/': {
@@ -2027,18 +2408,58 @@ const LocaleAccountRouteRouteWithChildren =
   LocaleAccountRouteRoute._addFileChildren(LocaleAccountRouteRouteChildren)
 
 interface LocaleAdminRouteRouteChildren {
+  LocaleAdminSplatRoute: typeof LocaleAdminSplatRoute
   LocaleAdminAccountRoute: typeof LocaleAdminAccountRoute
   LocaleAdminAdPricesRoute: typeof LocaleAdminAdPricesRoute
   LocaleAdminAdsRoute: typeof LocaleAdminAdsRoute
+  LocaleAdminBackupsRoute: typeof LocaleAdminBackupsRoute
+  LocaleAdminBannersRoute: typeof LocaleAdminBannersRoute
+  LocaleAdminCategoriesRoute: typeof LocaleAdminCategoriesRoute
+  LocaleAdminDealershipsRoute: typeof LocaleAdminDealershipsRoute
+  LocaleAdminListingsRoute: typeof LocaleAdminListingsRoute
+  LocaleAdminLocationsRoute: typeof LocaleAdminLocationsRoute
+  LocaleAdminMakesRoute: typeof LocaleAdminMakesRoute
+  LocaleAdminMechanicsRoute: typeof LocaleAdminMechanicsRoute
+  LocaleAdminModerationRoute: typeof LocaleAdminModerationRoute
   LocaleAdminNotificationsRoute: typeof LocaleAdminNotificationsRoute
+  LocaleAdminPagesRoute: typeof LocaleAdminPagesRoute
+  LocaleAdminPaymentsRoute: typeof LocaleAdminPaymentsRoute
+  LocaleAdminPlansRoute: typeof LocaleAdminPlansRoute
+  LocaleAdminPromotionsRoute: typeof LocaleAdminPromotionsRoute
+  LocaleAdminReportsRoute: typeof LocaleAdminReportsRoute
+  LocaleAdminReviewsRoute: typeof LocaleAdminReviewsRoute
+  LocaleAdminSettingsRoute: typeof LocaleAdminSettingsRoute
+  LocaleAdminUsersRoute: typeof LocaleAdminUsersRoute
+  LocaleAdminVerificationsRoute: typeof LocaleAdminVerificationsRoute
+  LocaleAdminWorkshopsRoute: typeof LocaleAdminWorkshopsRoute
   LocaleAdminIndexRoute: typeof LocaleAdminIndexRoute
 }
 
 const LocaleAdminRouteRouteChildren: LocaleAdminRouteRouteChildren = {
+  LocaleAdminSplatRoute: LocaleAdminSplatRoute,
   LocaleAdminAccountRoute: LocaleAdminAccountRoute,
   LocaleAdminAdPricesRoute: LocaleAdminAdPricesRoute,
   LocaleAdminAdsRoute: LocaleAdminAdsRoute,
+  LocaleAdminBackupsRoute: LocaleAdminBackupsRoute,
+  LocaleAdminBannersRoute: LocaleAdminBannersRoute,
+  LocaleAdminCategoriesRoute: LocaleAdminCategoriesRoute,
+  LocaleAdminDealershipsRoute: LocaleAdminDealershipsRoute,
+  LocaleAdminListingsRoute: LocaleAdminListingsRoute,
+  LocaleAdminLocationsRoute: LocaleAdminLocationsRoute,
+  LocaleAdminMakesRoute: LocaleAdminMakesRoute,
+  LocaleAdminMechanicsRoute: LocaleAdminMechanicsRoute,
+  LocaleAdminModerationRoute: LocaleAdminModerationRoute,
   LocaleAdminNotificationsRoute: LocaleAdminNotificationsRoute,
+  LocaleAdminPagesRoute: LocaleAdminPagesRoute,
+  LocaleAdminPaymentsRoute: LocaleAdminPaymentsRoute,
+  LocaleAdminPlansRoute: LocaleAdminPlansRoute,
+  LocaleAdminPromotionsRoute: LocaleAdminPromotionsRoute,
+  LocaleAdminReportsRoute: LocaleAdminReportsRoute,
+  LocaleAdminReviewsRoute: LocaleAdminReviewsRoute,
+  LocaleAdminSettingsRoute: LocaleAdminSettingsRoute,
+  LocaleAdminUsersRoute: LocaleAdminUsersRoute,
+  LocaleAdminVerificationsRoute: LocaleAdminVerificationsRoute,
+  LocaleAdminWorkshopsRoute: LocaleAdminWorkshopsRoute,
   LocaleAdminIndexRoute: LocaleAdminIndexRoute,
 }
 

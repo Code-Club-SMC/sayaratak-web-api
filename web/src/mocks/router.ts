@@ -1,6 +1,7 @@
 import { ZodError } from "zod"
 
 import "./handlers"
+import { db } from "./db"
 import {
   MockError,
   readCookie,
@@ -54,6 +55,14 @@ export async function handleMock(
   const failure = injected(req, pathname)
   await wait(latency(req))
   if (failure) return failure
+  // A timed ban lifts itself on the first request after its end date.
+  for (const u of db.users)
+    if (u.bannedUntil && Date.parse(u.bannedUntil) <= Date.now())
+      Object.assign(u, {
+        banned: false,
+        bannedReason: undefined,
+        bannedUntil: undefined,
+      })
   for (const r of routes) {
     const match = r.method === req.method ? r.regex.exec(pathname) : null
     if (!match) continue

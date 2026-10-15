@@ -8,10 +8,10 @@ import { errorText } from "@/lib/api/error-text"
 import { formatDate } from "@/lib/format"
 import { useT } from "@/lib/i18n/use-t"
 import { useNow } from "@/lib/now"
+import { ReasonDialog } from "@/features/admin/components/reason-dialog"
 import { campaignState, stateVariant } from "../campaign-state"
 import { useReviewCampaign, type AdminCampaign } from "../queries"
 import { BannerPreview } from "./banner-preview"
-import { RejectCampaignDialog } from "./reject-campaign-dialog"
 
 // One campaign for the admin: the banner as it will run, who pays, where, when and the receipt. Approving checks banner and receipt together.
 export function AdminCampaignRow({ campaign: c }: { campaign: AdminCampaign }) {
@@ -81,18 +81,20 @@ export function AdminCampaignRow({ campaign: c }: { campaign: AdminCampaign }) {
           )}
         </div>
       )}
-      {rejecting && (
-        <RejectCampaignDialog
-          pending={review.isPending}
-          onClose={() => setRejecting(false)}
-          onReject={(reason) =>
-            review.mutate(
-              { id: c.id, action: "reject", reason },
-              done("ads.rejected")
-            )
-          }
-        />
-      )}
+      <ReasonDialog
+        open={rejecting}
+        onOpenChange={setRejecting}
+        title={t("ads.reject_title")}
+        label={t("ads.reject_reason")}
+        confirmLabel={t("ads.reject")}
+        pending={review.isPending}
+        onConfirm={(reason) =>
+          review.mutate(
+            { id: c.id, action: "reject", reason },
+            done("ads.rejected")
+          )
+        }
+      />
     </article>
   )
 }

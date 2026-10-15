@@ -37,6 +37,7 @@ import {
   myPromotionSchema,
 } from "@/schemas/responses"
 import type {
+  banInputSchema,
   bannerInputSchema,
   broadcastInputSchema,
   grantInputSchema,
@@ -200,8 +201,8 @@ export const useAdminUpdateListing = () =>
 // People and businesses
 export const useBanUser = () =>
   useApiMutation(
-    ({ id, reason }: { id: string; reason?: string }) =>
-      post(userSchema)(`/admin/users/${id}/ban`, { reason }),
+    ({ id, ...body }: { id: string } & z.input<typeof banInputSchema>) =>
+      post(userSchema)(`/admin/users/${id}/ban`, body),
     touched
   )
 export const useUnbanUser = () =>

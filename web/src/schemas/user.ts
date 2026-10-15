@@ -28,6 +28,8 @@ export const userSchema = z.object({
   hasPassword: z.boolean(),
   banned: z.boolean(),
   bannedReason: z.string().optional(),
+  // End of a timed ban; absent for a permanent one.
+  bannedUntil: z.string().optional(),
   createdAt: z.string(),
   onboardingDone: z.boolean(),
   interests: z.array(interestSchema),

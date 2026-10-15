@@ -4,6 +4,7 @@ import { isRedirect } from "@tanstack/react-router"
 import { beforeEach, describe, expect, it } from "vitest"
 
 import { keys } from "@/lib/api/query-keys"
+import { dashboardPath } from "@/lib/navigation"
 import { requireRole } from "@/features/auth/guards"
 import { DashboardLayout } from "@/features/dashboard/components/dashboard-layout"
 import { DashboardNotFound } from "@/features/dashboard/components/dashboard-not-found"
@@ -297,4 +298,35 @@ describe("mechanic routes", () => {
       expect(e.options.href).toBe("/en/workshop")
     }
   })
+})
+
+describe("admin routes", () => {
+  it("every sidebar link, the account page and the not-found splat have a route file", () => {
+    const base = "src/routes/$locale/admin"
+    for (const { path } of navConfig.admin.flatMap((g) => g.items)) {
+      const dir = `${base}${path}`
+      expect(
+        existsSync(`${dir}.tsx`) || existsSync(`${dir}/index.tsx`),
+        path
+      ).toBe(true)
+    }
+    expect(existsSync(`${base}/account.tsx`)).toBe(true)
+    expect(existsSync(`${base}/$.tsx`)).toBe(true)
+  })
+  it.each(["user", "dealership", "workshop", "mechanic"] as const)(
+    "sends a %s away from /admin to its own dashboard",
+    (role) => {
+      const row = db.users.find((u) => u.role === role && u.onboardingDone)!
+      try {
+        requireRole("admin")({
+          context: { me: publicUser(row), locale: "en" as const },
+          location: { href: "/en/admin/users" },
+        })
+        throw new Error("no redirect")
+      } catch (e) {
+        if (!isRedirect(e)) throw e
+        expect(e.options.href).toBe(`/en${dashboardPath(role)}`)
+      }
+    }
+  )
 })

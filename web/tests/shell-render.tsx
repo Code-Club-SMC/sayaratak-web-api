@@ -47,6 +47,8 @@ import arManager from "@/messages/ar/manager.json"
 import enManager from "@/messages/en/manager.json"
 import arToast from "@/messages/ar/toast.json"
 import enToast from "@/messages/en/toast.json"
+import arAdmin from "@/messages/ar/admin.json"
+import enAdmin from "@/messages/en/admin.json"
 import { useMockFetch } from "./mock-fetch"
 
 export async function renderShell(
@@ -89,6 +91,7 @@ export async function renderShell(
     manager: locale === "ar" ? arManager : enManager,
     home: locale === "ar" ? arHome : enHome,
     onboarding: locale === "ar" ? arOnboarding : enOnboarding,
+    admin: locale === "ar" ? arAdmin : enAdmin,
   })
   const root = createRootRoute({
     component: () => (

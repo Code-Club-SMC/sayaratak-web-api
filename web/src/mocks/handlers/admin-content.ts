@@ -2,6 +2,7 @@ import {
   backupSchema,
   bannerSchema,
   adminReportSchema,
+  adminReviewSchema,
   settingsSchema,
   type Report,
   sitePageSchema,
@@ -20,20 +21,40 @@ import { z } from "zod"
 
 import { db, find, insert, newId, remove } from "../db"
 import { fail, needRole, route, type Ctx } from "../http"
-import { byNewest, listPage, nowIso, notify } from "../lib"
+import { byNewest, findBusiness, listPage, nowIso, notify } from "../lib"
 import { setBan } from "./admin"
 import { recomputeRating } from "./reviews"
 
 const admin = (c: Ctx) => needRole(c, "admin")
 const ack = () => okSchema.parse({ ok: true })
 
+// Filters: `status`, `targetType`, `rating` (exact stars) and `id` (one review, for a link). `q` matches the author, the text and the business name.
 route("GET", "/admin/reviews", (c) => {
   admin(c)
+  const q = (key: string) => c.query.get(key)
   const rows = db.reviews
-    .filter((r) => !c.query.get("status") || r.status === c.query.get("status"))
+    .filter(
+      (r) =>
+        (!q("id") || r.id === q("id")) &&
+        (!q("status") || r.status === q("status")) &&
+        (!q("targetType") || r.targetType === q("targetType")) &&
+        (!q("rating") || r.rating === Number(q("rating")))
+    )
     .sort(byNewest)
-  return pageOf(reviewSchema).parse(
-    listPage(c, rows, (r) => `${r.authorName} ${r.body ?? ""}`)
+    .map((r) => {
+      const target = findBusiness(r.targetId)
+      return {
+        ...r,
+        target: target ? { name: target.name, slug: target.slug } : null,
+      }
+    })
+  return pageOf(adminReviewSchema).parse(
+    listPage(
+      c,
+      rows,
+      (r) =>
+        `${r.authorName} ${r.body ?? ""} ${r.target?.name.ar ?? ""} ${r.target?.name.en ?? ""}`
+    )
   )
 })
 for (const [action, status] of [

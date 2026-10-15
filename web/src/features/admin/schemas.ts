@@ -4,6 +4,7 @@ import { optional } from "@/features/search/schemas"
 import { requiredText } from "@/schemas/fields"
 import { banInputSchema } from "@/schemas/inputs"
 import { typeFilterSchema } from "@/schemas/listing"
+import { targetTypeSchema } from "@/schemas/review"
 
 // A decision the admin writes down: a rejection, a dismissal note, a suspension.
 export const reasonSchema = z.object({ reason: requiredText(300) })
@@ -36,6 +37,14 @@ export const reportsSearchSchema = adminTableSearchSchema.extend({
   tab: tabOf(reportTabs),
 })
 export type ReportsSearch = z.infer<typeof reportsSearchSchema>
+// Flagged first: those are the reviews a business owner asked the admin to look at.
+export const reviewTabs = ["flagged", "visible", "hidden"] as const
+export const reviewsSearchSchema = adminTableSearchSchema.extend({
+  tab: tabOf(reviewTabs),
+  targetType: optional(targetTypeSchema),
+  rating: optional(z.coerce.number().int().min(1).max(5)),
+})
+export type ReviewsSearch = z.infer<typeof reviewsSearchSchema>
 export const verificationsSearchSchema = z.object({
   tab: tabOf(["pending", "approved", "rejected"]),
 })

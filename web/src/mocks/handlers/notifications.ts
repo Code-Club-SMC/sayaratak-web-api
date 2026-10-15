@@ -53,5 +53,6 @@ route("GET", "/me/counts", (c) => {
     pendingVerifications: db.verifications.filter((v) => v.status === "pending")
       .length,
     openReports: db.reports.filter((r) => r.status === "open").length,
+    flaggedReviews: db.reviews.filter((r) => r.status === "flagged").length,
   })
 })

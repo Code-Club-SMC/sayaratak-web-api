@@ -6,6 +6,7 @@ import { useApiMutation } from "@/lib/api/mutation"
 import { keys } from "@/lib/api/query-keys"
 import {
   adminReportSchema,
+  adminReviewSchema,
   backupSchema,
   bannerSchema,
   settingsSchema,
@@ -116,7 +117,7 @@ export const adminQueries = {
   promotions: (p?: Params) =>
     adminList("promotions", "/admin/promotions", myPromotionSchema, p),
   reviews: (p?: Params) =>
-    adminList("reviews", "/admin/reviews", reviewSchema, p),
+    adminList("reviews", "/admin/reviews", adminReviewSchema, p),
   reports: (p?: Params) =>
     adminList("reports", "/admin/reports", adminReportSchema, p),
   taxonomy: (type: z.infer<typeof taxonomyTypeSchema>) =>
@@ -325,16 +326,24 @@ export const useSendBroadcast = () =>
     touched
   )
 
-// Reviews and reports
+// Reviews and reports. Hiding or showing a review changes the business rating in directories and profiles.
+const withRatings = [
+  ...touched,
+  keys.reviews.all,
+  keys.business.all,
+  keys.directory.all("dealerships"),
+  keys.directory.all("workshops"),
+  keys.directory.all("mechanics"),
+] as const
 export const useHideReview = () =>
   useApiMutation(
     (id: string) => post(reviewSchema)(`/admin/reviews/${id}/hide`),
-    [...touched, keys.reviews.all]
+    withRatings
   )
 export const useShowReview = () =>
   useApiMutation(
     (id: string) => post(reviewSchema)(`/admin/reviews/${id}/show`),
-    [...touched, keys.reviews.all]
+    withRatings
   )
 export const useDismissReport = () =>
   useApiMutation(

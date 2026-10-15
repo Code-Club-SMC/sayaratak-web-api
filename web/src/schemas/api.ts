@@ -50,6 +50,7 @@ export const countsSchema = z.object({
   pendingPayments: z.number().int().optional(),
   pendingVerifications: z.number().int().optional(),
   openReports: z.number().int().optional(),
+  flaggedReviews: z.number().int().optional(),
 })
 export type Counts = z.infer<typeof countsSchema>
 

@@ -154,7 +154,7 @@ export const navConfig: Record<Role, NavGroup[]> = {
         "pendingListings"
       ),
       item("reports", "/reports", FlagIcon, "openReports"),
-      reviews,
+      item("reviews", "/reviews", StarIcon, "flaggedReviews"),
       item(
         "verifications",
         "/verifications",

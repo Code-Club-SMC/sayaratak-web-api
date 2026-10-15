@@ -14,7 +14,7 @@ export function SpecsList({ items }: { items: Spec[] }) {
           <dt className="w-32 shrink-0 text-ui text-muted-foreground">
             {label}
           </dt>
-          <dd className="min-w-0 text-ui font-medium">{value}</dd>
+          <dd className="min-w-0 text-ui font-medium wrap-anywhere">{value}</dd>
         </div>
       ))}
     </dl>

@@ -62,6 +62,14 @@ export const adminReportSchema = reportSchema.extend({
 })
 export type AdminReport = z.infer<typeof adminReportSchema>
 
+// A row of `GET /admin/listings`: the listing plus how many reports it has had.
+export const adminListingSchema = listingSchema.extend({
+  reports: z.number().int(),
+})
+export type AdminListing = z.infer<typeof adminListingSchema>
+// `POST /admin/listings/bulk`: how many of the picked listings the action changed (the others did not fit it).
+export const bulkResultSchema = z.object({ count: z.number().int() })
+
 // A row of `GET /admin/reviews`: the review with the name and slug of the business it is about. `target` is null once that business is deleted.
 export const adminReviewSchema = reviewSchema.extend({
   target: z.object({ name: bilingualSchema, slug: z.string() }).nullable(),

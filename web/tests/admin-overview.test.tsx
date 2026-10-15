@@ -42,7 +42,7 @@ describe("AdminOverviewPage", () => {
       ["Total listings", "/en/admin/listings?tab=approved", live.length],
       [
         "Total vehicles",
-        "/en/admin/listings?tab=approved&kind=vehicle",
+        "/en/admin/listings?tab=approved&type=vehicle",
         live.filter((l) => l.kind === "vehicle").length,
       ],
       ["Dealerships", "/en/admin/dealerships", db.dealerships.length],

@@ -5,7 +5,9 @@ import {
   adminStatsSchema,
 } from "@/schemas/responses"
 import {
+  adminListingSchema,
   adminVerificationSchema,
+  bulkResultSchema,
   type VerificationRequest,
 } from "@/schemas/admin"
 import {
@@ -16,7 +18,7 @@ import {
   businessAdminPatchSchema,
   rejectInputSchema,
 } from "@/schemas/inputs"
-import { listingSchema, typeFilterSchema } from "@/schemas/listing"
+import { listingSchema } from "@/schemas/listing"
 import { pageOf } from "@/schemas/fields"
 import { userSchema } from "@/schemas/user"
 import type { z } from "zod"
@@ -245,23 +247,30 @@ const apply = (
   else row.moderation = "removed"
 }
 
-// Pending listings, newest first. `type` is a vehicle type or "part"; `sellerKind` is individual, dealership or verified.
+// `type` is "vehicle", a vehicle type or "part"; `sellerKind` is individual, dealership or verified.
+const typeMatch = (c: Ctx) => {
+  const type = c.query.get("type")
+  return (l: ListingRow) =>
+    !type ||
+    (type === "part" || type === "vehicle"
+      ? l.kind === type
+      : l.vehicleType === type)
+}
+const sellerMatch = (c: Ctx) => {
+  const kind = c.query.get("sellerKind")
+  return (l: ListingRow) =>
+    (kind !== "individual" || l.owner.type === "user") &&
+    (kind !== "dealership" || l.owner.type === "dealership") &&
+    (kind !== "verified" || l.owner.verified)
+}
+
+// Pending listings, newest first.
 route("GET", "/admin/moderation", (c) => {
   admin(c)
-  const type = typeFilterSchema.safeParse(c.query.get("type")).data
-  const kind = c.query.get("sellerKind")
   const rows = db.listings
     .filter((l) => l.moderation === "pending")
-    .filter(
-      (l) =>
-        !type || (type === "part" ? l.kind === "part" : l.vehicleType === type)
-    )
-    .filter(
-      (l) =>
-        (kind !== "individual" || l.owner.type === "user") &&
-        (kind !== "dealership" || l.owner.type === "dealership") &&
-        (kind !== "verified" || l.owner.verified)
-    )
+    .filter(typeMatch(c))
+    .filter(sellerMatch(c))
     .sort(byNewest)
   return pageOf(listingSchema).parse(listPage(c, rows, (l) => l.title))
 })
@@ -282,23 +291,46 @@ route("POST", "/admin/listings/bulk", async (c) => {
   const { ids, action, reason } = await c.body(bulkInputSchema)
   if (action === "reject" && !reason)
     throw fail(422, "validation", { reason: "validation.required" })
-  for (const row of ids.flatMap((id) => db.listings.filter((l) => l.id === id)))
-    apply(action, row, reason)
-  return okSchema.parse({ ok: true })
+  // A row the action does not fit (approving an approved listing, restoring one that was never removed) is skipped.
+  const fits = (l: ListingRow) =>
+    action === "restore"
+      ? l.moderation === "removed"
+      : action === "remove"
+        ? l.moderation !== "removed"
+        : l.moderation === "pending" ||
+          (action === "approve" && l.moderation === "rejected")
+  const rows = db.listings.filter((l) => ids.includes(l.id) && fits(l))
+  for (const row of rows) apply(action, row, reason)
+  return bulkResultSchema.parse({ count: rows.length })
 })
+// Every listing but drafts (a seller's unpublished work) unless `moderation` asks for them. `promoted` is yes or no: a promotion running now.
 route("GET", "/admin/listings", (c) => {
   admin(c)
+  const q = (k: string) => c.query.get(k)
+  const now = Date.now()
+  const promoted = (l: ListingRow) =>
+    l.promotions.some(
+      (p) => Date.parse(p.startsAt) <= now && now < Date.parse(p.endsAt)
+    )
   const rows = db.listings
-    .filter(
-      (l) =>
-        !c.query.get("moderation") || l.moderation === c.query.get("moderation")
+    .filter((l) =>
+      q("moderation")
+        ? l.moderation === q("moderation")
+        : l.moderation !== "draft"
     )
-    .filter((l) => !c.query.get("status") || l.status === c.query.get("status"))
-    .filter(
-      (l) => !c.query.get("ownerId") || l.ownerUserId === c.query.get("ownerId")
-    )
+    .filter((l) => !q("id") || l.id === q("id"))
+    .filter((l) => !q("status") || l.status === q("status"))
+    .filter((l) => !q("ownerId") || l.ownerUserId === q("ownerId"))
+    .filter((l) => !q("cityId") || l.cityId === q("cityId"))
+    .filter((l) => !q("promoted") || promoted(l) === (q("promoted") === "yes"))
+    .filter(typeMatch(c))
+    .filter(sellerMatch(c))
     .sort(byNewest)
-  return pageOf(listingSchema).parse(
+    .map((l) => ({
+      ...l,
+      reports: db.reports.filter((r) => r.listingId === l.id).length,
+    }))
+  return pageOf(adminListingSchema).parse(
     listPage(c, rows, (l) => `${l.title} ${l.id} ${textOf(l.owner.name)}`)
   )
 })

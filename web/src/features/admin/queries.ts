@@ -5,10 +5,12 @@ import { apiFetch } from "@/lib/api/client"
 import { useApiMutation } from "@/lib/api/mutation"
 import { keys } from "@/lib/api/query-keys"
 import {
+  adminListingSchema,
   adminReportSchema,
   adminReviewSchema,
   backupSchema,
   bannerSchema,
+  bulkResultSchema,
   adminVerificationSchema,
   settingsSchema,
   sitePageSchema,
@@ -83,7 +85,7 @@ export const adminQueries = {
   moderation: (p?: Params) =>
     adminList("moderation", "/admin/moderation", listingSchema, p),
   listings: (p?: Params) =>
-    adminList("listings", "/admin/listings", listingSchema, p),
+    adminList("listings", "/admin/listings", adminListingSchema, p),
   users: (p?: Params) => adminList("users", "/admin/users", userSchema, p),
   businesses: (p?: Params) =>
     adminList("businesses", "/admin/businesses", adminBusinessSchema, p),
@@ -187,7 +189,7 @@ export const useBulkListings = () =>
       ids: string[]
       action: "approve" | "reject" | "remove" | "restore"
       reason?: string
-    }) => post(okSchema)("/admin/listings/bulk", body),
+    }) => post(bulkResultSchema)("/admin/listings/bulk", body),
     withListings
   )
 export const useAdminUpdateListing = () =>

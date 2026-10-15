@@ -43,7 +43,7 @@ export function AdminStatGrid({
         link={{
           to: "/$locale/admin/listings",
           params,
-          search: { tab: "approved", kind: "vehicle" },
+          search: { tab: "approved", type: "vehicle" },
         }}
       />
       <StatCard

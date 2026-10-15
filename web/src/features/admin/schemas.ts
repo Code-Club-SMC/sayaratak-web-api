@@ -1,9 +1,13 @@
 import { z } from "zod"
 
 import { optional } from "@/features/search/schemas"
-import { requiredText } from "@/schemas/fields"
+import { requiredInt, requiredText } from "@/schemas/fields"
 import { banInputSchema } from "@/schemas/inputs"
-import { typeFilterSchema } from "@/schemas/listing"
+import {
+  promotionTypeSchema,
+  typeFilterSchema,
+  vehicleTypeSchema,
+} from "@/schemas/listing"
 import { targetTypeSchema } from "@/schemas/review"
 
 // A decision the admin writes down: a rejection, a dismissal note, a suspension.
@@ -25,13 +29,43 @@ export const adminTableSearchSchema = z.object({
 export const adminTableSearchDefaults = { page: 1 } as const
 export type AdminTableSearch = z.infer<typeof adminTableSearchSchema>
 
+export const sellerKinds = [
+  "all",
+  "individual",
+  "dealership",
+  "verified",
+] as const
+
 // A tab kept in the URL; an unknown value falls back to the first tab. Pages that the overview links to (13.2) carry one before their own step builds them.
 const tabOf = <T extends readonly [string, ...string[]]>(tabs: T) =>
   z.enum(tabs).default(tabs[0]).catch(tabs[0])
-export const adminListingsSearchSchema = z.object({
-  tab: tabOf(["all", "approved", "pending", "rejected", "removed"]),
-  kind: optional(z.enum(["vehicle", "part"])),
+export const listingTabs = [
+  "all",
+  "approved",
+  "pending",
+  "rejected",
+  "removed",
+] as const
+// `type` is "vehicle" (every vehicle), one vehicle type or "part". `promoted` is a promotion running now.
+export const adminListingTypes = [
+  "vehicle",
+  ...vehicleTypeSchema.options,
+  "part",
+] as const
+export const adminListingsSearchSchema = adminTableSearchSchema.extend({
+  tab: tabOf(listingTabs),
+  type: optional(z.enum(adminListingTypes)),
+  cityId: optional(z.string().max(60)),
+  sellerKind: z.enum(sellerKinds).default("all").catch("all"),
+  promoted: optional(z.enum(["yes", "no"])),
 })
+export type AdminListingsSearch = z.infer<typeof adminListingsSearchSchema>
+// A free promotion the admin gives a listing; it starts at once.
+export const grantSchema = z.object({
+  type: promotionTypeSchema,
+  days: requiredInt(1, 365),
+})
+export type GrantForm = z.infer<typeof grantSchema>
 export const reportTabs = ["open", "resolved"] as const
 export const reportsSearchSchema = adminTableSearchSchema.extend({
   tab: tabOf(reportTabs),
@@ -58,12 +92,6 @@ export const plansSearchSchema = z.object({
 })
 
 // The review queue (13.3): `listing` is the open item; below lg it also switches the screen from the list to the review.
-export const sellerKinds = [
-  "all",
-  "individual",
-  "dealership",
-  "verified",
-] as const
 export const moderationSearchSchema = z.object({
   listing: optional(z.string().max(60)),
   type: optional(typeFilterSchema),

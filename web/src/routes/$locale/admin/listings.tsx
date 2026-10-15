@@ -1,13 +1,35 @@
 import { createFileRoute, stripSearchParams } from "@tanstack/react-router"
 
-import { adminListingsSearchSchema } from "@/features/admin/schemas"
-import { PlaceholderPage } from "@/features/dashboard/components/placeholder-page"
+import {
+  adminListingsSearchSchema,
+  adminTableSearchDefaults,
+  type AdminListingsSearch,
+} from "@/features/admin/schemas"
+import { AdminListingsPage } from "@/features/admin-listings/components/admin-listings-page"
 import { dashboardPage } from "@/features/dashboard/overview-route"
+import { taxonomyQuery } from "@/features/listings/queries"
 
-// A later Phase 13 step replaces the component.
+const page = dashboardPage("/admin/listings", "dashboard.nav_all_listings")
+
 export const Route = createFileRoute("/$locale/admin/listings")({
   validateSearch: adminListingsSearchSchema,
-  search: { middlewares: [stripSearchParams({ tab: "all" })] },
-  ...dashboardPage("/admin/listings", "dashboard.nav_all_listings"),
-  component: () => <PlaceholderPage titleKey="dashboard.nav_all_listings" />,
+  search: {
+    middlewares: [
+      stripSearchParams<AdminListingsSearch>({
+        ...adminTableSearchDefaults,
+        tab: "all",
+        sellerKind: "all",
+      }),
+    ],
+  },
+  ...page,
+  // The city filter and the sheet's specs read the taxonomy, so it loads first.
+  loader: async (args) => {
+    const [data] = await Promise.all([
+      page.loader(args),
+      args.context.queryClient.ensureQueryData(taxonomyQuery),
+    ])
+    return data
+  },
+  component: AdminListingsPage,
 })

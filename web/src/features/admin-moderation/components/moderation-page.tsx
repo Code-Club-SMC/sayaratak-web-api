@@ -133,7 +133,12 @@ export function ModerationPage() {
       </PageHeader>
       <div
         onKeyDown={onKeyDown}
-        className="grid items-start gap-6 lg:grid-cols-[360px_minmax(0,1fr)]"
+        className={cn(
+          "grid items-start gap-6",
+          // An empty queue has nothing to review, so its empty state takes the whole width.
+          (!queue.isSuccess || items.length > 0) &&
+            "lg:grid-cols-[360px_minmax(0,1fr)]"
+        )}
       >
         <div className={cn(search.listing && "max-lg:hidden")}>
           <QueueList

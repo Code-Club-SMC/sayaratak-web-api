@@ -13,7 +13,7 @@ export function ReportCard({
   report: AdminReport
   onOpen: () => void
 }) {
-  const { locale } = useT()
+  const { t, locale } = useT()
   const now = useNow()
   return (
     <article className="flex flex-col gap-2 border-b p-3 in-[li:last-child]:border-b-0">
@@ -22,6 +22,11 @@ export function ReportCard({
         <ReasonBadge reason={report.reason} />
         <ReportStatusBadge status={report.status} />
       </div>
+      {report.listingReports > 1 && (
+        <p className="text-caption">
+          {t("admin.report_count", { count: report.listingReports })}
+        </p>
+      )}
       <p className="text-caption text-muted-foreground">
         <bdi>{report.reporterName}</bdi>
         {" · "}

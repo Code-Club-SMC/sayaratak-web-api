@@ -29,9 +29,7 @@ export function ReportListingCell({
         className="size-12 shrink-0 rounded-lg"
       />
       <span className="truncate text-ui font-medium">
-        <bdi>
-          {listing ? titleOf(listing) : t("admin.report_listing_gone")}
-        </bdi>
+        <bdi>{listing ? titleOf(listing) : t("admin.report_listing_gone")}</bdi>
       </span>
     </button>
   )

@@ -5,11 +5,19 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { formatMonthYear, formatNumber } from "@/lib/format"
 import { useT } from "@/lib/i18n/use-t"
 import { localeHref } from "@/lib/navigation"
+import { cn } from "@/lib/utils"
 import type { Listing } from "@/schemas/listing"
 import { adminQueries } from "../queries"
 
 // Who posted a listing under review, with their track record. The counts read the totals of two one-row pages.
-export function SellerPanel({ owner }: { owner: Listing["owner"] }) {
+// `className` lets a host that is already a card (the reports sheet) drop the panel's own surface.
+export function SellerPanel({
+  owner,
+  className,
+}: {
+  owner: Listing["owner"]
+  className?: string
+}) {
   const { t, locale } = useT()
   const count = (moderation: "approved" | "rejected") =>
     adminQueries.listings({ ownerId: owner.id, moderation, pageSize: 1 })
@@ -30,7 +38,7 @@ export function SellerPanel({ owner }: { owner: Listing["owner"] }) {
   return (
     <section
       aria-label={t("admin.seller")}
-      className="flex flex-col gap-3 rounded-xl bg-card p-4"
+      className={cn("flex flex-col gap-3 rounded-xl bg-card p-4", className)}
     >
       <div className="flex flex-col gap-0.5">
         <p className="text-body font-semibold">

@@ -103,7 +103,7 @@ describe("AdminOverviewPage", () => {
     const links = await within(feed).findAllByRole("link")
     expect(links).toHaveLength(10)
     for (const a of links)
-      expect(a.getAttribute("href")).toMatch(/^\/en\/admin\/\w+\?id=/)
+      expect(a.getAttribute("href")).toMatch(/^\/en\/admin\/\w+\?(id|listing)=/)
   })
 
   it.each(["7d", "30d"] as const)(

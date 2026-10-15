@@ -3,6 +3,7 @@ import { z } from "zod"
 import { optional } from "@/features/search/schemas"
 import { requiredText } from "@/schemas/fields"
 import { banInputSchema } from "@/schemas/inputs"
+import { typeFilterSchema } from "@/schemas/listing"
 
 // A decision the admin writes down: a rejection, a dismissal note, a suspension.
 export const reasonSchema = z.object({ reason: requiredText(300) })
@@ -42,3 +43,17 @@ export const paymentsSearchSchema = z.object({
 export const plansSearchSchema = z.object({
   tab: tabOf(["user", "dealership", "workshop", "mechanic", "subscribers"]),
 })
+
+// The review queue (13.3): `listing` is the open item; below lg it also switches the screen from the list to the review.
+export const sellerKinds = [
+  "all",
+  "individual",
+  "dealership",
+  "verified",
+] as const
+export const moderationSearchSchema = z.object({
+  listing: optional(z.string().max(60)),
+  type: optional(typeFilterSchema),
+  sellerKind: z.enum(sellerKinds).default("all").catch("all"),
+})
+export type ModerationSearch = z.infer<typeof moderationSearchSchema>

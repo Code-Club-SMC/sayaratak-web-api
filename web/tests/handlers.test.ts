@@ -1592,13 +1592,13 @@ describe("admin", () => {
     expect(stats.totals.users).toBe(db.users.length)
     expect(stats.series.newListings).toHaveLength(7)
     expect(stats.series.revenue).toHaveLength(7)
-    // The feed is newest first, at most ten, and each row links to its screen with the item selected.
+    // The feed is newest first, at most ten, and each row links to its screen with the item selected (a pending listing opens in the review queue with `?listing=`).
     const feed = (await call("GET", "/admin/activity", { as: "u-admin" })).body
       .items
     expect(feed.length).toBeLessThanOrEqual(10)
-    expect(feed.every((i: { href: string }) => i.href.includes("?id="))).toBe(
-      true
-    )
+    expect(
+      feed.every((i: { href: string }) => /\?(id|listing)=/.test(i.href))
+    ).toBe(true)
   })
   it("taxonomy rows in use cannot be deleted; broadcasts notify the audience", async () => {
     expect(

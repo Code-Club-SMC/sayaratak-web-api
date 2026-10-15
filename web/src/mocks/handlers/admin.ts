@@ -13,7 +13,7 @@ import {
   businessAdminPatchSchema,
   rejectInputSchema,
 } from "@/schemas/inputs"
-import { listingSchema } from "@/schemas/listing"
+import { listingSchema, typeFilterSchema } from "@/schemas/listing"
 import { pageOf } from "@/schemas/fields"
 import { userSchema } from "@/schemas/user"
 import { both } from "@/mocks/seed/util"
@@ -100,7 +100,7 @@ route("GET", "/admin/stats", (c) => {
   })
 })
 
-// The ten newest events, each with the admin screen that shows it selected (`?id=`).
+// The ten newest events, each with the admin screen that shows it selected (`?id=`; a pending listing opens in the review queue, `?listing=`).
 route("GET", "/admin/activity", (c) => {
   admin(c)
   const feed = [
@@ -110,7 +110,10 @@ route("GET", "/admin/activity", (c) => {
         id: l.id,
         type: "listing_submitted" as const,
         label: both(l.title),
-        href: `/admin/moderation?id=${l.id}`,
+        href:
+          l.moderation === "pending"
+            ? `/admin/moderation?listing=${l.id}`
+            : `/admin/listings?id=${l.id}`,
         createdAt: l.createdAt,
       })),
     ...(["dealership", "workshop", "mechanic"] as const).flatMap((type) =>
@@ -238,15 +241,25 @@ const apply = (
   else row.moderation = "removed"
 }
 
+// Pending listings, newest first. `type` is a vehicle type or "part"; `sellerKind` is individual, dealership or verified.
 route("GET", "/admin/moderation", (c) => {
   admin(c)
-  return pageOf(listingSchema).parse(
-    listPage(
-      c,
-      db.listings.filter((l) => l.moderation === "pending").sort(byNewest),
-      (l) => l.title
+  const type = typeFilterSchema.safeParse(c.query.get("type")).data
+  const kind = c.query.get("sellerKind")
+  const rows = db.listings
+    .filter((l) => l.moderation === "pending")
+    .filter(
+      (l) =>
+        !type || (type === "part" ? l.kind === "part" : l.vehicleType === type)
     )
-  )
+    .filter(
+      (l) =>
+        (kind !== "individual" || l.owner.type === "user") &&
+        (kind !== "dealership" || l.owner.type === "dealership") &&
+        (kind !== "verified" || l.owner.verified)
+    )
+    .sort(byNewest)
+  return pageOf(listingSchema).parse(listPage(c, rows, (l) => l.title))
 })
 for (const action of ["approve", "reject", "remove", "restore"] as const) {
   route("POST", `/admin/listings/:id/${action}`, async (c) => {

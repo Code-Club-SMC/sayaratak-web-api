@@ -57,5 +57,12 @@
   "directory.works_in": "Works in {{cities}}",
   "directory.experience_years_one": "{{count}} year of experience",
   "directory.experience_years_other": "{{count}} years of experience",
-  "directory.job_title": "Auto mechanic"
+  "directory.job_title": "Auto mechanic",
+  "directory.unavailable_title": "Not taking enquiries right now",
+  "directory.unavailable_body_dealership": "This dealership is not available on Sayaratak at the moment, so its contact details and listings are hidden.",
+  "directory.unavailable_body_workshop": "This workshop is not available on Sayaratak at the moment, so its contact details are hidden.",
+  "directory.unavailable_body_mechanic": "This mechanic is not available on Sayaratak at the moment, so their contact details are hidden.",
+  "directory.unavailable_browse_dealership": "Browse other dealerships",
+  "directory.unavailable_browse_workshop": "Browse other workshops",
+  "directory.unavailable_browse_mechanic": "Browse other mechanics"
 }

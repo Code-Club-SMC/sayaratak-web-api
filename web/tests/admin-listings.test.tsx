@@ -179,6 +179,26 @@ describe("AdminListingsPage", () => {
     ).toBe(true)
   })
 
+  it("ownerId narrows to one person's listings and its chip clears it", async () => {
+    const own = db.listings.filter(
+      (l) => l.ownerUserId === "u-omar" && l.moderation !== "draft"
+    )
+    const { router } = await open("/en/admin/listings?ownerId=u-omar")
+    const chip = await screen.findByRole("button", {
+      name: "Remove Seller: Omar Hassan",
+    })
+    const table = await screen.findByRole("table", { name: "All listings" })
+    await waitFor(() =>
+      expect(within(table).getAllByRole("row")).toHaveLength(
+        Math.min(20, own.length) + 1
+      )
+    )
+    fireEvent.click(chip)
+    await waitFor(() =>
+      expect(router.history.location.search).not.toContain("ownerId")
+    )
+  })
+
   it("an unknown id says the listing is gone", async () => {
     await open("/en/admin/listings?id=nope")
     const panel = await sheet()

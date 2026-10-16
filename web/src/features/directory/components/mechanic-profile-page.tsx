@@ -15,6 +15,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { mechanicTabs, type MechanicProfileSearch } from "../mechanic-schemas"
 import { directoryQueries } from "../queries"
 import { useMechanicProfileNavigation } from "../use-mechanic-profile-navigation"
+import { BusinessUnavailableNotice } from "./business-unavailable-notice"
 import { MechanicAbout } from "./mechanic-about"
 import { MechanicJsonLd } from "./mechanic-json-ld"
 import { MechanicWork } from "./mechanic-work"
@@ -36,7 +37,7 @@ export function MechanicProfilePage({
   const cities = useCityNames(m.servedCityIds)
   const name = m.name[locale] || m.name.ar
   const contact: Parameters<typeof ContactActions>[0] | null =
-    me?.id === m.ownerId
+    me?.id === m.ownerId || m.unavailable
       ? null
       : {
           target: { type: "mechanic", id: m.id, title: name },
@@ -65,9 +66,11 @@ export function MechanicProfilePage({
         rating={m.rating}
         cityId={m.cityId}
         badge={
-          <Badge variant={m.available ? "success" : "muted"}>
-            {t(m.available ? "directory.available" : "directory.busy")}
-          </Badge>
+          !m.unavailable && (
+            <Badge variant={m.available ? "success" : "muted"}>
+              {t(m.available ? "directory.available" : "directory.busy")}
+            </Badge>
+          )
         }
         details={
           <>
@@ -85,6 +88,7 @@ export function MechanicProfilePage({
         }
         actions={contact && <ContactActions {...contact} layout="row" />}
       />
+      {m.unavailable && <BusinessUnavailableNotice type="mechanic" />}
       <SpecializationChips ids={m.specializationIds} />
       <Tabs value={search.tab} onValueChange={onTab}>
         <TabsList aria-label={t("directory.profile_sections")}>
@@ -115,7 +119,7 @@ export function MechanicProfilePage({
         </TabsContent>
       </Tabs>
       {contact && <MobileContactBar {...contact} />}
-      <MechanicJsonLd mechanic={m} />
+      {!m.unavailable && <MechanicJsonLd mechanic={m} />}
     </div>
   )
 }

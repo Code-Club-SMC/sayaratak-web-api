@@ -6,6 +6,7 @@ import { useApiMutation } from "@/lib/api/mutation"
 import { keys } from "@/lib/api/query-keys"
 import {
   adminListingSchema,
+  adminUserSchema,
   adminReportSchema,
   adminReviewSchema,
   backupSchema,
@@ -86,7 +87,7 @@ export const adminQueries = {
     adminList("moderation", "/admin/moderation", listingSchema, p),
   listings: (p?: Params) =>
     adminList("listings", "/admin/listings", adminListingSchema, p),
-  users: (p?: Params) => adminList("users", "/admin/users", userSchema, p),
+  users: (p?: Params) => adminList("users", "/admin/users", adminUserSchema, p),
   businesses: (p?: Params) =>
     adminList("businesses", "/admin/businesses", adminBusinessSchema, p),
   verifications: (p?: Params) =>
@@ -202,17 +203,24 @@ export const useAdminUpdateListing = () =>
     withListings
   )
 
-// People and businesses
+// People and businesses. A ban hides the person's listings and takes their business off the directories.
+const withPublic = [
+  ...withListings,
+  keys.business.all,
+  keys.directory.all("dealerships"),
+  keys.directory.all("workshops"),
+  keys.directory.all("mechanics"),
+] as const
 export const useBanUser = () =>
   useApiMutation(
     ({ id, ...body }: { id: string } & z.input<typeof banInputSchema>) =>
       post(userSchema)(`/admin/users/${id}/ban`, body),
-    touched
+    withPublic
   )
 export const useUnbanUser = () =>
   useApiMutation(
     (id: string) => post(userSchema)(`/admin/users/${id}/unban`, {}),
-    touched
+    withPublic
   )
 export const useUpdateBusinessAdmin = () =>
   useApiMutation(
@@ -242,13 +250,7 @@ export const useApproveVerification = () =>
   useApiMutation(
     (id: string) =>
       post(adminVerificationSchema)(`/admin/verifications/${id}/approve`),
-    [
-      ...withListings,
-      keys.business.all,
-      keys.directory.all("dealerships"),
-      keys.directory.all("workshops"),
-      keys.directory.all("mechanics"),
-    ]
+    withPublic
   )
 export const useRejectVerification = () =>
   useApiMutation(
@@ -363,7 +365,7 @@ export const useActionReport = () =>
       ...body
     }: { id: string } & z.input<typeof reportActionInputSchema>) =>
       post(adminReportSchema)(`/admin/reports/${id}/action`, body),
-    withListings
+    withPublic
   )
 
 // Taxonomy, banners, pages, settings, backups

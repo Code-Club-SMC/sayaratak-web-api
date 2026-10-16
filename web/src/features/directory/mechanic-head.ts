@@ -33,6 +33,8 @@ export function mechanicHead(
         locale: Locale
         slug: string
         image?: string
+        // The owner is banned: the page stays up with a notice, out of search engines.
+        unavailable?: true
       }
     | undefined,
   s: MechanicProfileSearch
@@ -42,5 +44,6 @@ export function mechanicHead(
   return buildHead({
     ...data,
     path: s.tab === "work" ? base : `${base}?tab=${s.tab}`,
+    noindex: !!data.unavailable,
   })
 }

@@ -19,7 +19,14 @@ import type { z } from "zod"
 import { db, insert, newId, paginate } from "../db"
 import { fail, needRole, pageParams, route } from "../http"
 import { both } from "@/mocks/seed/util"
-import { activePlan, byNewest, businessOf, textOf } from "../lib"
+import {
+  activePlan,
+  byNewest,
+  businessOf,
+  listed,
+  ownerBanned,
+  textOf,
+} from "../lib"
 import { haversineKm } from "../search"
 
 const inventory = (ownerId: string, dealerId: string) =>
@@ -32,6 +39,9 @@ const inventory = (ownerId: string, dealerId: string) =>
 
 const withInventory = (d: (typeof db.dealerships)[number]) =>
   dealershipSchema.parse({ ...d, inventoryCount: inventory(d.ownerId, d.id) })
+// The profile of a banned owner still opens, flagged so the page shows a notice instead of contact buttons.
+const flag = (ownerId: string) =>
+  ownerBanned(ownerId) ? { unavailable: true } : {}
 
 type Sorted<T> = (a: T, b: T) => number
 const rating = (
@@ -48,7 +58,7 @@ route("GET", "/dealerships", (c) => {
     newest: byNewest,
   }
   const rows = db.dealerships
-    .filter((d) => d.status === "active")
+    .filter(listed)
     .filter((d) => !q || textOf(d.name).includes(q))
     .filter((d) => !c.query.get("city") || d.cityId === c.query.get("city"))
     .filter((d) => c.query.get("verified") !== "true" || d.verified)
@@ -65,7 +75,7 @@ route("GET", "/dealerships/:slug", (c) => {
     (d) => d.slug === c.params.slug && d.status === "active"
   )
   if (!row) throw fail(404, "not_found")
-  return withInventory(row)
+  return { ...withInventory(row), ...flag(row.ownerId) }
 })
 
 route("GET", "/workshops", (c) => {
@@ -81,7 +91,7 @@ route("GET", "/workshops", (c) => {
     nearest: (a, b) => km(a) - km(b),
   }
   const rows = db.workshops
-    .filter((w) => w.status === "active")
+    .filter(listed)
     .filter((w) => !q || textOf(w.name).includes(q))
     .filter((w) => !c.query.get("city") || w.cityId === c.query.get("city"))
     .filter((w) => !service || w.services.some((s) => s.templateId === service))
@@ -98,7 +108,7 @@ route("GET", "/workshops/:slug", (c) => {
     (w) => w.slug === c.params.slug && w.status === "active"
   )
   if (!row) throw fail(404, "not_found")
-  return workshopSchema.parse(row)
+  return workshopSchema.parse({ ...row, ...flag(row.ownerId) })
 })
 
 const isPaid = (userId: string) => (activePlan(userId)?.price ?? 0) > 0
@@ -112,7 +122,7 @@ route("GET", "/mechanics", (c) => {
     newest: byNewest,
   }
   const rows = db.mechanics
-    .filter((m) => m.status === "active")
+    .filter(listed)
     .filter((m) => !q || textOf(m.name).includes(q))
     .filter(
       (m) =>
@@ -136,7 +146,7 @@ route("GET", "/mechanics/:slug", (c) => {
     (m) => m.slug === c.params.slug && m.status === "active"
   )
   if (!row) throw fail(404, "not_found")
-  return mechanicSchema.parse(row)
+  return mechanicSchema.parse({ ...row, ...flag(row.ownerId) })
 })
 
 // Business self-service. The role decides which table the caller edits.

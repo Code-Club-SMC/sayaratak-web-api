@@ -2,6 +2,7 @@ import { TYPE_SLUGS } from "@/features/search/landing"
 import { intentSchema } from "@/schemas/listing"
 import type { SitemapEntry } from "@/lib/sitemap"
 import { db } from "./db"
+import { listed } from "./lib"
 import { isPublic } from "./search"
 
 const staticPages = [
@@ -45,9 +46,7 @@ export function sitemapEntries(): SitemapEntry[] {
       ["mechanics", db.mechanics],
     ] as const
   ).flatMap(([dir, rows]) =>
-    rows
-      .filter((r) => r.status === "active")
-      .map((r) => ({ path: `/${dir}/${r.slug}` }))
+    rows.filter(listed).map((r) => ({ path: `/${dir}/${r.slug}` }))
   )
   return [
     ...staticPages.map((path) => ({ path })),

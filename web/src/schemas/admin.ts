@@ -3,6 +3,7 @@ import { z } from "zod"
 import { bilingualSchema, idSchema, localeSchema } from "./fields"
 import { listingSchema } from "./listing"
 import { reviewSchema, targetTypeSchema } from "./review"
+import { userSchema } from "./user"
 
 // A banner is a photo with real text on top, one set of text per language (so it reads on a phone, to a screen reader and in the admin form). `focus` is the photo's vertical focal point in percent: the crop keeps it in view. A banner without `copy` is a finished image (the older form) and shows as is.
 export const bannerCopySchema = z.object({
@@ -69,6 +70,13 @@ export const adminListingSchema = listingSchema.extend({
 export type AdminListing = z.infer<typeof adminListingSchema>
 // `POST /admin/listings/bulk`: how many of the picked listings the action changed (the others did not fit it).
 export const bulkResultSchema = z.object({ count: z.number().int() })
+
+// A row of `GET /admin/users`: the person with their listings (drafts left out) and the reports made on those listings.
+export const adminUserSchema = userSchema.extend({
+  listings: z.number().int(),
+  reportsAgainst: z.number().int(),
+})
+export type AdminUser = z.infer<typeof adminUserSchema>
 
 // A row of `GET /admin/reviews`: the review with the name and slug of the business it is about. `target` is null once that business is deleted.
 export const adminReviewSchema = reviewSchema.extend({

@@ -6,6 +6,7 @@ import {
 } from "@/schemas/responses"
 import {
   adminListingSchema,
+  adminUserSchema,
   adminVerificationSchema,
   bulkResultSchema,
   type VerificationRequest,
@@ -20,7 +21,6 @@ import {
 } from "@/schemas/inputs"
 import { listingSchema } from "@/schemas/listing"
 import { pageOf } from "@/schemas/fields"
-import { userSchema } from "@/schemas/user"
 import type { z } from "zod"
 import { both } from "@/mocks/seed/util"
 
@@ -342,20 +342,34 @@ route("PATCH", "/admin/listings/:id", async (c) => {
   return listingSchema.parse(row)
 })
 
+// `status` is active or banned; `id` picks one person (a link to the sheet).
 route("GET", "/admin/users", (c) => {
   admin(c)
+  const q = (k: string) => c.query.get(k)
   const rows = db.users
-    .filter((u) => !c.query.get("role") || u.role === c.query.get("role"))
-    .filter((u) => c.query.get("banned") !== "true" || u.banned)
+    .filter((u) => !q("id") || u.id === q("id"))
+    .filter((u) => !q("role") || u.role === q("role"))
+    .filter((u) => !q("status") || u.banned === (q("status") === "banned"))
     .sort(byNewest)
   const page = listPage(
     c,
     rows,
     (u) => `${u.fullName} ${u.phone ?? ""} ${u.email ?? ""}`
   )
-  return pageOf(userSchema).parse({
+  return pageOf(adminUserSchema).parse({
     ...page,
-    items: page.items.map(publicUser),
+    items: page.items.map((u) => {
+      const own = db.listings.filter(
+        (l) => l.ownerUserId === u.id && l.moderation !== "draft"
+      )
+      return {
+        ...publicUser(u),
+        listings: own.length,
+        reportsAgainst: db.reports.filter((r) =>
+          own.some((l) => l.id === r.listingId)
+        ).length,
+      }
+    }),
   })
 })
 // No notification: the banned person finds out on their next request (403 `banned`, then the suspended page).

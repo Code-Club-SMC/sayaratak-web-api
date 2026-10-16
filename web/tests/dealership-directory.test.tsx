@@ -285,6 +285,25 @@ describe("DealershipProfilePage", () => {
       document.querySelector('script[type="application/ld+json"]')
     ).toBeTruthy()
   })
+  it("a banned owner's profile shows a notice, no contact and no JSON-LD", async () => {
+    const d = db.dealerships[0]!
+    db.users.find((u) => u.id === d.ownerId)!.banned = true
+    await renderShell(profile())
+    expect(
+      await screen.findByRole("heading", {
+        name: "Not taking enquiries right now",
+      })
+    ).toBeTruthy()
+    expect(
+      screen.getByRole("link", { name: "Browse other dealerships" })
+    ).toHaveProperty("href", expect.stringContaining("/en/dealerships"))
+    expect(screen.queryByRole("button", { name: "Call" })).toBeNull()
+    expect(screen.queryByRole("button", { name: "Message" })).toBeNull()
+    const ld = [
+      ...document.querySelectorAll('script[type="application/ld+json"]'),
+    ].map((el) => el.textContent)
+    expect(ld.some((json) => json.includes("AutoDealer"))).toBe(false)
+  })
   it("the owner does not get contact buttons on their own profile", async () => {
     await renderShell(profile(), { role: "dealership" })
     await screen.findByRole("heading", { level: 1 })

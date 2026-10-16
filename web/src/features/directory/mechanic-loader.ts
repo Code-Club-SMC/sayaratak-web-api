@@ -68,6 +68,7 @@ export async function mechanicLoader(
   return {
     locale,
     slug: m.slug,
+    unavailable: m.unavailable,
     title: [name, city].filter(Boolean).join(", "),
     description: (m.bio[locale] || m.bio.ar)
       .replace(/\s+/g, " ")

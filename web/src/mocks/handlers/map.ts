@@ -4,6 +4,7 @@ import { both } from "@/mocks/seed/util"
 
 import { db } from "../db"
 import { queryObject, route } from "../http"
+import { listed } from "../lib"
 import { matches, tierOf } from "../search"
 
 const MAX_POINTS = 300
@@ -61,7 +62,7 @@ route("GET", "/map", (c) => {
   for (const [layer, kind, rows] of businesses) {
     if (!layers.has(layer)) continue
     for (const b of rows)
-      if (b.status === "active" && inside(b.location))
+      if (listed(b) && inside(b.location))
         points.push({
           id: b.id,
           kind,
@@ -77,7 +78,7 @@ route("GET", "/map", (c) => {
   if (layers.has("mechanics")) {
     for (const m of db.mechanics) {
       const city = db.taxonomy.cities.find((x) => x.id === m.cityId)
-      if (m.status === "active" && city && inside(city.center))
+      if (listed(m) && city && inside(city.center))
         points.push({
           id: m.id,
           kind: "mechanic",

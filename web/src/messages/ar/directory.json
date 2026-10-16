@@ -69,5 +69,12 @@
   "directory.experience_years_few": "خبرة {{count}} سنوات",
   "directory.experience_years_many": "خبرة {{count}} سنة",
   "directory.experience_years_other": "خبرة {{count}} سنة",
-  "directory.job_title": "ميكانيكي سيارات"
+  "directory.job_title": "ميكانيكي سيارات",
+  "directory.unavailable_title": "لا يستقبل الاستفسارات حاليًا",
+  "directory.unavailable_body_dealership": "هذا المعرض غير متاح على سيارتك حاليًا، لذلك أُخفيت بيانات التواصل والإعلانات.",
+  "directory.unavailable_body_workshop": "هذه الورشة غير متاحة على سيارتك حاليًا، لذلك أُخفيت بيانات التواصل.",
+  "directory.unavailable_body_mechanic": "هذا الميكانيكي غير متاح على سيارتك حاليًا، لذلك أُخفيت بيانات التواصل.",
+  "directory.unavailable_browse_dealership": "تصفّح معارض أخرى",
+  "directory.unavailable_browse_workshop": "تصفّح ورشًا أخرى",
+  "directory.unavailable_browse_mechanic": "تصفّح ميكانيكيين آخرين"
 }

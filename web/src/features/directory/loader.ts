@@ -93,6 +93,7 @@ export async function dealershipLoader(
   return {
     locale,
     slug: d.slug,
+    unavailable: d.unavailable,
     title: [name, city].filter(Boolean).join(", "),
     description: (d.description[locale] || d.description.ar)
       .replace(/\s+/g, " ")

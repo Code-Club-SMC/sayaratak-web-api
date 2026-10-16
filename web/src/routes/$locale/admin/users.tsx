@@ -1,10 +1,29 @@
-import { createFileRoute } from "@tanstack/react-router"
+import { createFileRoute, stripSearchParams } from "@tanstack/react-router"
 
-import { PlaceholderPage } from "@/features/dashboard/components/placeholder-page"
+import {
+  adminTableSearchDefaults,
+  usersSearchSchema,
+  type UsersSearch,
+} from "@/features/admin/schemas"
+import { UsersPage } from "@/features/admin-users/components/users-page"
 import { dashboardPage } from "@/features/dashboard/overview-route"
+import { taxonomyQuery } from "@/features/listings/queries"
 
-// A later Phase 13 step replaces the component.
+const page = dashboardPage("/admin/users", "dashboard.nav_users")
+
 export const Route = createFileRoute("/$locale/admin/users")({
-  ...dashboardPage("/admin/users", "dashboard.nav_users"),
-  component: () => <PlaceholderPage titleKey="dashboard.nav_users" />,
+  validateSearch: usersSearchSchema,
+  search: {
+    middlewares: [stripSearchParams<UsersSearch>(adminTableSearchDefaults)],
+  },
+  ...page,
+  // The city column and the sheet read the taxonomy, so it loads first.
+  loader: async (args) => {
+    const [data] = await Promise.all([
+      page.loader(args),
+      args.context.queryClient.ensureQueryData(taxonomyQuery),
+    ])
+    return data
+  },
+  component: UsersPage,
 })

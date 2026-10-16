@@ -34,6 +34,8 @@ export const dealershipSchema = z.object({
   verified: z.boolean(),
   inventoryCount: z.number().int(),
   status: profileStatusSchema,
+  // Set on the public profile while the owner is banned: the page shows a notice and no contact.
+  unavailable: z.literal(true).optional(),
   createdAt: z.string(),
 })
 export type Dealership = z.infer<typeof dealershipSchema>
@@ -67,6 +69,8 @@ export const workshopSchema = z.object({
   rating: ratingSchema,
   verified: z.boolean(),
   status: profileStatusSchema,
+  // Set on the public profile while the owner is banned: the page shows a notice and no contact.
+  unavailable: z.literal(true).optional(),
   createdAt: z.string(),
 })
 export type Workshop = z.infer<typeof workshopSchema>
@@ -98,6 +102,8 @@ export const mechanicSchema = z.object({
   rating: ratingSchema,
   verified: z.boolean(),
   status: profileStatusSchema,
+  // Set on the public profile while the owner is banned: the page shows a notice and no contact.
+  unavailable: z.literal(true).optional(),
   createdAt: z.string(),
 })
 export type Mechanic = z.infer<typeof mechanicSchema>

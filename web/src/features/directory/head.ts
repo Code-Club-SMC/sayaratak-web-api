@@ -26,6 +26,8 @@ export function dealershipHead(
         locale: Locale
         slug: string
         image?: string
+        // The owner is banned: the page stays up with a notice, out of search engines.
+        unavailable?: true
       }
     | undefined,
   s: DealershipProfileSearch
@@ -49,5 +51,9 @@ export function dealershipHead(
       : s.page > 1
         ? `${base}?page=${s.page}`
         : base
-  return buildHead({ ...data, path, noindex: filtered })
+  return buildHead({
+    ...data,
+    path,
+    noindex: filtered || !!data.unavailable,
+  })
 }

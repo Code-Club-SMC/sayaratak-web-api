@@ -1,7 +1,7 @@
 import { z } from "zod"
 
 import { optional } from "@/features/search/schemas"
-import { requiredInt, requiredText } from "@/schemas/fields"
+import { requiredInt, requiredText, roleSchema } from "@/schemas/fields"
 import { banInputSchema } from "@/schemas/inputs"
 import {
   promotionTypeSchema,
@@ -58,6 +58,8 @@ export const adminListingsSearchSchema = adminTableSearchSchema.extend({
   cityId: optional(z.string().max(60)),
   sellerKind: z.enum(sellerKinds).default("all").catch("all"),
   promoted: optional(z.enum(["yes", "no"])),
+  // One person's listings, from the user sheet (13.8).
+  ownerId: optional(z.string().max(60)),
 })
 export type AdminListingsSearch = z.infer<typeof adminListingsSearchSchema>
 // A free promotion the admin gives a listing; it starts at once.
@@ -66,6 +68,12 @@ export const grantSchema = z.object({
   days: requiredInt(1, 365),
 })
 export type GrantForm = z.infer<typeof grantSchema>
+export const userStatuses = ["active", "banned"] as const
+export const usersSearchSchema = adminTableSearchSchema.extend({
+  role: optional(roleSchema),
+  status: optional(z.enum(userStatuses)),
+})
+export type UsersSearch = z.infer<typeof usersSearchSchema>
 export const reportTabs = ["open", "resolved"] as const
 export const reportsSearchSchema = adminTableSearchSchema.extend({
   tab: tabOf(reportTabs),

@@ -19,6 +19,7 @@ import {
 } from "../schemas"
 import { useDealershipProfileNavigation } from "../use-dealership-profile-navigation"
 import { BusinessAbout } from "./business-about"
+import { BusinessUnavailableNotice } from "./business-unavailable-notice"
 import { DealershipInventory } from "./dealership-inventory"
 import { DealershipJsonLd } from "./dealership-json-ld"
 
@@ -40,7 +41,7 @@ export function DealershipProfilePage({
   const name = d.name[locale] || d.name.ar
   const phone = d.phones[0]
   const contact: Parameters<typeof ContactActions>[0] | null =
-    me?.id === d.ownerId
+    me?.id === d.ownerId || d.unavailable
       ? null
       : {
           target: { type: "dealership", id: d.id, title: name },
@@ -70,9 +71,10 @@ export function DealershipProfilePage({
         verified={d.verified}
         rating={d.rating}
         cityId={d.cityId}
-        badge={<OpenNowBadge hours={d.hours} />}
+        badge={!d.unavailable && <OpenNowBadge hours={d.hours} />}
         actions={contact && <ContactActions {...contact} layout="row" />}
       />
+      {d.unavailable && <BusinessUnavailableNotice type="dealership" />}
       <Tabs value={search.tab} onValueChange={nav.onTab}>
         <TabsList aria-label={t("directory.profile_sections")}>
           {dealershipTabs.map((tab) => (
@@ -96,7 +98,7 @@ export function DealershipProfilePage({
             address={d.address}
             location={d.location}
             hours={d.hours}
-            phones={d.phones}
+            phones={d.unavailable ? [] : d.phones}
           />
         </TabsContent>
         <TabsContent value="reviews" className="pt-4">
@@ -111,7 +113,7 @@ export function DealershipProfilePage({
         </TabsContent>
       </Tabs>
       {contact && <MobileContactBar {...contact} />}
-      <DealershipJsonLd dealership={d} />
+      {!d.unavailable && <DealershipJsonLd dealership={d} />}
     </div>
   )
 }

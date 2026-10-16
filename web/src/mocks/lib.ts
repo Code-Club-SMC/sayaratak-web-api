@@ -81,6 +81,11 @@ export const businessOf = (user: Pick<UserRow, "id" | "role">) => {
     }
   return null
 }
+// A banned owner's business keeps its page (with a notice and no contact, see `unavailable`) but leaves directories, the map and the sitemap.
+export const ownerBanned = (ownerId: string) =>
+  !!find(db.users, ownerId)?.banned
+export const listed = (b: { status: string; ownerId: string }) =>
+  b.status === "active" && !ownerBanned(b.ownerId)
 export const findBusiness = (id: string) =>
   find(db.dealerships, id) ?? find(db.workshops, id) ?? find(db.mechanics, id)
 export const businessType = (id: string) =>

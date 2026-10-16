@@ -64,6 +64,7 @@ export function AdminListingsPage() {
     !!search.type ||
     !!search.cityId ||
     !!search.promoted ||
+    !!search.ownerId ||
     sellerKind !== "all"
 
   return (

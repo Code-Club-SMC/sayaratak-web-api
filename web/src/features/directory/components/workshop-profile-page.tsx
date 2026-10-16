@@ -16,6 +16,7 @@ import { directoryQueries } from "../queries"
 import { workshopTabs, type WorkshopProfileSearch } from "../workshop-schemas"
 import { useWorkshopProfileNavigation } from "../use-workshop-profile-navigation"
 import { BusinessAbout } from "./business-about"
+import { BusinessUnavailableNotice } from "./business-unavailable-notice"
 import { ServiceList } from "./service-list"
 import { WorkshopJsonLd } from "./workshop-json-ld"
 
@@ -34,7 +35,7 @@ export function WorkshopProfilePage({
   const onTab = useWorkshopProfileNavigation(slug)
   const name = w.name[locale] || w.name.ar
   const contact: Parameters<typeof ContactActions>[0] | null =
-    me?.id === w.ownerId
+    me?.id === w.ownerId || w.unavailable
       ? null
       : {
           target: { type: "workshop", id: w.id, title: name },
@@ -62,9 +63,10 @@ export function WorkshopProfilePage({
         verified={w.verified}
         rating={w.rating}
         cityId={w.cityId}
-        badge={<OpenNowBadge hours={w.hours} />}
+        badge={!w.unavailable && <OpenNowBadge hours={w.hours} />}
         actions={contact && <ContactActions {...contact} layout="row" />}
       />
+      {w.unavailable && <BusinessUnavailableNotice type="workshop" />}
       <Tabs value={search.tab} onValueChange={onTab}>
         <TabsList aria-label={t("directory.profile_sections")}>
           {workshopTabs.map((tab) => (
@@ -86,7 +88,7 @@ export function WorkshopProfilePage({
             address={w.address}
             location={w.location}
             hours={w.hours}
-            phones={[w.phone]}
+            phones={w.unavailable ? [] : [w.phone]}
           />
         </TabsContent>
         <TabsContent value="reviews" className="pt-4">
@@ -101,7 +103,7 @@ export function WorkshopProfilePage({
         </TabsContent>
       </Tabs>
       {contact && <MobileContactBar {...contact} />}
-      <WorkshopJsonLd workshop={w} />
+      {!w.unavailable && <WorkshopJsonLd workshop={w} />}
     </div>
   )
 }

@@ -1,8 +1,10 @@
 import { useQuery } from "@tanstack/react-query"
+import { XIcon } from "lucide-react"
 
 import { SelectInput } from "@/components/app/select-input"
 import { useT } from "@/lib/i18n/use-t"
 import { taxonomyQuery } from "@/features/listings/queries"
+import { adminQueries } from "@/features/admin/queries"
 import {
   adminListingTypes,
   adminListingsSearchSchema,
@@ -10,7 +12,7 @@ import {
   type AdminListingsSearch,
 } from "@/features/admin/schemas"
 
-// City, type, seller kind and promotion in the table toolbar. Clearing one drops it from the URL.
+// City, type, seller kind and promotion in the table toolbar, plus a chip for one person's listings (from the user sheet). Clearing one drops it from the URL.
 export function AdminListingFilters({
   search,
   onChange,
@@ -21,8 +23,26 @@ export function AdminListingFilters({
   const { t, locale } = useT()
   const { data: tax } = useQuery(taxonomyQuery)
   const { type, sellerKind, promoted } = adminListingsSearchSchema.shape
+  const owner = useQuery({
+    ...adminQueries.users({ id: search.ownerId }),
+    enabled: !!search.ownerId,
+  }).data?.items[0]
+  const ownerLabel = t("admin.listings_owner", {
+    name: owner?.fullName ?? search.ownerId,
+  })
   return (
     <>
+      {search.ownerId && (
+        <button
+          type="button"
+          aria-label={t("search.remove_filter", { label: ownerLabel })}
+          onClick={() => onChange({ ownerId: undefined })}
+          className="flex min-h-(--control-h) max-w-64 items-center gap-2 rounded-full bg-muted ps-4 pe-3 text-ui"
+        >
+          <bdi className="truncate">{ownerLabel}</bdi>
+          <XIcon aria-hidden className="size-4 shrink-0" />
+        </button>
+      )}
       <SelectInput
         className="w-40"
         aria-label={t("admin.city_filter")}

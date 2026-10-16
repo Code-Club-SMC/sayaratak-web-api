@@ -69,6 +69,7 @@ route("GET", "/admin/payments", (c) => {
   admin(c)
   const rows = db.payments
     .filter((p) => !c.query.get("status") || p.status === c.query.get("status"))
+    .filter((p) => !c.query.get("userId") || p.userId === c.query.get("userId"))
     .sort(byNewest)
   const page = listPage(
     c,

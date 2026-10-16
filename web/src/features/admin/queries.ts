@@ -260,7 +260,7 @@ export const useRejectVerification = () =>
 export const useApprovePayment = () =>
   useApiMutation(
     (id: string) => post(paymentSchema)(`/admin/payments/${id}/approve`),
-    [...touched, keys.billing.all, keys.listings.all]
+    [...touched, keys.billing.all, keys.listings.all, keys.ads.all]
   )
 export const useRejectPayment = () =>
   useApiMutation(

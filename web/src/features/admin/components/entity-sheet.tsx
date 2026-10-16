@@ -1,4 +1,4 @@
-import type { ReactNode } from "react"
+import { useRef, type ReactNode } from "react"
 
 import {
   Sheet,
@@ -26,17 +26,24 @@ export function EntitySheet({
   footer?: ReactNode
   children: ReactNode
 }) {
+  // Focus starts at the top of the body, not on its first control, which would scroll a long sheet (a receipt, documents) to the middle.
+  const body = useRef<HTMLDivElement>(null)
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent
         side="inline-end"
+        initialFocus={body}
         className="gap-0 data-[side=inline-end]:w-full data-[side=inline-end]:sm:max-w-lg"
       >
         <SheetHeader className="border-b pe-12">
           <SheetTitle>{title}</SheetTitle>
           {description && <SheetDescription>{description}</SheetDescription>}
         </SheetHeader>
-        <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain p-4">
+        <div
+          ref={body}
+          tabIndex={-1}
+          className="min-h-0 flex-1 overflow-y-auto overscroll-contain p-4 outline-none"
+        >
           {children}
         </div>
         {footer && (

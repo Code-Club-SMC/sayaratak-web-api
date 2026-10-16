@@ -2,6 +2,7 @@ import { broadcastSchema, okSchema } from "@/schemas/api"
 import {
   paymentSchema,
   planSchema,
+  type Payment,
   promotionPriceSchema,
   subscriptionSchema,
 } from "@/schemas/billing"
@@ -64,12 +65,28 @@ const khartoumMonth = (iso: string) =>
     .toLocaleDateString("en-CA", { timeZone: "Africa/Khartoum" })
     .slice(0, 7)
 
+// What approval of a payment starts: the plan's or promotion's days, the campaign's weeks.
+function orderOf(p: Payment) {
+  if (p.itemType === "plan")
+    return { durationDays: find(db.plans, p.itemId)?.durationDays ?? 0 }
+  if (p.itemType === "campaign")
+    return { durationDays: (find(db.campaigns, p.itemId)?.weeks ?? 0) * 7 }
+  const promotion = find(db.promotions, p.itemId)
+  const listing = promotion && find(db.listings, promotion.listingId)
+  return {
+    durationDays: promotion?.durationDays ?? 0,
+    promotionType: promotion?.type,
+    listing: listing && { slug: listing.slug, title: listing.title },
+  }
+}
+
 // A page of payments with the payer's name, plus the strip above the table: approved this month (Khartoum calendar), and what waits for review.
 route("GET", "/admin/payments", (c) => {
   admin(c)
   const rows = db.payments
     .filter((p) => !c.query.get("status") || p.status === c.query.get("status"))
     .filter((p) => !c.query.get("userId") || p.userId === c.query.get("userId"))
+    .filter((p) => !c.query.get("id") || p.id === c.query.get("id"))
     .sort(byNewest)
   const page = listPage(
     c,
@@ -87,6 +104,7 @@ route("GET", "/admin/payments", (c) => {
         id: p.userId,
         name: find(db.users, p.userId)?.fullName ?? p.payerName,
       },
+      order: orderOf(p),
     })),
     summary: {
       approvedThisMonth: db.payments

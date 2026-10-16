@@ -161,12 +161,21 @@ export const myPromotionsSchema = z.object({
   items: z.array(myPromotionSchema),
 }) // GET /me/promotions, newest first
 
-export const adminPaymentsPageSchema = pageOf(
-  paymentSchema.extend({ user: z.object({ id: idSchema, name: z.string() }) })
-).extend({
+// One payment row for the admin: the payer's account name, and what approval starts (13.10). `listing` is set for a promotion whose listing still exists.
+export const adminPaymentSchema = paymentSchema.extend({
+  user: z.object({ id: idSchema, name: z.string() }),
+  order: z.object({
+    durationDays: z.number().int(),
+    promotionType: promotionSchema.shape.type.optional(),
+    listing: z.object({ slug: z.string(), title: z.string() }).optional(),
+  }),
+})
+export type AdminPayment = z.infer<typeof adminPaymentSchema>
+export const adminPaymentsPageSchema = pageOf(adminPaymentSchema).extend({
   summary: z.object({
     approvedThisMonth: z.number().int(),
     pendingCount: z.number().int(),
     pendingAmount: z.number().int(),
   }), // SDG, calendar month in Africa/Khartoum
 })
+export type AdminPaymentsPage = z.infer<typeof adminPaymentsPageSchema>

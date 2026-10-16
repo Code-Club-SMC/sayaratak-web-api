@@ -249,7 +249,7 @@ export function seedPayments(
       reference: `SY-${String(100_000 + i * 137).slice(0, 6)}`,
       payerName: user.fullName,
       transactionRef: String(int(10_000_000, 99_999_999)),
-      receiptUrl: `/mock/receipt-0${(i % 3) + 1}.webp`,
+      receiptUrl: `/api/uploads/receipt-${i + 1}`,
       status: pending ? "pending_review" : rejected ? "rejected" : "approved",
       rejectionReason: rejected ? "رقم العملية غير مطابق" : undefined,
       createdAt: ago((i + 1) * int(4, 30) * 3_600_000),

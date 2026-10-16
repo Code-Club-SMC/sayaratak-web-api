@@ -115,9 +115,11 @@ export const verificationsSearchSchema = adminTableSearchSchema.extend({
   tab: tabOf(verificationTabs),
 })
 export type VerificationsSearch = z.infer<typeof verificationsSearchSchema>
-export const paymentsSearchSchema = z.object({
-  tab: tabOf(["pending", "approved", "rejected", "all"]),
+export const paymentTabs = ["pending", "approved", "rejected", "all"] as const
+export const paymentsSearchSchema = adminTableSearchSchema.extend({
+  tab: tabOf(paymentTabs),
 })
+export type PaymentsSearch = z.infer<typeof paymentsSearchSchema>
 export const plansSearchSchema = z.object({
   tab: tabOf(["user", "dealership", "workshop", "mechanic", "subscribers"]),
 })

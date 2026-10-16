@@ -26,6 +26,7 @@ import {
   seedVerifications,
   settings,
 } from "./site"
+import { seedReceipts } from "./receipts"
 import { countries, seedTaxonomy } from "./taxonomy"
 import { clock } from "./util"
 
@@ -77,6 +78,7 @@ export function buildSeed({ empty = false }: { empty?: boolean } = {}): Db {
   const { favorites, savedSearches } = empty
     ? { favorites: [], savedSearches: [] }
     : seedSaved(users, listings)
+  const payments = empty ? [] : seedPayments(users, listings, promotions)
   const owned = new Set(
     listings
       .filter((l) => l.ownerUserId === "u-omar" || l.ownerUserId === "u-dealer")
@@ -100,7 +102,7 @@ export function buildSeed({ empty = false }: { empty?: boolean } = {}): Db {
       : seedNotifications(users.filter((u) => demoIds.includes(u.id))),
     plans: structuredClone(plans),
     subscriptions: seedSubscriptions(),
-    payments: empty ? [] : seedPayments(users, listings, promotions),
+    payments,
     promotions,
     promotionPrices: structuredClone(promotionPrices),
     reports: empty ? [] : seedReports(listings, users),
@@ -137,7 +139,7 @@ export function buildSeed({ empty = false }: { empty?: boolean } = {}): Db {
         ]),
     contacts: [],
     broadcasts: [],
-    uploads: new Map(),
+    uploads: seedReceipts(payments, settings.bankakAccount.name),
     attempts: new Map(),
     codes: new Map(),
     resetTokens: new Map(),

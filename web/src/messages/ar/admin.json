@@ -268,5 +268,21 @@
   "admin.unban_body": "يستطيع تسجيل الدخول مجددًا، وتظهر إعلاناته وصفحة نشاطه التجاري من جديد.",
   "admin.user_banned_toast": "تم حظر المستخدم",
   "admin.user_unbanned_toast": "تم إلغاء حظر المستخدم",
-  "admin.listings_owner": "البائع: {{name}}"
+  "admin.listings_owner": "البائع: {{name}}",
+  "admin.approve_title": "الموافقة على هذا الإعلان؟",
+  "admin.approve_body": "سيظهر على الموقع، وسيُبلَّغ البائع، ويتلقى المشترون الذين لديهم بحث محفوظ مطابق تنبيهًا.",
+  "admin.approve_body_several": "ستظهر على الموقع، وسيُبلَّغ بائعوها، ويتلقى المشترون الذين لديهم بحث محفوظ مطابق تنبيهًا.",
+  "admin.restore_title": "استعادة هذا الإعلان؟",
+  "admin.bulk_approve_title_zero": "الموافقة على الإعلانات؟",
+  "admin.bulk_approve_title_one": "الموافقة على إعلان واحد؟",
+  "admin.bulk_approve_title_two": "الموافقة على إعلانين؟",
+  "admin.bulk_approve_title_few": "الموافقة على {{count}} إعلانات؟",
+  "admin.bulk_approve_title_many": "الموافقة على {{count}} إعلانًا؟",
+  "admin.bulk_approve_title_other": "الموافقة على {{count}} إعلان؟",
+  "admin.bulk_restore_title_zero": "استعادة الإعلانات؟",
+  "admin.bulk_restore_title_one": "استعادة إعلان واحد؟",
+  "admin.bulk_restore_title_two": "استعادة إعلانين؟",
+  "admin.bulk_restore_title_few": "استعادة {{count}} إعلانات؟",
+  "admin.bulk_restore_title_many": "استعادة {{count}} إعلانًا؟",
+  "admin.bulk_restore_title_other": "استعادة {{count}} إعلان؟"
 }

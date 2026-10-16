@@ -240,5 +240,13 @@
   "admin.unban_body": "They can sign in again, and their listings and business page show again.",
   "admin.user_banned_toast": "User banned",
   "admin.user_unbanned_toast": "User unbanned",
-  "admin.listings_owner": "Seller: {{name}}"
+  "admin.listings_owner": "Seller: {{name}}",
+  "admin.approve_title": "Approve this listing?",
+  "admin.approve_body": "It goes live on the site, the seller is notified and buyers with a matching saved search get an alert.",
+  "admin.approve_body_several": "They go live on the site, their sellers are notified and buyers with a matching saved search get an alert.",
+  "admin.restore_title": "Restore this listing?",
+  "admin.bulk_approve_title_one": "Approve {{count}} listing?",
+  "admin.bulk_approve_title_other": "Approve {{count}} listings?",
+  "admin.bulk_restore_title_one": "Restore {{count}} listing?",
+  "admin.bulk_restore_title_other": "Restore {{count}} listings?"
 }

@@ -36,6 +36,14 @@ const queue = () =>
 const notified = (userId: string, type: string) =>
   db.notifications.some((n) => n.userId === userId && n.type === type)
 
+// Every approve asks first (owner, 2026-10-16).
+const confirmApprove = async () =>
+  fireEvent.click(
+    within(await screen.findByRole("alertdialog")).getByRole("button", {
+      name: "Approve",
+    })
+  )
+
 describe("ModerationPage", () => {
   it("lists every pending listing and opens the newest", async () => {
     await open()
@@ -52,6 +60,10 @@ describe("ModerationPage", () => {
     await open()
     await queue()
     fireEvent.click(screen.getByRole("button", { name: /^Approve/ }))
+    expect(db.listings.find((l) => l.id === first!.id)?.moderation).toBe(
+      "pending"
+    )
+    await confirmApprove()
     await waitFor(() =>
       expect(
         within(
@@ -120,6 +132,7 @@ describe("ModerationPage", () => {
       ).toBe(second!.id)
     )
     fireEvent.keyDown(document.activeElement!, { code: "KeyA" })
+    await confirmApprove()
     await waitFor(() =>
       expect(db.listings.find((l) => l.id === second!.id)?.moderation).toBe(
         "approved"
@@ -150,6 +163,7 @@ describe("ModerationPage", () => {
     fireEvent.click(boxes[0]!)
     fireEvent.click(boxes[1]!)
     fireEvent.click(screen.getByRole("button", { name: "Approve selected" }))
+    await confirmApprove()
     await waitFor(() =>
       expect(
         [a!, b!].map((l) => db.listings.find((r) => r.id === l.id)?.moderation)

@@ -116,6 +116,29 @@ describe("AdminListingsPage", () => {
       expect((await get(`/listings/${l.slug}`)).status).toBe(404)
   })
 
+  it("bulk Approve asks first", async () => {
+    const waiting = () =>
+      db.listings.filter((l) => l.moderation === "pending").length
+    const before = waiting()
+    await open("/en/admin/listings?tab=pending")
+    const table = await screen.findByRole("table", { name: "All listings" })
+    const boxes = await within(table).findAllByRole("checkbox", {
+      name: "Select row",
+    })
+    fireEvent.click(boxes[0]!)
+    fireEvent.click(boxes[1]!)
+    const bar = await screen.findByRole("region", {
+      name: "Actions for selected rows",
+    })
+    fireEvent.click(within(bar).getByRole("button", { name: "Approve" }))
+    const confirm = await screen.findByRole("alertdialog", {
+      name: "Approve 2 listings?",
+    })
+    expect(waiting()).toBe(before)
+    fireEvent.click(within(confirm).getByRole("button", { name: "Approve" }))
+    await waitFor(() => expect(waiting()).toBe(before - 2))
+  })
+
   it("bulk Restore only touches removed rows", async () => {
     const [a, b] = db.listings.filter((l) => l.moderation === "approved")
     a!.moderation = "removed"
@@ -143,6 +166,12 @@ describe("AdminListingsPage", () => {
     let panel = await sheet()
     fireEvent.click(
       await within(panel).findByRole("button", { name: "Restore" })
+    )
+    expect(row.moderation).toBe("removed")
+    fireEvent.click(
+      within(await screen.findByRole("alertdialog")).getByRole("button", {
+        name: "Restore",
+      })
     )
     await waitFor(() => expect(row.moderation).toBe("approved"))
 

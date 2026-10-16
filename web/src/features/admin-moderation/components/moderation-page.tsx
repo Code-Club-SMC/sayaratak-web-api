@@ -21,6 +21,7 @@ import {
   type ModerationSearch,
 } from "@/features/admin/schemas"
 import { usePageTitle } from "@/features/dashboard/components/page-title"
+import { ConfirmDialog } from "@/components/app/confirm-dialog"
 import { PageHeader } from "@/components/app/page-header"
 import { Button } from "@/components/ui/button"
 import { toast } from "@/components/ui/toast"
@@ -57,6 +58,8 @@ export function ModerationPage() {
   const [gone, setGone] = useState<ReadonlySet<string>>(new Set())
   const [selected, setSelected] = useState<Set<string>>(new Set())
   const [rejecting, setRejecting] = useState<Listing | null>(null)
+  // The ids waiting for the approve confirm: one listing (button or A) or the checked rows.
+  const [approving, setApproving] = useState<string[] | null>(null)
   const [shortcuts, setShortcuts] = useShortcutsOn()
   const approve = useApproveListing()
   const reject = useRejectListing()
@@ -101,12 +104,20 @@ export function ModerationPage() {
       },
     })
   }
-  const approveOne = (l: Listing) =>
-    act([l.id], t("admin.listing_approved"), (o) => approve.mutate(l.id, o))
+  const approveIds = (ids: string[]) => {
+    const [id] = ids
+    if (id && ids.length === 1)
+      act([id], t("admin.listing_approved"), (o) => approve.mutate(id, o))
+    else
+      act(ids, t("admin.listings_approved", { count: ids.length }), (o) =>
+        bulk.mutate({ ids, action: "approve" }, o)
+      )
+    focusTitle()
+  }
 
   const onKeyDown = reviewKeyHandler(shortcuts, (action) => {
     if (!current) return
-    if (action === "approve") return approveOne(current)
+    if (action === "approve") return setApproving([current.id])
     if (action === "reject") return setRejecting(current)
     const next = items[index + (action === "next" ? 1 : -1)]
     if (!next) return
@@ -149,14 +160,7 @@ export function ModerationPage() {
             selected={selected}
             onSelect={setSelected}
             onOpen={(id) => go({ listing: id }, false)}
-            onApproveSelected={() => {
-              const ids = [...selected]
-              act(
-                ids,
-                t("admin.listings_approved", { count: ids.length }),
-                (o) => bulk.mutate({ ids, action: "approve" }, o)
-              )
-            }}
+            onApproveSelected={() => setApproving([...selected])}
           />
         </div>
         <div
@@ -182,7 +186,7 @@ export function ModerationPage() {
               actions={
                 <ReviewActions
                   shortcuts={shortcuts}
-                  onApprove={() => approveOne(current)}
+                  onApprove={() => setApproving([current.id])}
                   onReject={() => setRejecting(current)}
                   onRemove={() => {
                     act([current.id], t("admin.listing_removed"), (o) =>
@@ -199,6 +203,26 @@ export function ModerationPage() {
           )}
         </div>
       </div>
+      <ConfirmDialog
+        open={!!approving}
+        onOpenChange={(open) => !open && setApproving(null)}
+        title={
+          approving && approving.length > 1
+            ? t("admin.bulk_approve_title", { count: approving.length })
+            : t("admin.approve_title")
+        }
+        description={t(
+          approving && approving.length > 1
+            ? "admin.approve_body_several"
+            : "admin.approve_body"
+        )}
+        confirmLabel={t("admin.approve")}
+        onConfirm={() => {
+          if (!approving) return
+          setApproving(null)
+          approveIds(approving)
+        }}
+      />
       <ReasonDialog
         open={!!rejecting}
         onOpenChange={(open) => !open && setRejecting(null)}

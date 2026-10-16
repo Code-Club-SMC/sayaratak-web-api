@@ -2,8 +2,8 @@ import { errorText } from "@/lib/api/error-text"
 import { useT } from "@/lib/i18n/use-t"
 import { useBulkListings } from "@/features/admin/queries"
 import type { AdminListingsSearch } from "@/features/admin/schemas"
+import { ConfirmButton } from "@/components/app/confirm-button"
 import { RemoveButton } from "@/components/app/remove-button"
-import { Button } from "@/components/ui/button"
 import { toast } from "@/components/ui/toast"
 
 type Action = "approve" | "remove" | "restore"
@@ -34,23 +34,27 @@ export function AdminListingBulkActions({
   return (
     <>
       {["all", "pending", "rejected"].includes(tab) && (
-        <Button
-          type="button"
+        <ConfirmButton
           disabled={bulk.isPending}
-          onClick={() => run("approve")}
+          title={t("admin.bulk_approve_title", { count: ids.length })}
+          description={t("admin.approve_body_several")}
+          confirmLabel={t("admin.approve")}
+          onConfirm={() => run("approve")}
         >
           {t("admin.approve")}
-        </Button>
+        </ConfirmButton>
       )}
       {["all", "removed"].includes(tab) && (
-        <Button
-          type="button"
+        <ConfirmButton
           variant="outline"
           disabled={bulk.isPending}
-          onClick={() => run("restore")}
+          title={t("admin.bulk_restore_title", { count: ids.length })}
+          description={t("admin.approve_body_several")}
+          confirmLabel={t("admin.restore")}
+          onConfirm={() => run("restore")}
         >
           {t("admin.restore")}
-        </Button>
+        </ConfirmButton>
       )}
       {tab !== "removed" && (
         <RemoveButton

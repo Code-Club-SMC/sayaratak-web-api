@@ -14,6 +14,7 @@ import {
   useRestoreListing,
 } from "@/features/admin/queries"
 import { ListingReview } from "@/features/admin-moderation/components/listing-review"
+import { ConfirmButton } from "@/components/app/confirm-button"
 import { RemoveButton } from "@/components/app/remove-button"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -55,15 +56,17 @@ export function AdminListingSheet({
   const footer = listing && (
     <>
       {(m === "pending" || m === "rejected") && (
-        <Button
-          type="button"
+        <ConfirmButton
           disabled={approve.isPending}
-          onClick={() =>
+          title={t("admin.approve_title")}
+          description={t("admin.approve_body")}
+          confirmLabel={t("admin.approve")}
+          onConfirm={() =>
             approve.mutate(listing.id, settle(t("admin.listing_approved")))
           }
         >
           {t("admin.approve")}
-        </Button>
+        </ConfirmButton>
       )}
       {(m === "pending" || m === "approved") && (
         <Button
@@ -75,15 +78,17 @@ export function AdminListingSheet({
         </Button>
       )}
       {m === "removed" ? (
-        <Button
-          type="button"
+        <ConfirmButton
           disabled={restore.isPending}
-          onClick={() =>
+          title={t("admin.restore_title")}
+          description={t("admin.approve_body")}
+          confirmLabel={t("admin.restore")}
+          onConfirm={() =>
             restore.mutate(listing.id, settle(t("admin.listing_restored")))
           }
         >
           {t("admin.restore")}
-        </Button>
+        </ConfirmButton>
       ) : (
         <RemoveButton
           variant="ghost"

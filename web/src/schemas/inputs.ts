@@ -273,15 +273,21 @@ export const banInputSchema = z.object({
 export const reportActionInputSchema = noteInputSchema.extend({
   ban: banInputSchema.optional(),
 })
+// `reason` goes with a suspension.
 export const businessAdminPatchSchema = z
-  .object({ status: z.enum(["active", "suspended"]), verified: z.boolean() })
+  .object({
+    status: z.enum(["active", "suspended"]),
+    verified: z.boolean(),
+    reason: z.string().trim().min(1).max(300),
+  })
   .partial()
 // A plan for one business; price, limit and duration are optional custom values copied into the subscription.
 export const assignPlanInputSchema = z.object({
   planId: z.string().min(1),
   price: z.number().int().min(0).optional(),
-  limit: z.number().int().min(1).nullable().optional(),
+  limit: z.number().int().min(0).nullable().optional(),
   durationDays: z.number().int().min(1).optional(),
+  note: z.string().max(200).optional(),
 })
 export const grantInputSchema = z.object({
   listingId: z.string().min(1),

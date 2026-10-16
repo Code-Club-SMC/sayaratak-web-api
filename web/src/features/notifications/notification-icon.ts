@@ -1,6 +1,7 @@
 import {
   BadgeCheckIcon,
   BookmarkIcon,
+  BuildingIcon,
   CircleAlertIcon,
   CircleCheckIcon,
   CircleXIcon,
@@ -24,5 +25,6 @@ export const notificationIcon: Record<Notification["type"], LucideIcon> = {
   payment_rejected: CircleAlertIcon,
   subscription_expiring: ClockIcon,
   verification_result: BadgeCheckIcon,
+  business_status: BuildingIcon,
   broadcast: MegaphoneIcon,
 }

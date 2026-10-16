@@ -8,6 +8,7 @@ import { PlanReminderDialog } from "@/features/billing/components/plan-reminder-
 import { DashboardSidebar } from "./dashboard-sidebar"
 import { DashboardTopbar } from "./dashboard-topbar"
 import { PageTitleProvider } from "./page-title"
+import { SuspendedNotice } from "./suspended-notice"
 
 // The collapse state lives in the `sidebar_state` cookie that the Sidebar writes. The route is client-only, so the cookie is there at first render.
 const sidebarOpen = () => !/(?:^|; )sidebar_state=false/.test(document.cookie)
@@ -36,6 +37,7 @@ export function DashboardLayout() {
             tabIndex={-1}
             className="mx-auto w-full max-w-[1440px] flex-1 p-4 outline-none md:p-6 xl:p-8"
           >
+            {me.role !== "user" && me.role !== "admin" && <SuspendedNotice />}
             <Outlet />
           </main>
         </div>

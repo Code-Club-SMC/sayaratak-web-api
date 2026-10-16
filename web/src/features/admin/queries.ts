@@ -5,6 +5,7 @@ import { apiFetch } from "@/lib/api/client"
 import { useApiMutation } from "@/lib/api/mutation"
 import { keys } from "@/lib/api/query-keys"
 import {
+  adminBusinessSchema,
   adminListingSchema,
   adminUserSchema,
   adminReportSchema,
@@ -18,7 +19,6 @@ import {
   type Settings,
 } from "@/schemas/admin"
 import {
-  adminBusinessSchema,
   broadcastSchema,
   okSchema,
   taxonomyRowSchema,
@@ -41,7 +41,9 @@ import {
   myPromotionSchema,
 } from "@/schemas/responses"
 import type {
+  assignPlanInputSchema,
   banInputSchema,
+  businessAdminPatchSchema,
   bannerInputSchema,
   broadcastInputSchema,
   grantInputSchema,
@@ -222,28 +224,21 @@ export const useUnbanUser = () =>
     (id: string) => post(userSchema)(`/admin/users/${id}/unban`, {}),
     withPublic
   )
+// Verified, suspend (with a reason) and reactivate all change what the public side shows.
 export const useUpdateBusinessAdmin = () =>
   useApiMutation(
     ({
       id,
       ...body
-    }: {
-      id: string
-      status?: "active" | "suspended"
-      verified?: boolean
-    }) => patch(adminBusinessSchema)(`/admin/businesses/${id}`, body),
-    [
-      ...touched,
-      keys.directory.all("dealerships"),
-      keys.directory.all("workshops"),
-      keys.directory.all("mechanics"),
-    ]
+    }: { id: string } & z.input<typeof businessAdminPatchSchema>) =>
+      patch(adminBusinessSchema)(`/admin/businesses/${id}`, body),
+    withPublic
   )
 export const useAssignPlan = () =>
   useApiMutation(
-    ({ id, planId }: { id: string; planId: string }) =>
-      post(okSchema)(`/admin/businesses/${id}/assign-plan`, { planId }),
-    touched
+    ({ id, ...body }: { id: string } & z.input<typeof assignPlanInputSchema>) =>
+      post(adminBusinessSchema)(`/admin/businesses/${id}/assign-plan`, body),
+    [...withPublic, keys.billing.all]
   )
 // The badge shows on the business page, in directories and on its listings.
 export const useApproveVerification = () =>

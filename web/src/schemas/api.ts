@@ -1,7 +1,5 @@
 import { z } from "zod"
 
-import { bilingualSchema } from "./fields"
-
 export const eventTypeSchema = z.enum([
   "view",
   "phone_click",
@@ -78,16 +76,6 @@ export const listingAnalyticsSchema = z.object({
 })
 export type ListingAnalytics = z.infer<typeof listingAnalyticsSchema>
 
-export const adminBusinessSchema = z.object({
-  id: z.string(),
-  type: z.enum(["dealership", "workshop", "mechanic"]),
-  name: bilingualSchema,
-  ownerId: z.string(),
-  cityId: z.string(),
-  verified: z.boolean(),
-  status: z.enum(["active", "suspended"]),
-  createdAt: z.string(),
-})
 export const broadcastSchema = z.object({
   id: z.string(),
   audience: z.enum(["all", "user", "dealership", "workshop", "mechanic"]),

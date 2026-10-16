@@ -1,7 +1,13 @@
 import { z } from "zod"
 
 import { optional } from "@/features/search/schemas"
-import { requiredInt, requiredText, roleSchema } from "@/schemas/fields"
+import {
+  optionalInt,
+  optionalText,
+  requiredInt,
+  requiredText,
+  roleSchema,
+} from "@/schemas/fields"
 import { banInputSchema } from "@/schemas/inputs"
 import {
   promotionTypeSchema,
@@ -74,6 +80,23 @@ export const usersSearchSchema = adminTableSearchSchema.extend({
   status: optional(z.enum(userStatuses)),
 })
 export type UsersSearch = z.infer<typeof usersSearchSchema>
+// Dealerships, workshops and mechanics (13.9): one page per type, the same filters.
+export const businessesSearchSchema = adminTableSearchSchema.extend({
+  cityId: optional(z.string().max(60)),
+  verified: optional(z.enum(["yes", "no"])),
+  status: optional(z.enum(["active", "suspended"])),
+  planId: optional(z.string().max(60)),
+})
+export type BusinessesSearch = z.infer<typeof businessesSearchSchema>
+// Empty override fields take the plan's own values. This is the client's "custom pricing" for dealerships.
+export const assignPlanSchema = z.object({
+  planId: z.string().min(1, "validation.required"),
+  customPrice: optionalInt(0, 9_999_999_999),
+  customLimit: optionalInt(0, 10000),
+  durationDays: optionalInt(1, 730),
+  note: optionalText(200),
+})
+export type AssignPlanForm = z.infer<typeof assignPlanSchema>
 export const reportTabs = ["open", "resolved"] as const
 export const reportsSearchSchema = adminTableSearchSchema.extend({
   tab: tabOf(reportTabs),

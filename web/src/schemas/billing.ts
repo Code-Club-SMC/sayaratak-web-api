@@ -36,6 +36,8 @@ export const subscriptionSchema = z.object({
     used: z.number().int(),
     limit: z.number().int().nullable(),
   }),
+  // The admin's note when they assigned the plan.
+  note: z.string().optional(),
 })
 export type Subscription = z.infer<typeof subscriptionSchema>
 

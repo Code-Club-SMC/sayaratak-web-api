@@ -2,6 +2,7 @@ import type { ReactNode } from "react"
 
 import { UsageMeter } from "@/components/app/usage-meter"
 import { Badge } from "@/components/ui/badge"
+import { formatDate } from "@/lib/format"
 import { useT } from "@/lib/i18n/use-t"
 import { useNow } from "@/lib/now"
 import { cn } from "@/lib/utils"
@@ -69,11 +70,17 @@ export function PlanSummary({
       />
       <div className="flex flex-col gap-1.5">
         <p className="text-ui text-muted-foreground">
-          {days === null
-            ? t("billing.no_end")
-            : days <= 0
-              ? t("billing.ends_today")
-              : t("billing.ends_in", { count: days })}
+          {/* The billing page also gives the date; the sidebar card keeps the short form. */}
+          {size === "md" && subscription && days !== null && days > 0
+            ? t("billing.ends_on", {
+                date: formatDate(subscription.endsAt, locale),
+                count: days,
+              })
+            : days === null
+              ? t("billing.no_end")
+              : days <= 0
+                ? t("billing.ends_today")
+                : t("billing.ends_in", { count: days })}
         </p>
         {/* The time left of the period; the line above says it in words. */}
         {left !== null && (

@@ -1,4 +1,3 @@
-import { adminBusinessSchema, okSchema } from "@/schemas/api"
 import {
   activitySchema,
   adminSearchSchema,
@@ -12,11 +11,9 @@ import {
   type VerificationRequest,
 } from "@/schemas/admin"
 import {
-  assignPlanInputSchema,
   adminListingPatchSchema,
   banInputSchema,
   bulkInputSchema,
-  businessAdminPatchSchema,
   rejectInputSchema,
 } from "@/schemas/inputs"
 import { listingSchema } from "@/schemas/listing"
@@ -24,11 +21,10 @@ import { pageOf } from "@/schemas/fields"
 import type { z } from "zod"
 import { both } from "@/mocks/seed/util"
 
-import { db, find, insert, newId } from "../db"
+import { db, find } from "../db"
 import { fail, needRole, route, type Ctx } from "../http"
 import {
   DAY_MS,
-  businessType,
   byNewest,
   dayKey,
   findBusiness,
@@ -393,58 +389,6 @@ for (const ban of [true, false]) {
     return publicUser(user)
   })
 }
-
-const allBusinesses = () => [
-  ...db.dealerships.map((b) => ({ ...b, type: "dealership" as const })),
-  ...db.workshops.map((b) => ({ ...b, type: "workshop" as const })),
-  ...db.mechanics.map((b) => ({ ...b, type: "mechanic" as const })),
-]
-route("GET", "/admin/businesses", (c) => {
-  admin(c)
-  const rows = allBusinesses()
-    .filter((b) => !c.query.get("type") || b.type === c.query.get("type"))
-    .sort(byNewest)
-  return pageOf(adminBusinessSchema).parse(
-    listPage(c, rows, (b) => textOf(b.name))
-  )
-})
-route("PATCH", "/admin/businesses/:id", async (c) => {
-  admin(c)
-  const row = findBusiness(c.params.id ?? "")
-  const type = businessType(c.params.id ?? "")
-  if (!row || !type) throw fail(404, "not_found")
-  Object.assign(row, await c.body(businessAdminPatchSchema))
-  return adminBusinessSchema.parse({ ...row, type })
-})
-// A custom plan for one business: replaces its active subscription.
-route("POST", "/admin/businesses/:id/assign-plan", async (c) => {
-  admin(c)
-  const row = findBusiness(c.params.id ?? "")
-  const input = await c.body(assignPlanInputSchema)
-  const plan = find(db.plans, input.planId)
-  if (!row || !plan) throw fail(404, "not_found")
-  for (const s of db.subscriptions)
-    if (s.userId === row.ownerId && s.status === "active") s.status = "canceled"
-  insert(db.subscriptions, {
-    id: newId("sub"),
-    userId: row.ownerId,
-    planId: plan.id,
-    status: "active",
-    startsAt: nowIso(),
-    endsAt: new Date(
-      Date.now() + (input.durationDays ?? plan.durationDays) * DAY_MS
-    ).toISOString(),
-    price: input.price ?? plan.price,
-    usage: {
-      used: 0,
-      limit:
-        input.limit === undefined
-          ? (plan.listingLimit ?? plan.vehicleLimit ?? null)
-          : input.limit,
-    },
-  })
-  return okSchema.parse({ ok: true })
-})
 
 // `status` filters the tab; `id` returns that one request, for a sheet opened from a link; `q` matches the business and owner names.
 const verificationRow = (v: VerificationRequest) => {

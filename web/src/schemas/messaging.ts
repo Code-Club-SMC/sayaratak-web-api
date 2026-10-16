@@ -48,6 +48,7 @@ export const notificationSchema = z.object({
     "payment_rejected",
     "subscription_expiring",
     "verification_result",
+    "business_status",
     "broadcast",
   ]),
   // Both languages are stored; the UI shows the active locale.

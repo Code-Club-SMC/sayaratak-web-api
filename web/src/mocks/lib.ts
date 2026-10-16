@@ -34,6 +34,7 @@ const prefOf: Record<Notification["type"], keyof NotificationPrefs> = {
   listing_approved: "updates",
   listing_rejected: "updates",
   verification_result: "updates",
+  business_status: "updates",
   saved_search_match: "savedSearchMatches",
   review_new: "reviews",
   payment_approved: "billing",

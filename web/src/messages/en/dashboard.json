@@ -400,5 +400,9 @@
   "dashboard.portfolio_move_earlier": "Move {{name}} earlier",
   "dashboard.portfolio_move_later": "Move {{name}} later",
   "dashboard.portfolio_delete_title": "Delete this photo?",
-  "dashboard.portfolio_delete_body": "It will no longer show on your public page."
+  "dashboard.portfolio_delete_body": "It will no longer show on your public page.",
+  "dashboard.suspended_title": "Your page is suspended",
+  "dashboard.suspended_body": "Visitors cannot see your page or your listings until it is reactivated. You can still use your dashboard.",
+  "dashboard.suspended_reason": "Reason: {{reason}}",
+  "dashboard.suspended_contact": "Contact support"
 }

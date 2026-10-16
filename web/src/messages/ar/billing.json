@@ -238,5 +238,11 @@
   "billing.reminder_title": "باقة {{plan}} على بُعد خطوة واحدة",
   "billing.reminder_body": "اخترت باقة {{plan}} عند إعداد حسابك. ادفع {{price}} بتحويل بنكك وارفع الإيصال، وتستمر {{days}} يومًا من يوم موافقتنا. حتى ذلك الحين تبقى على باقة {{free}} ويبقى كل ما لديك كما هو.",
   "billing.reminder_keep_free": "البقاء على باقة {{plan}}",
-  "billing.reminder_later": "ليس الآن"
+  "billing.reminder_later": "ليس الآن",
+  "billing.ends_on_zero": "تنتهي في {{date}} · بعد {{count}} يوم",
+  "billing.ends_on_one": "تنتهي في {{date}} · بعد يوم واحد",
+  "billing.ends_on_two": "تنتهي في {{date}} · بعد يومين",
+  "billing.ends_on_few": "تنتهي في {{date}} · بعد {{count}} أيام",
+  "billing.ends_on_many": "تنتهي في {{date}} · بعد {{count}} يومًا",
+  "billing.ends_on_other": "تنتهي في {{date}} · بعد {{count}} يوم"
 }

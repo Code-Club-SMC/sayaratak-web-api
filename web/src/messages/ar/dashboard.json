@@ -408,5 +408,9 @@
   "dashboard.portfolio_move_earlier": "تقديم {{name}}",
   "dashboard.portfolio_move_later": "تأخير {{name}}",
   "dashboard.portfolio_delete_title": "حذف هذه الصورة؟",
-  "dashboard.portfolio_delete_body": "لن تظهر في صفحتك العامة بعد الآن."
+  "dashboard.portfolio_delete_body": "لن تظهر في صفحتك العامة بعد الآن.",
+  "dashboard.suspended_title": "صفحتك موقوفة",
+  "dashboard.suspended_body": "لا يرى الزوار صفحتك ولا إعلاناتك حتى تُعاد تفعيلها. يمكنك استخدام لوحتك كالمعتاد.",
+  "dashboard.suspended_reason": "السبب: {{reason}}",
+  "dashboard.suspended_contact": "تواصل مع الدعم"
 }

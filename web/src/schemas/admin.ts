@@ -2,7 +2,8 @@ import { z } from "zod"
 
 import { bilingualSchema, idSchema, localeSchema } from "./fields"
 import { listingSchema } from "./listing"
-import { reviewSchema, targetTypeSchema } from "./review"
+import { profileStatusSchema } from "./profile"
+import { ratingSchema, reviewSchema, targetTypeSchema } from "./review"
 import { userSchema } from "./user"
 
 // A banner is a photo with real text on top, one set of text per language (so it reads on a phone, to a screen reader and in the admin form). `focus` is the photo's vertical focal point in percent: the crop keeps it in view. A banner without `copy` is a finished image (the older form) and shows as is.
@@ -127,6 +128,43 @@ export const adminVerificationSchema = verificationRequestSchema.extend({
     .nullable(),
 })
 export type AdminVerification = z.infer<typeof adminVerificationSchema>
+
+// A row of `GET /admin/businesses`: the business with its owner, its plan (the active subscription, else the free plan) and, for a dealership, its live listings.
+export const adminBusinessSchema = z.object({
+  id: idSchema,
+  type: targetTypeSchema,
+  name: bilingualSchema,
+  slug: z.string(),
+  imageUrl: z.string(),
+  cityId: z.string(),
+  phone: z.string(),
+  whatsapp: z.string().nullable(),
+  ownerId: idSchema,
+  owner: z
+    .object({
+      name: z.string(),
+      phone: z.string().optional(),
+      email: z.string().optional(),
+    })
+    .nullable(),
+  verified: z.boolean(),
+  status: profileStatusSchema,
+  suspendedReason: z.string().optional(),
+  rating: ratingSchema,
+  listings: z.number().int().nullable(),
+  plan: z.object({
+    id: idSchema,
+    name: bilingualSchema,
+    price: z.number().int(),
+    // Null on a free plan with no subscription.
+    endsAt: z.string().nullable(),
+    used: z.number().int(),
+    limit: z.number().int().nullable(),
+    note: z.string().optional(),
+  }),
+  createdAt: z.string(),
+})
+export type AdminBusiness = z.infer<typeof adminBusinessSchema>
 
 export const sitePageSchema = z.object({
   slug: z.enum(["about", "contact", "privacy", "terms"]),

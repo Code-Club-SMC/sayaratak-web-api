@@ -210,5 +210,7 @@
   "billing.reminder_title": "Your {{plan}} plan is one step away",
   "billing.reminder_body": "You picked {{plan}} when you set up your account. Pay {{price}} by Bankak transfer and upload the receipt; it runs for {{days}} days from the day we approve it. Until then you stay on {{free}} and keep everything you have.",
   "billing.reminder_keep_free": "Keep {{plan}}",
-  "billing.reminder_later": "Not now"
+  "billing.reminder_later": "Not now",
+  "billing.ends_on_one": "Ends {{date}} · in {{count}} day",
+  "billing.ends_on_other": "Ends {{date}} · in {{count}} days"
 }

@@ -34,6 +34,8 @@ export const dealershipSchema = z.object({
   verified: z.boolean(),
   inventoryCount: z.number().int(),
   status: profileStatusSchema,
+  // Why the admin suspended it; the owner's dashboard shows it.
+  suspendedReason: z.string().optional(),
   // Set on the public profile while the owner is banned: the page shows a notice and no contact.
   unavailable: z.literal(true).optional(),
   createdAt: z.string(),
@@ -69,6 +71,8 @@ export const workshopSchema = z.object({
   rating: ratingSchema,
   verified: z.boolean(),
   status: profileStatusSchema,
+  // Why the admin suspended it; the owner's dashboard shows it.
+  suspendedReason: z.string().optional(),
   // Set on the public profile while the owner is banned: the page shows a notice and no contact.
   unavailable: z.literal(true).optional(),
   createdAt: z.string(),
@@ -102,6 +106,8 @@ export const mechanicSchema = z.object({
   rating: ratingSchema,
   verified: z.boolean(),
   status: profileStatusSchema,
+  // Why the admin suspended it; the owner's dashboard shows it.
+  suspendedReason: z.string().optional(),
   // Set on the public profile while the owner is banned: the page shows a notice and no contact.
   unavailable: z.literal(true).optional(),
   createdAt: z.string(),

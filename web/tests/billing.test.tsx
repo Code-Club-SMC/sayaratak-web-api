@@ -111,7 +111,7 @@ describe("BillingPage, plan tab", () => {
     const current = await screen.findByRole("region", { name: "Your plan" })
     expect(within(current).getByText(growth().name.en)).toBeTruthy()
     expect(within(current).getByText("Active")).toBeTruthy()
-    expect(within(current).getByText(/Ends in \d+ days/)).toBeTruthy()
+    expect(within(current).getByText(/Ends .+ · in \d+ days/)).toBeTruthy()
     expect(within(current).getByRole("meter")).toBeTruthy()
     expect(screen.getByText("Your current plan")).toBeTruthy()
     expect(screen.getByRole("button", { name: "Upgrade to Pro" })).toBeTruthy()

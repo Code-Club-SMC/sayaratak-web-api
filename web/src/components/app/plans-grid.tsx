@@ -23,15 +23,13 @@ export function PlansGrid(props: Props) {
   const { t, locale } = useT()
   const name = useId()
   const { plans } = props
-  const dealer = plans.some((p) => p.vehicleLimit !== undefined)
+  const dealer = plans.some((p) => p.audience === "dealership")
   const features = [
     ...new Set(plans.flatMap((p) => p.features.map((f) => f[locale]))),
   ]
   const rowsOf = (plan: Plan): PlanRow[] => {
-    const limit = plan.vehicleLimit ?? plan.listingLimit
-    const hasLimits = plans.some(
-      (p) => (p.vehicleLimit ?? p.listingLimit) !== undefined
-    )
+    const limit = plan.listingLimit
+    const hasLimits = plans.some((p) => p.listingLimit !== undefined)
     return [
       ...(hasLimits
         ? [

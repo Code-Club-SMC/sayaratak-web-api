@@ -7,6 +7,8 @@ import { keys } from "@/lib/api/query-keys"
 import {
   adminBusinessSchema,
   adminListingSchema,
+  adminPlanSchema,
+  adminSubscriptionSchema,
   adminUserSchema,
   adminReportSchema,
   adminReviewSchema,
@@ -25,12 +27,7 @@ import {
   type Range,
   type taxonomyTypeSchema,
 } from "@/schemas/api"
-import {
-  paymentSchema,
-  planSchema,
-  promotionPriceSchema,
-  subscriptionSchema,
-} from "@/schemas/billing"
+import { paymentSchema, promotionPriceSchema } from "@/schemas/billing"
 import { pageOf } from "@/schemas/fields"
 import {
   activitySchema,
@@ -49,6 +46,7 @@ import type {
   grantInputSchema,
   adminListingPatchSchema,
   pagePatchSchema,
+  planInputSchema,
   reportActionInputSchema,
 } from "@/schemas/inputs"
 import { listingSchema, type PromotionType } from "@/schemas/listing"
@@ -111,9 +109,14 @@ export const adminQueries = {
         }),
       placeholderData: keepPreviousData,
     }),
-  plans: adminPlain("plans", "/admin/plans", z.array(planSchema)),
+  plans: adminPlain("plans", "/admin/plans", z.array(adminPlanSchema)),
   subscriptions: (p?: Params) =>
-    adminList("subscriptions", "/admin/subscriptions", subscriptionSchema, p),
+    adminList(
+      "subscriptions",
+      "/admin/subscriptions",
+      adminSubscriptionSchema,
+      p
+    ),
   promotionPrices: adminPlain(
     "promotion-prices",
     "/admin/promotion-prices",
@@ -270,8 +273,8 @@ export const useRejectPayment = () =>
   )
 export const useCreatePlan = () =>
   useApiMutation(
-    (body: Omit<z.input<typeof planSchema>, "id">) =>
-      post(planSchema)("/admin/plans", body),
+    (body: z.input<typeof planInputSchema>) =>
+      post(adminPlanSchema)("/admin/plans", body),
     [...touched, keys.billing.all]
   )
 export const useUpdatePlan = () =>
@@ -279,8 +282,9 @@ export const useUpdatePlan = () =>
     ({
       id,
       ...body
-    }: { id: string } & Partial<Omit<z.input<typeof planSchema>, "id">>) =>
-      patch(planSchema)(`/admin/plans/${id}`, body),
+    }: { id: string } & Partial<
+      Omit<z.input<typeof planInputSchema>, "audience">
+    >) => patch(adminPlanSchema)(`/admin/plans/${id}`, body),
     [...touched, keys.billing.all]
   )
 export const useDeletePlan = () =>
@@ -410,7 +414,7 @@ export const useUpdatePage = () =>
 export const useUpdateSettings = () =>
   useApiMutation(
     (body: Partial<Settings>) => patch(settingsSchema)("/admin/settings", body),
-    [...touched, keys.content.site]
+    [...touched, keys.content.site, keys.billing.all]
   )
 export const useCreateBackup = () =>
   useApiMutation(() => post(backupSchema)("/admin/backups"), touched)

@@ -1,10 +1,8 @@
 import { broadcastSchema, okSchema } from "@/schemas/api"
 import {
   paymentSchema,
-  planSchema,
   type Payment,
   promotionPriceSchema,
-  subscriptionSchema,
 } from "@/schemas/billing"
 import { pageOf } from "@/schemas/fields"
 import {
@@ -26,8 +24,6 @@ import {
   byNewest,
   listPage,
   listingById,
-  listingLimit,
-  listingUsage,
   nowIso,
   notify,
   promotionView,
@@ -137,7 +133,7 @@ route("POST", "/admin/payments/:id/approve", (c) => {
       startsAt: nowIso(),
       endsAt: new Date(Date.now() + plan.durationDays * DAY_MS).toISOString(),
       price: plan.price,
-      usage: { used: 0, limit: plan.listingLimit ?? plan.vehicleLimit ?? null },
+      usage: { used: 0, limit: plan.listingLimit ?? null },
     })
   } else if (row.itemType === "campaign") {
     const campaign = find(db.campaigns, row.itemId)
@@ -183,52 +179,6 @@ route("POST", "/admin/payments/:id/reject", async (c) => {
     "/billing"
   )
   return paymentSchema.parse(row)
-})
-
-const planInput = planSchema.omit({ id: true })
-route(
-  "GET",
-  "/admin/plans",
-  (c) => (
-    admin(c),
-    db.plans
-      .map((p) => planSchema.parse(p))
-      .sort((a, b) => a.sortOrder - b.sortOrder)
-  )
-)
-route("POST", "/admin/plans", async (c) => {
-  admin(c)
-  return planSchema.parse(
-    insert(db.plans, { id: newId("plan"), ...(await c.body(planInput)) })
-  )
-})
-route("PATCH", "/admin/plans/:id", async (c) => {
-  admin(c)
-  const row = find(db.plans, c.params.id ?? "")
-  if (!row) throw fail(404, "not_found")
-  Object.assign(row, await c.body(planInput.partial()))
-  return planSchema.parse(row)
-})
-route("DELETE", "/admin/plans/:id", (c) => {
-  admin(c)
-  if (db.subscriptions.some((s) => s.planId === c.params.id))
-    throw fail(409, "in_use")
-  if (!remove(db.plans, c.params.id ?? "")) throw fail(404, "not_found")
-  return okSchema.parse({ ok: true })
-})
-
-route("GET", "/admin/subscriptions", (c) => {
-  admin(c)
-  const rows = db.subscriptions.map((s) => ({
-    ...s,
-    usage: { used: listingUsage(s.userId), limit: listingLimit(s.userId) },
-  }))
-  return pageOf(subscriptionSchema).parse(
-    listPage(
-      c,
-      rows.sort((a, b) => b.startsAt.localeCompare(a.startsAt))
-    )
-  )
 })
 
 const priceInput = promotionPriceSchema

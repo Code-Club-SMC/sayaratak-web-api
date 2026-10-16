@@ -120,9 +120,27 @@ export const paymentsSearchSchema = adminTableSearchSchema.extend({
   tab: tabOf(paymentTabs),
 })
 export type PaymentsSearch = z.infer<typeof paymentsSearchSchema>
-export const plansSearchSchema = z.object({
-  tab: tabOf(["user", "dealership", "workshop", "mechanic", "subscribers"]),
+export const planTabs = [
+  "user",
+  "dealership",
+  "workshop",
+  "mechanic",
+  "subscribers",
+] as const
+export const subscriptionStatuses = [
+  "active",
+  "pending",
+  "expired",
+  "canceled",
+] as const
+// The audience tabs list plans; Subscribers is a paged table with its own filters.
+export const plansSearchSchema = adminTableSearchSchema.extend({
+  tab: tabOf(planTabs),
+  audience: optional(z.enum(["user", "dealership", "workshop", "mechanic"])),
+  planId: optional(z.string().max(60)),
+  status: optional(z.enum(subscriptionStatuses)),
 })
+export type PlansSearch = z.infer<typeof plansSearchSchema>
 
 // The review queue (13.3): `listing` is the open item; below lg it also switches the screen from the list to the review.
 export const moderationSearchSchema = z.object({

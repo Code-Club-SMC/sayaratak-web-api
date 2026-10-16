@@ -1,5 +1,6 @@
 import { z } from "zod"
 
+import { planSchema, subscriptionSchema } from "./billing"
 import { bilingualSchema, idSchema, localeSchema } from "./fields"
 import { listingSchema } from "./listing"
 import { profileStatusSchema } from "./profile"
@@ -165,6 +166,26 @@ export const adminBusinessSchema = z.object({
   createdAt: z.string(),
 })
 export type AdminBusiness = z.infer<typeof adminBusinessSchema>
+
+// `free` is the audience's free plan (the first one priced 0): it keeps its price, stays on and cannot be deleted. `inUse` means a subscription or payment names it, so it cannot be deleted either.
+export const adminPlanSchema = planSchema.extend({
+  free: z.boolean(),
+  inUse: z.boolean(),
+})
+export type AdminPlan = z.infer<typeof adminPlanSchema>
+
+// A subscription row with who holds it: the business for a business plan, else the person. `userId` opens the account.
+export const adminSubscriptionSchema = subscriptionSchema.extend({
+  plan: z.object({
+    name: bilingualSchema,
+    audience: planSchema.shape.audience,
+  }),
+  subscriber: z.object({
+    name: bilingualSchema,
+    businessId: idSchema.optional(),
+  }),
+})
+export type AdminSubscription = z.infer<typeof adminSubscriptionSchema>
 
 export const sitePageSchema = z.object({
   slug: z.enum(["about", "contact", "privacy", "terms"]),

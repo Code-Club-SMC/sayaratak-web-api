@@ -289,6 +289,31 @@ export const assignPlanInputSchema = z.object({
   durationDays: z.number().int().min(1).optional(),
   note: z.string().max(200).optional(),
 })
+// A plan as the admin writes it. A cap sent as null is taken off (no cap).
+export const planInputSchema = z.object({
+  audience: z.enum(["user", "dealership", "workshop", "mechanic"]),
+  name: z.object({
+    ar: z.string().trim().min(1).max(40),
+    en: z.string().trim().min(1).max(40),
+  }),
+  price: z.number().int().min(0),
+  durationDays: z.number().int().min(1).max(730),
+  listingLimit: z.number().int().min(0).nullable(),
+  serviceLimit: z.number().int().min(0).nullable(),
+  photoLimit: z.number().int().min(0).nullable(),
+  portfolioLimit: z.number().int().min(0).nullable(),
+  featuredCredits: z.number().int().min(0),
+  features: z
+    .array(
+      z.object({
+        ar: z.string().trim().min(1).max(80),
+        en: z.string().trim().min(1).max(80),
+      })
+    )
+    .max(8),
+  enabled: z.boolean(),
+  sortOrder: z.number().int().min(0).max(999),
+})
 export const grantInputSchema = z.object({
   listingId: z.string().min(1),
   type: promotionTypeSchema,

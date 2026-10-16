@@ -186,8 +186,8 @@ describe("PlansGrid", () => {
     ).toBe(true)
     fireEvent.click(screen.getByRole("radio", { name: /Plan b/ }))
     expect(onChange).toHaveBeenCalledWith("b")
-    // Both cards carry the same rows, so they line up.
-    expect(screen.getAllByText("Listings")).toHaveLength(2)
+    // Both cards carry the same rows, so they line up. A dealership's listing limit reads as vehicles.
+    expect(screen.getAllByText("Vehicles")).toHaveLength(2)
     expect(screen.getByText("20")).toBeTruthy()
     expect(screen.getByText("No limit")).toBeTruthy()
   })

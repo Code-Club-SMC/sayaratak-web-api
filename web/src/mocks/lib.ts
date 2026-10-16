@@ -6,7 +6,7 @@ import type { NotificationPrefs } from "@/schemas/api"
 import type { Notification } from "@/schemas/messaging"
 import { db, find, newId, paginate } from "./db"
 import { fail, pageParams, type Ctx } from "./http"
-import type { Promotion } from "@/schemas/billing"
+import type { Plan, Promotion } from "@/schemas/billing"
 import { notificationHref } from "./seed/util"
 import type { ListingRow, UserRow } from "./types"
 import { userSchema } from "@/schemas/user"
@@ -127,6 +127,19 @@ export function listingLimit(userId: string) {
   if (user?.role === "dealership") return sub?.usage.limit ?? null
   if (!db.settings.individualSubscriptionsEnabled) return null
   return sub ? sub.usage.limit : db.settings.freeListingLimit
+}
+
+// A9: an audience's free plan is its first plan (by order) priced 0. Onboarding starts a business on it and billing shows it when there is no subscription.
+export const freePlanOf = (audience: Plan["audience"]) =>
+  db.plans
+    .filter((p) => p.audience === audience)
+    .sort((a, b) => a.sortOrder - b.sortOrder)
+    .find((p) => p.price === 0)
+
+// The setting "Free listings per user" is the individuals' free plan limit; the plan only shows it.
+export function syncFreeLimit() {
+  const free = freePlanOf("user")
+  if (free) free.listingLimit = db.settings.freeListingLimit
 }
 
 // The plan of the active subscription, if any.

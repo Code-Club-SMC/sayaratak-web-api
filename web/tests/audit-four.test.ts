@@ -209,7 +209,7 @@ describe("workshops and subscriptions", () => {
   it("subscription usage follows the A7 rules", async () => {
     const dealer = (await call("GET", "/me/subscription", { as: "u-dealer" }))
       .body
-    expect(dealer.usage.limit).toBe(dealer.plan.vehicleLimit)
+    expect(dealer.usage.limit).toBe(dealer.plan.listingLimit)
     const workshop = (
       await call("GET", "/me/subscription", { as: "u-workshop" })
     ).body

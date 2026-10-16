@@ -148,9 +148,7 @@ export const plans: Plan[] = planRows.map(
     name: { en, ar },
     price,
     durationDays,
-    ...(audience === "dealership"
-      ? { vehicleLimit: limit }
-      : { listingLimit: limit }),
+    listingLimit: limit,
     features: features.map((f) => {
       const [fen = "", far = ""] = f.split("|")
       return { en: fen, ar: far }
@@ -191,10 +189,7 @@ export function seedSubscriptions() {
       usage: {
         used: 0,
         // The demo seller owns 33 live listings, so his subscription carries a custom limit (like an admin-assigned plan) that leaves room to post and resubmit.
-        limit:
-          userId === "u-omar"
-            ? 40
-            : (plan?.listingLimit ?? plan?.vehicleLimit ?? null),
+        limit: userId === "u-omar" ? 40 : (plan?.listingLimit ?? null),
       },
     }
   })

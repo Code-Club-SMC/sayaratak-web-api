@@ -12,6 +12,7 @@ import {
   DAY_MS,
   byNewest,
   findBusiness,
+  freePlanOf,
   businessType,
   listPage,
   listingUsage,
@@ -28,16 +29,12 @@ const tables = {
 }
 type Business = ReturnType<(typeof tables)[Type]>[number]
 
-// The active subscription, else the audience's free plan (the first one, A9).
+// The active subscription, else the audience's free plan (A9).
 function planOf(type: Type, ownerId: string) {
   const sub = db.subscriptions.find(
     (s) => s.userId === ownerId && s.status === "active"
   )
-  const plan = sub
-    ? find(db.plans, sub.planId)
-    : db.plans
-        .filter((p) => p.audience === type)
-        .sort((a, b) => a.sortOrder - b.sortOrder)[0]
+  const plan = sub ? find(db.plans, sub.planId) : freePlanOf(type)
   const used = type === "dealership" ? listingUsage(ownerId) : 0
   return {
     id: plan?.id ?? "",
@@ -169,7 +166,7 @@ route("POST", "/admin/businesses/:id/assign-plan", async (c) => {
         type !== "dealership"
           ? null
           : input.limit === undefined
-            ? (plan.listingLimit ?? plan.vehicleLimit ?? null)
+            ? (plan.listingLimit ?? null)
             : input.limit,
     },
     note: input.note,

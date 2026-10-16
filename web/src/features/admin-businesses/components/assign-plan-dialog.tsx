@@ -53,7 +53,7 @@ export function AssignPlanDialog({
   }, [open, form])
   const { errors } = form.formState
   const plan = plans.find((p) => p.id === form.watch("planId"))
-  const planLimit = plan?.listingLimit ?? plan?.vehicleLimit
+  const planLimit = plan?.listingLimit
   const number = (
     name: NumberName,
     label: string,

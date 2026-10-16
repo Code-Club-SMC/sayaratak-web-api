@@ -8,7 +8,7 @@ import { DAY, both, ratingFrom, slugify } from "@/mocks/seed/util"
 
 import { db, newId } from "../db"
 import { needUser, route } from "../http"
-import { nowIso, publicUser } from "../lib"
+import { freePlanOf, nowIso, publicUser } from "../lib"
 import { template } from "./uploads"
 
 const phoneRows = z.array(z.object({ value: phoneSchema }))
@@ -113,10 +113,7 @@ route("POST", "/onboarding/complete", async (c) => {
     user.interests = interestSchema.array().catch([]).parse(payload.interests)
   }
   // A business starts on the free plan of its audience; a paid choice is paid for afterwards.
-  const free =
-    role === "user"
-      ? undefined
-      : db.plans.find((p) => p.audience === role && p.price === 0)
+  const free = role === "user" ? undefined : freePlanOf(role)
   if (free) {
     for (const s of db.subscriptions)
       if (s.userId === user.id && s.status === "active") s.status = "canceled"
@@ -128,7 +125,7 @@ route("POST", "/onboarding/complete", async (c) => {
       startsAt: nowIso(),
       endsAt: new Date(Date.now() + free.durationDays * DAY).toISOString(),
       price: free.price,
-      usage: { used: 0, limit: free.vehicleLimit ?? free.listingLimit ?? null },
+      usage: { used: 0, limit: free.listingLimit ?? null },
     })
   }
   const chosen = db.plans.find(

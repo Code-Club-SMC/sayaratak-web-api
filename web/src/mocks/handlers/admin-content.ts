@@ -21,7 +21,14 @@ import { z } from "zod"
 
 import { db, find, insert, newId, remove } from "../db"
 import { fail, needRole, route, type Ctx } from "../http"
-import { byNewest, findBusiness, listPage, nowIso, notify } from "../lib"
+import {
+  byNewest,
+  findBusiness,
+  listPage,
+  nowIso,
+  notify,
+  syncFreeLimit,
+} from "../lib"
 import { setBan } from "./admin"
 import { recomputeRating } from "./reviews"
 
@@ -280,6 +287,7 @@ route(
 route("PATCH", "/admin/settings", async (c) => {
   admin(c)
   Object.assign(db.settings, await c.body(settingsSchema.partial()))
+  syncFreeLimit()
   return settingsSchema.parse(db.settings)
 })
 

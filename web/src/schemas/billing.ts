@@ -9,8 +9,8 @@ export const planSchema = z.object({
   name: bilingualSchema,
   price: z.number().int(),
   durationDays: z.number().int(),
+  // How many live listings a subscriber may hold; a dealership's are its vehicles. None means no cap.
   listingLimit: z.number().int().optional(),
-  vehicleLimit: z.number().int().optional(),
   // Workshop and mechanic caps; none means no cap.
   serviceLimit: z.number().int().optional(),
   photoLimit: z.number().int().optional(),

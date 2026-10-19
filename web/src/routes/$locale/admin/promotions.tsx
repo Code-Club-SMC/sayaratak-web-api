@@ -1,10 +1,20 @@
-import { createFileRoute } from "@tanstack/react-router"
+import { createFileRoute, stripSearchParams } from "@tanstack/react-router"
 
-import { PlaceholderPage } from "@/features/dashboard/components/placeholder-page"
+import {
+  adminTableSearchDefaults,
+  adminTableSearchSchema,
+  type AdminTableSearch,
+} from "@/features/admin/schemas"
+import { AdminPromotionsPage } from "@/features/admin-promotions/components/promotions-page"
 import { dashboardPage } from "@/features/dashboard/overview-route"
 
-// A later Phase 13 step replaces the component.
 export const Route = createFileRoute("/$locale/admin/promotions")({
+  validateSearch: adminTableSearchSchema,
+  search: {
+    middlewares: [
+      stripSearchParams<AdminTableSearch>(adminTableSearchDefaults),
+    ],
+  },
   ...dashboardPage("/admin/promotions", "dashboard.nav_promotions"),
-  component: () => <PlaceholderPage titleKey="dashboard.nav_promotions" />,
+  component: AdminPromotionsPage,
 })

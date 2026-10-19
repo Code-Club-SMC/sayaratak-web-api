@@ -1,0 +1,81 @@
+import { useId, useState } from "react"
+import { useQuery } from "@tanstack/react-query"
+
+import { useT } from "@/lib/i18n/use-t"
+import type { PromotionPrice } from "@/schemas/billing"
+import { adminQueries } from "@/features/admin/queries"
+import { PriceText } from "@/components/app/price-text"
+import { SectionError } from "@/components/app/section-error"
+import { Button } from "@/components/ui/button"
+import { Skeleton } from "@/components/ui/skeleton"
+import { PriceDialog } from "./price-dialog"
+
+// The four promotion types with their length and price. The set is fixed; Edit changes price and length.
+export function PricesCard() {
+  const { t } = useT()
+  const id = useId()
+  const prices = useQuery(adminQueries.promotionPrices)
+  const [editing, setEditing] = useState<PromotionPrice>()
+  if (prices.isError && !prices.data)
+    return (
+      <SectionError
+        title={t("admin.promos_prices_title")}
+        message={t("admin.promos_prices_error")}
+        onRetry={() => void prices.refetch()}
+      />
+    )
+  return (
+    <section
+      aria-labelledby={id}
+      className="flex flex-col gap-4 rounded-xl bg-card p-4"
+    >
+      <div className="flex flex-col gap-1">
+        <h2 id={id} className="text-title font-semibold">
+          {t("admin.promos_prices_title")}
+        </h2>
+        <p className="text-ui text-muted-foreground">
+          {t("admin.promos_prices_body")}
+        </p>
+      </div>
+      {!prices.data ? (
+        <Skeleton aria-hidden="true" className="h-32 w-full" />
+      ) : (
+        <ul
+          aria-label={t("admin.promos_prices_table")}
+          className="flex flex-col"
+        >
+          {prices.data.map((p) => {
+            const name = t(`promotion.name_${p.type}`)
+            return (
+              <li
+                key={p.type}
+                className="flex flex-wrap items-center gap-x-4 gap-y-2 border-b py-3 last:border-b-0"
+              >
+                <div className="flex min-w-32 flex-1 flex-col">
+                  <span className="text-ui font-medium">{name}</span>
+                  <span className="text-caption text-muted-foreground">
+                    {t(`promotion.effect_${p.type}`)}
+                  </span>
+                </div>
+                <span className="text-ui text-muted-foreground">
+                  {t("billing.duration_days", { count: p.durationDays })}
+                </span>
+                <PriceText price={p.price} size="table" />
+                <Button
+                  type="button"
+                  variant="secondary"
+                  size="sm"
+                  aria-label={t("admin.promos_price_edit", { name })}
+                  onClick={() => setEditing(p)}
+                >
+                  {t("common.edit")}
+                </Button>
+              </li>
+            )
+          })}
+        </ul>
+      )}
+      <PriceDialog price={editing} onClose={() => setEditing(undefined)} />
+    </section>
+  )
+}

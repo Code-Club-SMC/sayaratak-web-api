@@ -1,5 +1,7 @@
 import { z } from "zod"
 
+import { bilingualSchema } from "./fields"
+
 export const eventTypeSchema = z.enum([
   "view",
   "phone_click",
@@ -76,14 +78,28 @@ export const listingAnalyticsSchema = z.object({
 })
 export type ListingAnalytics = z.infer<typeof listingAnalyticsSchema>
 
-export const broadcastSchema = z.object({
+// Who a broadcast reaches: any of the roles, optionally one city, optionally only verified businesses (then no individuals).
+export const broadcastRoleSchema = z.enum([
+  "user",
+  "dealership",
+  "workshop",
+  "mechanic",
+])
+export const broadcastAudienceSchema = z.object({
+  roles: z.array(broadcastRoleSchema).min(1, "validation.select_min"),
+  cityId: z.string().optional(),
+  verifiedOnly: z.boolean(),
+})
+export type BroadcastAudience = z.infer<typeof broadcastAudienceSchema>
+export const broadcastSchema = broadcastAudienceSchema.extend({
   id: z.string(),
-  audience: z.enum(["all", "user", "dealership", "workshop", "mechanic"]),
-  title: z.string(),
-  body: z.string(),
+  title: bilingualSchema,
+  body: bilingualSchema,
+  href: z.string().optional(),
   recipients: z.number().int(),
   createdAt: z.string(),
 })
+export type Broadcast = z.infer<typeof broadcastSchema>
 export const taxonomyTypeSchema = z.enum([
   "cities",
   "districts",

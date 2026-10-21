@@ -6,14 +6,14 @@ import { localeHref } from "@/lib/navigation"
 import type { Notification } from "@/schemas/messaging"
 import { notificationIcon } from "../notification-icon"
 
-// One row: icon by type, title, body, time. A row with a page is a link; one without is a button until it is read, then plain text. The unread dot has a text twin for screen readers.
+// One row: icon by type, title, body, time. A row with a page is a link; one without is a button until it is read, then plain text. The unread dot has a text twin for screen readers. Without `onOpen` (the broadcast preview) it is plain text.
 export function NotificationItem({
   notification: n,
   onOpen,
   compact = false,
 }: {
   notification: Notification
-  onOpen: (n: Notification, e: MouseEvent) => void
+  onOpen?: (n: Notification, e: MouseEvent) => void
   // The bell's panel keeps the body to one line.
   compact?: boolean
 }) {
@@ -59,7 +59,9 @@ export function NotificationItem({
   )
   return (
     <li>
-      {n.href ? (
+      {!onOpen ? (
+        <div className={row}>{content}</div>
+      ) : n.href ? (
         <a
           href={localeHref(n.href, locale)}
           onClick={(e) => onOpen(n, e)}

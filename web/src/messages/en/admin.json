@@ -561,5 +561,6 @@
   "admin.models_edit_label": "Edit {{name}}",
   "admin.models_remove_label": "Remove {{name}}",
   "admin.models_remove_title": "Remove {{name}}?",
-  "admin.models_removed": "Model removed"
+  "admin.models_removed": "Model removed",
+  "admin.makes_logo": "Logo (optional)"
 }

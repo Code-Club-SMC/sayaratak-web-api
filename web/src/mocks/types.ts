@@ -7,7 +7,7 @@ import type {
   VerificationRequest,
 } from "@/schemas/admin"
 import type { AdPage, Campaign } from "@/schemas/ads"
-import type { EventType, NotificationPrefs } from "@/schemas/api"
+import type { Broadcast, EventType, NotificationPrefs } from "@/schemas/api"
 import type { Bilingual, Locale } from "@/schemas/fields"
 import type { contactSubjects } from "@/schemas/inputs"
 import type { Listing, Media } from "@/schemas/listing"
@@ -68,14 +68,7 @@ export type ContactRow = {
   message: string
   createdAt: string
 }
-export type BroadcastRow = {
-  id: string
-  audience: "all" | "user" | "dealership" | "workshop" | "mechanic"
-  title: string
-  body: string
-  recipients: number
-  createdAt: string
-}
+export type BroadcastRow = Broadcast
 export type UploadRow = {
   id: string
   name: string

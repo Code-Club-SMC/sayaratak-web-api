@@ -1,3 +1,7 @@
+import { useQuery } from "@tanstack/react-query"
+
+import { taxonomyQuery } from "@/features/listings/queries"
+
 // Colour brand marks in public/images/makes/<make id>.svg, cropped to the artwork (no width or height, a tight viewBox). Add a file there and its id below to give a make a logo.
 const logos = new Set([
   "acura",
@@ -75,10 +79,13 @@ export function MakeLogo({
   size?: keyof typeof sizes
 }) {
   const { box, letter } = sizes[size]
-  if (id && logos.has(id))
+  const uploaded = useQuery(taxonomyQuery).data?.makes.find(
+    (m) => m.id === id
+  )?.logoUrl
+  if (uploaded || (id && logos.has(id)))
     return (
       <img
-        src={`/images/makes/${id}.svg`}
+        src={uploaded || `/images/makes/${id}.svg`}
         alt=""
         loading={size === "md" ? "eager" : "lazy"}
         decoding="async"

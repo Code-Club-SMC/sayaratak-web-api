@@ -24,6 +24,7 @@ import {
   type Settings,
 } from "@/schemas/admin"
 import {
+  type BroadcastAudience,
   broadcastSchema,
   okSchema,
   taxonomyRowSchema,
@@ -154,13 +155,16 @@ export const adminQueries = {
   ),
   broadcasts: (p?: Params) =>
     adminList("broadcasts", "/admin/broadcasts", broadcastSchema, p),
-  broadcastEstimate: (audience: string) =>
-    adminPlain(
-      "broadcast-estimate",
-      "/admin/broadcasts/estimate",
-      estimateSchema,
-      { audience }
-    ),
+  broadcastEstimate: (audience: BroadcastAudience) =>
+    queryOptions({
+      ...adminPlain(
+        "broadcast-estimate",
+        "/admin/broadcasts/estimate",
+        estimateSchema,
+        audience
+      ),
+      placeholderData: keepPreviousData,
+    }),
   banners: adminPlain("banners", "/admin/banners", z.array(bannerSchema)),
   page: (slug: string) =>
     adminPlain(`page-${slug}`, `/admin/pages/${slug}`, sitePageSchema),

@@ -1,4 +1,9 @@
-import { broadcastSchema, okSchema } from "@/schemas/api"
+import {
+  type BroadcastAudience,
+  broadcastAudienceSchema,
+  broadcastSchema,
+  okSchema,
+} from "@/schemas/api"
 import {
   paymentSchema,
   type Payment,
@@ -21,12 +26,14 @@ import { fail, needRole, route, type Ctx } from "../http"
 import {
   DAY_MS,
   activatePromotion,
+  businessOf,
   byNewest,
   listPage,
   listingById,
   nowIso,
   notify,
   promotionView,
+  textOf,
 } from "../lib"
 import type { PromotionPriceRow } from "../types"
 
@@ -246,17 +253,23 @@ route("POST", "/admin/promotions/:id/end", (c) => {
   return myPromotionSchema.parse(promotionView(promotion))
 })
 
-const audience = (a: string) =>
-  db.users.filter(
-    (u) => !u.banned && u.role !== "admin" && (a === "all" || u.role === a)
-  )
+// Matching accounts that keep announcements on, so the estimate is the number of bells that ring.
+// Individuals use their profile city; businesses use the business city. Verified only leaves individuals out.
+const audience = (a: BroadcastAudience) =>
+  db.users.filter((u) => {
+    if (u.banned || u.role === "admin" || !u.prefs.announcements) return false
+    if (!a.roles.includes(u.role)) return false
+    const business = businessOf(u)?.row
+    if (a.verifiedOnly && !business?.verified) return false
+    return !a.cityId || (business?.cityId ?? u.cityId) === a.cityId
+  })
 route(
   "GET",
   "/admin/broadcasts",
   (c) => (
     admin(c),
     pageOf(broadcastSchema).parse(
-      listPage(c, [...db.broadcasts].sort(byNewest))
+      listPage(c, [...db.broadcasts].sort(byNewest), (b) => textOf(b.title))
     )
   )
 )
@@ -266,21 +279,22 @@ route(
   (c) => (
     admin(c),
     estimateSchema.parse({
-      count: audience(c.query.get("audience") ?? "all").length,
+      count: audience(
+        broadcastAudienceSchema.parse({
+          roles: c.query.getAll("roles"),
+          cityId: c.query.get("cityId") || undefined,
+          verifiedOnly: c.query.get("verifiedOnly") === "true",
+        })
+      ).length,
     })
   )
 )
 route("POST", "/admin/broadcasts", async (c) => {
   admin(c)
   const input = await c.body(broadcastInputSchema)
-  const users = audience(input.audience)
+  const users = audience(input)
   for (const u of users)
-    notify(
-      u.id,
-      "broadcast",
-      { ar: input.title, en: input.title },
-      { ar: input.body, en: input.body }
-    )
+    notify(u.id, "broadcast", input.title, input.body, input.href)
   return broadcastSchema.parse(
     insert(db.broadcasts, {
       id: newId("bc"),

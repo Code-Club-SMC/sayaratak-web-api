@@ -597,5 +597,6 @@
   "admin.models_edit_label": "تعديل {{name}}",
   "admin.models_remove_label": "إزالة {{name}}",
   "admin.models_remove_title": "إزالة {{name}}؟",
-  "admin.models_removed": "تمت إزالة الموديل"
+  "admin.models_removed": "تمت إزالة الموديل",
+  "admin.makes_logo": "الشعار (اختياري)"
 }

@@ -181,6 +181,7 @@ const taxonomy: Record<
     shape: z.object({
       slug: z.string().min(1, "validation.required"),
       name,
+      logoUrl: z.string().nullable().optional(),
       vehicleTypes: z.array(vehicleTypeSchema).min(1, "validation.select_min"),
     }),
     useOf: (id) =>

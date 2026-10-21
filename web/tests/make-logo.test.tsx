@@ -1,14 +1,27 @@
 import { readdirSync } from "node:fs"
-import { render, screen } from "@testing-library/react"
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
+import { render as rtlRender, screen } from "@testing-library/react"
+import type { ReactElement } from "react"
 import { describe, expect, it } from "vitest"
 
 import { MakeLogo } from "@/components/app/make-logo"
 import { SelectInput } from "@/components/app/select-input"
+import { keys } from "@/lib/api/query-keys"
 import { buildSeed } from "@/mocks/seed"
 
 const files = readdirSync("public/images/makes")
   .filter((f) => f.endsWith(".svg"))
   .map((f) => f.replace(".svg", ""))
+
+// MakeLogo reads uploaded logos from the cached taxonomy.
+const render = (ui: ReactElement) => {
+  const client = new QueryClient()
+  const wrap = (el: ReactElement) => (
+    <QueryClientProvider client={client}>{el}</QueryClientProvider>
+  )
+  const out = rtlRender(wrap(ui))
+  return { ...out, rerender: (el: ReactElement) => out.rerender(wrap(el)) }
+}
 
 describe("MakeLogo", () => {
   it("shows the file of every make that has one", () => {
@@ -52,5 +65,22 @@ describe("MakeLogo", () => {
     const trigger = screen.getByRole("combobox", { name: "Make" })
     expect(trigger.textContent).toContain("Toyota")
     expect(trigger.querySelector("[aria-hidden]")).not.toBeNull()
+  })
+})
+
+describe("MakeLogo uploaded", () => {
+  it("prefers the uploaded logoUrl over the static file", () => {
+    const client = new QueryClient()
+    client.setQueryData(keys.taxonomy, {
+      makes: [{ id: "toyota", logoUrl: "/api/uploads/x.png" }],
+    })
+    const { container } = rtlRender(
+      <QueryClientProvider client={client}>
+        <MakeLogo id="toyota" />
+      </QueryClientProvider>
+    )
+    expect(container.querySelector("img")?.getAttribute("src")).toBe(
+      "/api/uploads/x.png"
+    )
   })
 })

@@ -11,6 +11,8 @@ import {
   useUpdateTaxonomyRow,
 } from "@/features/admin/queries"
 import { NameFields } from "@/features/admin-locations/components/name-fields"
+import { mediaFromUrl } from "@/features/onboarding/media"
+import { LogoUpload } from "@/components/app/logo-upload"
 import { CheckboxGroup } from "@/components/app/checkbox-group"
 import { ResponsiveDialog } from "@/components/app/responsive-dialog"
 import { SubmitButton } from "@/components/app/submit-button"
@@ -35,7 +37,7 @@ export function MakeDialog({
   const form = useAppForm<MakeForm>({
     resolver: zodResolver(makeSchema),
     mode: "onTouched",
-    defaultValues: { nameAr: "", nameEn: "", vehicleTypes: [] },
+    defaultValues: { nameAr: "", nameEn: "", logoUrl: "", vehicleTypes: [] },
   })
   const editing = make && make !== "new" ? make : undefined
   useEffect(() => {
@@ -43,6 +45,7 @@ export function MakeDialog({
       form.reset({
         nameAr: editing?.name.ar ?? "",
         nameEn: editing?.name.en ?? "",
+        logoUrl: editing?.logoUrl ?? "",
         vehicleTypes: editing?.vehicleTypes ?? [],
       })
   }, [make, editing, form])
@@ -56,24 +59,41 @@ export function MakeDialog({
       <form
         noValidate
         className="flex flex-col gap-4"
-        onSubmit={form.handleSubmit(({ nameAr, nameEn, vehicleTypes }) => {
-          const body = { name: { ar: nameAr, en: nameEn }, vehicleTypes }
-          const options = {
-            onSuccess: () => {
-              toast.add({ title: t("admin.makes_saved") })
-              onClose()
-            },
-            onError: (e: unknown) => toast.add({ title: errorText(t, e) }),
+        onSubmit={form.handleSubmit(
+          ({ nameAr, nameEn, logoUrl, vehicleTypes }) => {
+            const body = {
+              name: { ar: nameAr, en: nameEn },
+              logoUrl: logoUrl || null,
+              vehicleTypes,
+            }
+            const options = {
+              onSuccess: () => {
+                toast.add({ title: t("admin.makes_saved") })
+                onClose()
+              },
+              onError: (e: unknown) => toast.add({ title: errorText(t, e) }),
+            }
+            if (editing) update.mutate({ id: editing.id, ...body }, options)
+            else create.mutate(body, options)
           }
-          if (editing) update.mutate({ id: editing.id, ...body }, options)
-          else create.mutate(body, options)
-        })}
+        )}
       >
         <NameFields
           ar={form.register("nameAr")}
           en={form.register("nameEn")}
           errorAr={errors.nameAr?.message}
           errorEn={errors.nameEn?.message}
+        />
+        <Controller
+          control={form.control}
+          name="logoUrl"
+          render={({ field }) => (
+            <LogoUpload
+              label={t("admin.makes_logo")}
+              value={field.value ? mediaFromUrl(field.value) : null}
+              onChange={(media) => field.onChange(media?.url ?? "")}
+            />
+          )}
         />
         <Controller
           control={form.control}

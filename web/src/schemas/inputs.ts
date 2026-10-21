@@ -1,6 +1,6 @@
 import { z } from "zod"
 
-import { notificationPrefsSchema } from "./api"
+import { broadcastAudienceSchema, notificationPrefsSchema } from "./api"
 import {
   emailSchema,
   geoSchema,
@@ -319,10 +319,16 @@ export const grantInputSchema = z.object({
   type: promotionTypeSchema,
   days: z.number().int().min(1).default(7),
 })
-export const broadcastInputSchema = z.object({
-  audience: z.enum(["all", "user", "dealership", "workshop", "mechanic"]),
-  title: requiredText(80),
-  body: requiredText(500),
+// An internal path: one leading slash, never `//host`.
+export const pathSchema = z
+  .string()
+  .trim()
+  .regex(/^\/(?!\/)/, "validation.path")
+  .max(200, "validation.too_long")
+export const broadcastInputSchema = broadcastAudienceSchema.extend({
+  title: z.object({ ar: requiredText(80), en: requiredText(80) }),
+  body: z.object({ ar: requiredText(300), en: requiredText(300) }),
+  href: pathSchema.optional(),
 })
 export const adminListingPatchSchema = listingFields
   .pick({ title: true, description: true, price: true })

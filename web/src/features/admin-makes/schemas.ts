@@ -6,6 +6,7 @@ import { vehicleTypeSchema } from "@/schemas/listing"
 export const makeSchema = z.object({
   nameAr: requiredText(40),
   nameEn: requiredText(40),
+  logoUrl: z.string(),
   vehicleTypes: z.array(vehicleTypeSchema).min(1, "validation.select_min"),
 })
 export type MakeForm = z.infer<typeof makeSchema>

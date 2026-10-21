@@ -22,6 +22,8 @@ export const taxonomySchema = z.object({
       id: idSchema,
       slug: z.string(),
       name: bilingualSchema,
+      // An uploaded brand mark; makes without one use the file in public/images/makes, then the initial.
+      logoUrl: z.string().nullish(),
       vehicleTypes: z.array(vehicleTypeSchema),
     })
   ),

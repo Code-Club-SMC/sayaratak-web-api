@@ -143,7 +143,7 @@ const cases: [string, z.ZodType, unknown][] = [
     "taxonomy",
     taxonomySchema,
     {
-      cities: [{ id: "c", slug: "c", name: bi, center: geo }],
+      cities: [{ id: "c", slug: "c", name: bi, countryId: "sd", center: geo }],
       districts: [{ id: "d", cityId: "c", name: bi }],
       makes: [{ id: "m", slug: "m", name: bi, vehicleTypes: ["car"] }],
       models: [{ id: "x", makeId: "m", name: bi }],

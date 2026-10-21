@@ -22,6 +22,7 @@ import {
   MegaphoneIcon,
   MessageSquareIcon,
   PresentationIcon,
+  SendIcon,
   SettingsIcon,
   ShieldCheckIcon,
   StarIcon,
@@ -183,6 +184,7 @@ export const navConfig: Record<Role, NavGroup[]> = {
     ]),
     group("communication", [
       notifications,
+      item("broadcasts", "/broadcasts", SendIcon),
       item("banners", "/banners", ImagesIcon),
     ]),
     group("site", [

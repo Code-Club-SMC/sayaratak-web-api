@@ -1558,7 +1558,12 @@ describe("admin", () => {
     })
     await call("POST", "/admin/broadcasts", {
       as: "u-admin",
-      body: { audience: owner.role, title: "Hi all", body: "Welcome" },
+      body: {
+        roles: [owner.role],
+        verifiedOnly: false,
+        title: { ar: "مرحبا", en: "Hi all" },
+        body: { ar: "أهلا", en: "Welcome" },
+      },
     })
     expect(
       db.notifications.filter(
@@ -1624,15 +1629,19 @@ describe("admin", () => {
         })
       ).status
     ).toBe(200)
-    const est = await call(
-      "GET",
-      "/admin/broadcasts/estimate?audience=mechanic",
-      { as: "u-admin" }
-    )
+    const est = await call("GET", "/admin/broadcasts/estimate?roles=mechanic", {
+      as: "u-admin",
+    })
     const sent = await call("POST", "/admin/broadcasts", {
       as: "u-admin",
-      body: { audience: "mechanic", title: "Hello", body: "Welcome" },
+      body: {
+        roles: ["mechanic"],
+        verifiedOnly: false,
+        title: { ar: "مرحبا", en: "Hello" },
+        body: { ar: "أهلا", en: "Welcome" },
+      },
     })
+    expect(sent.status).toBe(200)
     expect(sent.body.recipients).toBe(est.body.count)
     expect(
       db.notifications.some(

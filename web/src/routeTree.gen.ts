@@ -47,6 +47,7 @@ import { Route as LocaleAdminAdPricesRouteImport } from './routes/$locale/admin/
 import { Route as LocaleAdminAdsRouteImport } from './routes/$locale/admin/ads'
 import { Route as LocaleAdminBackupsRouteImport } from './routes/$locale/admin/backups'
 import { Route as LocaleAdminBannersRouteImport } from './routes/$locale/admin/banners'
+import { Route as LocaleAdminBroadcastsRouteImport } from './routes/$locale/admin/broadcasts'
 import { Route as LocaleAdminCategoriesRouteImport } from './routes/$locale/admin/categories'
 import { Route as LocaleAdminDealershipsRouteImport } from './routes/$locale/admin/dealerships'
 import { Route as LocaleAdminListingsRouteImport } from './routes/$locale/admin/listings'
@@ -319,6 +320,11 @@ const LocaleAdminBackupsRoute = LocaleAdminBackupsRouteImport.update({
 const LocaleAdminBannersRoute = LocaleAdminBannersRouteImport.update({
   id: '/banners',
   path: '/banners',
+  getParentRoute: () => LocaleAdminRouteRoute,
+} as any)
+const LocaleAdminBroadcastsRoute = LocaleAdminBroadcastsRouteImport.update({
+  id: '/broadcasts',
+  path: '/broadcasts',
   getParentRoute: () => LocaleAdminRouteRoute,
 } as any)
 const LocaleAdminCategoriesRoute = LocaleAdminCategoriesRouteImport.update({
@@ -794,6 +800,7 @@ export interface FileRoutesByFullPath {
   '/$locale/admin/ads': typeof LocaleAdminAdsRoute
   '/$locale/admin/backups': typeof LocaleAdminBackupsRoute
   '/$locale/admin/banners': typeof LocaleAdminBannersRoute
+  '/$locale/admin/broadcasts': typeof LocaleAdminBroadcastsRoute
   '/$locale/admin/categories': typeof LocaleAdminCategoriesRoute
   '/$locale/admin/dealerships': typeof LocaleAdminDealershipsRoute
   '/$locale/admin/listings': typeof LocaleAdminListingsRoute
@@ -909,6 +916,7 @@ export interface FileRoutesByTo {
   '/$locale/admin/ads': typeof LocaleAdminAdsRoute
   '/$locale/admin/backups': typeof LocaleAdminBackupsRoute
   '/$locale/admin/banners': typeof LocaleAdminBannersRoute
+  '/$locale/admin/broadcasts': typeof LocaleAdminBroadcastsRoute
   '/$locale/admin/categories': typeof LocaleAdminCategoriesRoute
   '/$locale/admin/dealerships': typeof LocaleAdminDealershipsRoute
   '/$locale/admin/listings': typeof LocaleAdminListingsRoute
@@ -1031,6 +1039,7 @@ export interface FileRoutesById {
   '/$locale/admin/ads': typeof LocaleAdminAdsRoute
   '/$locale/admin/backups': typeof LocaleAdminBackupsRoute
   '/$locale/admin/banners': typeof LocaleAdminBannersRoute
+  '/$locale/admin/broadcasts': typeof LocaleAdminBroadcastsRoute
   '/$locale/admin/categories': typeof LocaleAdminCategoriesRoute
   '/$locale/admin/dealerships': typeof LocaleAdminDealershipsRoute
   '/$locale/admin/listings': typeof LocaleAdminListingsRoute
@@ -1154,6 +1163,7 @@ export interface FileRouteTypes {
     | '/$locale/admin/ads'
     | '/$locale/admin/backups'
     | '/$locale/admin/banners'
+    | '/$locale/admin/broadcasts'
     | '/$locale/admin/categories'
     | '/$locale/admin/dealerships'
     | '/$locale/admin/listings'
@@ -1269,6 +1279,7 @@ export interface FileRouteTypes {
     | '/$locale/admin/ads'
     | '/$locale/admin/backups'
     | '/$locale/admin/banners'
+    | '/$locale/admin/broadcasts'
     | '/$locale/admin/categories'
     | '/$locale/admin/dealerships'
     | '/$locale/admin/listings'
@@ -1390,6 +1401,7 @@ export interface FileRouteTypes {
     | '/$locale/admin/ads'
     | '/$locale/admin/backups'
     | '/$locale/admin/banners'
+    | '/$locale/admin/broadcasts'
     | '/$locale/admin/categories'
     | '/$locale/admin/dealerships'
     | '/$locale/admin/listings'
@@ -1751,6 +1763,13 @@ declare module '@tanstack/react-router' {
       path: '/banners'
       fullPath: '/$locale/admin/banners'
       preLoaderRoute: typeof LocaleAdminBannersRouteImport
+      parentRoute: typeof LocaleAdminRouteRoute
+    }
+    '/$locale/admin/broadcasts': {
+      id: '/$locale/admin/broadcasts'
+      path: '/broadcasts'
+      fullPath: '/$locale/admin/broadcasts'
+      preLoaderRoute: typeof LocaleAdminBroadcastsRouteImport
       parentRoute: typeof LocaleAdminRouteRoute
     }
     '/$locale/admin/categories': {
@@ -2414,6 +2433,7 @@ interface LocaleAdminRouteRouteChildren {
   LocaleAdminAdsRoute: typeof LocaleAdminAdsRoute
   LocaleAdminBackupsRoute: typeof LocaleAdminBackupsRoute
   LocaleAdminBannersRoute: typeof LocaleAdminBannersRoute
+  LocaleAdminBroadcastsRoute: typeof LocaleAdminBroadcastsRoute
   LocaleAdminCategoriesRoute: typeof LocaleAdminCategoriesRoute
   LocaleAdminDealershipsRoute: typeof LocaleAdminDealershipsRoute
   LocaleAdminListingsRoute: typeof LocaleAdminListingsRoute
@@ -2442,6 +2462,7 @@ const LocaleAdminRouteRouteChildren: LocaleAdminRouteRouteChildren = {
   LocaleAdminAdsRoute: LocaleAdminAdsRoute,
   LocaleAdminBackupsRoute: LocaleAdminBackupsRoute,
   LocaleAdminBannersRoute: LocaleAdminBannersRoute,
+  LocaleAdminBroadcastsRoute: LocaleAdminBroadcastsRoute,
   LocaleAdminCategoriesRoute: LocaleAdminCategoriesRoute,
   LocaleAdminDealershipsRoute: LocaleAdminDealershipsRoute,
   LocaleAdminListingsRoute: LocaleAdminListingsRoute,

@@ -8,9 +8,15 @@ import {
   sitePageSchema,
 } from "@/schemas/admin"
 import { okSchema, taxonomyTypeSchema } from "@/schemas/api"
-import { bilingualSchema, geoSchema, pageOf } from "@/schemas/fields"
+import {
+  bilingualSchema,
+  geoSchema,
+  pageOf,
+  type Bilingual,
+} from "@/schemas/fields"
 import {
   bannerInputSchema,
+  idsInputSchema,
   noteInputSchema,
   pagePatchSchema,
   reportActionInputSchema,
@@ -19,6 +25,7 @@ import { vehicleTypeSchema } from "@/schemas/listing"
 import { reviewSchema } from "@/schemas/review"
 import { z } from "zod"
 
+import { slugify } from "../seed/util"
 import { db, find, insert, newId, remove } from "../db"
 import { fail, needRole, route, type Ctx } from "../http"
 import {
@@ -211,11 +218,39 @@ route("GET", "/admin/taxonomy/:type", (c) => kind(c).rows())
 route("POST", "/admin/taxonomy/:type", async (c) => {
   const { type, rows, shape } = kind(c)
   if (type === "vehicle-types") throw fail(403, "forbidden")
-  const input = await c.body(shape)
+  // A part category's slug comes from its English name, with a number added when taken.
+  const input = await c.body(
+    type === "part-categories"
+      ? shape.extend({ slug: z.string().optional() })
+      : shape
+  )
+  if (type === "part-categories") {
+    const base = slugify((input.name as Bilingual).en) || "category"
+    let slug = base
+    for (let n = 2; rows().some((r) => r.id === slug); n++)
+      slug = `${base}-${n}`
+    input.slug = slug
+  }
   const id =
     typeof input.slug === "string" ? input.slug : newId(type.slice(0, 3))
   if (rows().some((r) => r.id === id)) throw fail(409, "exists")
   return insert(rows(), { id, ...input })
+})
+route("POST", "/admin/taxonomy/:type/reorder", async (c) => {
+  const { type, rows } = kind(c)
+  if (type !== "vehicle-types" && type !== "part-categories")
+    throw fail(404, "not_found")
+  const { ids } = await c.body(idsInputSchema)
+  const list = rows()
+  const sorted = ids.flatMap((id) => list.filter((r) => r.id === id))
+  // Rows the body left out keep their place after the named ones.
+  list.splice(
+    0,
+    list.length,
+    ...sorted,
+    ...list.filter((r) => !ids.includes(r.id))
+  )
+  return ack()
 })
 route("DELETE", "/admin/taxonomy/:type/:id", (c) => {
   const { type, rows, useOf } = kind(c)

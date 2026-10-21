@@ -770,7 +770,8 @@
   "admin.backup_restore_title": "استعادة نسخة",
   "admin.backup_restore_body": "تعود كل الإعلانات والحسابات والمدفوعات والإعدادات إلى ما كانت عليه في {{date}}. تضيع التغييرات التي تمت بعد ذلك. قائمة النسخ تبقى كما هي.",
   "admin.backup_restore_phrase": "استعادة",
-  "admin.backup_restoring": "جارٍ الاستعادة…",
+  "admin.backup_restoring_text": "جارٍ الاستعادة…",
+  "admin.backup_restoring_hint": "تستمر الاستعادة إن أغلقت هذه النافذة.",
   "admin.backup_restore_type": "اكتب {{phrase}} للتأكيد",
   "admin.backup_restored_title": "تمت استعادة النسخة",
   "admin.backup_restored": "يعرض الموقع الآن بيانات {{date}}."

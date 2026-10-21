@@ -12,7 +12,8 @@ export const backupDate = (iso: string, locale: Locale) =>
 
 // Date, type, size, status and Restore. Newest first from the server, so no column sorts.
 export function useBackupColumns(
-  onRestore: (backup: Backup) => void
+  onRestore: (backup: Backup) => void,
+  busy: boolean
 ): DataColumn<Backup>[] {
   const { t, locale } = useT()
   return [
@@ -53,6 +54,7 @@ export function useBackupColumns(
         <RestoreButton
           backup={row.original}
           date={backupDate(row.original.createdAt, locale)}
+          busy={busy}
           onRestore={() => onRestore(row.original)}
         />
       ),

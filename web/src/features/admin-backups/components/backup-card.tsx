@@ -9,9 +9,11 @@ import { backupDate } from "./use-backup-columns"
 // One backup below md.
 export function BackupCard({
   backup,
+  busy,
   onRestore,
 }: {
   backup: Backup
+  busy: boolean
   onRestore: () => void
 }) {
   const { t, locale } = useT()
@@ -30,7 +32,12 @@ export function BackupCard({
           })}
         </span>
       </div>
-      <RestoreButton backup={backup} date={date} onRestore={onRestore} />
+      <RestoreButton
+        backup={backup}
+        date={date}
+        busy={busy}
+        onRestore={onRestore}
+      />
     </article>
   )
 }

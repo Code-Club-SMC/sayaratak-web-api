@@ -2,14 +2,16 @@ import { useT } from "@/lib/i18n/use-t"
 import type { Backup } from "@/schemas/admin"
 import { Button } from "@/components/ui/button"
 
-// Only a finished backup can be restored.
+// Only a finished backup can be restored, and only one restore runs at a time.
 export function RestoreButton({
   backup,
   date,
+  busy,
   onRestore,
 }: {
   backup: Backup
   date: string
+  busy: boolean
   onRestore: () => void
 }) {
   const { t } = useT()
@@ -18,7 +20,7 @@ export function RestoreButton({
       type="button"
       variant="secondary"
       size="sm"
-      disabled={backup.status !== "ready"}
+      disabled={busy || backup.status !== "ready"}
       aria-label={t("admin.backup_restore_label", { date })}
       onClick={onRestore}
     >

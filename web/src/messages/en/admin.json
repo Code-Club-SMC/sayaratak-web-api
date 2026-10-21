@@ -722,7 +722,8 @@
   "admin.backup_restore_title": "Restore backup",
   "admin.backup_restore_body": "All listings, accounts, payments and settings go back to how they were on {{date}}. Changes made after that are lost. The backup list stays as it is.",
   "admin.backup_restore_phrase": "RESTORE",
-  "admin.backup_restoring": "Restoring…",
+  "admin.backup_restoring_text": "Restoring…",
+  "admin.backup_restoring_hint": "It keeps going if you close this.",
   "admin.backup_restore_type": "Type {{phrase}} to confirm",
   "admin.backup_restored_title": "Backup restored",
   "admin.backup_restored": "The site now shows the data from {{date}}."

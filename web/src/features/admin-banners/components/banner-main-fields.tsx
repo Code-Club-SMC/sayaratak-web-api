@@ -66,7 +66,11 @@ export function BannerMainFields() {
             name={name}
             render={({ field, fieldState }) => (
               <FormField
-                label={t(`admin.banners_${name}`)}
+                label={t(
+                  name === "startsAt"
+                    ? "admin.banners_starts"
+                    : "admin.banners_ends"
+                )}
                 error={fieldState.error?.message}
               >
                 {(props) => (

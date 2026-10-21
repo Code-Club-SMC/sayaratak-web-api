@@ -11,6 +11,7 @@ export function ResponsiveDialog({
   title,
   description,
   wide = false,
+  closable = true,
   className = "",
   children,
 }: {
@@ -20,6 +21,8 @@ export function ResponsiveDialog({
   description?: string
   // A long body: the dialog widens to 4xl, both containers stop at 85% of the screen height and the body scrolls.
   wide?: boolean
+  // False hides the close button, for a step that must not be left halfway.
+  closable?: boolean
   // Extra classes for the dialog and the sheet, e.g. a different surface colour.
   className?: string
   children: ReactNode
@@ -42,7 +45,11 @@ export function ResponsiveDialog({
   const size = `${wide ? "max-h-[85dvh] sm:max-w-4xl" : ""} ${className}`
   return mobile ? (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent side="bottom" className={`gap-4 p-6 ${size}`}>
+      <SheetContent
+        side="bottom"
+        showCloseButton={closable}
+        className={`gap-4 p-6 ${size}`}
+      >
         <SheetTitle>{title}</SheetTitle>
         {body}
       </SheetContent>
@@ -50,6 +57,7 @@ export function ResponsiveDialog({
   ) : (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
+        showCloseButton={closable}
         className={`gap-4 p-6 ${size} ${wide ? "grid-rows-[auto_minmax(0,1fr)]" : ""}`}
       >
         <DialogTitle>{title}</DialogTitle>

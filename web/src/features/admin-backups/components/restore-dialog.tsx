@@ -11,12 +11,11 @@ import { ResponsiveDialog } from "@/components/app/responsive-dialog"
 import { SubmitButton } from "@/components/app/submit-button"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Spinner } from "@/components/ui/spinner"
 import { useAppForm } from "@/hooks/use-app-form"
 import { restoreConfirmSchema, type RestoreConfirm } from "../schemas"
 import { backupDate } from "./use-backup-columns"
 
-// Says what goes back, asks for the typed word, then shows the restore running and its result. It cannot be closed mid-restore.
+// Says what goes back and asks for the typed word. While it restores the form stays in place, disabled, with the button busy and no way to close; then the result.
 export function RestoreDialog({
   backup,
   onClose,
@@ -39,6 +38,7 @@ export function RestoreDialog({
       open={!!backup}
       onOpenChange={(open) => !open && !restore.isPending && onClose()}
       title={t("admin.restore_title")}
+      closable={!restore.isPending}
     >
       {done ? (
         <div role="status" className="flex flex-col items-start gap-4">
@@ -53,11 +53,6 @@ export function RestoreDialog({
             {t("common.close")}
           </Button>
         </div>
-      ) : restore.isPending ? (
-        <p role="status" className="flex items-center gap-2 text-body">
-          <Spinner aria-hidden="true" />
-          {t("admin.restore_running", { date })}
-        </p>
       ) : (
         <form
           noValidate
@@ -74,32 +69,37 @@ export function RestoreDialog({
           <p className="text-body text-muted-foreground">
             {t("admin.restore_body", { date })}
           </p>
-          <FormField
-            label={t("admin.restore_type", { phrase })}
-            error={form.formState.errors.phrase?.message}
+          <fieldset
+            disabled={restore.isPending}
+            className="flex flex-col gap-4"
           >
-            {(props) => (
-              <Input
-                {...props}
-                autoComplete="off"
-                spellCheck={false}
-                {...form.register("phrase")}
-              />
+            <FormField
+              label={t("admin.restore_type", { phrase })}
+              error={form.formState.errors.phrase?.message}
+            >
+              {(props) => (
+                <Input
+                  {...props}
+                  autoComplete="off"
+                  spellCheck={false}
+                  {...form.register("phrase")}
+                />
+              )}
+            </FormField>
+            {form.formState.errors.root && (
+              <p role="alert" className="text-ui text-destructive">
+                {form.formState.errors.root.message}
+              </p>
             )}
-          </FormField>
-          {form.formState.errors.root && (
-            <p role="alert" className="text-ui text-destructive">
-              {form.formState.errors.root.message}
-            </p>
-          )}
-          <div className="flex flex-wrap gap-3">
-            <SubmitButton variant="destructive">
-              {t("admin.restore")}
-            </SubmitButton>
-            <Button type="button" variant="ghost" onClick={onClose}>
-              {t("common.cancel")}
-            </Button>
-          </div>
+            <div className="flex flex-wrap gap-3">
+              <SubmitButton variant="destructive" pending={restore.isPending}>
+                {t(restore.isPending ? "admin.restoring" : "admin.restore")}
+              </SubmitButton>
+              <Button type="button" variant="ghost" onClick={onClose}>
+                {t("common.cancel")}
+              </Button>
+            </div>
+          </fieldset>
         </form>
       )}
     </ResponsiveDialog>

@@ -722,7 +722,7 @@
   "admin.restore_title": "Restore backup",
   "admin.restore_body": "All listings, accounts, payments and settings go back to how they were on {{date}}. Changes made after that are lost. The backup list stays as it is.",
   "admin.restore_phrase": "RESTORE",
+  "admin.restoring": "Restoring…",
   "admin.restore_type": "Type {{phrase}} to confirm",
-  "admin.restore_running": "Restoring the backup from {{date}}",
   "admin.restore_done": "Restored. The site now shows the data from {{date}}."
 }

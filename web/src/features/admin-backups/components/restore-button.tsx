@@ -19,10 +19,10 @@ export function RestoreButton({
       variant="secondary"
       size="sm"
       disabled={backup.status !== "ready"}
-      aria-label={t("admin.restore_label", { date })}
+      aria-label={t("admin.backup_restore_label", { date })}
       onClick={onRestore}
     >
-      {t("admin.restore")}
+      {t("admin.backup_restore")}
     </Button>
   )
 }

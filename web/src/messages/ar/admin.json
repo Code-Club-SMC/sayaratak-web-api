@@ -765,12 +765,13 @@
   "admin.backup_status_ready": "جاهزة",
   "admin.backup_status_restoring": "جارٍ الاستعادة",
   "admin.backup_status_failed": "فشلت",
-  "admin.restore": "استعادة",
-  "admin.restore_label": "استعادة نسخة {{date}}",
-  "admin.restore_title": "استعادة نسخة",
-  "admin.restore_body": "تعود كل الإعلانات والحسابات والمدفوعات والإعدادات إلى ما كانت عليه في {{date}}. تضيع التغييرات التي تمت بعد ذلك. قائمة النسخ تبقى كما هي.",
-  "admin.restore_phrase": "استعادة",
-  "admin.restoring": "جارٍ الاستعادة…",
-  "admin.restore_type": "اكتب {{phrase}} للتأكيد",
-  "admin.restore_done": "تمت الاستعادة. يعرض الموقع الآن بيانات {{date}}."
+  "admin.backup_restore": "استعادة",
+  "admin.backup_restore_label": "استعادة نسخة {{date}}",
+  "admin.backup_restore_title": "استعادة نسخة",
+  "admin.backup_restore_body": "تعود كل الإعلانات والحسابات والمدفوعات والإعدادات إلى ما كانت عليه في {{date}}. تضيع التغييرات التي تمت بعد ذلك. قائمة النسخ تبقى كما هي.",
+  "admin.backup_restore_phrase": "استعادة",
+  "admin.backup_restoring": "جارٍ الاستعادة…",
+  "admin.backup_restore_type": "اكتب {{phrase}} للتأكيد",
+  "admin.backup_restored_title": "تمت استعادة النسخة",
+  "admin.backup_restored": "يعرض الموقع الآن بيانات {{date}}."
 }

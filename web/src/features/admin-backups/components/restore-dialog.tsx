@@ -26,7 +26,7 @@ export function RestoreDialog({
   const { t, locale } = useT()
   const restore = useRestoreBackup()
   const [done, setDone] = useState(false)
-  const phrase = t("admin.restore_phrase")
+  const phrase = t("admin.backup_restore_phrase")
   const form = useAppForm<RestoreConfirm>({
     resolver: zodResolver(restoreConfirmSchema(phrase)),
     mode: "onSubmit",
@@ -37,17 +37,19 @@ export function RestoreDialog({
     <ResponsiveDialog
       open={!!backup}
       onOpenChange={(open) => !open && !restore.isPending && onClose()}
-      title={t("admin.restore_title")}
-      closable={!restore.isPending}
+      title={t(
+        done ? "admin.backup_restored_title" : "admin.backup_restore_title"
+      )}
+      closable={!done && !restore.isPending}
     >
       {done ? (
         <div role="status" className="flex flex-col items-start gap-4">
-          <p className="flex items-center gap-2 text-body">
+          <p className="flex items-start gap-2 text-body">
             <CircleCheckIcon
               aria-hidden="true"
-              className="size-5 text-success"
+              className="mt-0.5 size-5 shrink-0 text-success"
             />
-            {t("admin.restore_done", { date })}
+            {t("admin.backup_restored", { date })}
           </p>
           <Button type="button" onClick={onClose}>
             {t("common.close")}
@@ -67,14 +69,14 @@ export function RestoreDialog({
           })}
         >
           <p className="text-body text-muted-foreground">
-            {t("admin.restore_body", { date })}
+            {t("admin.backup_restore_body", { date })}
           </p>
           <fieldset
             disabled={restore.isPending}
             className="flex flex-col gap-4"
           >
             <FormField
-              label={t("admin.restore_type", { phrase })}
+              label={t("admin.backup_restore_type", { phrase })}
               error={form.formState.errors.phrase?.message}
             >
               {(props) => (
@@ -93,7 +95,11 @@ export function RestoreDialog({
             )}
             <div className="flex flex-wrap gap-3">
               <SubmitButton variant="destructive" pending={restore.isPending}>
-                {t(restore.isPending ? "admin.restoring" : "admin.restore")}
+                {t(
+                  restore.isPending
+                    ? "admin.backup_restoring"
+                    : "admin.backup_restore"
+                )}
               </SubmitButton>
               <Button type="button" variant="ghost" onClick={onClose}>
                 {t("common.cancel")}

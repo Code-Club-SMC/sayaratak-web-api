@@ -52,7 +52,7 @@ describe("BackupsPage", () => {
     fireEvent.change(word, { target: { value: "RESTORE" } })
     fireEvent.click(dialog.getByRole("button", { name: "Restore" }))
     expect(
-      await dialog.findByText(/^Restored\./, {}, { timeout: 4000 })
+      await dialog.findByText("Backup restored", {}, { timeout: 4000 })
     ).toBeTruthy()
     expect(db.settings.listingExpiryDays).toBe(30)
     expect(db.backups).toHaveLength(6)

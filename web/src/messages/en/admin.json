@@ -717,12 +717,13 @@
   "admin.backup_status_ready": "Ready",
   "admin.backup_status_restoring": "Restoring",
   "admin.backup_status_failed": "Failed",
-  "admin.restore": "Restore",
-  "admin.restore_label": "Restore the backup from {{date}}",
-  "admin.restore_title": "Restore backup",
-  "admin.restore_body": "All listings, accounts, payments and settings go back to how they were on {{date}}. Changes made after that are lost. The backup list stays as it is.",
-  "admin.restore_phrase": "RESTORE",
-  "admin.restoring": "Restoring…",
-  "admin.restore_type": "Type {{phrase}} to confirm",
-  "admin.restore_done": "Restored. The site now shows the data from {{date}}."
+  "admin.backup_restore": "Restore",
+  "admin.backup_restore_label": "Restore the backup from {{date}}",
+  "admin.backup_restore_title": "Restore backup",
+  "admin.backup_restore_body": "All listings, accounts, payments and settings go back to how they were on {{date}}. Changes made after that are lost. The backup list stays as it is.",
+  "admin.backup_restore_phrase": "RESTORE",
+  "admin.backup_restoring": "Restoring…",
+  "admin.backup_restore_type": "Type {{phrase}} to confirm",
+  "admin.backup_restored_title": "Backup restored",
+  "admin.backup_restored": "The site now shows the data from {{date}}."
 }

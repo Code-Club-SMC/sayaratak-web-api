@@ -181,7 +181,7 @@ const taxonomy: Record<
     shape: z.object({
       slug: z.string().min(1, "validation.required"),
       name,
-      vehicleTypes: z.array(vehicleTypeSchema),
+      vehicleTypes: z.array(vehicleTypeSchema).min(1, "validation.select_min"),
     }),
     useOf: (id) =>
       db.listings.some((l) => l.makeId === id) ||
@@ -213,6 +213,8 @@ const taxonomy: Record<
     useOf: (id) => db.taxonomy.cities.some((c) => c.countryId === id),
   },
 }
+// These lists give a new row its id and slug from the English name.
+const slugged = new Set(["part-categories", "cities", "makes"])
 const kind = (c: Ctx) => {
   admin(c)
   const type = taxonomyTypeSchema.safeParse(c.params.type)
@@ -225,7 +227,7 @@ route("POST", "/admin/taxonomy/:type", async (c) => {
   if (type === "vehicle-types") throw fail(403, "forbidden")
   // A part category's or city's slug (and id) comes from its English name, with a number added when taken.
   const input = await c.body(
-    type === "part-categories" || type === "cities"
+    slugged.has(type)
       ? shape.extend({ slug: z.string().optional() })
       : type === "countries"
         ? shape.extend({
@@ -236,7 +238,7 @@ route("POST", "/admin/taxonomy/:type", async (c) => {
           })
         : shape
   )
-  if (type === "part-categories" || type === "cities") {
+  if (slugged.has(type)) {
     const base = slugify((input.name as Bilingual).en) || type.slice(0, -1)
     let slug = base
     for (let n = 2; rows().some((r) => r.id === slug); n++)

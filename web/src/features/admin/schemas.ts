@@ -150,6 +150,13 @@ export const locationsSearchSchema = adminTableSearchSchema.extend({
 })
 export type LocationsSearch = z.infer<typeof locationsSearchSchema>
 
+// Makes and models (13.15): `make` is the open make; below lg it also switches the screen from the list to its models.
+export const makesSearchSchema = z.object({
+  q: optional(z.string().trim().max(60)),
+  make: optional(z.string().max(60)),
+})
+export type MakesSearch = z.infer<typeof makesSearchSchema>
+
 // The review queue (13.3): `listing` is the open item; below lg it also switches the screen from the list to the review.
 export const moderationSearchSchema = z.object({
   listing: optional(z.string().max(60)),

@@ -1,10 +1,12 @@
-import { createFileRoute } from "@tanstack/react-router"
+import { createFileRoute, stripSearchParams } from "@tanstack/react-router"
 
-import { PlaceholderPage } from "@/features/dashboard/components/placeholder-page"
+import { makesSearchSchema } from "@/features/admin/schemas"
+import { MakesPage } from "@/features/admin-makes/components/makes-page"
 import { dashboardPage } from "@/features/dashboard/overview-route"
 
-// A later Phase 13 step replaces the component.
 export const Route = createFileRoute("/$locale/admin/makes")({
+  validateSearch: makesSearchSchema,
+  search: { middlewares: [stripSearchParams({})] },
   ...dashboardPage("/admin/makes", "dashboard.nav_makes"),
-  component: () => <PlaceholderPage titleKey="dashboard.nav_makes" />,
+  component: MakesPage,
 })

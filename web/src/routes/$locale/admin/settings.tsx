@@ -1,10 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router"
 
-import { PlaceholderPage } from "@/features/dashboard/components/placeholder-page"
+import { SiteSettingsPage } from "@/features/admin-settings/components/site-settings-page"
 import { dashboardPage } from "@/features/dashboard/overview-route"
 
-// A later Phase 13 step replaces the component.
 export const Route = createFileRoute("/$locale/admin/settings")({
   ...dashboardPage("/admin/settings", "dashboard.nav_settings"),
-  component: () => <PlaceholderPage titleKey="dashboard.nav_settings" />,
+  component: SiteSettingsPage,
 })

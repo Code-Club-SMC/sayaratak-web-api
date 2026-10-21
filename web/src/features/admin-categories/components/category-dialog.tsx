@@ -18,21 +18,18 @@ import { useAppForm } from "@/hooks/use-app-form"
 import { categoryFormSchema, type CategoryForm } from "../schemas"
 
 export type CategoryDraft = { id?: string; name?: Bilingual }
-export type CategoryKind = "vehicle-types" | "part-categories"
 
-// Both names of a vehicle type or part category. A new part category (no `id`) is added; a part category's slug comes from its English name on the server.
+// Both names of a part category. A new one (no `id`) is added; its slug comes from the English name on the server.
 export function CategoryDialog({
-  kind,
   draft,
   onClose,
 }: {
-  kind: CategoryKind
   draft: CategoryDraft | undefined
   onClose: () => void
 }) {
   const { t } = useT()
-  const create = useCreateTaxonomyRow(kind)
-  const update = useUpdateTaxonomyRow(kind)
+  const create = useCreateTaxonomyRow("part-categories")
+  const update = useUpdateTaxonomyRow("part-categories")
   const form = useAppForm<CategoryForm>({
     resolver: zodResolver(categoryFormSchema),
     mode: "onTouched",
@@ -44,7 +41,6 @@ export function CategoryDialog({
   }, [draft, form])
   const { errors } = form.formState
   const editing = !!draft?.id
-  const key = kind === "vehicle-types" ? "vehicle_types" : "part_categories"
   const pending = create.isPending || update.isPending
   return (
     <ResponsiveDialog
@@ -52,7 +48,7 @@ export function CategoryDialog({
       onOpenChange={(open) => !open && onClose()}
       title={t(
         editing
-          ? `admin.categories_edit_${key}`
+          ? "admin.categories_edit_part_categories"
           : "admin.categories_add_part_categories"
       )}
     >

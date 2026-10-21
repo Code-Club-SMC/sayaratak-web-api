@@ -1,9 +1,10 @@
 import { useT } from "@/lib/i18n/use-t"
 import { usePageTitle } from "@/features/dashboard/components/page-title"
 import { PageHeader } from "@/components/app/page-header"
-import { CategorySection } from "./category-section"
+import { PartCategoriesSection } from "./part-categories-section"
+import { VehicleTypesSection } from "./vehicle-types-section"
 
-// The five vehicle types and the part categories, in the order the public site lists them.
+// Which vehicle types the site shows, and the part categories sellers pick from.
 export function AdminCategoriesPage() {
   const { t } = useT()
   const title = t("dashboard.nav_categories")
@@ -11,8 +12,8 @@ export function AdminCategoriesPage() {
   return (
     <div className="flex flex-col gap-6">
       <PageHeader title={title} />
-      <CategorySection kind="vehicle-types" />
-      <CategorySection kind="part-categories" />
+      <VehicleTypesSection />
+      <PartCategoriesSection />
     </div>
   )
 }

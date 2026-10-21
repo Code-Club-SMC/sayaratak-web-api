@@ -385,15 +385,6 @@ export const useDeleteTaxonomyRow = (type: TaxonomyType) =>
     (id: string) => del(`/admin/taxonomy/${type}/${id}`),
     [...touched, keys.taxonomy]
   )
-// Writes the new order of the five vehicle types or of the part categories; the public lists follow it.
-export const useReorderTaxonomy = (
-  type: Extract<TaxonomyType, "vehicle-types" | "part-categories">
-) =>
-  useApiMutation(
-    (ids: string[]) =>
-      post(okSchema)(`/admin/taxonomy/${type}/reorder`, { ids }),
-    [...touched, keys.taxonomy]
-  )
 export const useCreateBanner = () =>
   useApiMutation(
     (body: z.input<typeof bannerInputSchema>) =>

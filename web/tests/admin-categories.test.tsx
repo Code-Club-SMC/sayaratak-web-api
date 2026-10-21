@@ -42,17 +42,24 @@ describe("AdminCategoriesPage", () => {
     )
   })
 
-  it("moves a vehicle type down", async () => {
+  it("keeps the last shown vehicle type on", async () => {
     await open()
-    fireEvent.click(
-      await screen.findByRole("button", { name: "Move Cars down" })
+    for (const v of db.taxonomy.vehicleTypes.slice(1)) v.enabled = false
+    expect(await screen.findByText("Last one shown")).toBeTruthy()
+    expect(
+      screen.queryByRole("switch", { name: "Shown on the site, Cars" })
+    ).toBeNull()
+    const res = await handleMock(
+      new Request("http://localhost/api/admin/taxonomy/vehicle-types/car", {
+        method: "PATCH",
+        headers: {
+          cookie: "sy_session=u-admin",
+          "content-type": "application/json",
+        },
+        body: JSON.stringify({ enabled: false }),
+      })
     )
-    await waitFor(() =>
-      expect(db.taxonomy.vehicleTypes.map((v) => v.id).slice(0, 2)).toEqual([
-        "truck",
-        "car",
-      ])
-    )
+    expect(res.status).toBe(409)
   })
 
   it("adds a part category with a slug, then refuses to remove one in use", async () => {

@@ -517,11 +517,10 @@
   "admin.plan_kept_short": "محفوظة للسجل",
   "admin.plan_save": "حفظ الباقة",
   "admin.categories_vehicle_types_title": "أنواع المركبات",
-  "admin.categories_vehicle_types_body": "غيّر أسماء الأنواع الخمسة أو أخفِها أو أعد ترتيبها. النوع المخفي يختفي من بطاقات الرئيسية والفلاتر ونموذج النشر. إضافة نوع جديد تحتاج تعديلًا في الكود.",
+  "admin.categories_vehicle_types_body": "أوقف نوعًا لإخراجه من بطاقات الرئيسية والفلاتر ونموذج النشر. تبقى الإعلانات الحالية. يبقى نوع واحد على الأقل مفعّلًا.",
   "admin.categories_part_categories_title": "فئات قطع الغيار",
-  "admin.categories_part_categories_body": "الفئات التي يختار منها البائع لقطعة الغيار، بالترتيب الذي يراه المشترون. لا يمكن حذف فئة فيها قطع.",
+  "admin.categories_part_categories_body": "الفئات التي يختار منها البائع لقطعة الغيار، مرتبة أبجديًا. لا يمكن حذف فئة فيها قطع.",
   "admin.categories_add_part_categories": "إضافة فئة",
-  "admin.categories_edit_vehicle_types": "تعديل نوع المركبة",
   "admin.categories_edit_part_categories": "تعديل الفئة",
   "admin.categories_saved": "تم الحفظ",
   "admin.categories_removed": "تم حذف الفئة",
@@ -533,9 +532,8 @@
   "admin.categories_off_body": "يختفي من بطاقات الرئيسية والفلاتر ونموذج النشر. تبقى الإعلانات الحالية.",
   "admin.categories_on": "إظهار",
   "admin.categories_off": "إخفاء",
-  "admin.categories_move_up": "نقل {{name}} لأعلى",
-  "admin.categories_move_down": "نقل {{name}} لأسفل",
   "admin.categories_edit_label": "تعديل {{name}}",
   "admin.categories_remove_label": "حذف {{name}}",
-  "admin.categories_remove_title": "حذف {{name}}؟"
+  "admin.categories_remove_title": "حذف {{name}}؟",
+  "admin.categories_last_shown": "آخر نوع ظاهر"
 }

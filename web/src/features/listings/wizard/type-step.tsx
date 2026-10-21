@@ -76,10 +76,9 @@ export function TypeStep() {
         <>
           <ChipSingleSelect
             legend={t("search.part_category")}
-            options={(tax?.partCategories ?? []).map((c) => ({
-              value: c.id,
-              label: label(c.name),
-            }))}
+            options={(tax?.partCategories ?? [])
+              .map((c) => ({ value: c.id, label: label(c.name) }))
+              .sort((a, b) => a.label.localeCompare(b.label, locale))}
             value={values.partCategoryId}
             onChange={(v) => set("partCategoryId", v)}
             error={error("partCategoryId")}

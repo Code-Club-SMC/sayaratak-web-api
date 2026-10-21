@@ -16,7 +16,6 @@ import {
 } from "@/schemas/fields"
 import {
   bannerInputSchema,
-  idsInputSchema,
   noteInputSchema,
   pagePatchSchema,
   reportActionInputSchema,
@@ -236,22 +235,6 @@ route("POST", "/admin/taxonomy/:type", async (c) => {
   if (rows().some((r) => r.id === id)) throw fail(409, "exists")
   return insert(rows(), { id, ...input })
 })
-route("POST", "/admin/taxonomy/:type/reorder", async (c) => {
-  const { type, rows } = kind(c)
-  if (type !== "vehicle-types" && type !== "part-categories")
-    throw fail(404, "not_found")
-  const { ids } = await c.body(idsInputSchema)
-  const list = rows()
-  const sorted = ids.flatMap((id) => list.filter((r) => r.id === id))
-  // Rows the body left out keep their place after the named ones.
-  list.splice(
-    0,
-    list.length,
-    ...sorted,
-    ...list.filter((r) => !ids.includes(r.id))
-  )
-  return ack()
-})
 route("DELETE", "/admin/taxonomy/:type/:id", (c) => {
   const { type, rows, useOf } = kind(c)
   if (type === "vehicle-types") throw fail(403, "forbidden")
@@ -260,10 +243,18 @@ route("DELETE", "/admin/taxonomy/:type/:id", (c) => {
   return ack()
 })
 route("PATCH", "/admin/taxonomy/:type/:id", async (c) => {
-  const { rows, shape } = kind(c)
+  const { type, rows, shape } = kind(c)
   const row = find(rows(), c.params.id ?? "")
   if (!row) throw fail(404, "not_found")
-  return Object.assign(row, await c.body(shape.partial()))
+  const input = await c.body(shape.partial())
+  // The site always shows at least one vehicle type.
+  if (
+    type === "vehicle-types" &&
+    input.enabled === false &&
+    !rows().some((r) => r !== row && r.enabled)
+  )
+    throw fail(409, "last_shown")
+  return Object.assign(row, input)
 })
 
 route(

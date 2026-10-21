@@ -85,10 +85,9 @@ export function FilterForm({
       value: v.id,
       label: withCount(v.name[locale], facets?.type, v.id),
     }))
-  const partCategories = (tax?.partCategories ?? []).map((c) => ({
-    value: c.id,
-    label: c.name[locale],
-  }))
+  const partCategories = (tax?.partCategories ?? [])
+    .map((c) => ({ value: c.id, label: c.name[locale] }))
+    .sort((a, b) => a.label.localeCompare(b.label, locale))
   const any = { value: "", label: t("search.any") }
   const show = (g: FilterGroup) => !groups || groups.includes(g)
 

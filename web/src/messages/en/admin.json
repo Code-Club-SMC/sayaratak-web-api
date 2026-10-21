@@ -481,11 +481,10 @@
   "admin.plan_kept_short": "Kept for history",
   "admin.plan_save": "Save plan",
   "admin.categories_vehicle_types_title": "Vehicle types",
-  "admin.categories_vehicle_types_body": "Rename, switch off or reorder the five types. A switched-off type leaves the home tiles, filters and the posting form. Adding a new type needs a code change.",
+  "admin.categories_vehicle_types_body": "Switch a type off to take it out of the home tiles, filters and the posting form. Existing listings stay. At least one type stays on.",
   "admin.categories_part_categories_title": "Part categories",
-  "admin.categories_part_categories_body": "The categories sellers pick for a spare part, in the order buyers see them. A category with parts in it cannot be removed.",
+  "admin.categories_part_categories_body": "The categories sellers pick for a spare part, listed A to Z. A category with parts in it cannot be removed.",
   "admin.categories_add_part_categories": "Add category",
-  "admin.categories_edit_vehicle_types": "Edit vehicle type",
   "admin.categories_edit_part_categories": "Edit category",
   "admin.categories_saved": "Saved",
   "admin.categories_removed": "Category removed",
@@ -497,9 +496,8 @@
   "admin.categories_off_body": "It leaves the home tiles, filters and the posting form. Existing listings stay.",
   "admin.categories_on": "Show",
   "admin.categories_off": "Hide",
-  "admin.categories_move_up": "Move {{name}} up",
-  "admin.categories_move_down": "Move {{name}} down",
   "admin.categories_edit_label": "Edit {{name}}",
   "admin.categories_remove_label": "Remove {{name}}",
-  "admin.categories_remove_title": "Remove {{name}}?"
+  "admin.categories_remove_title": "Remove {{name}}?",
+  "admin.categories_last_shown": "Last one shown"
 }

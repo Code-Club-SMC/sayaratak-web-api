@@ -17,7 +17,7 @@ export function LocationActions({
     <div className="flex items-center gap-1">
       <Button
         type="button"
-        variant="ghost"
+        variant="secondary"
         size="sm"
         aria-label={t("admin.locations_edit_label", { name })}
         onClick={onEdit}
@@ -25,7 +25,7 @@ export function LocationActions({
         {t("common.edit")}
       </Button>
       <RemoveButton
-        variant="ghost"
+        variant="secondary"
         size="sm"
         aria-label={t("admin.locations_remove_label", { name })}
         title={t("admin.locations_remove_title", { name })}

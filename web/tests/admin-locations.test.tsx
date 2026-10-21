@@ -39,7 +39,7 @@ describe("LocationsPage", () => {
       role: "admin",
       path: "/en/admin/locations",
     })
-    expect(await screen.findByText("Last one on")).toBeTruthy()
+    expect(await screen.findByText("Only country shown, stays on")).toBeTruthy()
     expect(
       (await call("/admin/taxonomy/countries/sd", "PATCH", { enabled: false }))
         .status

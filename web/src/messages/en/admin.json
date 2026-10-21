@@ -512,7 +512,7 @@
   "admin.locations_col_coordinates": "Map center",
   "admin.locations_col_districts": "Districts",
   "admin.locations_col_city": "City",
-  "admin.locations_last_on": "Last one on",
+  "admin.locations_last_on": "Only country shown, stays on",
   "admin.locations_enabled_label": "On the site, {{name}}",
   "admin.locations_on_title": "Show {{name}} on the site?",
   "admin.locations_off_title": "Hide {{name}} from the site?",

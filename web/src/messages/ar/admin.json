@@ -548,7 +548,7 @@
   "admin.locations_col_coordinates": "مركز الخريطة",
   "admin.locations_col_districts": "الأحياء",
   "admin.locations_col_city": "المدينة",
-  "admin.locations_last_on": "آخر دولة ظاهرة",
+  "admin.locations_last_on": "الدولة الوحيدة الظاهرة، تبقى مفعّلة",
   "admin.locations_enabled_label": "على الموقع، {{name}}",
   "admin.locations_on_title": "إظهار {{name}} على الموقع؟",
   "admin.locations_off_title": "إخفاء {{name}} من الموقع؟",

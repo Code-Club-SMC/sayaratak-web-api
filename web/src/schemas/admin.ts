@@ -167,10 +167,11 @@ export const adminBusinessSchema = z.object({
 })
 export type AdminBusiness = z.infer<typeof adminBusinessSchema>
 
-// `free` is the audience's free plan (the first one priced 0): it keeps its price, stays on and cannot be deleted. `inUse` means a subscription or payment names it, so it cannot be deleted either.
+// `free` is the audience's free plan (the first one priced 0): it keeps its price, stays on and cannot be deleted. `inUse` means a subscription or payment names it, so it cannot be deleted either. `subscribers` counts its active subscriptions.
 export const adminPlanSchema = planSchema.extend({
   free: z.boolean(),
   inUse: z.boolean(),
+  subscribers: z.number().int(),
 })
 export type AdminPlan = z.infer<typeof adminPlanSchema>
 

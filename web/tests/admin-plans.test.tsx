@@ -69,12 +69,24 @@ describe("PlansPage", () => {
     await waitFor(() =>
       expect(within(table).getAllByRole("row")).toHaveLength(rows.length + 1)
     )
-    expect(within(table).getByText("Free plan")).toBeTruthy()
+    expect(within(table).getByText("Free plan, always on")).toBeTruthy()
+    expect(
+      within(table).queryByRole("button", { name: "Remove Free" })
+    ).toBeNull()
+    // The Subscribers column counts each plan's active subscriptions.
+    const col = within(table)
+      .getAllByRole("columnheader")
+      .findIndex((h) => h.textContent === "Subscribers")
+    const plus = within(table).getByRole("row", { name: /Plus/ })
+    expect(within(plus).getAllByRole("cell")[col]?.textContent).toBe(
+      String(
+        db.subscriptions.filter(
+          (x) => x.planId === "plan-user-plus" && x.status === "active"
+        ).length
+      )
+    )
     const locked = within(table).getByRole("switch", { name: /Free on/ })
     expect(locked.getAttribute("aria-disabled")).toBe("true")
-    expect(
-      within(table).getByRole("button", { name: "Remove Free" })
-    ).toHaveProperty("disabled", true)
   })
 
   it("a new dealership plan with a feature shows in onboarding and billing; turning it off hides it", async () => {
@@ -170,7 +182,6 @@ describe("PlansPage", () => {
     )
     await confirmRemove("Remove the Spare plan?")
     await waitFor(() => expect(find(db.plans, "plan-spare")).toBeUndefined())
-    expect(within(table).getByText("In use")).toBeTruthy()
     fireEvent.click(within(table).getByRole("button", { name: "Remove Plus" }))
     await confirmIn(
       "This item is in use and cannot be deleted",

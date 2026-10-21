@@ -27,3 +27,7 @@ export const capLabel = (audience: Plan["audience"], cap: CapKey) =>
   audience === "dealership" && cap === "listingLimit"
     ? "admin.plan_cap_vehicles"
     : labels[cap]
+
+// The table's shorter header for a cap.
+export const capHeader = (audience: Plan["audience"], cap: CapKey) =>
+  cap === "featuredCredits" ? "admin.plan_col_credits" : capLabel(audience, cap)

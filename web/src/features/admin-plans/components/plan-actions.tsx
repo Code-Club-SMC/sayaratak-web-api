@@ -1,21 +1,26 @@
+import { LockIcon } from "lucide-react"
+
 import { useT } from "@/lib/i18n/use-t"
 import type { AdminPlan } from "@/schemas/admin"
 import { Button } from "@/components/ui/button"
-import { planNoteId } from "./plan-name-cell"
 import { PlanRemoveButton } from "./plan-remove-button"
 
+// Edit, then Remove; where a plan cannot be removed, the reason sits in Remove's place.
 export function PlanActions({
   plan,
-  scope,
   onEdit,
 }: {
   plan: AdminPlan
-  scope: "table" | "card"
   onEdit: () => void
 }) {
   const { t, locale } = useT()
+  const locked = plan.free
+    ? t("admin.plan_free_locked_short")
+    : plan.inUse && !plan.enabled
+      ? t("admin.plan_kept_short")
+      : undefined
   return (
-    <div className="flex flex-wrap gap-1">
+    <div className="flex flex-wrap items-center gap-1">
       <Button
         type="button"
         variant="ghost"
@@ -25,12 +30,14 @@ export function PlanActions({
       >
         {t("common.edit")}
       </Button>
-      <PlanRemoveButton
-        plan={plan}
-        describedBy={
-          plan.free || plan.inUse ? planNoteId(plan, scope) : undefined
-        }
-      />
+      {locked ? (
+        <span className="inline-flex items-center gap-1.5 px-2 text-caption text-muted-foreground">
+          <LockIcon aria-hidden="true" className="size-3.5" />
+          {locked}
+        </span>
+      ) : (
+        <PlanRemoveButton plan={plan} />
+      )}
     </div>
   )
 }

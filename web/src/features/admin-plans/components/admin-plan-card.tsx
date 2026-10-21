@@ -1,13 +1,14 @@
+import { formatNumber } from "@/lib/format"
 import { useT } from "@/lib/i18n/use-t"
 import type { AdminPlan } from "@/schemas/admin"
 import { PlanActions } from "./plan-actions"
 import { PlanCapValue } from "./plan-cap-value"
-import { capLabel, capsOf } from "./plan-caps"
+import { capHeader, capsOf } from "./plan-caps"
 import { PlanEnabledSwitch } from "./plan-enabled-switch"
 import { PlanNameCell } from "./plan-name-cell"
 import { PlanPrice } from "./plan-price"
 
-// One plan below md: name, price and length, the caps, the switch with its label, then Edit and Remove.
+// One plan below md: name, price and length, caps and subscribers, the switch with its label, then Edit and Remove (or why it stays).
 export function AdminPlanCard({
   plan,
   onEdit,
@@ -15,10 +16,10 @@ export function AdminPlanCard({
   plan: AdminPlan
   onEdit: () => void
 }) {
-  const { t } = useT()
+  const { t, locale } = useT()
   return (
     <article className="flex flex-col gap-2 border-b p-3 in-[li:last-child]:border-b-0">
-      <PlanNameCell plan={plan} scope="card" />
+      <PlanNameCell plan={plan} />
       <p className="flex flex-wrap items-baseline gap-x-2 text-ui">
         <PlanPrice price={plan.price} />
         <span className="text-muted-foreground">
@@ -29,20 +30,26 @@ export function AdminPlanCard({
         {capsOf[plan.audience].map((cap) => (
           <div key={cap} className="flex gap-1">
             <dt className="text-muted-foreground">
-              {t(capLabel(plan.audience, cap))}
+              {t(capHeader(plan.audience, cap))}
             </dt>
             <dd>
               <PlanCapValue plan={plan} cap={cap} />
             </dd>
           </div>
         ))}
+        <div className="flex gap-1">
+          <dt className="text-muted-foreground">
+            {t("admin.plan_col_subscribers")}
+          </dt>
+          <dd className="num">{formatNumber(plan.subscribers, locale)}</dd>
+        </div>
       </dl>
       <div className="flex flex-wrap items-center justify-between gap-2">
         <span className="flex items-center gap-2 text-ui">
           <PlanEnabledSwitch plan={plan} />
           <span aria-hidden="true">{t("admin.plan_col_enabled")}</span>
         </span>
-        <PlanActions plan={plan} scope="card" onEdit={onEdit} />
+        <PlanActions plan={plan} onEdit={onEdit} />
       </div>
     </article>
   )

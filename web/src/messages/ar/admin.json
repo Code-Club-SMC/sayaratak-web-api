@@ -454,8 +454,6 @@
   "admin.plan_cap_photos": "الصور",
   "admin.plan_cap_portfolio": "صور الأعمال",
   "admin.plan_cap_empty_hint": "اتركه فارغاً لعدم وضع حد.",
-  "admin.plan_free_badge": "الباقة المجانية",
-  "admin.plan_in_use_badge": "مستخدمة",
   "admin.plan_free_locked": "الباقة المجانية تبقى مفعّلة ولا يمكن إزالتها.",
   "admin.plan_enabled_label": "تفعيل {{name}}",
   "admin.plan_enable_title": "تفعيل {{name}}؟",
@@ -512,5 +510,10 @@
   "admin.promos_ended_toast": "تم إنهاء الترويج",
   "admin.promos_empty": "لا توجد ترويجات جارية",
   "admin.promos_empty_filtered": "لا يوجد ترويج يطابق بحثك",
-  "admin.promos_pick_title": "اختر إعلانًا للترويج"
+  "admin.promos_pick_title": "اختر إعلانًا للترويج",
+  "admin.plans_unsaved": "تغييرات غير محفوظة",
+  "admin.plan_col_subscribers": "المشتركون",
+  "admin.plan_col_credits": "الرصيد الشهري",
+  "admin.plan_free_locked_short": "الباقة المجانية، مفعّلة دائماً",
+  "admin.plan_kept_short": "محفوظة للسجل"
 }

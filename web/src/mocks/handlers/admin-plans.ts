@@ -32,6 +32,9 @@ const rowOf = (p: Plan) =>
     ...p,
     free: freePlanOf(p.audience)?.id === p.id,
     inUse: inUse(p.id),
+    subscribers: db.subscriptions.filter(
+      (s) => s.planId === p.id && s.status === "active"
+    ).length,
   })
 const planOf = (id: string) => {
   const row = find(db.plans, id)

@@ -15,6 +15,7 @@ import {
 import { dataTableFeatures, type DataColumn } from "@/lib/table"
 import { useT } from "@/lib/i18n/use-t"
 import { useDelayedFlag } from "@/lib/use-delayed-flag"
+import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -136,12 +137,14 @@ export function DataTable<T extends RowData>({
 
   return (
     <div className="flex flex-col gap-4">
-      <DataTableToolbar
-        search={search}
-        onSearch={onSearch}
-        filters={filters}
-        columns={toggles}
-      />
+      {(onSearch || filters || toggles.length > 0) && (
+        <DataTableToolbar
+          search={search}
+          onSearch={onSearch}
+          filters={filters}
+          columns={toggles}
+        />
+      )}
       {selection && count > 0 && (
         <BulkActionBar count={count} onClear={() => selection.onChange({})}>
           {selection.actions}
@@ -173,6 +176,8 @@ export function DataTable<T extends RowData>({
                       )}
                       {group.headers.map((header, i) => {
                         const key = header.column.columnDef.meta?.sortKey
+                        const end =
+                          header.column.columnDef.meta?.align === "end"
                         const dir =
                           sort === `${key}_asc`
                             ? "asc"
@@ -192,11 +197,12 @@ export function DataTable<T extends RowData>({
                                   ? "descending"
                                   : undefined
                             }
-                            className={
-                              !mobileCard && i === 0
-                                ? "max-md:sticky max-md:start-0 max-md:bg-card"
-                                : undefined
-                            }
+                            className={cn(
+                              !mobileCard &&
+                                i === 0 &&
+                                "max-md:sticky max-md:start-0 max-md:bg-card",
+                              end && "text-end"
+                            )}
                           >
                             {key && onSortChange ? (
                               <Button
@@ -249,11 +255,13 @@ export function DataTable<T extends RowData>({
                           {row.getVisibleCells().map((cell, i) => (
                             <TableCell
                               key={cell.id}
-                              className={
-                                !mobileCard && i === 0
-                                  ? "max-md:sticky max-md:start-0 max-md:bg-card"
-                                  : undefined
-                              }
+                              className={cn(
+                                !mobileCard &&
+                                  i === 0 &&
+                                  "max-md:sticky max-md:start-0 max-md:bg-card",
+                                cell.column.columnDef.meta?.align === "end" &&
+                                  "text-end"
+                              )}
                             >
                               <table.FlexRender cell={cell} />
                             </TableCell>

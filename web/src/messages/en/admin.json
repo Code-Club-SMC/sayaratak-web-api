@@ -418,8 +418,6 @@
   "admin.plan_cap_photos": "Photos",
   "admin.plan_cap_portfolio": "Portfolio photos",
   "admin.plan_cap_empty_hint": "Leave empty for no limit.",
-  "admin.plan_free_badge": "Free plan",
-  "admin.plan_in_use_badge": "In use",
   "admin.plan_free_locked": "The free plan stays on and cannot be removed.",
   "admin.plan_enabled_label": "{{name}} on",
   "admin.plan_enable_title": "Turn on {{name}}?",
@@ -476,5 +474,10 @@
   "admin.promos_ended_toast": "Promotion ended",
   "admin.promos_empty": "No active promotions",
   "admin.promos_empty_filtered": "No promotion matches your search",
-  "admin.promos_pick_title": "Choose a listing to promote"
+  "admin.promos_pick_title": "Choose a listing to promote",
+  "admin.plans_unsaved": "Unsaved changes",
+  "admin.plan_col_subscribers": "Subscribers",
+  "admin.plan_col_credits": "Credits / month",
+  "admin.plan_free_locked_short": "Free plan, always on",
+  "admin.plan_kept_short": "Kept for history"
 }

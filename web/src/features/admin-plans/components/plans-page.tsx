@@ -36,7 +36,6 @@ export function PlansPage() {
   return (
     <div className="flex flex-col gap-6">
       <PageHeader title={title} />
-      <IndividualSettingsCard />
       <Tabs
         value={tab}
         onValueChange={(next) =>
@@ -53,11 +52,14 @@ export function PlansPage() {
             </TabsTrigger>
           ))}
         </TabsList>
-        <TabsContent value={tab} className="flex flex-col gap-4">
+        <TabsContent value={tab} className="flex flex-col gap-6">
           {tab === "subscribers" ? (
             <SubscribersTable search={search} go={go} />
           ) : (
-            <PlansTable audience={tab} />
+            <>
+              {tab === "user" && <IndividualSettingsCard />}
+              <PlansTable audience={tab} />
+            </>
           )}
         </TabsContent>
       </Tabs>

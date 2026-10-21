@@ -10,15 +10,8 @@ import { RemoveButton } from "@/components/app/remove-button"
 import { Button } from "@/components/ui/button"
 import { toast } from "@/components/ui/toast"
 
-// A plan nobody used is removed after a confirm. A plan a subscription or payment names stays for that history: the button explains and offers to turn it off instead (A12 `in_use`). The free plan, and a used plan already off, cannot be removed.
-export function PlanRemoveButton({
-  plan,
-  describedBy,
-}: {
-  plan: AdminPlan
-  // The badge that says why the button is off.
-  describedBy?: string
-}) {
+// A plan nobody used is removed after a confirm. A plan a subscription or payment names stays for that history: the button explains and offers to turn it off instead (A12 `in_use`). The free plan, and a used plan already off, get no button (see PlanActions).
+export function PlanRemoveButton({ plan }: { plan: AdminPlan }) {
   const { t, locale } = useT()
   const remove = useDeletePlan()
   const update = useUpdatePlan()
@@ -26,19 +19,6 @@ export function PlanRemoveButton({
   const name = plan.name[locale]
   const label = t("common.remove")
   const aria = t("admin.plan_remove_label", { name })
-  if (plan.free || (plan.inUse && !plan.enabled))
-    return (
-      <Button
-        type="button"
-        variant="ghost"
-        size="sm"
-        disabled
-        aria-label={aria}
-        aria-describedby={describedBy}
-      >
-        {label}
-      </Button>
-    )
   const dialog = (
     <ConfirmDialog
       open={blocked}

@@ -6,8 +6,8 @@ import {
   type RowData,
 } from "@tanstack/react-table"
 
-// `sortKey` is the API sort base: a header click asks for `<sortKey>_asc`, then `<sortKey>_desc`.
-export type DataColumnMeta = { sortKey?: string }
+// `sortKey` is the API sort base: a header click asks for `<sortKey>_asc`, then `<sortKey>_desc`. `align: "end"` lines numbers up at the end of the column, header included.
+export type DataColumnMeta = { sortKey?: string; align?: "end" }
 
 // Phantom value: only its type matters.
 const meta: DataColumnMeta = {}

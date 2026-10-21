@@ -12,7 +12,7 @@ import { AdminPlanCard } from "./admin-plan-card"
 import { PlanFormDialog } from "./plan-form-dialog"
 import { usePlanColumns } from "./use-plan-columns"
 
-// One audience's plans, all on one page in their own order, with Add plan in the toolbar.
+// One audience's plans under their own heading with Add plan beside it, all on one page in their own order.
 export function PlansTable({ audience }: { audience: AdminPlan["audience"] }) {
   const { t } = useT()
   const plans = useQuery(adminQueries.plans)
@@ -20,8 +20,18 @@ export function PlansTable({ audience }: { audience: AdminPlan["audience"] }) {
   const [editing, setEditing] = useState<AdminPlan | "new">()
   const columns = usePlanColumns(audience, setEditing)
   const nextOrder = Math.max(-1, ...(rows ?? []).map((p) => p.sortOrder)) + 1
+  const headingId = `plans-${audience}`
   return (
-    <>
+    <section aria-labelledby={headingId} className="flex flex-col gap-3">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h2 id={headingId} className="text-title font-semibold">
+          {t(`admin.plans_table_${audience}`)}
+        </h2>
+        <Button type="button" onClick={() => setEditing("new")}>
+          <PlusIcon data-icon="inline-start" />
+          {t("admin.plan_add")}
+        </Button>
+      </div>
       <DataTable
         label={t(`admin.plans_table_${audience}`)}
         columns={columns}
@@ -30,12 +40,6 @@ export function PlansTable({ audience }: { audience: AdminPlan["audience"] }) {
         loading={plans.isPending}
         error={plans.isError}
         onRetry={() => void plans.refetch()}
-        filters={
-          <Button type="button" onClick={() => setEditing("new")}>
-            <PlusIcon data-icon="inline-start" />
-            {t("admin.plan_add")}
-          </Button>
-        }
         mobileCard={(p) => (
           <AdminPlanCard plan={p} onEdit={() => setEditing(p)} />
         )}
@@ -58,6 +62,6 @@ export function PlansTable({ audience }: { audience: AdminPlan["audience"] }) {
         plan={editing === "new" ? undefined : editing}
         nextOrder={nextOrder}
       />
-    </>
+    </section>
   )
 }

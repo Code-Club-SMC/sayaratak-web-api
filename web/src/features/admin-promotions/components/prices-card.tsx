@@ -38,7 +38,23 @@ export function PricesCard() {
         </p>
       </div>
       {!prices.data ? (
-        <Skeleton aria-hidden="true" className="h-32 w-full" />
+        // One placeholder row per promotion type, shaped like the real row so nothing moves when the prices arrive.
+        <ul aria-hidden="true" className="flex flex-col">
+          {Array.from({ length: 4 }, (_, i) => (
+            <li
+              key={i}
+              className="flex items-center gap-4 border-b py-3 last:border-b-0"
+            >
+              <div className="flex flex-1 flex-col gap-1.5">
+                <Skeleton className="h-4 w-28" />
+                <Skeleton className="h-3 w-56 max-w-full" />
+              </div>
+              <Skeleton className="h-4 w-14" />
+              <Skeleton className="h-4 w-20" />
+              <Skeleton className="h-8 w-14 rounded-lg" />
+            </li>
+          ))}
+        </ul>
       ) : (
         <ul
           aria-label={t("admin.promos_prices_table")}

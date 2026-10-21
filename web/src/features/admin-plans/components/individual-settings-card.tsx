@@ -44,7 +44,24 @@ export function IndividualSettingsCard() {
           settings={settings.data}
         />
       ) : (
-        <Skeleton aria-hidden="true" className="h-40 w-full" />
+        // The two setting rows and the footer, shaped like the form.
+        <div aria-hidden="true" className="flex flex-col">
+          {["h-6 w-11 rounded-full", "h-10 w-24 rounded-lg"].map((control) => (
+            <div
+              key={control}
+              className="flex items-center gap-4 border-t py-3"
+            >
+              <div className="flex flex-1 flex-col gap-1.5">
+                <Skeleton className="h-4 w-40" />
+                <Skeleton className="h-3 w-64 max-w-full" />
+              </div>
+              <Skeleton className={control} />
+            </div>
+          ))}
+          <div className="flex justify-end border-t pt-4">
+            <Skeleton className="h-9 w-16 rounded-lg" />
+          </div>
+        </div>
       )}
     </section>
   )

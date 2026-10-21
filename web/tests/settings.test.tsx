@@ -114,6 +114,23 @@ describe("SettingsPage", () => {
     ).toBe("/en/admin/notifications")
   })
 
+  it("saves the admin's name, password and data saver", async () => {
+    await open("admin")
+    type(await field("Full name *"), "Admin Saved")
+    save()
+    await waitFor(() => expect(rowOf("admin").fullName).toBe("Admin Saved"))
+    const password = rowOf("admin").password!
+    type(await field("Current password"), password)
+    type(await field("New password"), "Fresh1234")
+    save("Change password")
+    await waitFor(() => expect(rowOf("admin").password).toBe("Fresh1234"))
+    const toggle = await screen.findByRole("switch", { name: "Data saver" })
+    fireEvent.click(toggle)
+    await waitFor(() =>
+      expect(toggle.getAttribute("aria-checked")).toBe("true")
+    )
+  })
+
   it("saves the name and confirms in place", async () => {
     await open()
     type(await field("Full name *"), "Omar Saved")

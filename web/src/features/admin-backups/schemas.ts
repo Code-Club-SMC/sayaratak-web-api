@@ -6,6 +6,6 @@ export const restoreConfirmSchema = (phrase: string) =>
     phrase: z
       .string()
       .trim()
-      .refine((v) => v === phrase, "validation.phrase"),
+      .refine((v) => v === phrase, "validation.restore_phrase"),
   })
 export type RestoreConfirm = z.infer<ReturnType<typeof restoreConfirmSchema>>

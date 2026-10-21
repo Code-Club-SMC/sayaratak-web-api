@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import type { BroadcastForm } from "../schemas"
 
-// Title and message in each language, Arabic first; each recipient reads the one of their own language.
+// Title and message in each language, Arabic first; each recipient reads the one of their own language. Each field counts its characters.
 export function BroadcastTextFields({
   form,
 }: {
@@ -23,6 +23,7 @@ export function BroadcastTextFields({
         <FormField
           label={t(`admin.broadcast_title_${lang}`)}
           error={errors[title]?.message}
+          description={`${form.watch(title).length}/80`}
         >
           {(props) => (
             <Input
@@ -37,6 +38,7 @@ export function BroadcastTextFields({
         <FormField
           label={t(`admin.broadcast_body_${lang}`)}
           error={errors[body]?.message}
+          description={`${form.watch(body).length}/300`}
         >
           {(props) => (
             <Textarea

@@ -31,8 +31,8 @@
   "validation.contact_required": "أضف رقم هاتف أو بريدًا إلكترونيًا",
   "validation.country_code": "استخدم رمز دولة من حرفين",
   "validation.dial_code": "استخدم رمز اتصال مثل ‎+249",
-  "validation.path": "ابدأ المسار بالرمز /",
-  "validation.url": "أدخل مسارًا يبدأ بالرمز / أو رابطًا كاملًا",
+  "validation.path": "أدخل مسار صفحة يبدأ بـ /",
+  "validation.url": "أدخل مسارًا يبدأ بـ / أو عنوانًا يبدأ بـ https://",
   "validation.date_order": "يجب أن يكون تاريخ النهاية بعد تاريخ البداية",
   "validation.account_number": "أدخل من 6 إلى 20 رقمًا",
   "validation.phrase": "اكتب كلمة التأكيد كما هي",
@@ -50,6 +50,5 @@
   "validation.ad_photo": "أضف صورة للبانر",
   "validation.ad_target": "اختر ما يفتحه البانر",
   "validation.ad_pages": "اختر صفحة واحدة على الأقل",
-  "validation.country_code_taken": "هذا الرمز مستخدم بالفعل",
-  "validation.path": "أدخل مسار صفحة يبدأ بـ /"
+  "validation.country_code_taken": "هذا الرمز مستخدم بالفعل"
 }

@@ -14,7 +14,7 @@ export function NotificationItem({
 }: {
   notification: Notification
   onOpen?: (n: Notification, e: MouseEvent) => void
-  // The bell's panel keeps the body to one line.
+  // The bell's panel keeps the body to one line; the notifications page shows all of it.
   compact?: boolean
 }) {
   const { t, locale } = useT()
@@ -35,12 +35,12 @@ export function NotificationItem({
               <>
                 <span
                   aria-hidden="true"
-                  className="size-2 shrink-0 rounded-full bg-primary"
+                  className="mt-1.5 size-2 shrink-0 self-start rounded-full bg-primary"
                 />
                 <span className="sr-only">{t("notifications.unread")}</span>
               </>
             )}
-            <span className={compact ? "truncate" : undefined}>
+            <span className={compact ? "truncate" : "min-w-0 break-words"}>
               {n.title[locale]}
             </span>
           </span>
@@ -50,7 +50,7 @@ export function NotificationItem({
           />
         </span>
         <span
-          className={`text-caption text-muted-foreground ${compact ? "truncate" : "line-clamp-2"}`}
+          className={`text-caption text-muted-foreground ${compact ? "truncate" : "break-words whitespace-pre-line"}`}
         >
           {n.body[locale]}
         </span>

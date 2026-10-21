@@ -657,5 +657,20 @@
   "admin.banners_delete_title": "Delete {{name}}?",
   "admin.banners_delete_body": "It leaves the site and its counts are lost.",
   "admin.banners_empty": "No banners yet",
-  "admin.banners_empty_filtered": "No banner matches this search."
+  "admin.banners_empty_filtered": "No banner matches this search.",
+  "admin.pages_hint": "About, contact, privacy and terms. A save shows on the site at once, in both languages.",
+  "admin.pages_updated": "Updated {{date}}",
+  "admin.pages_error": "Could not load this page. Try again.",
+  "admin.pages_language": "Language",
+  "admin.pages_tab_ar": "Arabic",
+  "admin.pages_tab_en": "English",
+  "admin.pages_title_ar": "Title in Arabic",
+  "admin.pages_title_en": "Title in English",
+  "admin.pages_body_ar": "Text in Arabic",
+  "admin.pages_body_en": "Text in English",
+  "admin.pages_body_hint": "Blank line for a new paragraph. Start a line with # for a heading, with - for a list item.",
+  "admin.pages_preview_ar": "Preview in Arabic",
+  "admin.pages_preview_en": "Preview in English",
+  "admin.pages_save": "Save page",
+  "admin.pages_saved": "Page saved"
 }

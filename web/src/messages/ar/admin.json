@@ -705,5 +705,20 @@
   "admin.banners_delete_title": "حذف {{name}}؟",
   "admin.banners_delete_body": "يختفي من الموقع وتضيع إحصاءاته.",
   "admin.banners_empty": "لا توجد بنرات بعد",
-  "admin.banners_empty_filtered": "لا يوجد بنر يطابق هذا البحث."
+  "admin.banners_empty_filtered": "لا يوجد بنر يطابق هذا البحث.",
+  "admin.pages_hint": "من نحن، اتصل بنا، الخصوصية والشروط. يظهر الحفظ على الموقع فورًا، باللغتين.",
+  "admin.pages_updated": "حُدّثت {{date}}",
+  "admin.pages_error": "تعذر تحميل هذه الصفحة. حاول مرة أخرى.",
+  "admin.pages_language": "اللغة",
+  "admin.pages_tab_ar": "العربية",
+  "admin.pages_tab_en": "الإنجليزية",
+  "admin.pages_title_ar": "العنوان بالعربية",
+  "admin.pages_title_en": "العنوان بالإنجليزية",
+  "admin.pages_body_ar": "النص بالعربية",
+  "admin.pages_body_en": "النص بالإنجليزية",
+  "admin.pages_body_hint": "سطر فارغ لفقرة جديدة. ابدأ السطر بـ # لعنوان، وبـ - لعنصر قائمة.",
+  "admin.pages_preview_ar": "معاينة بالعربية",
+  "admin.pages_preview_en": "معاينة بالإنجليزية",
+  "admin.pages_save": "حفظ الصفحة",
+  "admin.pages_saved": "تم حفظ الصفحة"
 }

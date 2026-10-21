@@ -84,6 +84,10 @@ export type Country = {
   dialCode: string
   enabled: boolean
 }
+// Everything a backup copies and a restore puts back; the backup list itself is left out.
+export type Snapshot = Omit<Db, "backups">
+// Seeded rows carry no snapshot, so restoring one puts the seed data back.
+export type BackupRow = Backup & { snapshot?: Snapshot }
 export type PromotionPriceRow = PromotionPrice & { id: string }
 export type SitePageRow = SitePage & { id: string }
 
@@ -112,7 +116,7 @@ export type Db = {
   adPages: AdPageRow[]
   campaigns: CampaignRow[]
   pages: SitePageRow[]
-  backups: Backup[]
+  backups: BackupRow[]
   settings: Settings
   drafts: DraftRow[]
   events: EventRow[]

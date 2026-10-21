@@ -25,7 +25,7 @@ import { reviewSchema } from "@/schemas/review"
 import { z } from "zod"
 
 import { slugify } from "../seed/util"
-import { db, find, insert, newId, remove } from "../db"
+import { db, find, insert, newId, remove, restoreDb, takeSnapshot } from "../db"
 import { fail, needRole, route, type Ctx } from "../http"
 import {
   byNewest,
@@ -338,11 +338,18 @@ route("PATCH", "/admin/settings", async (c) => {
   return settingsSchema.parse(db.settings)
 })
 
-route(
-  "GET",
-  "/admin/backups",
-  (c) => (admin(c), z.array(backupSchema).parse([...db.backups].sort(byNewest)))
-)
+const BACKUP_MS = 2000
+const RESTORE_MS = 1500
+route("GET", "/admin/backups", (c) => {
+  admin(c)
+  for (const b of db.backups)
+    if (
+      b.status === "running" &&
+      Date.now() - Date.parse(b.createdAt) >= BACKUP_MS
+    )
+      b.status = "ready"
+  return z.array(backupSchema).parse([...db.backups].sort(byNewest))
+})
 route("POST", "/admin/backups", (c) => {
   admin(c)
   return backupSchema.parse(
@@ -351,13 +358,18 @@ route("POST", "/admin/backups", (c) => {
       createdAt: nowIso(),
       sizeMb: 40 + db.backups.length,
       type: "manual",
-      status: "ready",
+      status: "running",
+      snapshot: takeSnapshot(),
     })
   )
 })
-// The mock keeps one live data set, so a restore only confirms the backup exists.
-route("POST", "/admin/backups/:id/restore", (c) => {
+// Puts the data back as it was when the backup was taken; the wait stands in for the real restore.
+route("POST", "/admin/backups/:id/restore", async (c) => {
   admin(c)
-  if (!find(db.backups, c.params.id ?? "")) throw fail(404, "not_found")
+  const backup = find(db.backups, c.params.id ?? "")
+  if (!backup) throw fail(404, "not_found")
+  if (backup.status !== "ready") throw fail(409, "conflict")
+  await new Promise((resolve) => setTimeout(resolve, RESTORE_MS))
+  restoreDb(backup.snapshot)
   return ack()
 })

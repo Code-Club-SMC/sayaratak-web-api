@@ -1,7 +1,7 @@
 import { customAlphabet, nanoid } from "nanoid"
 
 import { buildSeed } from "./seed"
-import type { Db } from "./types"
+import type { Db, Snapshot } from "./types"
 
 declare global {
   var __sayaratakDb: Db | undefined
@@ -14,6 +14,17 @@ export const db: Db = (globalThis.__sayaratakDb ??= buildSeed({
   empty: empty(),
 }))
 export const resetDb = () => Object.assign(db, buildSeed({ empty: empty() }))
+// ponytail: a full copy per backup, fine for the demo data; store diffs if backups ever pile up.
+export const takeSnapshot = (): Snapshot => {
+  const { backups: _, ...rest } = db
+  return structuredClone(rest)
+}
+// Puts a snapshot back (or the seed data when there is none) and keeps the backup list. Sessions are cookies holding a
+// user id, so whoever is signed in stays signed in as long as their account exists in the restored data.
+export const restoreDb = (snapshot?: Snapshot) => {
+  const { backups: _, ...seed } = buildSeed({ empty: empty() })
+  Object.assign(db, snapshot ? structuredClone(snapshot) : seed)
+}
 
 type Row = { id: string }
 // Six characters, like the seeded ids, so slugs keep the same shape.

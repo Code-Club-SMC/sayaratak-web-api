@@ -210,6 +210,7 @@ export const settingsSchema = z.object({
     address: z.string(),
   }),
   locales: z.array(localeSchema),
+  backupSchedule: z.enum(["daily", "weekly", "off"]),
 })
 export type Settings = z.infer<typeof settingsSchema>
 
@@ -218,7 +219,8 @@ export const backupSchema = z.object({
   createdAt: z.string(),
   sizeMb: z.number(),
   type: z.enum(["auto", "manual"]),
-  status: z.enum(["ready", "restoring", "failed"]),
+  // A new backup is `running` for about 2 seconds, then `ready`.
+  status: z.enum(["running", "ready", "restoring", "failed"]),
 })
 export type Backup = z.infer<typeof backupSchema>
 

@@ -22,6 +22,7 @@ export const settings: Settings = {
     address: "الخرطوم، السودان",
   },
   locales: ["ar", "en"],
+  backupSchedule: "daily",
 }
 
 const page = (

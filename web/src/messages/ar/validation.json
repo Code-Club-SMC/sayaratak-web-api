@@ -50,5 +50,6 @@
   "validation.ad_photo": "أضف صورة للبانر",
   "validation.ad_target": "اختر ما يفتحه البانر",
   "validation.ad_pages": "اختر صفحة واحدة على الأقل",
-  "validation.country_code_taken": "هذا الرمز مستخدم بالفعل"
+  "validation.country_code_taken": "هذا الرمز مستخدم بالفعل",
+  "validation.phrase": "اكتب الكلمة كما هي تمامًا"
 }

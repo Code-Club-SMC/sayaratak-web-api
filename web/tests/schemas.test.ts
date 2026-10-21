@@ -390,6 +390,7 @@ const cases: [string, z.ZodType, unknown][] = [
       bankakAccount: { name: "N", number: "123456" },
       contact: { phone, whatsapp: phone, email: "a@b.co", address: "A" },
       locales: ["ar", "en"],
+      backupSchedule: "off",
     },
   ],
   [

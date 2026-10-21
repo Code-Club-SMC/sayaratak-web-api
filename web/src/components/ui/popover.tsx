@@ -29,7 +29,7 @@ function PopoverContent({
         alignOffset={alignOffset}
         side={side}
         sideOffset={sideOffset}
-        className="isolate z-(--z-popover)"
+        className="isolate z-(--z-dialog)"
       >
         <PopoverPrimitive.Popup
           data-slot="popover-content"

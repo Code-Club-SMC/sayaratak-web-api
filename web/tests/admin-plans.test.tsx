@@ -96,7 +96,7 @@ describe("PlansPage", () => {
     const dialog = await screen.findByRole("dialog", {
       name: "Add a dealership plan",
     })
-    fireEvent.click(within(dialog).getByRole("button", { name: "Add plan" }))
+    fireEvent.click(within(dialog).getByRole("button", { name: "Save plan" }))
     await waitFor(() =>
       expect(within(dialog).getAllByText("This field is required").length).toBe(
         4
@@ -122,9 +122,9 @@ describe("PlansPage", () => {
     fireEvent.input(textbox(dialog, /Feature 1 in English/), {
       target: { value: "Dedicated support" },
     })
-    fireEvent.click(within(dialog).getByRole("button", { name: "Add plan" }))
+    fireEvent.click(within(dialog).getByRole("button", { name: "Save plan" }))
     await waitFor(() =>
-      expect(add).toHaveBeenCalledWith({ title: "Plan added" })
+      expect(add).toHaveBeenCalledWith({ title: "Plan saved" })
     )
     const plan = db.plans.find((p) => p.name.en === "Elite")!
     expect(plan).toMatchObject({
@@ -156,7 +156,7 @@ describe("PlansPage", () => {
     expect(textbox(dialog, /Price/)).toHaveProperty("readOnly", true)
     fireEvent.change(textbox(dialog, /Services/), { target: { value: "" } })
     fireEvent.change(textbox(dialog, /Photos/), { target: { value: "4" } })
-    fireEvent.click(within(dialog).getByRole("button", { name: "Save" }))
+    fireEvent.click(within(dialog).getByRole("button", { name: "Save plan" }))
     const plan = find(db.plans, "plan-workshop-basic")!
     await waitFor(() => expect(plan.photoLimit).toBe(4))
     expect(plan.serviceLimit).toBeUndefined()
@@ -204,12 +204,18 @@ describe("PlansPage", () => {
     const settings = await screen.findByRole("region", {
       name: "Individual sellers",
     })
-    fireEvent.change(
-      await within(settings).findByRole("textbox", {
-        name: /Free listings per user/,
-      }),
-      { target: { value: "5" } }
-    )
+    const limit = await within(settings).findByRole("textbox", {
+      name: /Free listings per user/,
+    })
+    fireEvent.change(limit, { target: { value: "500" } })
+    expect(await within(settings).findByText("Unsaved changes")).toBeTruthy()
+    fireEvent.click(within(settings).getByRole("button", { name: "Save" }))
+    expect(
+      await within(settings).findByText("This number is too large")
+    ).toBeTruthy()
+    expect(limit.getAttribute("aria-invalid")).toBe("true")
+    expect(db.settings.freeListingLimit).toBe(3)
+    fireEvent.change(limit, { target: { value: "5" } })
     fireEvent.click(
       within(settings).getByRole("switch", { name: "Individual subscriptions" })
     )

@@ -395,7 +395,6 @@
   "admin.plan_add_title_mechanic": "Add a mechanic plan",
   "admin.plan_edit_title": "Edit {{name}}",
   "admin.plan_edit_label": "Edit {{name}}",
-  "admin.plan_added_toast": "Plan added",
   "admin.plan_saved_toast": "Plan saved",
   "admin.plan_col_name": "Plan",
   "admin.plan_col_price": "Price",
@@ -479,5 +478,6 @@
   "admin.plan_col_subscribers": "Subscribers",
   "admin.plan_col_credits": "Credits / month",
   "admin.plan_free_locked_short": "Free plan, always on",
-  "admin.plan_kept_short": "Kept for history"
+  "admin.plan_kept_short": "Kept for history",
+  "admin.plan_save": "Save plan"
 }

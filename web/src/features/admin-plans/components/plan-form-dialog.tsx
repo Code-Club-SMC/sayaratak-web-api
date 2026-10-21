@@ -97,7 +97,7 @@ export function PlanFormDialog({
       else
         create.mutate(
           { audience: forAudience, ...body },
-          done("admin.plan_added_toast")
+          done("admin.plan_saved_toast")
         )
     },
     () => focusFirstInvalid(document.querySelector("[data-plan-form]"))
@@ -122,7 +122,7 @@ export function PlanFormDialog({
         <PlanFormFields form={form} plan={plan} />
         <div className="flex flex-wrap gap-3">
           <SubmitButton pending={create.isPending || update.isPending}>
-            {plan ? t("common.save") : t("admin.plan_add")}
+            {t("admin.plan_save")}
           </SubmitButton>
           <Button
             type="button"

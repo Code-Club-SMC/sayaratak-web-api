@@ -431,7 +431,6 @@
   "admin.plan_add_title_mechanic": "إضافة باقة للميكانيكيين",
   "admin.plan_edit_title": "تعديل {{name}}",
   "admin.plan_edit_label": "تعديل {{name}}",
-  "admin.plan_added_toast": "تمت إضافة الباقة",
   "admin.plan_saved_toast": "تم حفظ الباقة",
   "admin.plan_col_name": "الباقة",
   "admin.plan_col_price": "السعر",
@@ -515,5 +514,6 @@
   "admin.plan_col_subscribers": "المشتركون",
   "admin.plan_col_credits": "الرصيد الشهري",
   "admin.plan_free_locked_short": "الباقة المجانية، مفعّلة دائماً",
-  "admin.plan_kept_short": "محفوظة للسجل"
+  "admin.plan_kept_short": "محفوظة للسجل",
+  "admin.plan_save": "حفظ الباقة"
 }

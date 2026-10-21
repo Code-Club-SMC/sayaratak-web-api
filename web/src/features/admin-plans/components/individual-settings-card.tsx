@@ -44,7 +44,7 @@ export function IndividualSettingsCard() {
           settings={settings.data}
         />
       ) : (
-        <Skeleton aria-hidden="true" className="h-24 w-full max-w-lg" />
+        <Skeleton aria-hidden="true" className="h-40 w-full" />
       )}
     </section>
   )

@@ -141,6 +141,14 @@ export const plansSearchSchema = adminTableSearchSchema.extend({
   status: optional(z.enum(subscriptionStatuses)),
 })
 export type PlansSearch = z.infer<typeof plansSearchSchema>
+// Locations (13.14): Cities narrow by country, Districts by city.
+export const locationTabs = ["countries", "cities", "districts"] as const
+export const locationsSearchSchema = adminTableSearchSchema.extend({
+  tab: tabOf(locationTabs),
+  countryId: optional(z.string().max(60)),
+  cityId: optional(z.string().max(60)),
+})
+export type LocationsSearch = z.infer<typeof locationsSearchSchema>
 
 // The review queue (13.3): `listing` is the open item; below lg it also switches the screen from the list to the review.
 export const moderationSearchSchema = z.object({

@@ -6,6 +6,9 @@ import { useApiMutation } from "@/lib/api/mutation"
 import { keys } from "@/lib/api/query-keys"
 import {
   adminBusinessSchema,
+  adminCitySchema,
+  adminCountrySchema,
+  adminDistrictSchema,
   adminListingSchema,
   adminPlanSchema,
   adminSubscriptionSchema,
@@ -134,6 +137,21 @@ export const adminQueries = {
       `/admin/taxonomy/${type}`,
       z.array(taxonomyRowSchema)
     ),
+  countries: adminPlain(
+    "taxonomy-countries",
+    "/admin/taxonomy/countries",
+    z.array(adminCountrySchema)
+  ),
+  cities: adminPlain(
+    "taxonomy-cities",
+    "/admin/taxonomy/cities",
+    z.array(adminCitySchema)
+  ),
+  districts: adminPlain(
+    "taxonomy-districts",
+    "/admin/taxonomy/districts",
+    z.array(adminDistrictSchema)
+  ),
   broadcasts: (p?: Params) =>
     adminList("broadcasts", "/admin/broadcasts", broadcastSchema, p),
   broadcastEstimate: (audience: string) =>

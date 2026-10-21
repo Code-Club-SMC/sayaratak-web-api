@@ -39,6 +39,7 @@ import { setBan } from "./admin"
 import { recomputeRating } from "./reviews"
 
 const admin = (c: Ctx) => needRole(c, "admin")
+const businesses = () => [...db.dealerships, ...db.workshops, ...db.mechanics]
 const ack = () => okSchema.parse({ ok: true })
 
 // Filters: `status`, `targetType`, `rating` (exact stars) and `id` (one review, for a link). `q` matches the author, the text and the business name.
@@ -158,19 +159,22 @@ const taxonomy: Record<
   z.infer<typeof taxonomyTypeSchema>,
   { rows: () => Loose[]; shape: z.ZodObject; useOf: (id: string) => boolean }
 > = {
+  // A city's slug is made once, on create, from its English name; landing URLs use it, so it never changes.
   cities: {
     rows: () => db.taxonomy.cities,
-    shape: z.object({
-      slug: z.string().min(1, "validation.required"),
-      name,
-      center: geoSchema,
-    }),
-    useOf: (id) => db.listings.some((l) => l.cityId === id),
+    shape: z.object({ countryId: z.string().min(1), name, center: geoSchema }),
+    useOf: (id) =>
+      db.taxonomy.districts.some((d) => d.cityId === id) ||
+      db.listings.some((l) => l.cityId === id) ||
+      businesses().some((b) => b.cityId === id) ||
+      db.users.some((u) => u.cityId === id),
   },
   districts: {
     rows: () => db.taxonomy.districts,
     shape: z.object({ cityId: z.string().min(1), name }),
-    useOf: (id) => db.listings.some((l) => l.districtId === id),
+    useOf: (id) =>
+      db.listings.some((l) => l.districtId === id) ||
+      businesses().some((b) => "districtId" in b && b.districtId === id),
   },
   makes: {
     rows: () => db.taxonomy.makes,
@@ -198,13 +202,15 @@ const taxonomy: Record<
     shape: z.object({ slug: z.string().min(1, "validation.required"), name }),
     useOf: (id) => db.listings.some((l) => l.partCategoryId === id),
   },
+  // The id is the lowercase code, given once on create (`code`).
   countries: {
     rows: () => db.countries,
     shape: z.object({
       name,
       dialCode: z.string().regex(/^\+\d{1,4}$/, "validation.dial_code"),
+      enabled: z.boolean(),
     }),
-    useOf: () => false,
+    useOf: (id) => db.taxonomy.cities.some((c) => c.countryId === id),
   },
 }
 const kind = (c: Ctx) => {
@@ -217,23 +223,35 @@ route("GET", "/admin/taxonomy/:type", (c) => kind(c).rows())
 route("POST", "/admin/taxonomy/:type", async (c) => {
   const { type, rows, shape } = kind(c)
   if (type === "vehicle-types") throw fail(403, "forbidden")
-  // A part category's slug comes from its English name, with a number added when taken.
+  // A part category's or city's slug (and id) comes from its English name, with a number added when taken.
   const input = await c.body(
-    type === "part-categories"
+    type === "part-categories" || type === "cities"
       ? shape.extend({ slug: z.string().optional() })
-      : shape
+      : type === "countries"
+        ? shape.extend({
+            code: z
+              .string()
+              .regex(/^[a-zA-Z]{2}$/, "validation.country_code")
+              .transform((v) => v.toLowerCase()),
+          })
+        : shape
   )
-  if (type === "part-categories") {
-    const base = slugify((input.name as Bilingual).en) || "category"
+  if (type === "part-categories" || type === "cities") {
+    const base = slugify((input.name as Bilingual).en) || type.slice(0, -1)
     let slug = base
     for (let n = 2; rows().some((r) => r.id === slug); n++)
       slug = `${base}-${n}`
     input.slug = slug
   }
+  const { code, ...fields } = input
   const id =
-    typeof input.slug === "string" ? input.slug : newId(type.slice(0, 3))
+    typeof code === "string"
+      ? code
+      : typeof input.slug === "string"
+        ? input.slug
+        : newId(type.slice(0, 3))
   if (rows().some((r) => r.id === id)) throw fail(409, "exists")
-  return insert(rows(), { id, ...input })
+  return insert(rows(), { id, ...fields })
 })
 route("DELETE", "/admin/taxonomy/:type/:id", (c) => {
   const { type, rows, useOf } = kind(c)
@@ -247,9 +265,9 @@ route("PATCH", "/admin/taxonomy/:type/:id", async (c) => {
   const row = find(rows(), c.params.id ?? "")
   if (!row) throw fail(404, "not_found")
   const input = await c.body(shape.partial())
-  // The site always shows at least one vehicle type.
+  // The site always shows at least one vehicle type and one country.
   if (
-    type === "vehicle-types" &&
+    (type === "vehicle-types" || type === "countries") &&
     input.enabled === false &&
     !rows().some((r) => r !== row && r.enabled)
   )

@@ -9,6 +9,7 @@ export const taxonomySchema = z.object({
     z.object({
       id: idSchema,
       slug: z.string(),
+      countryId: idSchema,
       name: bilingualSchema,
       center: geoSchema,
     })

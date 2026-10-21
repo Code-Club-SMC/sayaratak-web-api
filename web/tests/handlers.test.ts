@@ -1611,7 +1611,7 @@ describe("admin", () => {
     const created = await call("POST", "/admin/taxonomy/cities", {
       as: "u-admin",
       body: {
-        slug: "dongola",
+        countryId: "sd",
         name: { ar: "دنقلا", en: "Dongola" },
         center: { lat: 19.17, lng: 30.48 },
       },

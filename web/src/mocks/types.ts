@@ -84,7 +84,13 @@ export type UploadRow = {
   // Set by POST /uploads, so a later save by id (PUT /me/business/images) can build the Media.
   media?: Media
 }
-export type Country = { id: string; name: Bilingual; dialCode: string }
+// `id` is the lowercase ISO code; it never changes once the country exists. Only enabled countries reach the public site.
+export type Country = {
+  id: string
+  name: Bilingual
+  dialCode: string
+  enabled: boolean
+}
 export type PromotionPriceRow = PromotionPrice & { id: string }
 export type SitePageRow = SitePage & { id: string }
 

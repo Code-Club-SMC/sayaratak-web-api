@@ -687,12 +687,28 @@ export const serviceTemplateRows: [string, string, string][] = [
 ]
 const bi = (en: string, ar: string) => ({ en, ar })
 
+// Only Sudan is on; the others are there for the admin to turn on when the site grows.
 export const countries: Country[] = [
-  { id: "sd", name: bi("Sudan", "السودان"), dialCode: "+249" },
-  { id: "eg", name: bi("Egypt", "مصر"), dialCode: "+20" },
-  { id: "sa", name: bi("Saudi Arabia", "السعودية"), dialCode: "+966" },
-  { id: "ae", name: bi("United Arab Emirates", "الإمارات"), dialCode: "+971" },
-  { id: "ss", name: bi("South Sudan", "جنوب السودان"), dialCode: "+211" },
+  { id: "sd", name: bi("Sudan", "السودان"), dialCode: "+249", enabled: true },
+  { id: "eg", name: bi("Egypt", "مصر"), dialCode: "+20", enabled: false },
+  {
+    id: "sa",
+    name: bi("Saudi Arabia", "السعودية"),
+    dialCode: "+966",
+    enabled: false,
+  },
+  {
+    id: "ae",
+    name: bi("United Arab Emirates", "الإمارات"),
+    dialCode: "+971",
+    enabled: false,
+  },
+  {
+    id: "ss",
+    name: bi("South Sudan", "جنوب السودان"),
+    dialCode: "+211",
+    enabled: false,
+  },
 ]
 
 export function seedTaxonomy() {
@@ -701,6 +717,7 @@ export function seedTaxonomy() {
     cities: cityRows.map(([id, en, ar, lat, lng]) => ({
       id,
       slug: id,
+      countryId: "sd",
       name: bi(en, ar),
       center: { lat, lng },
     })),

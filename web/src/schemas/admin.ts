@@ -5,6 +5,7 @@ import { bilingualSchema, idSchema, localeSchema } from "./fields"
 import { listingSchema } from "./listing"
 import { profileStatusSchema } from "./profile"
 import { ratingSchema, reviewSchema, targetTypeSchema } from "./review"
+import { taxonomySchema } from "./taxonomy"
 import { userSchema } from "./user"
 
 // A banner is a photo with real text on top, one set of text per language (so it reads on a phone, to a screen reader and in the admin form). `focus` is the photo's vertical focal point in percent: the crop keeps it in view. A banner without `copy` is a finished image (the older form) and shows as is.
@@ -220,3 +221,16 @@ export const backupSchema = z.object({
   status: z.enum(["ready", "restoring", "failed"]),
 })
 export type Backup = z.infer<typeof backupSchema>
+
+// Locations (13.14). A country's `id` is its lowercase ISO code; the admin rows show it in capitals.
+export const adminCountrySchema = z.object({
+  id: idSchema,
+  name: bilingualSchema,
+  dialCode: z.string(),
+  enabled: z.boolean(),
+})
+export type AdminCountry = z.infer<typeof adminCountrySchema>
+export const adminCitySchema = taxonomySchema.shape.cities.element
+export type AdminCity = z.infer<typeof adminCitySchema>
+export const adminDistrictSchema = taxonomySchema.shape.districts.element
+export type AdminDistrict = z.infer<typeof adminDistrictSchema>

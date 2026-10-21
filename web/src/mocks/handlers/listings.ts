@@ -57,7 +57,17 @@ const forViewer = (l: ListingRow, viewer?: UserRow | null) =>
 export const shown = (l: ListingRow, viewer?: UserRow | null) =>
   owned(forViewer(l, viewer))
 
-route("GET", "/taxonomy", () => taxonomySchema.parse(db.taxonomy))
+// Cities of a turned-off country, and their districts, stay off the public site.
+route("GET", "/taxonomy", () => {
+  const on = new Set(db.countries.filter((c) => c.enabled).map((c) => c.id))
+  const cities = db.taxonomy.cities.filter((c) => on.has(c.countryId))
+  const kept = new Set(cities.map((c) => c.id))
+  return taxonomySchema.parse({
+    ...db.taxonomy,
+    cities,
+    districts: db.taxonomy.districts.filter((d) => kept.has(d.cityId)),
+  })
+})
 
 // `limit` (1 to 24) and `exclude` serve the rails; they are not search params of a page.
 route("GET", "/listings", (c) => {

@@ -41,7 +41,7 @@ export function SidebarUser({ me }: { me: User }) {
               })
             }
           >
-            <LogOutIcon aria-hidden="true" />
+            <LogOutIcon aria-hidden="true" className="rtl:-scale-x-100" />
             <span className="text-ui">{t("common.sign_out")}</span>
           </SidebarMenuButton>
           {logout.isError && (

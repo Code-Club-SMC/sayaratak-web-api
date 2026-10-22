@@ -91,7 +91,9 @@ export function AccountMenu() {
             key={item.key}
             render={<a href={localeHref(item.path, locale)} />}
           >
-            <item.icon className="text-muted-foreground" />
+            <item.icon
+              className={`text-muted-foreground${item.icon === ArrowRightIcon ? "rtl:-scale-x-100" : ""}`}
+            />
             {t(item.key)}
           </DropdownMenuItem>
         ))}
@@ -110,7 +112,7 @@ export function AccountMenu() {
             })
           }
         >
-          <LogOutIcon className="text-muted-foreground" />
+          <LogOutIcon className="text-muted-foreground rtl:-scale-x-100" />
           {t("common.sign_out")}
         </DropdownMenuItem>
         {logout.isError && (

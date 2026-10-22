@@ -40,7 +40,7 @@ export function ReviewStep() {
           <div key={p.id} className="flex justify-between gap-3">
             <dt>{t(`ads.page_${p.id}`)}</dt>
             <dd className="num">
-              {formatPrice(p.weeklyPrice, locale).amount} x {weeks}
+              {formatPrice(p.weeklyPrice, locale).amount} × {weeks}
             </dd>
           </div>
         ))}

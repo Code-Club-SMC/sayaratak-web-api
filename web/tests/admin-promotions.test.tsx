@@ -60,9 +60,14 @@ describe("AdminPromotionsPage", () => {
     fireEvent.change(within(picker).getByRole("searchbox"), {
       target: { value: listing.title },
     })
-    const first = await within(picker).findByRole("button", {
-      name: new RegExp(listing.title.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")),
-    })
+    // The search is debounced, so under a loaded full run the default 1 s wait is too short.
+    const first = await within(picker).findByRole(
+      "button",
+      {
+        name: new RegExp(listing.title.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")),
+      },
+      { timeout: 5000 }
+    )
     const before = listing.promotions.length
     fireEvent.click(first)
     const grant = await screen.findByRole("dialog", {

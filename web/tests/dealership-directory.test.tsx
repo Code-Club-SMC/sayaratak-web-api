@@ -1,6 +1,6 @@
 import { Suspense, useState } from "react"
 import { fireEvent, screen, waitFor, within } from "@testing-library/react"
-import { beforeEach, describe, expect, it } from "vitest"
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 
 import { DealershipProfilePage } from "@/features/directory/components/dealership-profile-page"
 import { DealershipsPage } from "@/features/directory/components/dealerships-page"
@@ -135,6 +135,13 @@ describe("dealershipJsonLd", () => {
 })
 
 describe("HoursTable", () => {
+  // NowProvider swaps in Date.now() after mount, so the test freezes Date and leaves timers alone.
+  beforeEach(() => {
+    vi.useFakeTimers({ toFake: ["Date"] })
+    vi.setSystemTime(NOW)
+  })
+  afterEach(() => vi.useRealTimers())
+
   it("lists the week from Saturday and marks today on the Khartoum clock", async () => {
     const hours = demo().hours.map((h) => ({ ...h, closed: h.day === 5 }))
     await renderShell(

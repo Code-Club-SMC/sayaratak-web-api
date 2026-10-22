@@ -67,7 +67,11 @@ export function SectionForm<T extends FieldValues>({
             </p>
           )}
           <div className="flex flex-wrap items-center gap-3">
-            <SubmitButton pending={update.isPending} savedLabel={saved}>
+            <SubmitButton
+              pending={update.isPending}
+              dirty={dirty}
+              savedLabel={saved}
+            >
               {t("common.save")}
             </SubmitButton>
             {dirty && (

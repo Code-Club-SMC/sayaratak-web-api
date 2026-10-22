@@ -61,7 +61,7 @@ export function BannerCopy({
           {banner.sponsored && (
             <Badge variant="signal">{t("nav.ad_badge")}</Badge>
           )}
-          <span className="text-caption font-medium tracking-[0.12em] text-deep-accent uppercase rtl:tracking-normal">
+          <span className="text-caption font-medium text-deep-accent">
             {copy.eyebrow}
           </span>
         </div>

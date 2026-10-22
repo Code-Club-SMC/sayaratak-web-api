@@ -15,7 +15,7 @@ export function AnalyticsShot() {
       decoding="async"
       width={1268}
       height={900}
-      className="absolute start-0 -top-22 h-auto w-[88rem] max-w-none rounded-ss-2xl ring-1 ring-foreground/5"
+      className="absolute start-0 -top-22 h-auto w-[88rem] max-w-none rounded-ss-xl ring-1 ring-foreground/5"
     />
   )
 }

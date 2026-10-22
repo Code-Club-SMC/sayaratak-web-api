@@ -7,6 +7,7 @@ import { EmptyState } from "@/components/app/empty-state"
 import { PageHeader } from "@/components/app/page-header"
 import { ShellLink } from "@/components/app/shell-link"
 import { Button, buttonVariants } from "@/components/ui/button"
+import { cn } from "@/lib/utils"
 import { meQuery } from "@/features/auth/me-query"
 import { usePageTitle } from "@/features/dashboard/components/page-title"
 import { businessQueries } from "@/features/directory/queries"
@@ -68,7 +69,7 @@ export function MessagesPage({
     business && (
       <ShellLink
         path={`/${base}/${business.slug}`}
-        className={buttonVariants({ variant: "outline" })}
+        className={cn(buttonVariants({ variant: "outline" }))}
       >
         {t("messages.empty_profile")}
       </ShellLink>
@@ -76,7 +77,7 @@ export function MessagesPage({
   ) : (
     <ShellLink
       path="/vehicles/cars/sale"
-      className={buttonVariants({ variant: "outline" })}
+      className={cn(buttonVariants({ variant: "outline" }))}
     >
       {t("messages.empty_browse")}
     </ShellLink>

@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react"
 
 import { buttonVariants } from "@/components/ui/button"
+import { cn } from "@/lib/utils"
 import { useT } from "@/lib/i18n/use-t"
 import { localeHref } from "@/lib/navigation"
 
@@ -30,7 +31,7 @@ export function SubmittedState({ base }: { base: string }) {
         </a>
         <a
           href={localeHref(base, locale)}
-          className={buttonVariants({ variant: "outline" })}
+          className={cn(buttonVariants({ variant: "outline" }))}
         >
           {t("billing.go_dashboard")}
         </a>

@@ -53,7 +53,7 @@ export function ThreadItem({
                 src={subjectImage}
                 alt=""
                 sizes="24px"
-                className="aspect-square size-6 shrink-0 rounded-sm"
+                className="aspect-square size-6 shrink-0 rounded-lg"
               />
             )}
             <span className="truncate">

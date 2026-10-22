@@ -9,8 +9,11 @@ import { Spinner } from "@/components/ui/spinner"
 
 // Pending: disabled and `aria-busy` at once, a spinner only after 300 ms, and the label stays in the layout so the width never changes.
 // `savedLabel` is set by the page after a successful save (for example `mutation.isSuccess`): the label reads "Saved" with a check for 1.5 s.
+// `dirty` is for the Save of one section among several: secondary at rest, primary once the section has unsaved changes, so a page shows one primary button (14.2).
 export function SubmitButton({
   pending,
+  dirty,
+  variant,
   disabled,
   savedLabel,
   className,
@@ -18,6 +21,7 @@ export function SubmitButton({
   ...props
 }: ComponentProps<typeof Button> & {
   pending?: boolean
+  dirty?: boolean
   savedLabel?: boolean
 }) {
   const { t } = useT()
@@ -33,6 +37,7 @@ export function SubmitButton({
     <Button
       type="submit"
       {...props}
+      variant={dirty === undefined ? variant : dirty ? "default" : "secondary"}
       className={cn("relative", className)}
       disabled={pending || disabled}
       aria-busy={pending}

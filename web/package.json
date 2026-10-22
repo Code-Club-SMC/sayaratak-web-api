@@ -18,8 +18,8 @@
     "i18n:check": "bun scripts/check-i18n.ts",
     "i18n:literals": "echo \"i18n:literals: not built yet\"",
     "seo:check": "bun scripts/check-seo.ts",
-    "audit:design": "echo \"audit:design: not built yet\"",
-    "shots": "echo \"shots: not built yet\"",
+    "audit:design": "bun scripts/audit-design.ts",
+    "shots": "bun scripts/shots.ts",
     "banners": "bun scripts/make-banners.ts"
   },
   "dependencies": {

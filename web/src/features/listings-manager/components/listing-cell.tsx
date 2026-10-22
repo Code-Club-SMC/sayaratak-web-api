@@ -25,7 +25,7 @@ export function ListingCell({ listing }: { listing: Listing }) {
           <bdi>{listing.title}</bdi>
         </span>
         <span className="text-caption text-muted-foreground">
-          <bdi>{listing.id}</bdi>
+          <bdi dir="ltr">{listing.id.toUpperCase()}</bdi>
         </span>
       </div>
     </div>

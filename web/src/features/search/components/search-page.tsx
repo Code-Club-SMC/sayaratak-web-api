@@ -9,6 +9,7 @@ import { BannerSlot } from "@/components/app/banner-slot"
 import { Breadcrumbs } from "@/components/app/breadcrumbs"
 import { SaveSearchButton } from "@/components/app/save-search-button"
 import { buttonVariants } from "@/components/ui/button"
+import { cn } from "@/lib/utils"
 import { routeHref, searchRoute } from "../landing"
 import { compact, searchParamsSchema, type SearchParams } from "../schemas"
 import { searchTitle } from "../title"
@@ -74,7 +75,7 @@ export function SearchPage({
             <SaveSearchButton params={search} />
             <a
               href={localeHref(map, locale)}
-              className={buttonVariants({ variant: "outline" })}
+              className={cn(buttonVariants({ variant: "outline" }))}
             >
               {t("search.show_on_map")}
             </a>

@@ -2,6 +2,7 @@ import type { ErrorComponentProps } from "@tanstack/react-router"
 import { useRouteContext, useRouter } from "@tanstack/react-router"
 
 import { buttonVariants, Button } from "@/components/ui/button"
+import { cn } from "@/lib/utils"
 import { ApiError } from "@/lib/api/client"
 import { useT } from "@/lib/i18n/use-t"
 import { dashboardPath, localeHref } from "@/lib/navigation"
@@ -16,7 +17,7 @@ export function RouteError({ error }: ErrorComponentProps) {
   const home = (
     <a
       href={localeHref("/", locale)}
-      className={buttonVariants({ variant: "outline" })}
+      className={cn(buttonVariants({ variant: "outline" }))}
     >
       {t("error.go_home")}
     </a>

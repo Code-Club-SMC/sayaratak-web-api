@@ -98,6 +98,7 @@ export function PasswordForm({ hasPassword }: { hasPassword: boolean }) {
       <SubmitButton
         className="self-start"
         pending={change.isPending}
+        dirty={form.formState.isDirty}
         savedLabel={saved}
       >
         {t(

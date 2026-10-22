@@ -66,7 +66,7 @@ export function ListingScene() {
           {week.map((v, i) => (
             <div
               key={i}
-              className={`flex-1 rounded-sm ${i === week.length - 1 ? "bg-primary" : "bg-primary/25"}`}
+              className={`flex-1 rounded-lg ${i === week.length - 1 ? "bg-primary" : "bg-primary/25"}`}
               style={{ blockSize: `${(v / 41) * 100}%` }}
             />
           ))}

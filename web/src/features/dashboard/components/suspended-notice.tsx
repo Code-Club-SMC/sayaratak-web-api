@@ -5,6 +5,7 @@ import { useT } from "@/lib/i18n/use-t"
 import { localeHref } from "@/lib/navigation"
 import { businessQueries } from "@/features/directory/queries"
 import { buttonVariants } from "@/components/ui/button"
+import { cn } from "@/lib/utils"
 
 // Above every page of a business dashboard while the admin has the business suspended: why, what it means, and the way to support.
 export function SuspendedNotice() {
@@ -32,7 +33,7 @@ export function SuspendedNotice() {
         )}
         <a
           href={localeHref("/contact", locale)}
-          className={buttonVariants({ variant: "outline" })}
+          className={cn(buttonVariants({ variant: "outline" }))}
         >
           {t("dashboard.suspended_contact")}
         </a>

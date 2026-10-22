@@ -47,11 +47,15 @@ export function ListingPreview({
     t(`condition.${listing.condition}`),
     listing.transmission && t(`transmission.${listing.transmission}`),
     listing.negotiable && t("form.preview_fact_negotiable"),
-  ].filter(Boolean)
+  ].filter((fact): fact is string => !!fact)
   return (
     <div className="flex flex-col gap-2">
       <ListingCard listing={listing} preview />
-      <p className="text-caption text-muted-foreground">{facts.join(" · ")}</p>
+      <p className="flex flex-wrap gap-x-3 text-caption text-muted-foreground">
+        {facts.map((fact) => (
+          <span key={fact}>{fact}</span>
+        ))}
+      </p>
     </div>
   )
 }

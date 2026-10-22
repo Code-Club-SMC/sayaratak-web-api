@@ -66,7 +66,11 @@ export function SettingsCard<T extends FieldValues>({
             </p>
           )}
           <div className="flex flex-wrap items-center gap-3">
-            <SubmitButton pending={update.isPending} savedLabel={saved}>
+            <SubmitButton
+              pending={update.isPending}
+              dirty={isDirty}
+              savedLabel={saved}
+            >
               {t("common.save")}
             </SubmitButton>
             {isDirty && (

@@ -98,7 +98,7 @@ export function MakeLogo({
   return (
     <span
       aria-hidden
-      className={`${box} ${letter} grid shrink-0 place-items-center rounded-md bg-muted font-semibold text-muted-foreground`}
+      className={`${box} ${letter} grid shrink-0 place-items-center rounded-lg bg-muted font-semibold text-muted-foreground`}
     >
       <bdi>{name.charAt(0)}</bdi>
     </span>

@@ -5,7 +5,7 @@ import { formatTime } from "@/lib/format"
 import { useT } from "@/lib/i18n/use-t"
 import type { ChatRow } from "../chat-row"
 
-// Own messages sit at the end side with the accent fill, the other person's at the start side with the muted fill. No borders.
+// Own messages sit at the end side with the primary fill (Decisions log 2026-10-08), the other person's at the start side with the muted fill. No borders.
 export function MessageBubble({
   row,
   own,

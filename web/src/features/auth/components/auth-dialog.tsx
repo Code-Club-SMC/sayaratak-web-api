@@ -44,7 +44,7 @@ export function AuthDialog() {
     </Sheet>
   ) : (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-h-[90dvh] gap-0 overflow-y-auto p-6 sm:max-w-[420px]">
+      <DialogContent className="max-h-[90dvh] gap-0 overflow-y-auto p-6 sm:max-w-[400px]">
         {body}
       </DialogContent>
     </Dialog>

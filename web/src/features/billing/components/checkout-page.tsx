@@ -4,6 +4,7 @@ import { useSearch } from "@tanstack/react-router"
 import { PageHeader } from "@/components/app/page-header"
 import { SectionError } from "@/components/app/section-error"
 import { buttonVariants } from "@/components/ui/button"
+import { cn } from "@/lib/utils"
 import { usePageTitle } from "@/features/dashboard/components/page-title"
 import { useT } from "@/lib/i18n/use-t"
 import { dashboardPath, localeHref } from "@/lib/navigation"
@@ -29,7 +30,7 @@ export function CheckoutPage({ audience }: { audience: Plan["audience"] }) {
       <PageHeader title={title}>
         <a
           href={localeHref(`${base}/billing`, locale)}
-          className={buttonVariants({ variant: "outline" })}
+          className={cn(buttonVariants({ variant: "outline" }))}
         >
           {t("common.back")}
         </a>

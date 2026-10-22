@@ -3,7 +3,7 @@ import { useState } from "react"
 import { FieldGrid } from "@/components/app/field-grid"
 import { FormField } from "@/components/app/form-field"
 import { NumberField } from "@/components/app/number-field"
-import { Button } from "@/components/ui/button"
+import { SubmitButton } from "@/components/app/submit-button"
 import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
 import { toast } from "@/components/ui/toast"
@@ -33,10 +33,7 @@ export function AdPriceRow({ page }: { page: AdPage }) {
         if (invalid) return
         update.mutate(
           { id: page.id, weeklyPrice: price, slots, enabled },
-          {
-            onSuccess: () => toast.add({ title: t("toast.saved") }),
-            onError: (err) => toast.add({ title: errorText(t, err) }),
-          }
+          { onError: (err) => toast.add({ title: errorText(t, err) }) }
         )
       }}
     >
@@ -79,13 +76,15 @@ export function AdPriceRow({ page }: { page: AdPage }) {
           )}
         </FormField>
       </FieldGrid>
-      <Button
-        type="submit"
+      <SubmitButton
         className="self-start"
-        disabled={!dirty || invalid || update.isPending}
+        pending={update.isPending}
+        dirty={dirty}
+        disabled={!dirty || invalid}
+        savedLabel={update.isSuccess}
       >
         {t("common.save")}
-      </Button>
+      </SubmitButton>
     </form>
   )
 }

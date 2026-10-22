@@ -5,6 +5,7 @@ import { SectionError } from "@/components/app/section-error"
 import { SettingsSection } from "@/components/app/settings-section"
 import { ShellLink } from "@/components/app/shell-link"
 import { buttonVariants } from "@/components/ui/button"
+import { cn } from "@/lib/utils"
 import { Skeleton } from "@/components/ui/skeleton"
 import { meQuery } from "@/features/auth/queries"
 import { usePageTitle } from "@/features/dashboard/components/page-title"
@@ -68,7 +69,7 @@ export function SettingsPage({ role }: { role: Role }) {
           >
             <ShellLink
               path={navHref(role, "/notifications")}
-              className={buttonVariants({ variant: "outline" })}
+              className={cn(buttonVariants({ variant: "outline" }))}
             >
               {t("settings.notifications_link")}
             </ShellLink>

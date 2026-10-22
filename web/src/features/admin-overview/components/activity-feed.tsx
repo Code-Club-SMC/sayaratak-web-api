@@ -46,7 +46,7 @@ export function ActivityFeed() {
             <li key={`${item.type}-${item.id}`}>
               <a
                 href={localeHref(item.href, locale)}
-                className="flex flex-col gap-0.5 rounded-md px-2 py-3 motion-color hover:bg-muted"
+                className="flex flex-col gap-0.5 rounded-lg px-2 py-3 motion-color hover:bg-muted"
               >
                 <span className="text-ui">
                   {t(`admin.activity_${item.type}`, {

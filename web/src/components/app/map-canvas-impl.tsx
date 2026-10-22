@@ -20,12 +20,12 @@ import type { MapCanvasProps, MapShape } from "./map-canvas"
 // A divIcon avoids Leaflet's default marker images, which bundlers do not resolve.
 const icon = L.divIcon({
   className: "",
-  html: '<span style="display:block;width:20px;height:20px;border-radius:9999px;background:var(--primary);border:3px solid #fff;box-shadow:0 1px 4px rgb(0 0 0 / 0.4)"></span>',
+  html: '<span style="display:block;width:20px;height:20px;border-radius:9999px;background:var(--primary);border:3px solid var(--card);box-shadow:0 1px 4px color-mix(in oklch, var(--foreground) 40%, transparent)"></span>',
   iconSize: [20, 20],
   iconAnchor: [10, 10],
 })
 
-// One filled shape per kind, white outline. The paths are fixed text, never built from data.
+// One filled shape per kind, card-colored outline. The paths are fixed text, never built from data.
 const shapes: Record<MapShape, string> = {
   circle: '<circle cx="14" cy="14" r="10"/>',
   square: '<rect x="5" y="5" width="18" height="18" rx="3"/>',
@@ -35,7 +35,7 @@ const shapes: Record<MapShape, string> = {
 const shapeIcon = (shape: MapShape) =>
   L.divIcon({
     className: "",
-    html: `<svg width="28" height="28" viewBox="0 0 28 28" fill="${shape === "circle" ? "var(--primary)" : "var(--foreground)"}" stroke="#fff" stroke-width="2.5" stroke-linejoin="round" style="filter:drop-shadow(0 1px 2px rgb(0 0 0 / 0.4))">${shapes[shape]}</svg>`,
+    html: `<svg width="28" height="28" viewBox="0 0 28 28" fill="${shape === "circle" ? "var(--primary)" : "var(--foreground)"}" stroke="var(--card)" stroke-width="2.5" stroke-linejoin="round" style="filter:drop-shadow(0 1px 2px color-mix(in oklch, var(--foreground) 40%, transparent))">${shapes[shape]}</svg>`,
     iconSize: [28, 28],
     iconAnchor: [14, 14],
   })
@@ -50,7 +50,7 @@ const icons = {
 const clusterIcon = (count: number) =>
   L.divIcon({
     className: "",
-    html: `<span style="display:grid;place-items:center;width:36px;height:36px;border-radius:9999px;background:var(--foreground);color:var(--background);border:3px solid #fff;font:600 14px/1 var(--font-sans, sans-serif)">${count}</span>`,
+    html: `<span style="display:grid;place-items:center;width:36px;height:36px;border-radius:9999px;background:var(--foreground);color:var(--background);border:3px solid var(--card);font:600 14px/1 var(--font-sans, sans-serif)">${count}</span>`,
     iconSize: [36, 36],
   })
 

@@ -104,6 +104,17 @@ describe("SubmitButton", () => {
     expect(screen.getByText("Save")).toBeTruthy()
     expect(screen.queryByText("Saved")).toBeNull()
   })
+
+  it("is secondary at rest and primary once its section is dirty", async () => {
+    await renderShell(
+      <Flip>{(on) => <SubmitButton dirty={on}>Save</SubmitButton>}</Flip>
+    )
+    const button = screen.getByRole("button", { name: "Save" })
+    expect(button.className).toContain("bg-secondary")
+    expect(button.className).not.toContain("bg-primary")
+    fireEvent.click(screen.getByText("go"))
+    await waitFor(() => expect(button.className).toContain("bg-primary"))
+  })
 })
 
 describe("MediaImage", () => {

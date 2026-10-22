@@ -27,7 +27,7 @@ export function useBannerColumns(handlers: {
             height={40}
             alt=""
             loading="lazy"
-            className="h-10 w-16 shrink-0 rounded-md bg-muted object-cover"
+            className="h-10 w-16 shrink-0 rounded-lg bg-muted object-cover"
           />
           <span className="max-w-56 truncate font-medium">{b.title}</span>
         </span>

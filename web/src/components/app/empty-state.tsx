@@ -38,7 +38,12 @@ export function EmptyState({
         <EmptyMedia variant="icon">
           <Icon aria-hidden="true" strokeWidth={1.5} />
         </EmptyMedia>
-        <EmptyTitle role="heading" aria-level={level}>
+        {/* tracking-normal undoes the primitive's tracking-tight: letter spacing breaks Arabic joining (A5). */}
+        <EmptyTitle
+          role="heading"
+          aria-level={level}
+          className="tracking-normal"
+        >
           <span className="text-title font-semibold">{title}</span>
         </EmptyTitle>
         {body && (

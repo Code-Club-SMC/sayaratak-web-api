@@ -102,7 +102,7 @@ export function HeroSlide({
         >
           {ad && <Badge variant="signal">{t("nav.ad_badge")}</Badge>}
           {label && (
-            <span className="hidden text-caption font-medium tracking-[0.12em] text-deep-accent uppercase md:inline rtl:tracking-normal">
+            <span className="hidden text-caption font-medium text-deep-accent md:inline">
               {label}
             </span>
           )}

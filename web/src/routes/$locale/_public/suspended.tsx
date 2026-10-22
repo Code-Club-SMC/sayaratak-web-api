@@ -3,6 +3,7 @@ import { createFileRoute } from "@tanstack/react-router"
 
 import { StatePanel } from "@/components/app/state-panel"
 import { buttonVariants } from "@/components/ui/button"
+import { cn } from "@/lib/utils"
 import { siteQuery } from "@/features/pages/queries"
 import { getCopy } from "@/lib/i18n/server"
 import { useT } from "@/lib/i18n/use-t"
@@ -31,7 +32,7 @@ export const Route = createFileRoute("/$locale/_public/suspended")({
 function Suspended() {
   const { t, locale } = useT()
   const contact = useQuery(siteQuery).data?.contact
-  const link = buttonVariants({ variant: "outline" })
+  const link = cn(buttonVariants({ variant: "outline" }))
   return (
     <StatePanel
       title={t("auth.suspended_title")}

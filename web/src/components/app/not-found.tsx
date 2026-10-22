@@ -1,4 +1,5 @@
 import { buttonVariants } from "@/components/ui/button"
+import { cn } from "@/lib/utils"
 import { useT } from "@/lib/i18n/use-t"
 import { localeHref } from "@/lib/navigation"
 import { StatePanel } from "./state-panel"
@@ -16,7 +17,7 @@ export function NotFound() {
       </a>
       <a
         href={localeHref("/", locale)}
-        className={buttonVariants({ variant: "outline" })}
+        className={cn(buttonVariants({ variant: "outline" }))}
       >
         {t("error.go_home")}
       </a>

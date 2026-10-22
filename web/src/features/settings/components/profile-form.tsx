@@ -162,6 +162,7 @@ export function ProfileForm({ me }: { me: User }) {
           <SubmitButton
             className="self-start"
             pending={update.isPending || send.isPending}
+            dirty={form.formState.isDirty}
             savedLabel={saved}
           >
             {t("common.save")}

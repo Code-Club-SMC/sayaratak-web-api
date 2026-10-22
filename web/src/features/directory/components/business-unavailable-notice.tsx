@@ -4,6 +4,7 @@ import { useT } from "@/lib/i18n/use-t"
 import { localeHref } from "@/lib/navigation"
 import type { TargetType } from "@/schemas/review"
 import { buttonVariants } from "@/components/ui/button"
+import { cn } from "@/lib/utils"
 
 // On the profile of a business whose owner is banned: says it is not taking enquiries (without saying why) and points to the others.
 export function BusinessUnavailableNotice({ type }: { type: TargetType }) {
@@ -21,7 +22,7 @@ export function BusinessUnavailableNotice({ type }: { type: TargetType }) {
         <p className="text-body">{t(`directory.unavailable_body_${type}`)}</p>
         <a
           href={localeHref(`/${type}s`, locale)}
-          className={buttonVariants({ variant: "outline" })}
+          className={cn(buttonVariants({ variant: "outline" }))}
         >
           {t(`directory.unavailable_browse_${type}`)}
         </a>

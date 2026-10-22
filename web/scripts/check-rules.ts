@@ -1,8 +1,8 @@
 // Fails on physical-direction classes (outside components/ui), on a native <select>, on TODO, FIXME, console.log, an empty onClick and href="#" in src/**, and on a Remove button that does not go through RemoveButton (every Remove asks first).
 import { readFileSync, readdirSync } from "node:fs"
 import process from "node:process"
+import { physical } from "./patterns"
 
-const physical = /(?<!\w)-?(?:ml|mr|pl|pr|left|right)-\S|text-(?:left|right)\b/
 const banned =
   /\b(?:TODO|FIXME)\b|console\.log|<select[\s>]|onClick=\{\(\)\s*=>\s*\{\s*\}\}|href=\{?["']#["']/
 const skip = ["src/components/ui/", "src/routeTree.gen.ts"]

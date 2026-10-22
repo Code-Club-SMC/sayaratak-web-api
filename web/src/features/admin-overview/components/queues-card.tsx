@@ -54,7 +54,7 @@ export function QueuesCard() {
             <li key={row.label}>
               <Link
                 {...row.link}
-                className="flex min-h-12 items-center gap-3 rounded-md px-2 motion-color hover:bg-muted"
+                className="flex min-h-12 items-center gap-3 rounded-lg px-2 motion-color hover:bg-muted"
               >
                 <span className="flex-1 text-ui">{row.label}</span>
                 {row.count === undefined ? (

@@ -20,9 +20,9 @@ import type { MapCanvasProps, MapShape } from "./map-canvas"
 // A divIcon avoids Leaflet's default marker images, which bundlers do not resolve.
 const icon = L.divIcon({
   className: "",
-  html: '<span style="display:block;width:20px;height:20px;border-radius:9999px;background:var(--primary);border:3px solid var(--card);box-shadow:0 1px 4px color-mix(in oklch, var(--foreground) 40%, transparent)"></span>',
-  iconSize: [20, 20],
-  iconAnchor: [10, 10],
+  html: '<span style="display:block;width:24px;height:24px;border-radius:9999px;background:var(--primary);border:3px solid var(--card);box-shadow:0 1px 4px color-mix(in oklch, var(--foreground) 40%, transparent)"></span>',
+  iconSize: [24, 24],
+  iconAnchor: [12, 12],
 })
 
 // One filled shape per kind, card-colored outline. The paths are fixed text, never built from data.

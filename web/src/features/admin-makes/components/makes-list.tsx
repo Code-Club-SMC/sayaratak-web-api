@@ -94,7 +94,6 @@ export function MakesList({
                   variant="ghost"
                   className="h-auto min-w-0 flex-1 flex-col items-start gap-0 py-1 text-start whitespace-normal"
                   aria-pressed={search.make === row.id}
-                  aria-label={t("admin.makes_open_label", { name })}
                   onClick={() => go({ ...search, make: row.id })}
                 >
                   <span className="text-ui font-medium">

@@ -78,7 +78,7 @@ describe("AdminPromotionsPage", () => {
     )
     await waitFor(() => expect(listing.promotions.length).toBe(before + 1))
     const [end] = await screen.findAllByRole("button", {
-      name: `End the promotion of ${listing.title} now`,
+      name: `End now: ${listing.title}`,
     })
     fireEvent.click(end!)
     expect(listing.promotions.length).toBe(before + 1)

@@ -19,6 +19,7 @@
     "i18n:literals": "bun scripts/check-literals.ts",
     "seo:check": "bun scripts/check-seo.ts",
     "audit:design": "bun scripts/audit-design.ts",
+    "contrast": "bun scripts/contrast.ts",
     "shots": "bun scripts/shots.ts",
     "banners": "bun scripts/make-banners.ts"
   },

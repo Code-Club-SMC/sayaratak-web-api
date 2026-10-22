@@ -88,7 +88,7 @@ export function MobileMenu() {
           </a>
         </nav>
         <div className="flex flex-wrap items-center gap-2 p-4">
-          <LanguageSwitcher expanded />
+          <LanguageSwitcher />
           <DataSaverToggle expanded />
         </div>
         {post && (

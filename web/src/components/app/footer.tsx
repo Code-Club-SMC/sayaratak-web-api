@@ -125,7 +125,7 @@ export function Footer() {
               </div>
             )}
           </div>
-          <LanguageSwitcher expanded />
+          <LanguageSwitcher />
         </div>
       </div>
     </footer>

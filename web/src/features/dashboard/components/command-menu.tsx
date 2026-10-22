@@ -63,12 +63,11 @@ export function CommandMenu({ role }: { role: User["role"] }) {
       <Button
         variant="outline"
         size="sm"
-        aria-label={t("dashboard.search_pages")}
         onClick={() => setOpen(true)}
         className="gap-2 text-muted-foreground md:min-w-48 md:justify-start"
       >
         <SearchIcon aria-hidden="true" />
-        <span className="hidden md:inline">{t("dashboard.search_pages")}</span>
+        <span className="max-md:sr-only">{t("dashboard.search_pages")}</span>
         <Kbd className="ms-auto hidden md:inline-flex">Ctrl K</Kbd>
       </Button>
       <CommandDialog

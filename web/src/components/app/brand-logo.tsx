@@ -18,7 +18,6 @@ export function BrandLogo() {
       to="/$locale"
       params={{ locale }}
       preload={dataSaver ? false : "intent"}
-      aria-label={t("nav.home")}
       className="relative flex h-12 w-24 shrink-0 items-center rounded-lg"
     >
       <span
@@ -26,6 +25,7 @@ export function BrandLogo() {
       >
         {t("nav.brand")}
       </span>
+      <span className="sr-only">{t("nav.home")}</span>
       <img
         ref={image}
         src="/sayaratak-logo.svg"

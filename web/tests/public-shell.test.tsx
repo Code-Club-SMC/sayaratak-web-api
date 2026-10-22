@@ -38,7 +38,7 @@ describe("public shell", () => {
   })
   it("keeps the wordmark visible until a logo loads, including an early image failure", async () => {
     await renderShell(<BrandLogo />)
-    const home = screen.getByRole("link", { name: "Home" })
+    const home = screen.getByRole("link", { name: /Home/ })
     const image = home.querySelector("img")
     const wordmark = screen.getByText("Sayaratak")
     if (!image) throw new Error("Expected logo element")
@@ -58,7 +58,7 @@ describe("public shell", () => {
       { path: "/en/search" }
     )
     const preload = vi.spyOn(router, "preloadRoute")
-    const home = screen.getByRole("link", { name: "Home" })
+    const home = screen.getByRole("link", { name: /Home/ })
     fireEvent.mouseEnter(home)
     await waitFor(() => expect(preload).toHaveBeenCalledOnce())
     fireEvent.mouseLeave(home)
@@ -73,9 +73,7 @@ describe("public shell", () => {
       path: "/ar/search?city=x&city=y#results",
     })
     expect(
-      screen
-        .getByRole("link", { name: "التبديل إلى الإنجليزية" })
-        .getAttribute("href")
+      screen.getByRole("link", { name: "English" }).getAttribute("href")
     ).toBe("/en/search?city=x&city=y#results")
   })
   it("persists data saver, updates rendering and disables intent preloading", async () => {

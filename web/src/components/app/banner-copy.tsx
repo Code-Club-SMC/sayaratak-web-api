@@ -26,6 +26,8 @@ function Photo({
     >
       <img
         src={src}
+        width={1200}
+        height={900}
         alt=""
         loading="lazy"
         decoding="async"

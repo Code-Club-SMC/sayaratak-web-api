@@ -69,6 +69,8 @@ export function HeroSlide({
                 if (img?.complete && img.naturalWidth === 0) setFailed(true)
               }}
               src={photo.src}
+              width={1600}
+              height={400}
               alt={photo.alt}
               draggable={false}
               loading={index === 0 ? "eager" : "lazy"}

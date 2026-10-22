@@ -25,6 +25,8 @@ export function ListingScene() {
           {!dataSaver && (
             <img
               src="/images/categories/cars-640.webp"
+              width={640}
+              height={480}
               alt=""
               loading="lazy"
               decoding="async"

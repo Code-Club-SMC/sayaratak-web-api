@@ -26,6 +26,8 @@ export function CampaignCard({
     <article className="flex flex-col gap-4 rounded-xl bg-card p-5 md:flex-row">
       <img
         src={c.creative.imageUrl}
+        width={640}
+        height={480}
         alt=""
         loading="lazy"
         className="aspect-[4/3] w-full rounded-lg bg-muted object-cover md:w-40"

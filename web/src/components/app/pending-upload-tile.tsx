@@ -24,6 +24,8 @@ export function PendingUploadTile({
       {item.preview && (
         <img
           src={item.preview}
+          width={320}
+          height={320}
           alt=""
           className={cn("size-full object-cover", !uploading && "opacity-40")}
         />

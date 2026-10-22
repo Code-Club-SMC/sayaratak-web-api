@@ -13,7 +13,7 @@
     "check": "prettier --check \"**/*.{ts,tsx,js,jsx}\"",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "test:e2e": "echo \"test:e2e: not built yet\"",
+    "test:e2e": "playwright test",
     "size": "bun scripts/check-size.ts",
     "i18n:check": "bun scripts/check-i18n.ts",
     "i18n:literals": "echo \"i18n:literals: not built yet\"",
@@ -64,6 +64,8 @@
     "zod": "^4.6.5"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.14.0",
+    "@playwright/test": "^1.64.1",
     "@tanstack/devtools-vite": "latest",
     "@tanstack/eslint-config": "latest",
     "@tanstack/router-cli": "^1.167.39",

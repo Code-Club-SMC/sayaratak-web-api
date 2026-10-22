@@ -63,9 +63,9 @@ const logos = new Set([
 
 // One box per size for every logo, so rows and tiles line up; `object-contain` fits wide wordmarks and round badges alike. `lg` fills whatever box the tile gives it.
 const sizes = {
-  sm: { box: "h-6 w-10", letter: "text-caption" },
-  md: { box: "h-10 w-14", letter: "text-ui" },
-  lg: { box: "size-full", letter: "text-title" },
+  sm: { box: "h-6 w-10", letter: "text-caption", w: 40, h: 24 },
+  md: { box: "h-10 w-14", letter: "text-ui", w: 56, h: 40 },
+  lg: { box: "size-full", letter: "text-title", w: 56, h: 40 },
 } as const
 
 // Decorative: the make name always sits beside it. A make without a file shows the first letter of `name` when it is given (lists and grids, where a gap would break the column), and nothing otherwise (headings). Pass the English name: the Latin initial matches the badge on the car, and an Arabic initial reads as a stray mark.
@@ -78,7 +78,7 @@ export function MakeLogo({
   name?: string
   size?: keyof typeof sizes
 }) {
-  const { box, letter } = sizes[size]
+  const { box, letter, w, h } = sizes[size]
   const uploaded = useQuery(taxonomyQuery).data?.makes.find(
     (m) => m.id === id
   )?.logoUrl
@@ -86,6 +86,8 @@ export function MakeLogo({
     return (
       <img
         src={uploaded || `/images/makes/${id}.svg`}
+        width={w}
+        height={h}
         alt=""
         loading={size === "md" ? "eager" : "lazy"}
         decoding="async"

@@ -208,7 +208,13 @@ describe("ListingsManager", () => {
     expect(items).not.toContain("View public page")
     expect(items).not.toContain("Promote")
     expect(items).toContain("Edit")
-    expect(within(row).getByRole("button", { name: "Rejected" })).toBeTruthy()
+    fireEvent.keyDown(document.activeElement ?? document.body, {
+      key: "Escape",
+    })
+    // A click (or a tap on a phone) shows the reason, not only a hover.
+    fireEvent.click(within(row).getByRole("button", { name: "Rejected" }))
+    const popup = await screen.findByRole("dialog")
+    expect(within(popup).getByText(/^(Reason:|No reason given)/)).toBeTruthy()
   })
 
   it("marks the selected approved rows sold or rented in one go", async () => {

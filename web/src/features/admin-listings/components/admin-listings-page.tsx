@@ -80,7 +80,10 @@ export function AdminListingsPage() {
           })
         }
       >
-        <TabsList aria-label={t("admin.listings_tabs")}>
+        <TabsList
+          aria-label={t("admin.listings_tabs")}
+          className="max-w-full overflow-x-auto"
+        >
           {listingTabs.map((value) => (
             <TabsTrigger key={value} value={value}>
               {t(

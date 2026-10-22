@@ -23,6 +23,8 @@ export function useBannerColumns(handlers: {
         <span className="flex items-center gap-3">
           <img
             src={b.imageUrl[locale]}
+            width={64}
+            height={40}
             alt=""
             loading="lazy"
             className="h-10 w-16 shrink-0 rounded-md bg-muted object-cover"

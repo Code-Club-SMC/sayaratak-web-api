@@ -41,6 +41,8 @@ export function ImageFileInput({
         {preview && (
           <img
             src={preview}
+            width={64}
+            height={64}
             alt={labels.preview}
             className="size-16 shrink-0 rounded-lg object-cover"
           />

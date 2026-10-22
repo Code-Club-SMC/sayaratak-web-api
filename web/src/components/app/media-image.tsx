@@ -59,6 +59,8 @@ export function MediaImage({
           src={mediaSrc(src, Math.min(960, maxWidth))}
           srcSet={mediaSrcSet(src, maxWidth)}
           sizes={sizes}
+          width={1280}
+          height={960}
           alt={alt}
           loading={priority ? "eager" : "lazy"}
           fetchPriority={priority ? "high" : undefined}

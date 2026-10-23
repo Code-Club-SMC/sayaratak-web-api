@@ -1,29 +1,20 @@
-// Fetches the sitemap, robots.txt and a dozen sample pages from a running server and asserts the head tags (A6, step 6.9).
+// Fetches the sitemap, robots.txt and 24 sample pages from a running server and asserts the head tags (A6, steps 6.9 and 14.7).
 // Usage: bun run seo:check [origin]   (default SEO_ORIGIN, then APP_ORIGIN, then http://localhost:3000)
 import process from "node:process"
 
-const base = (
-  process.argv[2] ??
-  process.env.SEO_ORIGIN ??
-  process.env.APP_ORIGIN ??
-  "http://localhost:3000"
-).replace(/\/$/, "")
-
-let failed = 0
-const check = (ok: boolean, what: string) => {
-  if (!ok) {
-    failed++
-    console.log(`FAIL ${what}`)
-  }
-}
-const get = (path: string) => fetch(base + path)
-const unescape = (s: string) =>
-  s
-    .replace(/&quot;/g, '"')
-    .replace(/&#x27;|&#39;/g, "'")
-    .replace(/&lt;/g, "<")
-    .replace(/&gt;/g, ">")
-    .replace(/&amp;/g, "&")
+import {
+  base,
+  canonicalOf,
+  check,
+  get,
+  getJson,
+  pathOf,
+  result,
+  robotsOf,
+  tagsOf,
+  unescape,
+} from "./seo-lib"
+import { checkPolicy } from "./check-seo-policy"
 
 // robots.txt and sitemap
 const robots = await (await get("/robots.txt")).text()
@@ -120,18 +111,28 @@ const samples: [string, string[]][] = [
   ["/en/about", []],
   ["/ar/dealerships", []],
   ["/en/parts", []],
+  // Step 14.7: every page type in the other language too, a part, an Arabic slug and deep pages of a list.
+  [
+    `/en/listing/${(await getJson<{ items: { slug: string }[] }>("/api/listings?kind=part&pageSize=1")).items[0]!.slug}`,
+    ["BreadcrumbList", "Product"],
+  ],
+  [
+    locs
+      .find((u) => /\/ar\/listing\/[\u0600-\u06FF]/.test(u))!
+      .slice(base.length),
+    ["BreadcrumbList", "Offer"],
+  ],
+  [first("/dealerships/", "en"), ["AutoDealer", "BreadcrumbList"]],
+  [first("/workshops/", "ar"), ["AutoRepair", "BreadcrumbList"]],
+  [first("/mechanics/", "en"), ["Person", "BreadcrumbList"]],
+  ["/ar/contact", []],
+  ["/en/terms", []],
+  ["/ar/privacy", []],
+  ["/en/workshops", []],
+  ["/ar/mechanics", []],
+  ["/ar/vehicles/cars/sale?page=2", []],
+  ["/en/search?page=2", []],
 ]
-
-const pathOf = (href?: string) =>
-  decodeURI(href ?? "").replace(/^https?:\/\/[^/]+/, "")
-type Tag = Record<string, string>
-const tagsOf = (html: string) =>
-  [...html.matchAll(/<(meta|link)\b([^>]*)>/g)].map((m) => {
-    const tag: Tag = { tag: m[1]! }
-    for (const a of m[2]!.matchAll(/([\w:-]+)="([^"]*)"/g))
-      tag[a[1]!.toLowerCase()] = unescape(a[2]!)
-    return tag
-  })
 
 for (const [path, types] of samples) {
   const res = await get(path)
@@ -143,11 +144,8 @@ for (const [path, types] of samples) {
   check(res.status === 200, `${where} status ${res.status}`)
   check(/<title>[^<]+ \| Sayaratak<\/title>/.test(html), `${where} title`)
   check(!!meta("description"), `${where} description`)
-  const canonical = tags.find((t) => t.rel === "canonical")?.href
-  check(
-    pathOf(canonical) === decodeURI(path),
-    `${where} canonical ${canonical}`
-  )
+  const canonical = canonicalOf(tags)
+  check(canonical === decodeURI(path), `${where} canonical ${canonical}`)
   const lang = (l: string) =>
     tags.find((t) => t.rel === "alternate" && t.hreflang === l)?.href
   const rest = path.replace(/^\/(?:ar|en)/, "")
@@ -170,10 +168,7 @@ for (const [path, types] of samples) {
   ])
     check(!!meta(key), `${where} ${key}`)
   if (path.includes("/listing/")) check(!!meta("og:image"), `${where} og:image`)
-  check(
-    meta("robots") === undefined,
-    `${where} is noindex but listed in the sitemap`
-  )
+  check(robotsOf(tags) === undefined, `${where} is noindex`)
   const blocks = [
     ...html.matchAll(
       /<script type="application\/ld\+json"[^>]*>(.*?)<\/script>/gs
@@ -192,18 +187,11 @@ for (const [path, types] of samples) {
     check(found.includes(`"@type":"${t}"`), `${where} JSON-LD ${t}`)
 }
 
-// Filtered and map pages must stay out of the index.
-for (const path of ["/ar/search?q=test", "/en/map", "/ar/dealerships?q=a"]) {
-  const tags = tagsOf(await (await get(path)).text())
-  check(
-    tags.some((t) => t.name === "robots" && t.content === "noindex, follow"),
-    `${path} lacks noindex, follow`
-  )
-}
+await checkPolicy(locs)
 
 console.log(
-  failed
-    ? `seo:check: ${failed} failed`
-    : `seo:check: ${samples.length} pages ok`
+  result.failed
+    ? `seo:check: ${result.failed} failed`
+    : `seo:check: ${samples.length} pages and the indexation policy ok`
 )
-if (failed) process.exit(1)
+if (result.failed) process.exit(1)

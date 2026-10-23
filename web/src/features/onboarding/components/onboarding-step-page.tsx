@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react"
+import { Suspense, useEffect, useRef, useState } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { useRouter, useRouterState } from "@tanstack/react-router"
@@ -181,7 +181,11 @@ export function OnboardingStepPage({
           key={step.id}
           className={`flex flex-col gap-4 transition-opacity duration-(--dur-fast) ease-(--ease-standard) starting:opacity-0 ${role === "user" ? "" : "min-h-80"}`}
         >
-          {loaded === step.id && <step.Component />}
+          {loaded === step.id && (
+            <Suspense fallback={null}>
+              <step.Component />
+            </Suspense>
+          )}
         </div>
         {(save.isError || complete.isError) && (
           <div className="flex flex-wrap items-center gap-x-3">

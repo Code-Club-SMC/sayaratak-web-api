@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router"
 
+import { adsQueries } from "@/features/ads/queries"
 import { HomePage } from "@/features/home/components/home-page"
 import { homeQueries } from "@/features/home/queries"
 import { getHomePrefs } from "@/features/home/server"
@@ -50,6 +51,12 @@ export const Route = createFileRoute("/$locale/_public/")({
       settle(homeQueries.mechanics, (q) => queryClient.ensureQueryData(q)),
       settle(bannersQuery("home_top"), (q) => queryClient.ensureQueryData(q)),
       settle(bannersQuery("home_middle"), (q) =>
+        queryClient.ensureQueryData(q)
+      ),
+      settle(adsQueries.serve("home_top"), (q) =>
+        queryClient.ensureQueryData(q)
+      ),
+      settle(adsQueries.serve("home_middle"), (q) =>
         queryClient.ensureQueryData(q)
       ),
     ])

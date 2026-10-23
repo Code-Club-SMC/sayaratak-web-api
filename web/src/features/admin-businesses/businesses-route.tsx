@@ -1,4 +1,4 @@
-import { stripSearchParams } from "@tanstack/react-router"
+import { lazyRouteComponent, stripSearchParams } from "@tanstack/react-router"
 import type { QueryClient } from "@tanstack/react-query"
 
 import {
@@ -9,9 +9,14 @@ import {
 import { dashboardPage } from "@/features/dashboard/overview-route"
 import { taxonomyQuery } from "@/features/listings/queries"
 import { adminQueries } from "@/features/admin/queries"
+import { withProps } from "@/lib/lazy-page"
 import type { AdminBusiness } from "@/schemas/admin"
 import type { Locale } from "@/schemas/locale"
-import { BusinessesPage } from "./components/businesses-page"
+
+const BusinessesPage = lazyRouteComponent(
+  () => import("./components/businesses-page"),
+  "BusinessesPage"
+)
 
 // Route options of `/admin/dealerships`, `/admin/workshops` and `/admin/mechanics`. The city column and the plan filter read the taxonomy and the plans, so both load first.
 export const businessesRoute = (type: AdminBusiness["type"]) => {
@@ -34,6 +39,6 @@ export const businessesRoute = (type: AdminBusiness["type"]) => {
       ])
       return data
     },
-    component: () => <BusinessesPage type={type} />,
+    component: withProps(BusinessesPage, { type }),
   }
 }

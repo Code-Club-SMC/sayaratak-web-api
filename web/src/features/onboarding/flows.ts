@@ -1,4 +1,9 @@
-import { createElement, type ComponentType } from "react"
+import {
+  createElement,
+  lazy,
+  type ComponentType,
+  type LazyExoticComponent,
+} from "react"
 import type { FieldValues } from "react-hook-form"
 import type { z } from "zod"
 
@@ -18,16 +23,54 @@ import {
   workshopLocationSchema,
   type OnboardingRole,
 } from "./schemas"
-import { BusinessStep } from "./components/business-step"
-import { DealerLocationStep } from "./components/dealer-location-step"
-import { HoursStep } from "./components/hours-step"
-import { MechanicAboutStep } from "./components/mechanic-about-step"
-import { MechanicContactPlanStep } from "./components/mechanic-contact-plan-step"
-import { MechanicExpertiseStep } from "./components/mechanic-expertise-step"
-import { PlanStep } from "./components/plan-step"
-import { UserDetailsStep } from "./components/user-details-step"
-import { WorkshopHoursServicesStep } from "./components/workshop-hours-services-step"
-import { WorkshopLocationStep } from "./components/workshop-location-step"
+
+// Step bodies load on first use, so the guards and the route loader that read `flows` do not pull the forms into the first load.
+const BusinessStep = lazy(() =>
+  import("./components/business-step").then((m) => ({
+    default: m.BusinessStep,
+  }))
+)
+const DealerLocationStep = lazy(() =>
+  import("./components/dealer-location-step").then((m) => ({
+    default: m.DealerLocationStep,
+  }))
+)
+const HoursStep = lazy(() =>
+  import("./components/hours-step").then((m) => ({ default: m.HoursStep }))
+)
+const MechanicAboutStep = lazy(() =>
+  import("./components/mechanic-about-step").then((m) => ({
+    default: m.MechanicAboutStep,
+  }))
+)
+const MechanicContactPlanStep = lazy(() =>
+  import("./components/mechanic-contact-plan-step").then((m) => ({
+    default: m.MechanicContactPlanStep,
+  }))
+)
+const MechanicExpertiseStep = lazy(() =>
+  import("./components/mechanic-expertise-step").then((m) => ({
+    default: m.MechanicExpertiseStep,
+  }))
+)
+const PlanStep = lazy(() =>
+  import("./components/plan-step").then((m) => ({ default: m.PlanStep }))
+)
+const UserDetailsStep = lazy(() =>
+  import("./components/user-details-step").then((m) => ({
+    default: m.UserDetailsStep,
+  }))
+)
+const WorkshopHoursServicesStep = lazy(() =>
+  import("./components/workshop-hours-services-step").then((m) => ({
+    default: m.WorkshopHoursServicesStep,
+  }))
+)
+const WorkshopLocationStep = lazy(() =>
+  import("./components/workshop-location-step").then((m) => ({
+    default: m.WorkshopLocationStep,
+  }))
+)
 
 export type FlowStep = {
   id: string
@@ -39,7 +82,7 @@ export type FlowStep = {
   wide?: boolean
   // Starting values for a step with no saved draft, e.g. the account name.
   defaults?: (me: User) => FieldValues
-  Component: ComponentType
+  Component: ComponentType | LazyExoticComponent<ComponentType>
 }
 
 // Steps shared by the dealership and workshop flows take their audience as a prop.

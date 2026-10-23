@@ -1,5 +1,7 @@
 import type { QueryClient } from "@tanstack/react-query"
 
+import { adsQueries } from "@/features/ads/queries"
+import { adPageOf } from "@/features/ads/ad-page-of"
 import { listingQueries, taxonomyQuery } from "@/features/listings/queries"
 import { bannersQuery } from "@/features/pages/queries"
 import { getCopy } from "@/lib/i18n/server"
@@ -25,6 +27,7 @@ export async function searchLoader(
     queryClient.ensureQueryData(taxonomyQuery),
     getCopy({ data: { locale, keys: [...titleKeys] } }),
     queryClient.prefetchQuery(bannersQuery("search_top")),
+    queryClient.prefetchQuery(adsQueries.serve(adPageOf(search))),
     first,
   ])
   const messages = Object.fromEntries(

@@ -1,13 +1,18 @@
-import { stripSearchParams } from "@tanstack/react-router"
+import { lazyRouteComponent, stripSearchParams } from "@tanstack/react-router"
 
 import { dashboardPage } from "@/features/dashboard/overview-route"
+import { withProps } from "@/lib/lazy-page"
 import { dashboardPath } from "@/lib/navigation"
-import { AnalyticsPage } from "./components/analytics-page"
 import {
   analyticsSearchDefaults,
   analyticsSearchSchema,
   type AnalyticsSearch,
 } from "./schemas"
+
+const AnalyticsPage = lazyRouteComponent(
+  () => import("./components/analytics-page"),
+  "AnalyticsPage"
+)
 
 // Route options of `<dashboard>/analytics`, the same for the three business roles.
 export const analyticsRoute = (
@@ -21,5 +26,5 @@ export const analyticsRoute = (
     `${dashboardPath(role)}/analytics`,
     "dashboard.nav_analytics"
   ),
-  component: () => <AnalyticsPage role={role} />,
+  component: withProps(AnalyticsPage, { role }),
 })

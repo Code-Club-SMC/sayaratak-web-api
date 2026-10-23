@@ -39,10 +39,15 @@ for (const rule of [
       "auth",
       "onboarding",
       "post",
-    ].map((s) => `Disallow: /${l}/${s}`)
+    ].flatMap((s) => [`Disallow: /${l}/${s}$`, `Disallow: /${l}/${s}/`])
   ),
 ])
   check(robots.includes(rule + "\n"), `robots.txt lacks "${rule}"`)
+// The public directories share a prefix with the dashboards and must stay crawlable.
+check(
+  !/^Disallow: \/(ar|en)\/(dealer|workshop|mechanic)$/m.test(robots),
+  "robots.txt blocks a public directory by prefix"
+)
 check(
   /^Sitemap: https?:\/\/\S+\/sitemap\.xml$/m.test(robots),
   "robots.txt Sitemap line"

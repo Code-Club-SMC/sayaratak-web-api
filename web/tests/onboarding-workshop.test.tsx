@@ -61,6 +61,10 @@ const open = async (step: string, saved: object = {}) => {
       shell.client.getQueryData(draftQuery("onboarding:workshop").queryKey)
     ).toBeDefined()
   )
+  // The step body is a lazy chunk.
+  await waitFor(() =>
+    expect(document.querySelector("form > div")?.childElementCount).toBeTruthy()
+  )
   return shell
 }
 const next = () =>

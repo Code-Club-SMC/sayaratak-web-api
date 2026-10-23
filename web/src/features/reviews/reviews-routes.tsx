@@ -1,14 +1,19 @@
-import { stripSearchParams } from "@tanstack/react-router"
+import { lazyRouteComponent, stripSearchParams } from "@tanstack/react-router"
 
 import { dashboardPage } from "@/features/dashboard/overview-route"
+import { withProps } from "@/lib/lazy-page"
 import { dashboardPath } from "@/lib/navigation"
 import type { TargetType } from "@/schemas/review"
-import { ReviewsManagerPage } from "./components/reviews-manager-page"
 import {
   reviewsSearchDefaults,
   reviewsSearchSchema,
   type ReviewsSearch,
 } from "./schemas"
+
+const ReviewsManagerPage = lazyRouteComponent(
+  () => import("./components/reviews-manager-page"),
+  "ReviewsManagerPage"
+)
 
 // Route options of `<dashboard>/reviews`, the same for the three business roles.
 export const reviewsRoute = (targetType: TargetType) => ({
@@ -20,5 +25,5 @@ export const reviewsRoute = (targetType: TargetType) => ({
     `${dashboardPath(targetType)}/reviews`,
     "dashboard.nav_reviews"
   ),
-  component: () => <ReviewsManagerPage targetType={targetType} />,
+  component: withProps(ReviewsManagerPage, { targetType }),
 })

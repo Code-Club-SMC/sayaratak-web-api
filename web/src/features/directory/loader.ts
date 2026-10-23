@@ -5,6 +5,7 @@ import type {
 } from "@tanstack/react-query"
 import { notFound } from "@tanstack/react-router"
 
+import { adsQueries } from "@/features/ads/queries"
 import { listingQueries, taxonomyQuery } from "@/features/listings/queries"
 import { bannersQuery } from "@/features/pages/queries"
 import { reviewQueries } from "@/features/reviews/queries"
@@ -50,6 +51,7 @@ export async function dealershipsLoader(
   })
   await Promise.all([
     queryClient.prefetchQuery(bannersQuery("directory_top")),
+    queryClient.prefetchQuery(adsQueries.serve("directory_dealerships")),
     firstLoad(
       queryClient,
       directoryQueries.dealerships.list(dealershipFilters(search)),

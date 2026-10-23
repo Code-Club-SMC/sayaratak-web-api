@@ -49,7 +49,10 @@ export const robotsTxt = (origin: string) =>
     "User-agent: *",
     "Allow: /",
     "Disallow: /api/",
-    ...locales.flatMap((l) => closed.map((s) => `Disallow: /${l}/${s}`)),
+    // `/ar/dealer` alone would also block the public `/ar/dealerships`, so a section is closed as the exact path and as the folder.
+    ...locales.flatMap((l) =>
+      closed.flatMap((s) => [`Disallow: /${l}/${s}$`, `Disallow: /${l}/${s}/`])
+    ),
     `Sitemap: ${origin}/sitemap.xml`,
     "",
   ].join("\n")

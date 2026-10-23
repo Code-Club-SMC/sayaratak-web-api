@@ -1,6 +1,8 @@
 import type { QueryClient } from "@tanstack/react-query"
 import { notFound, redirect } from "@tanstack/react-router"
 
+import { adsQueries } from "@/features/ads/queries"
+import { bannersQuery } from "@/features/pages/queries"
 import { ApiError } from "@/lib/api/client"
 import { listingTitle } from "@/lib/listing-title"
 import { mediaSrc } from "@/lib/media"
@@ -30,6 +32,8 @@ export async function listingLoader(
     })
   }
   const rails = Promise.allSettled([
+    queryClient.prefetchQuery(bannersQuery("listing_aside")),
+    queryClient.prefetchQuery(adsQueries.serve("listing_detail")),
     queryClient.prefetchQuery(listingQueries.similar(listing.id)),
     queryClient.prefetchQuery(
       listingQueries.rail(

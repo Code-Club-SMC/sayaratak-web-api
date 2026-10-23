@@ -57,8 +57,11 @@ describe("sitemap", () => {
   it("robots.txt blocks the private sections in both locales", () => {
     const txt = robotsTxt("https://x.sd")
     expect(txt).toContain("Disallow: /api/\n")
-    expect(txt).toContain("Disallow: /ar/account\n")
-    expect(txt).toContain("Disallow: /en/post\n")
+    expect(txt).toContain("Disallow: /ar/account/\n")
+    expect(txt).toContain("Disallow: /en/post$\n")
+    // Exact paths, so the public /ar/dealerships and /ar/workshops stay open.
+    expect(txt).toContain("Disallow: /ar/dealer$\n")
+    expect(txt).not.toMatch(/^Disallow: \/ar\/(dealer|workshop|mechanic)$/m)
     expect(txt).toContain("Sitemap: https://x.sd/sitemap.xml")
   })
 })

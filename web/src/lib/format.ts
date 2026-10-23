@@ -13,9 +13,38 @@ const units = {
   en: { price: "SDG", mileage: "km" },
 } as const
 
+// An Intl formatter costs far more to build than to use, and a table calls these once per cell, so each is built once per locale.
+const perLocale = <T>(make: (locale: Locale) => T) => {
+  const made = new Map<Locale, T>()
+  return (locale: Locale) => {
+    const known = made.get(locale)
+    if (known) return known
+    const next = make(locale)
+    made.set(locale, next)
+    return next
+  }
+}
+const dateFormat = (options: Intl.DateTimeFormatOptions) =>
+  perLocale((locale) => new Intl.DateTimeFormat(locale, options))
+
+const numberFormat = perLocale((locale) => new Intl.NumberFormat(locale, base))
+const dateFull = dateFormat({
+  ...dateBase,
+  day: "numeric",
+  month: "short",
+  year: "numeric",
+})
+const timeOnly = dateFormat({ ...dateBase, hour: "numeric", minute: "2-digit" })
+const monthYear = dateFormat({ ...dateBase, month: "long", year: "numeric" })
+const dayMonth = dateFormat({ ...dateBase, day: "numeric", month: "short" })
+const weekday = dateFormat({ weekday: "long", timeZone: "UTC" })
+const relative = perLocale(
+  (locale) => new Intl.RelativeTimeFormat(locale, { ...base, numeric: "auto" })
+)
+
 // Thousands separators for any count (views, results, mileage).
 export const formatNumber = (n: number, locale: Locale) =>
-  new Intl.NumberFormat(locale, base).format(n)
+  numberFormat(locale).format(n)
 
 // Whole SDG pounds split into amount and unit so PriceText can style the unit quietly.
 export const formatPrice = (amount: number, locale: Locale) => ({
@@ -25,33 +54,20 @@ export const formatPrice = (amount: number, locale: Locale) => ({
 
 // Calendar date for an ISO string, always in Khartoum time.
 export const formatDate = (iso: string, locale: Locale) =>
-  new Intl.DateTimeFormat(locale, {
-    ...dateBase,
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-  }).format(new Date(iso))
+  dateFull(locale).format(new Date(iso))
 
 // "14:05" in Khartoum time, for the time under a message.
 export const formatTime = (iso: string, locale: Locale) =>
-  new Intl.DateTimeFormat(locale, {
-    ...dateBase,
-    hour: "numeric",
-    minute: "2-digit",
-  }).format(new Date(iso))
+  timeOnly(locale).format(new Date(iso))
 
 // "October 2025", for member-since lines.
 export const formatMonthYear = (iso: string, locale: Locale) =>
-  new Intl.DateTimeFormat(locale, {
-    ...dateBase,
-    month: "long",
-    year: "numeric",
-  }).format(new Date(iso))
+  monthYear(locale).format(new Date(iso))
 
 // "3 hours ago" for the last month, then the plain date. `now` is passed in so SSR and hydration agree.
 export function formatRelative(iso: string, now: number, locale: Locale) {
   const seconds = Math.round((new Date(iso).getTime() - now) / 1000)
-  const rtf = new Intl.RelativeTimeFormat(locale, { ...base, numeric: "auto" })
+  const rtf = relative(locale)
   const abs = Math.abs(seconds)
   if (abs < 45) return rtf.format(0, "second")
   if (abs < 3600) return rtf.format(Math.round(seconds / 60), "minute")
@@ -66,17 +82,11 @@ export const formatMileage = (km: number, locale: Locale) =>
 
 // Day name for a weekday number (0 = Sunday). 2023-01-01 was a Sunday.
 export const formatWeekday = (day: number, locale: Locale) =>
-  new Intl.DateTimeFormat(locale, { weekday: "long", timeZone: "UTC" }).format(
-    Date.UTC(2023, 0, 1 + day)
-  )
+  weekday(locale).format(Date.UTC(2023, 0, 1 + day))
 
 // Day and month only, for chart axes.
 export const formatShortDate = (iso: string, locale: Locale) =>
-  new Intl.DateTimeFormat(locale, {
-    ...dateBase,
-    day: "numeric",
-    month: "short",
-  }).format(new Date(iso))
+  dayMonth(locale).format(new Date(iso))
 
 export const initials = (name: string) =>
   name

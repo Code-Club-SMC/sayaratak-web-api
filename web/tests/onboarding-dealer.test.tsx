@@ -64,6 +64,10 @@ const open = async (step: string, saved: object = {}) => {
       shell.client.getQueryData(draftQuery("onboarding:dealership").queryKey)
     ).toBeDefined()
   )
+  // The step body is a lazy chunk.
+  await waitFor(() =>
+    expect(document.querySelector("form > div")?.childElementCount).toBeTruthy()
+  )
   return shell
 }
 // What the billing page would read: the newest subscription of the signed-in account.

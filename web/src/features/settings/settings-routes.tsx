@@ -1,7 +1,14 @@
+import { lazyRouteComponent } from "@tanstack/react-router"
+
 import { dashboardPage } from "@/features/dashboard/overview-route"
+import { withProps } from "@/lib/lazy-page"
 import { dashboardPath } from "@/lib/navigation"
 import type { Role } from "@/schemas/fields"
-import { SettingsPage } from "./components/settings-page"
+
+const SettingsPage = lazyRouteComponent(
+  () => import("./components/settings-page"),
+  "SettingsPage"
+)
 
 // Route options of the settings page, one per dashboard. The admin's page is `/admin/account`.
 export const settingsRoute = (role: Role) => ({
@@ -11,5 +18,5 @@ export const settingsRoute = (role: Role) => ({
         `${dashboardPath(role)}/settings`,
         "dashboard.nav_settings"
       )),
-  component: () => <SettingsPage role={role} />,
+  component: withProps(SettingsPage, { role }),
 })

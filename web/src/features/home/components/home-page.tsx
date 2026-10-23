@@ -34,7 +34,6 @@ export function HomePage({
         title={t("home.featured")}
         query={homeQueries.featured}
         href={searchPath({ featured: true })}
-        eager={4}
       />
       <NearYouRail city={city} center={center} geo={geo} />
       <HomeRail

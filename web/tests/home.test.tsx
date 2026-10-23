@@ -159,7 +159,7 @@ describe("HomePage", () => {
     expect(tiles[5]?.getAttribute("href")).toBe("/en/parts")
   })
 
-  it("links every rail to a real list and the first four photos load at once", async () => {
+  it("links every rail to a real list and rail photos load lazily", async () => {
     await renderShell(page())
     const featured = (
       await screen.findByRole("heading", { name: "Featured" })
@@ -172,7 +172,7 @@ describe("HomePage", () => {
     const images = [...featured.querySelectorAll("img")]
     expect(images.length).toBeGreaterThanOrEqual(4)
     for (const img of images.slice(0, 4))
-      expect(img.getAttribute("loading")).toBe("eager")
+      expect(img.getAttribute("loading")).toBe("lazy")
     const dealers = (
       await screen.findByRole("heading", { name: "Verified dealerships" })
     ).closest("section")!

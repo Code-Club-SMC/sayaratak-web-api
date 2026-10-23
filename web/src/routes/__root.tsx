@@ -11,7 +11,7 @@ import { TanStackDevtools } from "@tanstack/react-devtools"
 import { I18nextProvider } from "react-i18next"
 
 import { DevPanelHost } from "@/components/app/dev-panel-host"
-import { AuthDialog } from "@/features/auth/components/auth-dialog"
+import { AuthDialogHost } from "@/features/auth/components/auth-dialog-host"
 import { NavigationProgress } from "@/components/app/navigation-progress"
 import { OfflineBanner } from "@/components/app/offline-banner"
 import { meQuery } from "@/features/auth/me-query"
@@ -128,7 +128,7 @@ function RootComponent() {
               <NavigationProgress />
               <OfflineBanner />
               <Outlet />
-              <AuthDialog />
+              <AuthDialogHost />
             </Toaster>
           </NowProvider>
         </PrefsProvider>

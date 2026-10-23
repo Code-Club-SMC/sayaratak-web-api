@@ -1,6 +1,7 @@
 import type { QueryClient } from "@tanstack/react-query"
 import { notFound } from "@tanstack/react-router"
 
+import { adsQueries } from "@/features/ads/queries"
 import { taxonomyQuery } from "@/features/listings/queries"
 import { bannersQuery } from "@/features/pages/queries"
 import { reviewQueries } from "@/features/reviews/queries"
@@ -31,6 +32,7 @@ export async function workshopsLoader(
   await Promise.all([
     queryClient.ensureQueryData(taxonomyQuery),
     queryClient.prefetchQuery(bannersQuery("directory_top")),
+    queryClient.prefetchQuery(adsQueries.serve("directory_workshops")),
     firstLoad(
       queryClient,
       directoryQueries.workshops.list(workshopFilters(search)),

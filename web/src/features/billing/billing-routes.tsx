@@ -1,14 +1,16 @@
-import { notFound, stripSearchParams } from "@tanstack/react-router"
+import {
+  lazyRouteComponent,
+  notFound,
+  stripSearchParams,
+} from "@tanstack/react-router"
 import type { QueryClient } from "@tanstack/react-query"
 
 import { dashboardPage } from "@/features/dashboard/overview-route"
 import { ApiError } from "@/lib/api/client"
+import { withProps } from "@/lib/lazy-page"
 import { dashboardPath } from "@/lib/navigation"
 import type { Plan } from "@/schemas/billing"
 import type { Locale } from "@/schemas/locale"
-import { BillingPage } from "./components/billing-page"
-import { CheckoutNotFound } from "./components/checkout-not-found"
-import { CheckoutPage } from "./components/checkout-page"
 import { billingQueries } from "./queries"
 import {
   billingSearchDefaults,
@@ -16,6 +18,19 @@ import {
   billingSearchSchema,
   checkoutSearchSchema,
 } from "./schemas"
+
+const BillingPage = lazyRouteComponent(
+  () => import("./components/billing-page"),
+  "BillingPage"
+)
+const CheckoutPage = lazyRouteComponent(
+  () => import("./components/checkout-page"),
+  "CheckoutPage"
+)
+const CheckoutNotFound = lazyRouteComponent(
+  () => import("./components/checkout-not-found"),
+  "CheckoutNotFound"
+)
 
 // Route options of `<dashboard>/billing`, the same for the four roles that pay (the admin has no billing page).
 export const billingRoute = (audience: Plan["audience"]) => ({
@@ -27,7 +42,7 @@ export const billingRoute = (audience: Plan["audience"]) => ({
     `${dashboardPath(audience)}/billing`,
     "dashboard.nav_billing"
   ),
-  component: () => <BillingPage audience={audience} />,
+  component: withProps(BillingPage, { audience }),
 })
 
 // Route options of `<dashboard>/billing/checkout?item=`. The loader awaits the checkout; an item that is unknown, not the user's or already paid is a 404.
@@ -67,7 +82,7 @@ export const checkoutRoute = (audience: Plan["audience"]) => {
       return data
     },
     head: page.head,
-    notFoundComponent: () => <CheckoutNotFound audience={audience} />,
-    component: () => <CheckoutPage audience={audience} />,
+    notFoundComponent: withProps(CheckoutNotFound, { audience }),
+    component: withProps(CheckoutPage, { audience }),
   }
 }

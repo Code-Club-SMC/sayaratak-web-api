@@ -23,14 +23,14 @@ export function PasswordInput({
       <Input
         {...props}
         type={shown ? "text" : "password"}
-        className={`pe-12 ${className ?? ""}`}
+        className={`pe-14 ${className ?? ""}`}
       />
-      <div className="absolute inset-y-0 end-1.5 flex items-center">
+      <div className="absolute inset-y-0 end-0.5 flex items-center">
         <Button
           type="button"
           variant="ghost"
           size="icon-sm"
-          className="size-8"
+          className="size-11"
           aria-label={t(shown ? "form.hide_password" : "form.show_password")}
           aria-pressed={shown}
           onClick={() => {

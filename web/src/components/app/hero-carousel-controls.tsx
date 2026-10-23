@@ -41,7 +41,7 @@ export function HeroCarouselControls({
           aria-label={t("nav.go_to_slide", { number: i + 1 })}
           aria-current={i === index ? "true" : undefined}
           onClick={() => onSelect(i)}
-          className={cn("grid h-6 w-7 place-items-center rounded-full", ring)}
+          className={cn("grid size-11 place-items-center rounded-full", ring)}
         >
           <span
             className={cn(
@@ -61,7 +61,7 @@ export function HeroCarouselControls({
         type="button"
         aria-label={t(playing ? "nav.carousel_pause" : "nav.carousel_play")}
         onClick={onToggle}
-        className={cn("grid h-6 w-7 place-items-center rounded-full", ring)}
+        className={cn("grid size-11 place-items-center rounded-full", ring)}
       >
         {playing ? (
           <PauseIcon aria-hidden className="size-3.5 fill-current" />

@@ -15,8 +15,7 @@ todos.json
 # typescript
 *.tsbuildinfo
 
-# project plan and progress (local only)
-docs/
+# project plan and progress (local only; docs/ is committed)
 plan/
 
 # playwright

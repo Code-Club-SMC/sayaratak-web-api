@@ -1,4 +1,4 @@
-// Fails on physical-direction classes (outside components/ui), on a native <select>, on TODO, FIXME, console.log, an empty onClick and href="#" in src/**, and on a Remove button that does not go through RemoveButton (every Remove asks first).
+// Fails on physical-direction classes (outside components/ui), on a native <select>, on TODO, FIXME, console.log, an empty onClick and href="#" in src/**, on a "use client" line anywhere in src/** (components/ui included), and on a Remove button that does not go through RemoveButton (every Remove asks first).
 import { readFileSync, readdirSync } from "node:fs"
 import process from "node:process"
 import { physical } from "./patterns"
@@ -10,6 +10,14 @@ const skip = ["src/components/ui/", "src/routeTree.gen.ts"]
 let failed = 0
 for (const file of readdirSync("src", { recursive: true, encoding: "utf8" })) {
   const path = `src/${file}`
+  // The app has no React Server Components; shadcn adds "use client" unless components.json `rsc` is false.
+  if (
+    /\.tsx?$/.test(path) &&
+    /^["']use client["']/m.test(readFileSync(path, "utf8"))
+  ) {
+    console.error(`${path}: remove "use client" (no Server Components here)`)
+    failed++
+  }
   if (!/\.(?:tsx?|css)$/.test(path) || skip.some((s) => path.startsWith(s)))
     continue
   const text = readFileSync(path, "utf8")

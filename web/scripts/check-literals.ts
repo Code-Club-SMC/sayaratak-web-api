@@ -9,7 +9,6 @@ const skip = [
   "src/routeTree.gen.ts",
   "src/mocks/",
   "src/components/app/dev-panel.tsx",
-  "src/routes/$locale/_public/dev.shared.tsx",
 ]
 const keep = new Set(["Ctrl K", "SY-527294"])
 const hasLetters = /\p{L}/u

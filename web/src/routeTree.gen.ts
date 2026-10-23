@@ -105,7 +105,6 @@ import { Route as LocaleWorkshopSettingsRouteImport } from './routes/$locale/wor
 import { Route as LocaleWorkshopVerificationRouteImport } from './routes/$locale/workshop/verification'
 import { Route as LocalePublicDealershipsIndexRouteImport } from './routes/$locale/_public/dealerships/index'
 import { Route as LocalePublicDealershipsSlugRouteImport } from './routes/$locale/_public/dealerships/$slug'
-import { Route as LocalePublicDevSharedRouteImport } from './routes/$locale/_public/dev.shared'
 import { Route as LocalePublicListingSlugRouteImport } from './routes/$locale/_public/listing/$slug'
 import { Route as LocalePublicMechanicsIndexRouteImport } from './routes/$locale/_public/mechanics/index'
 import { Route as LocalePublicMechanicsSlugRouteImport } from './routes/$locale/_public/mechanics/$slug'
@@ -622,11 +621,6 @@ const LocalePublicDealershipsSlugRoute =
     path: '/dealerships/$slug',
     getParentRoute: () => LocalePublicRouteRoute,
   } as any)
-const LocalePublicDevSharedRoute = LocalePublicDevSharedRouteImport.update({
-  id: '/dev/shared',
-  path: '/dev/shared',
-  getParentRoute: () => LocalePublicRouteRoute,
-} as any)
 const LocalePublicListingSlugRoute = LocalePublicListingSlugRouteImport.update({
   id: '/listing/$slug',
   path: '/listing/$slug',
@@ -860,7 +854,6 @@ export interface FileRoutesByFullPath {
   '/$locale/onboarding/': typeof LocaleOnboardingIndexRoute
   '/$locale/workshop/': typeof LocaleWorkshopIndexRoute
   '/$locale/dealerships/$slug': typeof LocalePublicDealershipsSlugRoute
-  '/$locale/dev/shared': typeof LocalePublicDevSharedRoute
   '/$locale/listing/$slug': typeof LocalePublicListingSlugRoute
   '/$locale/mechanics/$slug': typeof LocalePublicMechanicsSlugRoute
   '/$locale/workshops/$slug': typeof LocalePublicWorkshopsSlugRoute
@@ -975,7 +968,6 @@ export interface FileRoutesByTo {
   '/$locale/onboarding': typeof LocaleOnboardingIndexRoute
   '/$locale/workshop': typeof LocaleWorkshopIndexRoute
   '/$locale/dealerships/$slug': typeof LocalePublicDealershipsSlugRoute
-  '/$locale/dev/shared': typeof LocalePublicDevSharedRoute
   '/$locale/listing/$slug': typeof LocalePublicListingSlugRoute
   '/$locale/mechanics/$slug': typeof LocalePublicMechanicsSlugRoute
   '/$locale/workshops/$slug': typeof LocalePublicWorkshopsSlugRoute
@@ -1099,7 +1091,6 @@ export interface FileRoutesById {
   '/$locale/onboarding/': typeof LocaleOnboardingIndexRoute
   '/$locale/workshop/': typeof LocaleWorkshopIndexRoute
   '/$locale/_public/dealerships/$slug': typeof LocalePublicDealershipsSlugRoute
-  '/$locale/_public/dev/shared': typeof LocalePublicDevSharedRoute
   '/$locale/_public/listing/$slug': typeof LocalePublicListingSlugRoute
   '/$locale/_public/mechanics/$slug': typeof LocalePublicMechanicsSlugRoute
   '/$locale/_public/workshops/$slug': typeof LocalePublicWorkshopsSlugRoute
@@ -1223,7 +1214,6 @@ export interface FileRouteTypes {
     | '/$locale/onboarding/'
     | '/$locale/workshop/'
     | '/$locale/dealerships/$slug'
-    | '/$locale/dev/shared'
     | '/$locale/listing/$slug'
     | '/$locale/mechanics/$slug'
     | '/$locale/workshops/$slug'
@@ -1338,7 +1328,6 @@ export interface FileRouteTypes {
     | '/$locale/onboarding'
     | '/$locale/workshop'
     | '/$locale/dealerships/$slug'
-    | '/$locale/dev/shared'
     | '/$locale/listing/$slug'
     | '/$locale/mechanics/$slug'
     | '/$locale/workshops/$slug'
@@ -1461,7 +1450,6 @@ export interface FileRouteTypes {
     | '/$locale/onboarding/'
     | '/$locale/workshop/'
     | '/$locale/_public/dealerships/$slug'
-    | '/$locale/_public/dev/shared'
     | '/$locale/_public/listing/$slug'
     | '/$locale/_public/mechanics/$slug'
     | '/$locale/_public/workshops/$slug'
@@ -2171,13 +2159,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LocalePublicDealershipsSlugRouteImport
       parentRoute: typeof LocalePublicRouteRoute
     }
-    '/$locale/_public/dev/shared': {
-      id: '/$locale/_public/dev/shared'
-      path: '/dev/shared'
-      fullPath: '/$locale/dev/shared'
-      preLoaderRoute: typeof LocalePublicDevSharedRouteImport
-      parentRoute: typeof LocalePublicRouteRoute
-    }
     '/$locale/_public/listing/$slug': {
       id: '/$locale/_public/listing/$slug'
       path: '/listing/$slug'
@@ -2361,7 +2342,6 @@ interface LocalePublicRouteRouteChildren {
   LocalePublicTermsRoute: typeof LocalePublicTermsRoute
   LocalePublicIndexRoute: typeof LocalePublicIndexRoute
   LocalePublicDealershipsSlugRoute: typeof LocalePublicDealershipsSlugRoute
-  LocalePublicDevSharedRoute: typeof LocalePublicDevSharedRoute
   LocalePublicListingSlugRoute: typeof LocalePublicListingSlugRoute
   LocalePublicMechanicsSlugRoute: typeof LocalePublicMechanicsSlugRoute
   LocalePublicWorkshopsSlugRoute: typeof LocalePublicWorkshopsSlugRoute
@@ -2383,7 +2363,6 @@ const LocalePublicRouteRouteChildren: LocalePublicRouteRouteChildren = {
   LocalePublicTermsRoute: LocalePublicTermsRoute,
   LocalePublicIndexRoute: LocalePublicIndexRoute,
   LocalePublicDealershipsSlugRoute: LocalePublicDealershipsSlugRoute,
-  LocalePublicDevSharedRoute: LocalePublicDevSharedRoute,
   LocalePublicListingSlugRoute: LocalePublicListingSlugRoute,
   LocalePublicMechanicsSlugRoute: LocalePublicMechanicsSlugRoute,
   LocalePublicWorkshopsSlugRoute: LocalePublicWorkshopsSlugRoute,
@@ -2666,12 +2645,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { createStart } from '@tanstack/react-start'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-  }
-}

@@ -48,6 +48,15 @@ export function TopListingsCard({
         <EmptyState
           icon={CarIcon}
           title={t("analytics.top_empty")}
+          action={
+            <Link
+              to="/$locale/dealer/inventory/new"
+              params={{ locale }}
+              className={buttonVariants({ variant: "outline" })}
+            >
+              {t("listing.post")}
+            </Link>
+          }
           level={3}
           className="py-6"
         />

@@ -10,6 +10,8 @@ import { SettingsSection } from "@/components/app/settings-section"
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { usePageTitle } from "@/features/dashboard/components/page-title"
+import { toast } from "@/components/ui/toast"
+import { errorText } from "@/lib/api/error-text"
 import { useT } from "@/lib/i18n/use-t"
 import { localeHref } from "@/lib/navigation"
 import { countsQuery } from "../counts-query"
@@ -43,6 +45,7 @@ export function NotificationsPage() {
   )
   const unread = useQuery(countsQuery).data?.unreadNotifications ?? 0
   const markAll = useMarkNotificationsRead()
+  const fail = (error: unknown) => toast.add({ title: errorText(t, error) })
   const open = useOpenNotification()
   const go = (next: Partial<NotificationsSearch>, replace: boolean) =>
     void navigate({
@@ -67,7 +70,7 @@ export function NotificationsPage() {
           type="button"
           variant="outline"
           disabled={!unread}
-          onClick={() => markAll.mutate(undefined)}
+          onClick={() => markAll.mutate(undefined, { onError: fail })}
         >
           {t("notifications.mark_all")}
         </Button>

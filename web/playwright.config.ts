@@ -2,6 +2,15 @@ import { defineConfig } from "@playwright/test"
 
 // End-to-end tests run against the production build on port 3100 (3000 is the dev server).
 const port = 3100
+// The states sweep (14.6) is slow, so it runs only with `bun run test:states`, and it also needs a second server with empty mock data. The script builds first, so the two servers do not build at once.
+const states = process.env.STATES === "1"
+const emptyPort = 3101
+const server = (p: number, env = "") => ({
+  command: `${states ? "" : "bun run build && "}${env}PORT=${p} API_BASE_URL=http://localhost:${p} bun run start`,
+  url: `http://localhost:${p}/ar`,
+  reuseExistingServer: true,
+  timeout: 600_000,
+})
 
 export default defineConfig({
   testDir: "e2e",
@@ -14,10 +23,9 @@ export default defineConfig({
     trace: "retain-on-failure",
   },
   projects: [{ name: "chrome" }],
-  webServer: {
-    command: `bun run build && PORT=${port} API_BASE_URL=http://localhost:${port} bun run start`,
-    url: `http://localhost:${port}/ar`,
-    reuseExistingServer: true,
-    timeout: 600_000,
-  },
+  testIgnore: states ? [] : /states/,
+  webServer: [
+    server(port),
+    ...(states ? [server(emptyPort, "MOCK_EMPTY=true ")] : []),
+  ],
 })

@@ -180,14 +180,14 @@ route("PATCH", "/me/business", async (c) => {
   // The form posts one string per field; it is stored in both languages (stub for translate-on-save).
   for (const key of ["name", "description", "bio"])
     if (typeof allowed[key] === "string") allowed[key] = both(allowed[key])
-  Object.assign(biz.row, allowed)
   const schema =
     biz.type === "dealership"
       ? dealershipSchema
       : biz.type === "workshop"
         ? workshopSchema
         : mechanicSchema
-  const check = (schema as z.ZodType).safeParse(biz.row)
+  // Checked on a copy first, so a rejected save leaves the stored profile as it was.
+  const check = (schema as z.ZodType).safeParse({ ...biz.row, ...allowed })
   if (!check.success)
     throw fail(
       422,
@@ -201,6 +201,7 @@ route("PATCH", "/me/business", async (c) => {
         ])
       )
     )
+  Object.assign(biz.row, allowed)
   return parseBusiness(biz)
 })
 

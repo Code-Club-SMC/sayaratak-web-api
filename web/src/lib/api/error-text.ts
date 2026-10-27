@@ -6,6 +6,7 @@ import { ApiError } from "./client"
 export function errorText(t: TFunction, error: unknown) {
   if (error instanceof ApiError) {
     if (error.code === "already_reviewed") return t("reviews.already_reviewed")
+    if (error.code === "bump_wait") return t("billing.bump_wait")
     if (error.code === "forbidden") return t("error.forbidden")
     if (error.code === "in_use") return t("admin.in_use")
     if (error.code === "offline") return t("error.offline")

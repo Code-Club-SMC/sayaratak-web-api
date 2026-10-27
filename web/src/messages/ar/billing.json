@@ -25,6 +25,7 @@
   "promotion.name_featured": "مميز",
   "promotion.name_bump": "رفع الإعلان",
   "promotion.once": "مرة واحدة",
+  "billing.bump_wait": "رُفع هذا الإعلان قبل أقل من 24 ساعة. يمكنك رفعه مرة أخرى بعد ذلك.",
   "billing.start_free": "ابدأ مجاناً",
   "billing.included": "مشمولة",
   "billing.pending_badge": "الدفع قيد المراجعة",

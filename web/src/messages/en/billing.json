@@ -13,6 +13,7 @@
   "promotion.name_featured": "Featured",
   "promotion.name_bump": "Bump up",
   "promotion.once": "One time",
+  "billing.bump_wait": "This listing was bumped less than 24 hours ago. You can bump it again after that.",
   "billing.start_free": "Start free",
   "billing.included": "Included",
   "billing.pending_badge": "Payment under review",

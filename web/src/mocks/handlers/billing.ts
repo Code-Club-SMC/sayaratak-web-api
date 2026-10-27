@@ -53,6 +53,8 @@ route("GET", "/plans", (c) => {
 // The active subscription (else the pending one), its plan, and how much of the limit is used. No subscription means null: an individual then runs on the free limit.
 // A featured credit buys one 7-day Featured.
 const CREDIT_DAYS = 7
+// A listing can be bumped again a day after its last bump.
+const BUMP_WAIT_MS = 24 * 3_600_000
 // Featured credits of the active subscription: its plan's count, less the credit promotions started since the period began.
 function credits(userId: string) {
   const sub = currentSubscription(userId)
@@ -244,6 +246,12 @@ route("POST", "/promotions", async (c) => {
   const price = find(db.promotionPrices, priceId ?? "")
   if (!price) throw fail(404, "not_found")
   const { type } = price
+  if (
+    type === "bump" &&
+    listing.bumpedAt &&
+    Date.now() - Date.parse(listing.bumpedAt) < BUMP_WAIT_MS
+  )
+    throw fail(409, "bump_wait")
   const unpaid = db.promotions.find(
     (p) =>
       p.listingId === listingId &&

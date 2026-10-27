@@ -142,6 +142,9 @@ describe("api client", () => {
     expect(errorText(t, new ApiError(403, "forbidden"))).toBe("error.forbidden")
     expect(errorText(t, new ApiError(409, "in_use"))).toBe("admin.in_use")
     expect(errorText(t, new ApiError(503, "offline"))).toBe("error.offline")
+    expect(errorText(t, new ApiError(409, "bump_wait"))).toBe(
+      "billing.bump_wait"
+    )
     expect(errorText(t, new ApiError(409, "payment_pending"))).toBe(
       "billing.payment_pending"
     )

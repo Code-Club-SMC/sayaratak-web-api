@@ -7,6 +7,7 @@ import { wizardDefaults } from "@/features/listings/wizard/wizard-defaults"
 import type { Review } from "@/schemas/review"
 import { db, resetDb } from "@/mocks/db"
 import { handleMock } from "@/mocks/router"
+import { capPaid } from "@/mocks/search"
 
 type Opts = { as?: string; body?: unknown; form?: FormData }
 async function call(method: string, path: string, o: Opts = {}) {
@@ -243,6 +244,29 @@ describe("listings", () => {
     const page = (await call("GET", "/listings")).body.items as Row[]
     const at = page.flatMap((l, i) => (featured(l) ? [i] : []))
     expect(at).toEqual([0, 1, 2, 3, 4, 8, 12, 16, 20])
+  })
+  it("Featured listings take turns: the order holds within an hour and changes between hours", () => {
+    const featured = db.listings.filter((l) =>
+      l.promotions.some(
+        (p) =>
+          p.type === "featured" &&
+          Date.parse(p.startsAt) <= Date.now() &&
+          Date.parse(p.endsAt) >= Date.now()
+      )
+    )
+    expect(featured.length).toBeGreaterThan(9)
+    const hour = 3_600_000
+    const at = (now: number) => capPaid(featured, now).map((l) => l.id)
+    const start = Math.floor(Date.now() / hour) * hour
+    expect(at(start)).toEqual(at(start + hour - 1))
+    expect(at(start)).not.toEqual(at(start + hour))
+    // Over a day, more of them get a turn in the first row than any single hour shows.
+    const firstRow = new Set(
+      Array.from({ length: 24 }, (_, i) =>
+        at(start + i * hour).slice(0, 4)
+      ).flat()
+    )
+    expect(firstRow.size).toBeGreaterThan(8)
   })
   it("lets a featured listing jump the organic ones", async () => {
     const corollas = "/listings?make=toyota&model=toyota-corolla"
@@ -1234,6 +1258,20 @@ describe("billing, promotions and payments", () => {
       paymentStatus: "none",
     })
     expect(listing?.promotions.map((p) => p.type)).toContain("featured")
+  })
+  it("refuses a second bump within 24 hours of the last one", async () => {
+    const listing = db.listings.find(
+      (l) => l.ownerUserId === "u-omar" && l.moderation === "approved"
+    )!
+    const bump = () =>
+      call("POST", "/promotions", {
+        as: "u-omar",
+        body: { listingId: listing.id, priceId: "bump" },
+      })
+    listing.bumpedAt = new Date(Date.now() - 23 * 3_600_000).toISOString()
+    expect((await bump()).body.code).toBe("bump_wait")
+    listing.bumpedAt = new Date(Date.now() - 25 * 3_600_000).toISOString()
+    expect((await bump()).body).toMatchObject({ type: "bump" })
   })
   it("a paid bump is done once approved: the listing is bumped, carries no promotion, and the bump reads ended", async () => {
     const listing = db.listings.find(

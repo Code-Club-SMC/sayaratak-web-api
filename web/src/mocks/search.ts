@@ -154,10 +154,20 @@ const ranked = (a: ListingRow, b: ListingRow) =>
   Number(b.media.length > 0) - Number(a.media.length > 0) ||
   newest(a, b)
 
+// Hash of the listing id and the hour: Featured listings take turns, in an order that changes every hour and stays the same while a buyer pages through.
+const HOUR_MS = 3_600_000
+const turn = (id: string, now: number) => {
+  let h = Math.floor(now / HOUR_MS)
+  for (const c of id) h = Math.imul(h ^ c.charCodeAt(0), 16_777_619)
+  return h >>> 0
+}
+
 // Featured listings never fill a whole page: each page of 24 opens with a row of up to 4 featured, then a featured leads each later row of 4 at most; the rest go by ranking. Leftover featured listings move to later pages, still ahead of their organic peers there.
 const PAGE = 24
-export function capPaid(sorted: ListingRow[]) {
-  const featured = sorted.filter((l) => tierOf(l) > 0)
+export function capPaid(sorted: ListingRow[], now = Date.now()) {
+  const featured = sorted
+    .filter((l) => tierOf(l) > 0)
+    .sort((a, b) => turn(a.id, now) - turn(b.id, now))
   const organic = sorted.filter((l) => tierOf(l) === 0)
   const out: ListingRow[] = []
   for (let i = 0; i < sorted.length; i++) {

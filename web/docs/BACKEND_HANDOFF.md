@@ -29,6 +29,7 @@ What the real API has to provide so the frontend works unchanged, and what the m
 | 409 `payment_pending` | A receipt for this item is already under review |
 | 409 `already_reviewed` | One review per author per target |
 | 409 `no_credits` | No featured credit left |
+| 409 `bump_wait` | The listing was bumped less than 24 hours ago |
 | 409 `page_full` | An ad page has no free slot for those dates |
 | 409 `conflict` | State does not allow the action (for example replying to a hidden review) |
 | 410 `code_expired` | Emailed code expired, used, or failed five times |
@@ -196,7 +197,7 @@ The auth rows are the mock's contract. The backend plan replaces them with Bette
 - `q` matches every word against the title, both description languages and the make and model names in both languages.
 - A radius needs `lat`, `lng` and `radius` in km; distance is haversine. A city's center wins over the browser position as origin.
 - Sorts: `relevance`, `newest` (by `bumpedAt`, else `createdAt`), `price_asc`, `price_desc`, `year_desc`, `mileage_asc`, `nearest` (falls back to relevance without a position).
-- Relevance: listings with a Featured promotion running now first, then listings with photos, then newest. Then `capPaid`: each page of 24 opens with a row of up to 4 Featured listings, then one Featured may lead each later row of 4 (at most 9 a page), the rest are organic. Featured listings left over move to later pages, still ahead of organic ones there.
+- Relevance: listings with a Featured promotion running now first, then listings with photos, then newest. Then `capPaid`: Featured listings take turns, ordered by a hash of the listing id and the current hour (stable while a buyer pages through, different each hour, so every paying seller gets a share of page 1); each page of 24 opens with a row of up to 4 Featured listings, then one Featured may lead each later row of 4 (at most 9 a page), the rest are organic. Featured listings left over move to later pages, still ahead of organic ones there.
 - `featured=true` (the home page rail) keeps listings with a running Featured promotion.
 - Facets are disjunctive: each facet (`type`, `make` with `model`, `fuel`, `transmission`, `city` with `district`) is counted with every filter applied except its own, so picking a make still shows counts for the other makes.
 - Paid mechanics (active subscription to a plan with price above 0) lead every sort of `GET /mechanics`.
@@ -233,7 +234,7 @@ The auth rows are the mock's contract. The backend plan replaces them with Bette
 ### Promotions and ads
 
 - Two promotion types. **Featured** runs for days (one price row per length: 3, 7 and 14 days in the seed), lifts the listing in relevance, joins the home page rail and shows the Featured badge. **Bump** (one price row, 0 days) is one-off: on approval the listing's `bumpedAt` becomes now, so it goes back to the top of the newest; no badge and nothing added to `promotions`.
-- `POST /promotions` with a `priceId` creates `pending_payment` with that row's type and days, or returns the existing unpaid one for the same listing, type and days. An admin grant starts at once and costs nothing (`source: admin_grant`). Ending removes it from the listing at once. A running promotion whose end has passed reads as `ended`.
+- `POST /promotions` with a `priceId` creates `pending_payment` with that row's type and days, or returns the existing unpaid one for the same listing, type and days. A bump is refused with 409 `bump_wait` within 24 hours of the listing's last bump. An admin grant starts at once and costs nothing (`source: admin_grant`). Ending removes it from the listing at once. A running promotion whose end has passed reads as `ended`.
 - Campaign price is the sum of the chosen pages' weekly prices times weeks, computed on the server. A campaign holds its slots from the moment its receipt is sent until it ends; sending the receipt re-checks free slots (409 `page_full`). `GET /ads` serves one running campaign of the page at random; house banners fill unsold slots.
 
 ### Events and analytics (`handlers/analytics.ts`)

@@ -15,6 +15,7 @@
     "test": "vitest run",
     "test:e2e": "playwright test",
     "test:states": "bun run build && STATES=1 playwright test states",
+    "test:journeys": "bun run build && playwright test -c playwright.journeys.config.ts",
     "size": "bun scripts/check-size.ts",
     "i18n:check": "bun scripts/check-i18n.ts",
     "i18n:literals": "bun scripts/check-literals.ts",

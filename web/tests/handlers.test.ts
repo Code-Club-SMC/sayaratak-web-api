@@ -254,6 +254,21 @@ describe("listings", () => {
       page.length - sponsored.length - featured.length
     ).toBeGreaterThanOrEqual(14)
   })
+  it("lets a featured listing lead the first row when no sponsored takes it", async () => {
+    const boost = db.listings
+      .flatMap((l) => l.promotions)
+      .find((p) => p.type === "boost")!
+    const corollas = "/listings?make=toyota&model=toyota-corolla"
+    const before = (await call("GET", corollas)).body.items as { id: string }[]
+    const oldest = db.listings.find((l) => l.id === before.at(-1)!.id)!
+    oldest.promotions.push({
+      ...boost,
+      startsAt: new Date(Date.now() - 60_000).toISOString(),
+      endsAt: new Date(Date.now() + 86_400_000).toISOString(),
+    })
+    const after = (await call("GET", corollas)).body.items as { id: string }[]
+    expect(after[0]!.id).toBe(oldest.id)
+  })
   it("narrows by the step 7.9 filters: repeated keys are lists, flags are yes-only, features need all", async () => {
     const total = (q: string) =>
       call("GET", `/listings?pageSize=100&${q}`).then((r) => r.body)

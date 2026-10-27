@@ -23,7 +23,8 @@ export default defineConfig({
     trace: "retain-on-failure",
   },
   projects: [{ name: "chrome" }],
-  testIgnore: states ? [] : /states/,
+  // The journeys (14.8) have their own config: they reset the shared mock DB, so they cannot run beside these.
+  testIgnore: states ? [/journeys/] : [/states/, /journeys/],
   webServer: [
     server(port),
     ...(states ? [server(emptyPort, "MOCK_EMPTY=true ")] : []),

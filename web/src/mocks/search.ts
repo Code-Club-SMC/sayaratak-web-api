@@ -158,7 +158,7 @@ const ranked = (a: ListingRow, b: ListingRow) =>
   Number(b.media.length > 0) - Number(a.media.length > 0) ||
   newest(a, b)
 
-// Paid listings never fill a whole page: each page of 24 opens with up to 4 sponsored, then a featured (pin or boost) leads each later row of 4 at most; the rest go by ranking. Leftover paid listings move to later pages, still ahead of their organic peers there.
+// Paid listings never fill a whole page: each page of 24 opens with up to 4 sponsored, and a featured (pin or boost) leads each row of 4 at most, the first row too when no sponsored takes its first slot; the rest go by ranking. Leftover paid listings move to later pages, still ahead of their organic peers there.
 const PAGE = 24
 export function capPaid(sorted: ListingRow[]) {
   const pool = (keep: (tier: number) => boolean) =>
@@ -170,11 +170,13 @@ export function capPaid(sorted: ListingRow[]) {
   for (let i = 0; i < sorted.length; i++) {
     const slot = i % PAGE
     const order =
-      slot < 4
-        ? [sponsored, organic, featured]
-        : slot % 4 === 0
-          ? [featured, organic, sponsored]
-          : [organic, featured, sponsored]
+      slot === 0
+        ? [sponsored, featured, organic]
+        : slot < 4
+          ? [sponsored, organic, featured]
+          : slot % 4 === 0
+            ? [featured, organic, sponsored]
+            : [organic, featured, sponsored]
     const next = order.find((q) => q.length > 0)?.shift()
     if (next) out.push(next)
   }

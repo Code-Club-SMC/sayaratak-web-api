@@ -6,7 +6,7 @@ import { errorText } from "@/lib/api/error-text"
 import { useT } from "@/lib/i18n/use-t"
 import { billingQueries, useCreatePromotion } from "../queries"
 
-// Shown in Promote while the plan still has featured credits: one tap pins the listing for 7 days, no checkout.
+// Shown in Promote while the plan still has featured credits: one tap features the listing for 7 days, no checkout.
 export function CreditOffer({
   listingId,
   onDone,
@@ -35,7 +35,7 @@ export function CreditOffer({
         disabled={create.isPending}
         onClick={() =>
           create.mutate(
-            { listingId, type: "pin", useCredit: true },
+            { listingId, useCredit: true },
             {
               onSuccess: () => {
                 toast.add({ title: t("billing.credit_used") })

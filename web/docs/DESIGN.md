@@ -33,14 +33,14 @@ Light theme only. OKLCH is the source of truth; re-run `bun run contrast` after 
 | `--primary` / `--ring` | `0.43 0.085 163` | Main actions, links, focus |
 | `--primary-foreground` | `0.985 0.003 150` | Text on primary and destructive |
 | `--accent` / `--accent-foreground` | `0.93 0.028 163` / `0.32 0.07 163` | Selected nav item, chip, row |
-| `--signal` / `--signal-foreground` | `0.82 0.16 82` / `0.26 0.05 80` | Paid promotion badges, Promote and Boost. Nothing else |
+| `--signal` / `--signal-foreground` | `0.82 0.16 82` / `0.26 0.05 80` | Paid promotion badges and Promote. Nothing else |
 | `--deep` / `--deep-foreground` / `--deep-accent` | `0.27 0.05 163` / `0.99 0.004 150` / `0.8 0.09 160` | Dark green banner and hero slide surfaces |
 | `--success` | `0.5 0.13 150` | Available, approved |
 | `--warning` | `0.48 0.09 65` | Reserved, pending review |
 | `--destructive` | `0.53 0.2 27` | Errors, delete, rejected |
 | `--chart-1` to `--chart-5` | primary, signal, `0.55 0.02 170`, `0.55 0.07 200`, `0.5 0.1 350` | Charts. Every series is also labeled |
 
-Status badges: 12 percent tint of the status color as fill, solid color as text, no border, no icon. Sold and Rented use the muted fill. Verified uses primary. A card shows one promotion badge, solid signal: "Sponsored" for `sponsored`, "Featured" for `pin`, `boost` or `homepage`.
+Status badges: 12 percent tint of the status color as fill, solid color as text, no border, no icon. Sold and Rented use the muted fill. Verified uses primary. A card shows the Featured badge, solid signal, while a Featured promotion runs. A bump shows no badge.
 
 ## Type
 
@@ -80,7 +80,7 @@ IBM Plex Sans and IBM Plex Sans Arabic, self-hosted (`@fontsource`), weights 400
 ## Components
 
 - **Surfaces.** Page, card, inset. A card never sits in a card. Cards have no border and no shadow. Borders only on form controls, table row dividers, settings separators and the line under a sticky layer once content scrolls under it. The only shadow is on floating layers (popover, menu, select, dialog, sheet, toast).
-- **Buttons.** `default` (one per view), `secondary`, `ghost`, `destructive`, `link`, `signal` (Promote and Boost only). `outline` is still used in app code by owner decision. A section's Save is `secondary` until its form is dirty. Navigation links use `buttonVariants`, never a `Link` inside a `Button`. Base UI uses `render`, not `asChild`.
+- **Buttons.** `default` (one per view), `secondary`, `ghost`, `destructive`, `link`, `signal` (Promote only). `outline` is still used in app code by owner decision. A section's Save is `secondary` until its form is dirty. Navigation links use `buttonVariants`, never a `Link` inside a `Button`. Base UI uses `render`, not `asChild`.
 - **Form controls.** `--field` fill, 1 px `--input` border, radius 8. Focus: ring plus primary border. Error: destructive border and the message under the field. 16 px text below `md` so iOS does not zoom.
 - **Required marks.** A form marks its minority: "(Optional)" by default, asterisks with `<FieldMarks value="required">` when optional fields are the majority.
 - **Remove.** Always `RemoveButton`, which confirms first. The undo toast comes after the confirm, not instead of it.

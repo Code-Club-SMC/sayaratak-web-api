@@ -2,7 +2,6 @@ import {
   type BroadcastAudience,
   broadcastAudienceSchema,
   broadcastSchema,
-  okSchema,
 } from "@/schemas/api"
 import {
   paymentSchema,
@@ -21,7 +20,7 @@ import {
   rejectInputSchema,
 } from "@/schemas/inputs"
 
-import { db, find, insert, newId, remove } from "../db"
+import { db, find, insert, newId } from "../db"
 import { fail, needRole, route, type Ctx } from "../http"
 import {
   DAY_MS,
@@ -56,7 +55,7 @@ function grantPromotion(
     listingId,
     type,
     status: "active" as const,
-    durationDays: days,
+    durationDays: type === "bump" ? 0 : days,
     source: "admin_grant" as const,
   })
   activatePromotion(promotion)
@@ -188,7 +187,10 @@ route("POST", "/admin/payments/:id/reject", async (c) => {
   return paymentSchema.parse(row)
 })
 
-const priceInput = promotionPriceSchema
+const priceInput = promotionPriceSchema.pick({
+  price: true,
+  durationDays: true,
+})
 route(
   "GET",
   "/admin/promotion-prices",
@@ -197,28 +199,17 @@ route(
     db.promotionPrices.map((p) => promotionPriceSchema.parse(p))
   )
 )
-route("POST", "/admin/promotion-prices", async (c) => {
-  admin(c)
-  const input = await c.body(priceInput)
-  if (db.promotionPrices.some((p) => p.type === input.type))
-    throw fail(409, "exists")
-  return promotionPriceSchema.parse(
-    insert(db.promotionPrices, { ...input, id: input.type })
-  )
-})
 route("PATCH", "/admin/promotion-prices/:id", async (c) => {
   admin(c)
   const row = find(db.promotionPrices, c.params.id ?? "")
   if (!row) throw fail(404, "not_found")
-  const { type: _type, ...patch } = await c.body(priceInput.partial())
-  Object.assign(row, patch)
+  const { price, durationDays } = await c.body(priceInput.partial())
+  Object.assign(row, {
+    price: price ?? row.price,
+    // A bump has no length.
+    durationDays: row.type === "bump" ? 0 : (durationDays ?? row.durationDays),
+  })
   return promotionPriceSchema.parse(row)
-})
-route("DELETE", "/admin/promotion-prices/:id", (c) => {
-  admin(c)
-  if (!remove(db.promotionPrices, c.params.id ?? ""))
-    throw fail(404, "not_found")
-  return okSchema.parse({ ok: true })
 })
 
 route("GET", "/admin/promotions", (c) => {

@@ -53,10 +53,10 @@ runCases([
   {
     name: "grantSchema",
     schema: grantSchema,
-    valid: [{ type: "pin", days: 365 }],
+    valid: [{ type: "featured", days: 365 }],
     bad: [
-      ["no days", { type: "pin", days: null }, "validation.required"],
-      ["over a year", { type: "pin", days: 366 }, "validation.too_large"],
+      ["no days", { type: "featured", days: null }, "validation.required"],
+      ["over a year", { type: "featured", days: 366 }, "validation.too_large"],
       ["unknown type", { type: "gold", days: 7 }],
     ],
   },

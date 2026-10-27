@@ -158,8 +158,10 @@ export const paymentReference = (userId: string, itemId: string) => {
   return `SY-${100_000 + hash}`
 }
 
-export const promotionPrice = (type: Promotion["type"]) =>
-  db.promotionPrices.find((p) => p.type === type)
+export const promotionPrice = (p: Pick<Promotion, "type" | "durationDays">) =>
+  db.promotionPrices.find(
+    (x) => x.type === p.type && x.durationDays === p.durationDays
+  )
 
 // A promotion with the listing and payment details of `myPromotionSchema`. An active one whose end has passed reads as ended.
 export function promotionView(p: Promotion) {
@@ -179,16 +181,22 @@ export function promotionView(p: Promotion) {
       coverUrl:
         (cover?.type === "video" ? cover.posterUrl : cover?.url) ?? null,
     },
-    price: p.source === "paid" ? (promotionPrice(p.type)?.price ?? 0) : 0,
+    price: p.source === "paid" ? (promotionPrice(p)?.price ?? 0) : 0,
     paymentStatus: payment?.status ?? ("none" as const),
   }
 }
 
-// Starts the clock: from now for the promotion's days, and the listing carries it while it runs.
+// Starts the clock: from now for the promotion's days, and the listing carries it while it runs. A bump is done at once: the listing goes back to the top of the newest.
 export function activatePromotion(p: Promotion) {
   const listing = listingById(p.listingId)
-  p.status = "active"
   p.startsAt = nowIso()
+  if (p.type === "bump") {
+    p.status = "ended"
+    p.endsAt = p.startsAt
+    listing.bumpedAt = p.startsAt
+    return
+  }
+  p.status = "active"
   p.endsAt = new Date(Date.now() + p.durationDays * DAY_MS).toISOString()
   listing.promotions.push({
     type: p.type,

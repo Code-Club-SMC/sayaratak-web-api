@@ -96,7 +96,7 @@ const listing = {
   status: "available",
   moderation: "approved",
   rejectionReason: null,
-  promotions: [{ type: "pin", startsAt: t, endsAt: t }],
+  promotions: [{ type: "featured", startsAt: t, endsAt: t }],
   owner: {
     id: "u1",
     type: "user",
@@ -319,7 +319,7 @@ const cases: [string, z.ZodType, unknown][] = [
     {
       id: "pr1",
       listingId: "k3f9a2",
-      type: "boost",
+      type: "featured",
       status: "active",
       durationDays: 3,
       startsAt: t,
@@ -330,7 +330,7 @@ const cases: [string, z.ZodType, unknown][] = [
   [
     "promotion price",
     promotionPriceSchema,
-    { type: "pin", durationDays: 7, price: 5000 },
+    { id: "featured-7", type: "featured", durationDays: 7, price: 5000 },
   ],
   [
     "banner",

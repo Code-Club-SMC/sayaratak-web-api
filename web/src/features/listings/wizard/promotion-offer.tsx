@@ -6,7 +6,7 @@ import { billingQueries } from "@/features/billing/queries"
 import { useT } from "@/lib/i18n/use-t"
 import type { User } from "@/schemas/user"
 
-// "Get more views": the four paid promotions of an approved listing. Continue creates the unpaid promotion and opens its checkout in the owner's dashboard; Not now closes the offer and creates nothing. Nothing shows while the prices load, fail or are empty: the offer is an extra, not part of the result.
+// "Get more views": the paid promotions of an approved listing. Continue creates the unpaid promotion and opens its checkout in the owner's dashboard; Not now closes the offer and creates nothing. Nothing shows while the prices load, fail or are empty: the offer is an extra, not part of the result.
 export function PromotionOffer({
   listingId,
   role,

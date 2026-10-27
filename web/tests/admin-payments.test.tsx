@@ -90,10 +90,10 @@ describe("PaymentsPage", () => {
     await waitFor(() => expect(count.textContent).toContain(String(before - 1)))
   })
 
-  it("approving a promotion starts it on the listing", async () => {
+  it("approving a bump puts the listing back on top of the newest", async () => {
     const pay = firstPending("promotion")
     const promo = find(db.promotions, pay.itemId)!
-    expect(promo.status).toBe("pending_payment")
+    expect(promo).toMatchObject({ type: "bump", status: "pending_payment" })
     await open(`/en/admin/payments?id=${pay.id}`)
     const panel = await sheet()
     expect(
@@ -105,9 +105,9 @@ describe("PaymentsPage", () => {
         name: "Approve",
       })
     )
-    await waitFor(() => expect(promo.status).toBe("active"))
+    await waitFor(() => expect(promo.status).toBe("ended"))
     const listing = find(db.listings, promo.listingId)!
-    expect(listing.promotions.some((p) => p.type === promo.type)).toBe(true)
+    expect(listing.bumpedAt).toBe(promo.startsAt)
   })
 
   it("Reject needs a reason, stores it and tells the payer; the promotion stays unpaid", async () => {

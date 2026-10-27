@@ -113,12 +113,7 @@ export function matches(l: ListingRow, p: SearchParams, skip: string[] = []) {
   )
     return false
   if (flagKeys.some((k) => p[k] && !flagTests[k](l))) return false
-  if (
-    p.featured &&
-    !activePromotions(l).some(
-      (x) => x.type === "homepage" || x.type === "sponsored"
-    )
-  )
+  if (p.featured && !activePromotions(l).some((x) => x.type === "featured"))
     return false
   if (p.seller && l.owner.id !== p.seller && l.ownerUserId !== p.seller)
     return false
@@ -142,15 +137,16 @@ export function matches(l: ListingRow, p: SearchParams, skip: string[] = []) {
   return true
 }
 
-const tiers = { sponsored: 3, pin: 2, boost: 1, homepage: 0 } as const
 const activePromotions = (l: ListingRow, now = Date.now()) =>
   l.promotions.filter(
     (x) => Date.parse(x.startsAt) <= now && Date.parse(x.endsAt) >= now
   )
 export const tierOf = (l: ListingRow, now = Date.now()) =>
-  Math.max(0, ...activePromotions(l, now).map((x) => tiers[x.type]))
+  Number(activePromotions(l, now).some((x) => x.type === "featured"))
+// A bump puts a listing back at the top as if it had just been posted.
+const posted = (l: ListingRow) => l.bumpedAt ?? l.createdAt
 const newest = (a: ListingRow, b: ListingRow) =>
-  b.createdAt.localeCompare(a.createdAt)
+  posted(b).localeCompare(posted(a))
 
 // A4 ranking: paid tier first, then listings with photos, then newest.
 const ranked = (a: ListingRow, b: ListingRow) =>
@@ -158,25 +154,16 @@ const ranked = (a: ListingRow, b: ListingRow) =>
   Number(b.media.length > 0) - Number(a.media.length > 0) ||
   newest(a, b)
 
-// Paid listings never fill a whole page: each page of 24 opens with up to 4 sponsored, and a featured (pin or boost) leads each row of 4 at most, the first row too when no sponsored takes its first slot; the rest go by ranking. Leftover paid listings move to later pages, still ahead of their organic peers there.
+// Featured listings never fill a whole page: each page of 24 opens with a row of up to 4 featured, then a featured leads each later row of 4 at most; the rest go by ranking. Leftover featured listings move to later pages, still ahead of their organic peers there.
 const PAGE = 24
 export function capPaid(sorted: ListingRow[]) {
-  const pool = (keep: (tier: number) => boolean) =>
-    sorted.filter((l) => keep(tierOf(l)))
-  const sponsored = pool((t) => t === 3)
-  const featured = pool((t) => t === 1 || t === 2)
-  const organic = pool((t) => t === 0)
+  const featured = sorted.filter((l) => tierOf(l) > 0)
+  const organic = sorted.filter((l) => tierOf(l) === 0)
   const out: ListingRow[] = []
   for (let i = 0; i < sorted.length; i++) {
     const slot = i % PAGE
     const order =
-      slot === 0
-        ? [sponsored, featured, organic]
-        : slot < 4
-          ? [sponsored, organic, featured]
-          : slot % 4 === 0
-            ? [featured, organic, sponsored]
-            : [organic, featured, sponsored]
+      slot < 4 || slot % 4 === 0 ? [featured, organic] : [organic, featured]
     const next = order.find((q) => q.length > 0)?.shift()
     if (next) out.push(next)
   }

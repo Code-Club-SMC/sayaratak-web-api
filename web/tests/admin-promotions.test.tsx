@@ -26,25 +26,29 @@ const open = () =>
     </NowProvider>,
     { role: "admin", path: "/en/admin/promotions" }
   )
-const publicPrice = async (type: string) =>
+const publicPrice = async (id: string) =>
   (
     (await (
       await handleMock(new Request("http://localhost/api/promotion-prices"))
-    ).json()) as { type: string; price: number; durationDays: number }[]
-  ).find((p) => p.type === type)!
+    ).json()) as { id: string; price: number; durationDays: number }[]
+  ).find((p) => p.id === id)!
 
 describe("AdminPromotionsPage", () => {
   it("editing a price shows in the public prices", async () => {
     await open()
     fireEvent.click(
-      await screen.findByRole("button", { name: "Edit Pin price" })
+      await screen.findByRole("button", {
+        name: "Edit price: Featured, 7 days",
+      })
     )
-    const dialog = await screen.findByRole("dialog", { name: "Edit Pin price" })
+    const dialog = await screen.findByRole("dialog", {
+      name: "Edit price: Featured, 7 days",
+    })
     const price = within(dialog).getByRole("textbox", { name: /Price/ })
     fireEvent.change(price, { target: { value: "65000" } })
     fireEvent.click(within(dialog).getByRole("button", { name: "Save" }))
     await waitFor(async () =>
-      expect((await publicPrice("pin")).price).toBe(65000)
+      expect((await publicPrice("featured-7")).price).toBe(65000)
     )
   })
 

@@ -51,7 +51,9 @@ route("GET", "/plans", (c) => {
 })
 
 // The active subscription (else the pending one), its plan, and how much of the limit is used. No subscription means null: an individual then runs on the free limit.
-// Featured credits of the active subscription: its plan's count, less the credit pins started since the period began.
+// A featured credit buys one 7-day Featured.
+const CREDIT_DAYS = 7
+// Featured credits of the active subscription: its plan's count, less the credit promotions started since the period began.
 function credits(userId: string) {
   const sub = currentSubscription(userId)
   const total =
@@ -161,7 +163,7 @@ function itemFor(user: UserRow, itemType: ItemType, itemId: string) {
   if (promo.status !== "pending_payment") throw fail(409, "exists")
   return {
     label: { ar: listing.title, en: listing.title },
-    amount: promotionPrice(promo.type)?.price ?? 0,
+    amount: promotionPrice(promo)?.price ?? 0,
     durationDays: promo.durationDays,
   }
 }
@@ -220,32 +222,33 @@ route("GET", "/promotion-prices", () =>
   z.array(promotionPriceSchema).parse(db.promotionPrices)
 )
 
-// A promotion starts as `pending_payment`; the admin's approval of its payment starts it. Asking again for the same listing and type returns the unpaid one.
+// A promotion starts as `pending_payment`; the admin's approval of its payment starts it. Asking again for the same listing and price row returns the unpaid one.
 route("POST", "/promotions", async (c) => {
   const user = needUser(c)
-  const { listingId, type, useCredit } = await c.body(promotionInputSchema)
+  const { listingId, priceId, useCredit } = await c.body(promotionInputSchema)
   const listing = listingById(listingId)
   if (listing.ownerUserId !== user.id) throw fail(403, "forbidden")
-  const price = promotionPrice(type)
-  if (!price) throw fail(404, "not_found")
   if (useCredit) {
-    if (type !== "pin") throw fail(422, "validation")
     if (credits(user.id).left < 1) throw fail(409, "no_credits")
     const promo = insert(db.promotions, {
       id: newId("promo"),
       listingId,
-      type,
+      type: "featured" as const,
       status: "pending_payment" as const,
-      durationDays: price.durationDays,
+      durationDays: CREDIT_DAYS,
       source: "credit" as const,
     })
     activatePromotion(promo)
     return promotionSchema.parse(promo)
   }
+  const price = find(db.promotionPrices, priceId ?? "")
+  if (!price) throw fail(404, "not_found")
+  const { type } = price
   const unpaid = db.promotions.find(
     (p) =>
       p.listingId === listingId &&
       p.type === type &&
+      p.durationDays === price.durationDays &&
       p.status === "pending_payment"
   )
   return promotionSchema.parse(

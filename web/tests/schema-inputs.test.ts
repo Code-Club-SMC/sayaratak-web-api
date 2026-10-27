@@ -306,10 +306,13 @@ runCases([
     name: "promotionInputSchema",
     schema: promotionInputSchema,
     valid: [
-      { listingId: "k1", type: "pin" },
-      { listingId: "k1", type: "pin", useCredit: true },
+      { listingId: "k1", priceId: "featured-7" },
+      { listingId: "k1", useCredit: true },
     ],
-    bad: [["unknown type", { listingId: "k1", type: "gold" }]],
+    bad: [
+      ["neither a price nor a credit", { listingId: "k1" }],
+      ["empty price id", { listingId: "k1", priceId: "" }],
+    ],
   },
   {
     name: "reportInputSchema",

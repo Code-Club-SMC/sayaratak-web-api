@@ -74,7 +74,9 @@ export const promotionSchema = z.object({
 })
 export type Promotion = z.infer<typeof promotionSchema>
 
+// Featured has one row per length (3, 7 and 14 days); a bump has one row with 0 days.
 export const promotionPriceSchema = z.object({
+  id: z.string(),
   type: promotionTypeSchema,
   durationDays: z.number().int(),
   price: z.number().int(),

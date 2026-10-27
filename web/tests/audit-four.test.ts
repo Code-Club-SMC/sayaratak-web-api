@@ -23,7 +23,7 @@ beforeEach(() => resetDb())
 
 // Contract changes from the fourth audit of the blueprint (A7, A8, A9).
 describe("listings for rails", () => {
-  it("limit caps the page, exclude drops one listing, featured keeps homepage and sponsored promotions", async () => {
+  it("limit caps the page, exclude drops one listing, featured keeps Featured promotions", async () => {
     const five = await call("GET", "/listings?limit=5")
     expect(five.body.items).toHaveLength(5)
     expect(five.body.pageSize).toBe(5)
@@ -40,9 +40,7 @@ describe("listings for rails", () => {
     expect(featured.body.items.length).toBeGreaterThan(0)
     for (const l of featured.body.items) {
       const kinds = l.promotions.map((p: { type: string }) => p.type)
-      expect(
-        kinds.some((k: string) => k === "homepage" || k === "sponsored")
-      ).toBe(true)
+      expect(kinds).toContain("featured")
     }
   })
 })

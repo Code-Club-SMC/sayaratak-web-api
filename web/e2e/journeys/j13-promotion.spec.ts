@@ -49,7 +49,7 @@ const post = async (page: Page, t: T, lang: "ar" | "en", year: string) => {
   await expect(page).toHaveURL(/step=done/)
 }
 
-test("J13 verified dealer posts live, boosts it by transfer, admin approves, it is featured and ranks first; Not now creates nothing", async ({
+test("J13 verified dealer posts live, features it for 7 days by transfer, admin approves, it is featured and ranks first; Not now creates nothing", async ({
   page: dealer,
   as,
   signIn,
@@ -66,7 +66,12 @@ test("J13 verified dealer posts live, boosts it by transfer, admin approves, it 
   await dealer
     .getByRole("radiogroup", { name: t("post.promo_title") })
     .locator("label")
-    .filter({ hasText: t("promotion.name_boost") })
+    .filter({ hasText: t("promotion.name_featured") })
+    .filter({
+      hasText: t(`billing.duration_days_${lang === "ar" ? "few" : "other"}`, {
+        count: 7,
+      }),
+    })
     .click()
   await dealer.getByRole("button", { name: t("post.promo_continue") }).click()
 
@@ -104,7 +109,7 @@ test("J13 verified dealer posts live, boosts it by transfer, admin approves, it 
     .click()
   await expect(admin.getByText(t("admin.payment_approved"))).toBeVisible()
 
-  // In search the boosted car carries the badge and comes before every unpromoted Corolla.
+  // In search the featured car carries the badge and comes before every unpromoted Corolla.
   const buyer = await as("user")
   await visit(buyer, at("/vehicles/cars/sale?make=toyota&model=toyota-corolla"))
   const cards = buyer.locator("main li article")

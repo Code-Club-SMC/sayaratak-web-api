@@ -4,7 +4,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import { authGate, closeAuthGate } from "@/features/auth/auth-gate"
 import { isOpenNow } from "@/lib/hours"
 import { NowProvider } from "@/lib/now"
-import { promotionKind } from "@/lib/promotion"
+import { isFeatured, promotionLabel } from "@/lib/promotion"
+import type { TFunction } from "i18next"
 import { dealershipSchema, mechanicSchema } from "@/schemas/profile"
 import { listingSchema, type Listing } from "@/schemas/listing"
 import { DealershipCard } from "@/components/app/dealership-card"
@@ -79,23 +80,29 @@ describe("hours and promotions", () => {
     expect(isOpenNow(hours, MON_8AM - 24 * 3_600_000)).toBe(false) // Sunday is closed
   })
 
-  it("shows Sponsored over Featured and ignores promotions that are not running", () => {
+  it("is featured only while a Featured promotion runs; a bump leaves no badge", () => {
     const iso = (offset: number) => new Date(MON_8AM + offset).toISOString()
-    const run = (type: "pin" | "sponsored", from: number, to: number) => ({
+    const run = (type: "featured" | "bump", from: number, to: number) => ({
       type,
       startsAt: iso(from),
       endsAt: iso(to),
     })
-    expect(promotionKind([], MON_8AM)).toBeNull()
-    expect(promotionKind([run("pin", -1000, 1000)], MON_8AM)).toBe("featured")
-    expect(
-      promotionKind(
-        [run("pin", -1000, 1000), run("sponsored", -1000, 1000)],
-        MON_8AM
-      )
-    ).toBe("sponsored")
-    expect(promotionKind([run("pin", -2000, -1000)], MON_8AM)).toBeNull()
-    expect(promotionKind([run("pin", 1000, 2000)], MON_8AM)).toBeNull()
+    expect(isFeatured([], MON_8AM)).toBe(false)
+    expect(isFeatured([run("featured", -1000, 1000)], MON_8AM)).toBe(true)
+    expect(isFeatured([run("bump", -1000, 1000)], MON_8AM)).toBe(false)
+    expect(isFeatured([run("featured", -2000, -1000)], MON_8AM)).toBe(false)
+    expect(isFeatured([run("featured", 1000, 2000)], MON_8AM)).toBe(false)
+  })
+
+  it("promotionLabel names the length of a Featured row, never of a bump", () => {
+    const t = ((key: string, o?: { count: number }) =>
+      o ? `${key}:${o.count}` : key) as unknown as TFunction
+    expect(promotionLabel(t, { type: "featured", durationDays: 7 })).toBe(
+      "promotion.name_featured, billing.duration_days:7"
+    )
+    expect(promotionLabel(t, { type: "bump", durationDays: 0 })).toBe(
+      "promotion.name_bump"
+    )
   })
 })
 
@@ -111,20 +118,20 @@ describe("ListingCard", () => {
     expect(screen.getByText("24,500,000")).toBeTruthy()
   })
 
-  it("badges: Sponsored, Verified and a status other than available", async () => {
+  it("badges: Featured, Verified and a status other than available", async () => {
     const l = listing({
       status: "reserved",
       owner: { ...listing().owner, verified: true },
       promotions: [
         {
-          type: "sponsored",
+          type: "featured",
           startsAt: new Date(MON_8AM - 1000).toISOString(),
           endsAt: new Date(MON_8AM + 1000).toISOString(),
         },
       ],
     })
     await renderShell(withNow(<ListingCard listing={l} variant="row" />))
-    for (const name of ["Sponsored", "Verified", "Reserved"])
+    for (const name of ["Featured", "Verified", "Reserved"])
       expect(screen.getByText(name)).toBeTruthy()
   })
 

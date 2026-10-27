@@ -130,7 +130,7 @@ The auth rows are the mock's contract. The backend plan replaces them with Bette
 | `POST /payments` | multipart: `itemType` (`plan`, `promotion`, `campaign`), `itemId`, `transactionRef` (4+ characters), `payerName`, `receipt` (image, 5 MB) | `billing:paymentSchema` |
 | `GET /checkout` | `item=plan:<id>\|promotion:<id>\|campaign:<id>` | `responses:checkoutSchema` |
 | `GET /promotion-prices` (public) | | `billing:promotionPriceSchema[]` |
-| `POST /promotions` | `inputs:promotionInputSchema` (`listingId`, `type`, `useCredit?`) | `billing:promotionSchema` |
+| `POST /promotions` | `inputs:promotionInputSchema` (`listingId`, then `priceId` or `useCredit: true`) | `billing:promotionSchema` |
 | `GET /me/promotions` | | `responses:myPromotionsSchema` |
 | `GET /ad-pages` (public) | | `ads:adPageSchema[]` with free slots |
 | `GET /me/ad-targets` | | `ads:adTargetSchema[]` (the advertiser's profile and live listings) |
@@ -164,7 +164,7 @@ The auth rows are the mock's contract. The backend plan replaces them with Bette
 | `GET /admin/payments`, `POST /admin/payments/:id/approve\|reject` | `status`, `userId`, `id`, `q`; `inputs:rejectInputSchema` | `responses:adminPaymentsPageSchema` (page plus summary strip), `billing:paymentSchema` |
 | `GET/POST /admin/plans`, `PATCH/DELETE /admin/plans/:id` | `inputs:planInputSchema` | `admin:adminPlanSchema` |
 | `GET /admin/subscriptions` | `audience`, `planId`, `status`, `q` | `Page<admin:adminSubscriptionSchema>` |
-| `GET/POST /admin/promotion-prices`, `PATCH/DELETE /:id` | | `billing:promotionPriceSchema` |
+| `GET /admin/promotion-prices`, `PATCH /:id` (price, and days of a Featured row; the set of rows is fixed) | | `billing:promotionPriceSchema` |
 | `GET /admin/promotions`, `POST /admin/promotions/grant`, `POST /admin/promotions/:id/end` | `inputs:grantInputSchema` | `Page<responses:myPromotionSchema>`, `responses:myPromotionSchema` |
 | `GET /admin/reviews`, `POST /admin/reviews/:id/hide\|show` | `status`, `targetType`, `rating`, `id`, `q` | `Page<admin:adminReviewSchema>`, `review:reviewSchema` |
 | `GET /admin/reports`, `POST /admin/reports/:id/dismiss\|action` | `status`, `id`; `inputs:noteInputSchema`, `inputs:reportActionInputSchema` (`note`, `ban?`) | `Page<admin:adminReportSchema>`, `admin:adminReportSchema` |
@@ -195,8 +195,9 @@ The auth rows are the mock's contract. The backend plan replaces them with Bette
 - Filters combine with AND. Multi-value filters (fuel, transmission, body, drive, origin, driver, part type) match any listed value. `features` needs every listed feature. Yes-only flags (customs cleared, accident free, registered, first owner, full service, warranty, exchange, financing, insurance included, delivery, installation) keep listings whose field says yes. For parts, `type` matches any of `compatibleTypes`.
 - `q` matches every word against the title, both description languages and the make and model names in both languages.
 - A radius needs `lat`, `lng` and `radius` in km; distance is haversine. A city's center wins over the browser position as origin.
-- Sorts: `relevance`, `newest`, `price_asc`, `price_desc`, `year_desc`, `mileage_asc`, `nearest` (falls back to relevance without a position).
-- Relevance: paid tier first (sponsored 3, pin 2, boost 1, homepage 0, counting only promotions running now), then listings with photos, then newest. Then `capPaid`: each page of 24 opens with up to 4 sponsored listings, one featured (pin or boost) may lead each row of 4 (the first slot too when no sponsored takes it), the rest are organic. Paid listings left over move to later pages, still ahead of organic ones there.
+- Sorts: `relevance`, `newest` (by `bumpedAt`, else `createdAt`), `price_asc`, `price_desc`, `year_desc`, `mileage_asc`, `nearest` (falls back to relevance without a position).
+- Relevance: listings with a Featured promotion running now first, then listings with photos, then newest. Then `capPaid`: each page of 24 opens with a row of up to 4 Featured listings, then one Featured may lead each later row of 4 (at most 9 a page), the rest are organic. Featured listings left over move to later pages, still ahead of organic ones there.
+- `featured=true` (the home page rail) keeps listings with a running Featured promotion.
 - Facets are disjunctive: each facet (`type`, `make` with `model`, `fuel`, `transmission`, `city` with `district`) is counted with every filter applied except its own, so picking a make still shows counts for the other makes.
 - Paid mechanics (active subscription to a plan with price above 0) lead every sort of `GET /mechanics`.
 
@@ -218,20 +219,21 @@ The auth rows are the mock's contract. The backend plan replaces them with Bette
 - Individuals: no limit while `settings.individualSubscriptionsEnabled` is off; otherwise their active subscription's limit, else `settings.freeListingLimit`. Dealerships: their subscription's `listingLimit`. Workshops and mechanics post no listings. Over the limit, submit returns 403 `limit_reached`.
 - Each audience's free plan is its first plan priced 0. Finishing business onboarding starts an active subscription to it without payment. A free subscription renews itself when it ends (the mock does not age subscriptions; the backend needs a job).
 - Workshop plans may cap `serviceLimit` and `photoLimit`, mechanic plans `portfolioLimit`. Over a cap, only reorder and remove pass, so a downgraded account keeps what it has.
-- `featuredCredits` per plan: each credit is a free 7-day pin (`POST /promotions` with `useCredit`), counted per subscription period, no carry-over. 409 `no_credits` when none is left.
+- `featuredCredits` per plan: each credit is a free 7-day Featured (`POST /promotions` with `useCredit: true`), counted per subscription period, no carry-over. 409 `no_credits` when none is left.
 - Plans: the audience never changes; the free plan keeps price 0 and stays on; deleting a plan that any subscription or payment names is 409 `in_use`.
 
 ### Payments (manual Bankak transfer)
 
 - `POST /payments` only for an enabled plan of the payer's own role, an unpaid promotion of the payer's listing, or an unpaid campaign of the payer. A second receipt while one is under review is 409 `payment_pending`. The reference is stable per payer and item (`SY-` plus six digits).
-- Approve, plan: cancels the active subscription and starts a new one for the plan's days with the plan's price and limit. Promotion: starts it now for its days and adds it to the listing. Campaign: approves it. Then notifies `payment_approved`.
+- Approve, plan: cancels the active subscription and starts a new one for the plan's days with the plan's price and limit. Promotion: a Featured starts now for its days and is added to the listing; a bump sets the listing's `bumpedAt` to now and reads `ended` at once. Campaign: approves it. Then notifies `payment_approved`.
 - Reject stores the reason and notifies `payment_rejected`. A rejected campaign goes back to unpaid; a rejected plan becomes the account's chosen plan again, waiting for payment.
 - Only a payment in review can be decided (else 409).
 - The admin summary counts approved payments in the current month on the Khartoum calendar.
 
 ### Promotions and ads
 
-- `POST /promotions` creates `pending_payment`, or returns the existing unpaid one for the same listing and type. An admin grant starts at once and costs nothing (`source: admin_grant`). Ending removes it from the listing at once. A running promotion whose end has passed reads as `ended`.
+- Two promotion types. **Featured** runs for days (one price row per length: 3, 7 and 14 days in the seed), lifts the listing in relevance, joins the home page rail and shows the Featured badge. **Bump** (one price row, 0 days) is one-off: on approval the listing's `bumpedAt` becomes now, so it goes back to the top of the newest; no badge and nothing added to `promotions`.
+- `POST /promotions` with a `priceId` creates `pending_payment` with that row's type and days, or returns the existing unpaid one for the same listing, type and days. An admin grant starts at once and costs nothing (`source: admin_grant`). Ending removes it from the listing at once. A running promotion whose end has passed reads as `ended`.
 - Campaign price is the sum of the chosen pages' weekly prices times weeks, computed on the server. A campaign holds its slots from the moment its receipt is sent until it ends; sending the receipt re-checks free slots (409 `page_full`). `GET /ads` serves one running campaign of the page at random; house banners fill unsold slots.
 
 ### Events and analytics (`handlers/analytics.ts`)

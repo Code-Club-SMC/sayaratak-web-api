@@ -4,7 +4,7 @@ import { useCityName } from "@/hooks/use-city-name"
 import { useDistrictName } from "@/hooks/use-district-name"
 import { useT } from "@/lib/i18n/use-t"
 import { useNow } from "@/lib/now"
-import { promotionKind } from "@/lib/promotion"
+import { isFeatured } from "@/lib/promotion"
 import type { Listing } from "@/schemas/listing"
 import { CopyButton } from "@/components/app/copy-button"
 import { FavoriteButton } from "@/components/app/favorite-button"
@@ -29,7 +29,7 @@ export function TitleBlock({
   const now = useNow()
   const city = useCityName(listing.cityId)
   const district = useDistrictName(listing.districtId)
-  const promoted = promotionKind(listing.promotions, now)
+  const promoted = isFeatured(listing.promotions, now)
   const code = listing.id.toUpperCase()
   return (
     <header className="flex flex-col gap-3">
@@ -58,7 +58,7 @@ export function TitleBlock({
             {t("listing.negotiable")}
           </span>
         )}
-        {promoted && <PromotedBadge kind={promoted} />}
+        {promoted && <PromotedBadge />}
       </div>
       <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-ui text-muted-foreground">
         <span className="inline-flex items-center gap-1">

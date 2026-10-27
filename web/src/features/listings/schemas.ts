@@ -13,7 +13,6 @@ import {
   fuelSchema,
   intentSchema,
   mediaSchema,
-  promotionTypeSchema,
   transmissionSchema,
   vehicleTypeSchema,
   type VehicleType,
@@ -227,7 +226,8 @@ export const reviewProfileSchema = z.object({
 
 // The offer on the done step. Nothing is chosen until the owner picks a row.
 export const promotionChoiceSchema = z.object({
-  promotion: z.enum(promotionTypeSchema.options, {
-    error: "post.promo_required",
-  }),
+  // A price row id.
+  promotion: z
+    .string({ error: "post.promo_required" })
+    .min(1, "post.promo_required"),
 })

@@ -31,7 +31,8 @@ export type UserRow = Omit<User, "hasPassword"> & {
   locale: Locale
   prefs: NotificationPrefs
 }
-export type ListingRow = Listing & { ownerUserId: string }
+// `bumpedAt` is when a bump last put the listing back at the top of the newest.
+export type ListingRow = Listing & { ownerUserId: string; bumpedAt?: string }
 export type ThreadRow = {
   id: string
   subjectType: "listing" | "dealership" | "workshop" | "mechanic"
@@ -88,7 +89,7 @@ export type Country = {
 export type Snapshot = Omit<Db, "backups">
 // Seeded rows carry no snapshot, so restoring one puts the seed data back.
 export type BackupRow = Backup & { snapshot?: Snapshot }
-export type PromotionPriceRow = PromotionPrice & { id: string }
+export type PromotionPriceRow = PromotionPrice
 export type SitePageRow = SitePage & { id: string }
 
 export type Db = {

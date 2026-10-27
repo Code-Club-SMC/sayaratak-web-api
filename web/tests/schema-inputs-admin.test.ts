@@ -208,8 +208,8 @@ runCases([
   {
     name: "grantInputSchema",
     schema: grantInputSchema,
-    valid: [{ listingId: "k1", type: "pin" }],
-    bad: [["zero days", { listingId: "k1", type: "pin", days: 0 }]],
+    valid: [{ listingId: "k1", type: "featured" }],
+    bad: [["zero days", { listingId: "k1", type: "featured", days: 0 }]],
   },
   {
     name: "pathSchema",
@@ -368,9 +368,9 @@ runCases([
 ])
 
 it("grantInputSchema gives a week by default", () => {
-  expect(grantInputSchema.parse({ listingId: "k1", type: "boost" }).days).toBe(
-    7
-  )
+  expect(
+    grantInputSchema.parse({ listingId: "k1", type: "featured" }).days
+  ).toBe(7)
 })
 it("bannerInputSchema fills its defaults", () => {
   expect(bannerInputSchema.parse(banner)).toMatchObject({

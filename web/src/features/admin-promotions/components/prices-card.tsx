@@ -2,6 +2,7 @@ import { useId, useState } from "react"
 import { useQuery } from "@tanstack/react-query"
 
 import { useT } from "@/lib/i18n/use-t"
+import { promotionLabel } from "@/lib/promotion"
 import type { PromotionPrice } from "@/schemas/billing"
 import { adminQueries } from "@/features/admin/queries"
 import { PriceText } from "@/components/app/price-text"
@@ -10,7 +11,7 @@ import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 import { PriceDialog } from "./price-dialog"
 
-// The four promotion types with their length and price. The set is fixed; Edit changes price and length.
+// Every promotion price row: Featured for each length, and Bump up. The set is fixed; Edit changes the price, and the length of a Featured row.
 export function PricesCard() {
   const { t } = useT()
   const id = useId()
@@ -61,20 +62,24 @@ export function PricesCard() {
           className="flex flex-col"
         >
           {prices.data.map((p) => {
-            const name = t(`promotion.name_${p.type}`)
+            const name = promotionLabel(t, p)
             return (
               <li
-                key={p.type}
+                key={p.id}
                 className="flex flex-wrap items-center gap-x-4 gap-y-2 border-b py-3 last:border-b-0"
               >
                 <div className="flex min-w-32 flex-1 flex-col">
-                  <span className="text-ui font-medium">{name}</span>
+                  <span className="text-ui font-medium">
+                    {t(`promotion.name_${p.type}`)}
+                  </span>
                   <span className="text-caption text-muted-foreground">
                     {t(`promotion.effect_${p.type}`)}
                   </span>
                 </div>
                 <span className="text-ui text-muted-foreground">
-                  {t("billing.duration_days", { count: p.durationDays })}
+                  {p.type === "bump"
+                    ? t("promotion.once")
+                    : t("billing.duration_days", { count: p.durationDays })}
                 </span>
                 <PriceText price={p.price} size="table" />
                 <Button

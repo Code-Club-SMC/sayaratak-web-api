@@ -98,14 +98,14 @@ describe("DoneStep", () => {
     const row = own("approved")
     const before = db.promotions.length
     const { router } = await open(row.id)
-    fireEvent.click(await screen.findByRole("radio", { name: /Boost/ }))
+    fireEvent.click(await screen.findByRole("radio", { name: /Bump up/ }))
     fireEvent.click(screen.getByRole("button", { name: "Continue to payment" }))
     await waitFor(() => expect(where(router)).toContain("/billing/checkout"))
     expect(db.promotions).toHaveLength(before + 1)
     const promo = db.promotions.at(-1)
     expect(promo).toMatchObject({
       listingId: row.id,
-      type: "boost",
+      type: "bump",
       status: "pending_payment",
     })
     expect(decodeURIComponent(where(router))).toBe(

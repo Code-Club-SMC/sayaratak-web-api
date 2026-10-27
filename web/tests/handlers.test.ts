@@ -225,49 +225,48 @@ describe("listings", () => {
       )
     ).toBe(true)
   })
-  it("caps paid listings per page: up to 4 sponsored on top, a featured at most once per row", async () => {
+  it("caps featured listings per page: a first row of up to 4, then at most one leading each row", async () => {
     type Row = {
       promotions: { type: string; startsAt: string; endsAt: string }[]
     }
     const now = Date.now()
-    const has = (l: Row, types: string[]) =>
+    const featured = (l: Row) =>
       l.promotions.some(
         (p) =>
-          types.includes(p.type) &&
+          p.type === "featured" &&
           Date.parse(p.startsAt) <= now &&
           Date.parse(p.endsAt) >= now
       )
     const all = (await call("GET", "/listings?pageSize=500")).body
       .items as Row[]
+    expect(all.filter(featured).length).toBeGreaterThan(9)
     const page = (await call("GET", "/listings")).body.items as Row[]
-    expect(
-      all.filter((l) => has(l, ["sponsored"])).length
-    ).toBeGreaterThanOrEqual(4)
-    const sponsored = page.flatMap((l, i) => (has(l, ["sponsored"]) ? [i] : []))
-    expect(sponsored).toEqual([0, 1, 2, 3])
-    const featured = page.flatMap((l, i) =>
-      !has(l, ["sponsored"]) && has(l, ["pin", "boost"]) ? [i] : []
-    )
-    expect(featured.length).toBeGreaterThan(0)
-    expect(featured.every((i) => i >= 4 && i % 4 === 0)).toBe(true)
-    expect(
-      page.length - sponsored.length - featured.length
-    ).toBeGreaterThanOrEqual(14)
+    const at = page.flatMap((l, i) => (featured(l) ? [i] : []))
+    expect(at).toEqual([0, 1, 2, 3, 4, 8, 12, 16, 20])
   })
-  it("lets a featured listing lead the first row when no sponsored takes it", async () => {
-    const boost = db.listings
-      .flatMap((l) => l.promotions)
-      .find((p) => p.type === "boost")!
+  it("lets a featured listing jump the organic ones", async () => {
     const corollas = "/listings?make=toyota&model=toyota-corolla"
     const before = (await call("GET", corollas)).body.items as { id: string }[]
     const oldest = db.listings.find((l) => l.id === before.at(-1)!.id)!
     oldest.promotions.push({
-      ...boost,
+      type: "featured",
       startsAt: new Date(Date.now() - 60_000).toISOString(),
       endsAt: new Date(Date.now() + 86_400_000).toISOString(),
     })
     const after = (await call("GET", corollas)).body.items as { id: string }[]
     expect(after[0]!.id).toBe(oldest.id)
+  })
+  it("a bump puts the listing back at the top of the newest, with no badge", async () => {
+    const newest = "/listings?make=toyota&model=toyota-corolla&sort=newest"
+    const before = (await call("GET", newest)).body.items as { id: string }[]
+    const oldest = db.listings.find((l) => l.id === before.at(-1)!.id)!
+    oldest.bumpedAt = new Date().toISOString()
+    const after = (await call("GET", newest)).body.items as {
+      id: string
+      promotions: unknown[]
+    }[]
+    expect(after[0]!.id).toBe(oldest.id)
+    expect(after[0]!.promotions).toEqual(oldest.promotions)
   })
   it("narrows by the step 7.9 filters: repeated keys are lists, flags are yes-only, features need all", async () => {
     const total = (q: string) =>
@@ -872,7 +871,7 @@ describe("messaging demo reply", () => {
 })
 
 describe("billing, promotions and payments", () => {
-  it("spends featured credits on pins: active at once, counted per period, refused when gone", async () => {
+  it("spends featured credits on 7-day Featured: active at once, counted per period, refused when gone", async () => {
     const as = "u-dealer"
     const mine = db.listings.filter(
       (l) => l.ownerUserId === as && l.status === "available"
@@ -884,23 +883,28 @@ describe("billing, promotions and payments", () => {
       (
         await call("POST", "/promotions", {
           as,
-          body: { listingId: mine[0]!.id, type: "boost", useCredit: true },
+          body: { listingId: mine[0]!.id },
         })
       ).status
     ).toBe(422)
     for (const l of mine.slice(0, 3)) {
       const res = await call("POST", "/promotions", {
         as,
-        body: { listingId: l.id, type: "pin", useCredit: true },
+        body: { listingId: l.id, useCredit: true },
       })
-      expect(res.body).toMatchObject({ status: "active", source: "credit" })
+      expect(res.body).toMatchObject({
+        type: "featured",
+        durationDays: 7,
+        status: "active",
+        source: "credit",
+      })
     }
     expect(await credits()).toEqual({ total: 3, left: 0 })
     expect(
       (
         await call("POST", "/promotions", {
           as,
-          body: { listingId: mine[3]!.id, type: "pin", useCredit: true },
+          body: { listingId: mine[3]!.id, useCredit: true },
         })
       ).body.code
     ).toBe("no_credits")
@@ -1152,14 +1156,14 @@ describe("billing, promotions and payments", () => {
     )
     const made = await call("POST", "/promotions", {
       as: "u-omar",
-      body: { listingId: listing?.id, type: "pin" },
+      body: { listingId: listing?.id, priceId: "featured-7" },
     })
     expect(made.body.status).toBe("pending_payment")
     expect(made.body.durationDays).toBe(7)
     // Asking again returns the same unpaid promotion.
     const again = await call("POST", "/promotions", {
       as: "u-omar",
-      body: { listingId: listing?.id, type: "pin" },
+      body: { listingId: listing?.id, priceId: "featured-7" },
     })
     expect(again.body.id).toBe(made.body.id)
     const item = `promotion:${made.body.id}`
@@ -1168,7 +1172,7 @@ describe("billing, promotions and payments", () => {
     })
     expect(checkout.body).toMatchObject({
       itemType: "promotion",
-      amount: 50_000,
+      amount: 40_000,
       durationDays: 7,
       pendingPaymentId: null,
       bankak: { name: "Sayaratak", number: "1234567" },
@@ -1188,7 +1192,7 @@ describe("billing, promotions and payments", () => {
     ).toMatchObject({
       status: "pending_payment",
       paymentStatus: "pending_review",
-      price: 50_000,
+      price: 40_000,
     })
     expect(
       (
@@ -1201,7 +1205,7 @@ describe("billing, promotions and payments", () => {
     await call("POST", `/admin/payments/${pay.body.id}/approve`, {
       as: "u-admin",
     })
-    expect(listing?.promotions.map((p) => p.type)).toContain("pin")
+    expect(listing?.promotions.map((p) => p.type)).toContain("featured")
     const running = db.promotions.find((p) => p.id === made.body.id)
     expect(running?.status).toBe("active")
     expect(running?.endsAt).toBeTruthy()
@@ -1209,7 +1213,7 @@ describe("billing, promotions and payments", () => {
     await call("POST", `/admin/promotions/${made.body.id}/end`, {
       as: "u-admin",
     })
-    expect(listing?.promotions.map((p) => p.type)).not.toContain("pin")
+    expect(listing?.promotions.map((p) => p.type)).not.toContain("featured")
     expect(db.promotions.find((p) => p.id === made.body.id)?.status).toBe(
       "ended"
     )
@@ -1220,7 +1224,7 @@ describe("billing, promotions and payments", () => {
     )
     const grant = await call("POST", "/admin/promotions/grant", {
       as: "u-admin",
-      body: { listingId: listing?.id, type: "boost", days: 5 },
+      body: { listingId: listing?.id, type: "featured", days: 5 },
     })
     expect(grant.body).toMatchObject({
       status: "active",
@@ -1229,7 +1233,34 @@ describe("billing, promotions and payments", () => {
       price: 0,
       paymentStatus: "none",
     })
-    expect(listing?.promotions.map((p) => p.type)).toContain("boost")
+    expect(listing?.promotions.map((p) => p.type)).toContain("featured")
+  })
+  it("a paid bump is done once approved: the listing is bumped, carries no promotion, and the bump reads ended", async () => {
+    const listing = db.listings.find(
+      (l) =>
+        l.ownerUserId === "u-omar" &&
+        l.moderation === "approved" &&
+        l.promotions.length === 0 &&
+        !db.promotions.some((p) => p.listingId === l.id)
+    )!
+    const made = await call("POST", "/promotions", {
+      as: "u-omar",
+      body: { listingId: listing.id, priceId: "bump" },
+    })
+    expect(made.body).toMatchObject({ type: "bump", durationDays: 0 })
+    const pay = await call("POST", "/payments", {
+      as: "u-omar",
+      form: receipt("promotion", made.body.id),
+    })
+    expect(pay.body.amount).toBe(5_000)
+    await call("POST", `/admin/payments/${pay.body.id}/approve`, {
+      as: "u-admin",
+    })
+    expect(listing.bumpedAt).toBeTruthy()
+    expect(listing.promotions).toEqual([])
+    expect(db.promotions.find((p) => p.id === made.body.id)?.status).toBe(
+      "ended"
+    )
   })
   it("plans hide the individual ones when individual subscriptions are off", async () => {
     expect((await call("GET", "/plans?audience=user")).body.length).toBe(2)

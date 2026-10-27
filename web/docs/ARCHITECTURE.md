@@ -107,9 +107,10 @@ Each route's `head()` sets title, description, canonical, hreflang (`ar`, `en`, 
 | Area | What was built |
 |---|---|
 | Sign in | Separate `/auth/login` (email and password) and `/auth/signup` (name, email, password, confirm, terms). Sign-up and password reset use a 6-digit emailed code. Phone sign-in is future work. The backend will use Better-Auth's own endpoints (see `SWAP_TO_REAL_API.md`) |
-| Plans | Each audience's first plan priced 0 is its free plan. Paid plans carry `featuredCredits` (free 7-day pins per period). Workshop and mechanic plans can cap services, photos and portfolio items |
+| Plans | Each audience's first plan priced 0 is its free plan. Paid plans carry `featuredCredits` (free 7-day Featured per period). Workshop and mechanic plans can cap services, photos and portfolio items |
 | Ads | Businesses buy banner campaigns on 11 ad pages (weekly price, 3 slots each), paid by the same Bankak checkout and approved by an admin. House banners fill unsold slots |
-| Search ranking | Relevance puts paid listings first but caps them per page of 24 (see `BACKEND_HANDOFF.md`) |
+| Promotions | Two types, as on OpenSooq and Dubizzle: Featured (seller picks 3, 7 or 14 days; top of search, home rail, badge) and Bump up (one-off, back to the top of the newest). They replaced pin, boost, homepage and sponsored (owner, 2026-10-27) |
+| Search ranking | Relevance puts Featured listings first but caps them per page of 24 (see `BACKEND_HANDOFF.md`) |
 | Admin | Bans take a duration (7 days, 30 days, permanent). Suspended businesses keep their page with a notice. Backups restore a real snapshot |
 | Buttons | The `outline` button variant stays in app code; a section's Save is `secondary` until the form is dirty |
 | Performance | Budget not met yet, accepted for the demo (above) |

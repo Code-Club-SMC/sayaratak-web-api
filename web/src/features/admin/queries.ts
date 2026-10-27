@@ -53,7 +53,7 @@ import type {
   planInputSchema,
   reportActionInputSchema,
 } from "@/schemas/inputs"
-import { listingSchema, type PromotionType } from "@/schemas/listing"
+import { listingSchema } from "@/schemas/listing"
 import { reviewSchema } from "@/schemas/review"
 import { userSchema } from "@/schemas/user"
 
@@ -314,25 +314,15 @@ export const useDeletePlan = () =>
     (id: string) => del(`/admin/plans/${id}`),
     [...touched, keys.billing.all]
   )
-export const useCreatePromotionPrice = () =>
-  useApiMutation(
-    (body: z.input<typeof promotionPriceSchema>) =>
-      post(promotionPriceSchema)("/admin/promotion-prices", body),
-    [...touched, keys.billing.promotionPrices]
-  )
 export const useUpdatePromotionPrice = () =>
   useApiMutation(
     ({
-      type,
+      id,
       ...body
-    }: { type: PromotionType } & Partial<
-      z.input<typeof promotionPriceSchema>
-    >) => patch(promotionPriceSchema)(`/admin/promotion-prices/${type}`, body),
-    [...touched, keys.billing.promotionPrices]
-  )
-export const useDeletePromotionPrice = () =>
-  useApiMutation(
-    (type: PromotionType) => del(`/admin/promotion-prices/${type}`),
+    }: { id: string } & Pick<
+      z.input<typeof promotionPriceSchema>,
+      "price" | "durationDays"
+    >) => patch(promotionPriceSchema)(`/admin/promotion-prices/${id}`, body),
     [...touched, keys.billing.promotionPrices]
   )
 export const useGrantPromotion = () =>

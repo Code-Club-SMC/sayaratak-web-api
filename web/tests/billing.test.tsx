@@ -297,7 +297,7 @@ describe("PromoteDialog", () => {
     expect(
       await screen.findByText("Choose a promotion to continue")
     ).toBeTruthy()
-    fireEvent.click(screen.getByRole("radio", { name: /Boost/ }))
+    fireEvent.click(screen.getByRole("radio", { name: /Bump up/ }))
     fireEvent.click(screen.getByRole("button", { name: "Continue to payment" }))
     await waitFor(() =>
       expect(router.state.location.href).toMatch(
@@ -308,7 +308,7 @@ describe("PromoteDialog", () => {
       db.promotions.find(
         (p) =>
           p.listingId === listing.id &&
-          p.type === "boost" &&
+          p.type === "bump" &&
           p.status === "pending_payment"
       )
     ).toBeTruthy()
@@ -316,7 +316,7 @@ describe("PromoteDialog", () => {
 })
 
 describe("PromoteDialog credits", () => {
-  it("pins the listing with a plan credit, no checkout", async () => {
+  it("features the listing for 7 days with a plan credit, no checkout", async () => {
     const listing = db.listings.find(
       (l) => l.ownerUserId === dealer().id && l.moderation === "approved"
     )!
@@ -327,7 +327,7 @@ describe("PromoteDialog credits", () => {
     )
     expect(
       await screen.findByText(
-        "A 7-day Pin. You have 3 of 3 credits left this month."
+        "A 7-day Featured. You have 3 of 3 credits left this month."
       )
     ).toBeTruthy()
     fireEvent.click(screen.getByRole("button", { name: "Use a credit" }))
@@ -337,6 +337,8 @@ describe("PromoteDialog credits", () => {
         (p) =>
           p.listingId === listing.id &&
           p.source === "credit" &&
+          p.type === "featured" &&
+          p.durationDays === 7 &&
           p.status === "active"
       )
     ).toBeTruthy()

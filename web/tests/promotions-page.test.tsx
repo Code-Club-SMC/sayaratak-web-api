@@ -109,7 +109,7 @@ describe("PromotionsPage", () => {
     const [row] = await within(picker).findAllByRole("listitem")
     fireEvent.click(within(row!).getByRole("button"))
     await screen.findByRole("radiogroup", { name: "Promote this listing" })
-    fireEvent.click(screen.getByRole("radio", { name: /Boost/ }))
+    fireEvent.click(screen.getByRole("radio", { name: /Bump up/ }))
     fireEvent.click(screen.getByRole("button", { name: "Continue to payment" }))
     await waitFor(() =>
       expect(router.state.location.href).toMatch(

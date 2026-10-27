@@ -6,6 +6,7 @@ import { PromotedBadge } from "./promoted-badge"
 // A radio row. The amber badge says the option is paid, as everywhere else.
 export function PromotionOption({
   name,
+  value,
   type,
   durationDays,
   price,
@@ -13,6 +14,7 @@ export function PromotionOption({
   onSelect,
 }: {
   name: string
+  value: string
   type: PromotionType
   durationDays: number
   price: number
@@ -26,7 +28,7 @@ export function PromotionOption({
       <input
         type="radio"
         name={name}
-        value={type}
+        value={value}
         checked={selected}
         onChange={onSelect}
         className="size-4 shrink-0 accent-primary"
@@ -34,9 +36,7 @@ export function PromotionOption({
       <span className="flex min-w-0 flex-1 flex-col gap-1">
         <span className="flex flex-wrap items-center gap-2 text-ui font-medium">
           {t(`promotion.name_${type}`)}
-          <PromotedBadge
-            kind={type === "sponsored" ? "sponsored" : "featured"}
-          />
+          {type === "featured" && <PromotedBadge />}
         </span>
         <span className="text-caption text-muted-foreground">
           {t(`promotion.effect_${type}`)}
@@ -50,7 +50,9 @@ export function PromotionOption({
           </span>
         </span>
         <span className="text-caption text-muted-foreground">
-          {t("billing.duration_days", { count: durationDays })}
+          {type === "bump"
+            ? t("promotion.once")
+            : t("billing.duration_days", { count: durationDays })}
         </span>
       </span>
     </label>

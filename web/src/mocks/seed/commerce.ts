@@ -1,10 +1,4 @@
-import type {
-  Payment,
-  Plan,
-  Promotion,
-  PromotionPrice,
-  Subscription,
-} from "@/schemas/billing"
+import type { Payment, Plan, Promotion, Subscription } from "@/schemas/billing"
 import type { ListingRow, PromotionPriceRow, UserRow } from "../types"
 import { DAY, ago, ahead, int, pick } from "./util"
 
@@ -160,14 +154,12 @@ export const plans: Plan[] = planRows.map(
   })
 )
 
-export const promotionPrices: PromotionPriceRow[] = (
-  [
-    { type: "pin", durationDays: 7, price: 50_000 },
-    { type: "boost", durationDays: 3, price: 20_000 },
-    { type: "homepage", durationDays: 7, price: 120_000 },
-    { type: "sponsored", durationDays: 14, price: 200_000 },
-  ] satisfies PromotionPrice[]
-).map((p) => ({ ...p, id: p.type }))
+export const promotionPrices: PromotionPriceRow[] = [
+  { id: "featured-3", type: "featured", durationDays: 3, price: 20_000 },
+  { id: "featured-7", type: "featured", durationDays: 7, price: 40_000 },
+  { id: "featured-14", type: "featured", durationDays: 14, price: 70_000 },
+  { id: "bump", type: "bump", durationDays: 0, price: 5_000 },
+]
 
 const demoPlan: Record<string, string> = {
   "u-omar": "plan-user-plus",
@@ -238,8 +230,10 @@ export function seedPayments(
         : { ar: listing?.title ?? "", en: listing?.title ?? "" },
       amount: isPlan
         ? plan.price
-        : (promotionPrices.find((p) => p.type === promo?.type)?.price ??
-          pick([20_000, 50_000, 120_000])),
+        : (promotionPrices.find(
+            (p) =>
+              p.type === promo?.type && p.durationDays === promo.durationDays
+          )?.price ?? pick([20_000, 40_000, 70_000])),
       method: "bankak_transfer",
       reference: `SY-${String(100_000 + i * 137).slice(0, 6)}`,
       payerName: user.fullName,

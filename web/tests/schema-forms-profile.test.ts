@@ -216,7 +216,7 @@ runCases([
   {
     name: "promotionChoiceSchema",
     schema: promotionChoiceSchema,
-    valid: [{ promotion: "pin" }],
+    valid: [{ promotion: "featured-7" }],
     bad: [["nothing chosen", {}, "post.promo_required"]],
   },
   {

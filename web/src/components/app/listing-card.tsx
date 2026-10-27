@@ -7,7 +7,7 @@ import { useT } from "@/lib/i18n/use-t"
 import { cardSizes } from "@/lib/media"
 import { markSharedCover } from "@/lib/motion"
 import { useNow } from "@/lib/now"
-import { promotionKind } from "@/lib/promotion"
+import { isFeatured } from "@/lib/promotion"
 import { cn } from "@/lib/utils"
 import type { Listing } from "@/schemas/listing"
 import { FavoriteButton } from "./favorite-button"
@@ -37,7 +37,7 @@ export function ListingCard({
   const now = useNow()
   const city = useCityName(listing.cityId)
   const title = useListingTitle()(listing)
-  const promoted = promotionKind(listing.promotions, now)
+  const promoted = isFeatured(listing.promotions, now)
   const first = listing.media[0]
   const facts =
     listing.kind === "part"
@@ -72,7 +72,7 @@ export function ListingCard({
           className={row ? "aspect-square" : undefined}
         />
         <div className="absolute start-2 end-12 top-2 flex flex-wrap gap-1">
-          {promoted && <PromotedBadge kind={promoted} />}
+          {promoted && <PromotedBadge />}
           {listing.owner.verified && (
             <span className="rounded-full bg-card">
               <VerifiedBadge />

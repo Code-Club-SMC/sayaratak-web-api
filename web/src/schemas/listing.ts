@@ -40,12 +40,8 @@ export const moderationSchema = z.enum([
   "rejected",
   "removed",
 ])
-export const promotionTypeSchema = z.enum([
-  "pin",
-  "boost",
-  "homepage",
-  "sponsored",
-])
+// Featured runs for days and lifts the listing; a bump is one-off and moves it back to the top of the newest.
+export const promotionTypeSchema = z.enum(["featured", "bump"])
 export type VehicleType = z.infer<typeof vehicleTypeSchema>
 export type Intent = z.infer<typeof intentSchema>
 export type Fuel = z.infer<typeof fuelSchema>

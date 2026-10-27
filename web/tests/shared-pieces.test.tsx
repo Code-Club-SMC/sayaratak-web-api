@@ -295,7 +295,8 @@ describe("PromotionOption", () => {
     await renderShell(
       <PromotionOption
         name="p"
-        type="sponsored"
+        value="featured-7"
+        type="featured"
         durationDays={7}
         price={15000}
         selected={false}
@@ -305,10 +306,25 @@ describe("PromotionOption", () => {
     fireEvent.click(screen.getByRole("radio"))
     expect(onSelect).toHaveBeenCalled()
     expect(
-      screen.getByText("Sponsored", { selector: "span.bg-signal" })
+      screen.getByText("Featured", { selector: "span.bg-signal" })
     ).toBeTruthy()
     expect(screen.getByText("7 days")).toBeTruthy()
     expect(screen.getByText(/15,000/)).toBeTruthy()
+  })
+  it("a bump shows One time and no paid badge", async () => {
+    await renderShell(
+      <PromotionOption
+        name="p"
+        value="bump"
+        type="bump"
+        durationDays={0}
+        price={5000}
+        selected={false}
+        onSelect={vi.fn()}
+      />
+    )
+    expect(screen.getByText("One time")).toBeTruthy()
+    expect(document.querySelector("span.bg-signal")).toBeNull()
   })
 })
 

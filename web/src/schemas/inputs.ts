@@ -193,12 +193,14 @@ export const messageInputSchema = z.object({
 })
 export const readInputSchema = z.object({ ids: z.array(z.string()).optional() })
 
-export const promotionInputSchema = z.object({
-  listingId: z.string().min(1),
-  type: promotionTypeSchema,
-  // Spend one of the plan's featured credits instead of paying: only for a pin, and it starts at once.
-  useCredit: z.boolean().optional(),
-})
+// `priceId` picks a row of the price list. A credit needs none: it is always a 7-day Featured, free and started at once.
+export const promotionInputSchema = z
+  .object({
+    listingId: z.string().min(1),
+    priceId: z.string().min(1).optional(),
+    useCredit: z.boolean().optional(),
+  })
+  .refine((v) => v.useCredit || v.priceId, "validation.required")
 export const reportInputSchema = z.object({
   listingId: z.string().min(1),
   reason: z.enum([

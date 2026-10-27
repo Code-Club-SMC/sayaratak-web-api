@@ -13,7 +13,7 @@ import { useT } from "@/lib/i18n/use-t"
 import { promotionTypeSchema } from "@/schemas/listing"
 import { grantSchema, type GrantForm } from "@/features/admin/schemas"
 
-// Promotion type and length in days. The caller closes the dialog when its mutation settles.
+// Promotion type and, for Featured, length in days. The caller closes the dialog when its mutation settles.
 export function GrantPromotionDialog({
   open,
   onOpenChange,
@@ -29,7 +29,7 @@ export function GrantPromotionDialog({
   const form = useAppForm<GrantForm>({
     resolver: zodResolver(grantSchema),
     mode: "onTouched",
-    defaultValues: { type: "boost", days: 7 },
+    defaultValues: { type: "featured", days: 7 },
   })
   useEffect(() => {
     if (open) form.reset()
@@ -68,28 +68,30 @@ export function GrantPromotionDialog({
             />
           )}
         </FormField>
-        <FormField
-          label={t("admin.grant_days")}
-          error={errors.days?.message}
-          className="w-40"
-        >
-          {(control) => (
-            <Controller
-              control={form.control}
-              name="days"
-              render={({ field }) => (
-                <NumberField
-                  {...control}
-                  min={1}
-                  max={365}
-                  value={field.value}
-                  onChange={field.onChange}
-                  onBlur={field.onBlur}
-                />
-              )}
-            />
-          )}
-        </FormField>
+        {form.watch("type") === "featured" && (
+          <FormField
+            label={t("admin.grant_days")}
+            error={errors.days?.message}
+            className="w-40"
+          >
+            {(control) => (
+              <Controller
+                control={form.control}
+                name="days"
+                render={({ field }) => (
+                  <NumberField
+                    {...control}
+                    min={1}
+                    max={365}
+                    value={field.value}
+                    onChange={field.onChange}
+                    onBlur={field.onBlur}
+                  />
+                )}
+              />
+            )}
+          </FormField>
+        )}
         <div className="flex flex-wrap gap-3">
           <SubmitButton pending={pending}>{t("admin.grant")}</SubmitButton>
           <Button

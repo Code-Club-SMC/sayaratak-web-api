@@ -60,12 +60,7 @@ const plans: Plan[] = [
   { kind: "vehicle", intent: "sale", types: ["tuk_tuk", "rickshaw"], n: 25 },
   { kind: "part", intent: "sale", types: [], n: 40 },
 ]
-const promoDays: Record<PromotionType, number> = {
-  pin: 7,
-  boost: 3,
-  homepage: 7,
-  sponsored: 14,
-}
+const featuredDays = [3, 7, 14]
 
 type Ctx = {
   taxonomy: Taxonomy
@@ -380,23 +375,18 @@ export function seedListings(ctx: Ctx) {
         whatsappClicks: int(0, 25),
       }
       if (status === "available" && chance(0.15)) {
-        const promoType: PromotionType = faker.helpers.weightedArrayElement([
-          { weight: 4, value: "boost" },
-          { weight: 3, value: "pin" },
-          { weight: 2, value: "homepage" },
-          { weight: 1, value: "sponsored" },
-        ])
-        const startMs = int(HOUR, (promoDays[promoType] / 2) * DAY)
+        const days = pick(featuredDays)
+        const startMs = int(HOUR, (days / 2) * DAY)
         const startsAt = ago(startMs)
-        const endsAt = ahead(promoDays[promoType] * DAY - startMs)
-        row.promotions.push({ type: promoType, startsAt, endsAt })
+        const endsAt = ahead(days * DAY - startMs)
+        row.promotions.push({ type: "featured", startsAt, endsAt })
         row.stats.views *= 2
         promotions.push({
           id: `promo-${promotions.length + 1}`,
           listingId: id,
-          type: promoType,
+          type: "featured",
           status: "active",
-          durationDays: promoDays[promoType],
+          durationDays: days,
           startsAt,
           endsAt,
           source: "paid",
@@ -437,7 +427,7 @@ export function seedListings(ctx: Ctx) {
     promotions.push({
       id: `promo-${promotions.length + 1}`,
       listingId: row.id,
-      type: "boost",
+      type: "featured",
       status: "ended",
       durationDays: 3,
       startsAt: ago(20 * DAY),
@@ -446,11 +436,11 @@ export function seedListings(ctx: Ctx) {
     })
   }
   // Two promotions waiting for payment on listings of the demo seller and the demo dealership, for the checkout and the admin queue.
-  const waiting: [string, PromotionType][] = [
-    ["u-omar", "boost"],
-    ["u-dealer", "pin"],
+  const waiting: [string, PromotionType, number][] = [
+    ["u-omar", "bump", 0],
+    ["u-dealer", "featured", 7],
   ]
-  for (const [ownerId, type] of waiting) {
+  for (const [ownerId, type, durationDays] of waiting) {
     const mine = listings.find(
       (l) =>
         l.ownerUserId === ownerId &&
@@ -463,7 +453,7 @@ export function seedListings(ctx: Ctx) {
         listingId: mine.id,
         type,
         status: "pending_payment",
-        durationDays: promoDays[type],
+        durationDays,
         source: "paid",
       })
   }

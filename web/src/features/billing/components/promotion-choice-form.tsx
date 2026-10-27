@@ -19,7 +19,7 @@ import { useAppForm } from "@/hooks/use-app-form"
 
 type Choice = z.input<typeof promotionChoiceSchema>
 
-// The four paid promotions as one radio group. Continue creates the unpaid promotion and opens its checkout in the owner's dashboard. `secondary` is the button beside Continue (Not now, Cancel); `label` names the group for screen readers.
+// Every price row (Featured for each length, and Bump up) as one radio group. Continue creates the unpaid promotion and opens its checkout in the owner's dashboard. `secondary` is the button beside Continue (Not now, Cancel); `label` names the group for screen readers.
 export function PromotionChoiceForm({
   listingId,
   role,
@@ -46,7 +46,10 @@ export function PromotionChoiceForm({
   const submit = form.handleSubmit(
     async ({ promotion }) => {
       try {
-        const promo = await create.mutateAsync({ listingId, type: promotion })
+        const promo = await create.mutateAsync({
+          listingId,
+          priceId: promotion,
+        })
         const item = new URLSearchParams({ item: `promotion:${promo.id}` })
         router.history.push(
           localeHref(`${dashboardPath(role)}/billing/checkout?${item}`, locale)
@@ -74,14 +77,15 @@ export function PromotionChoiceForm({
       >
         {prices.map((p) => (
           <PromotionOption
-            key={p.type}
+            key={p.id}
             name="promotion"
+            value={p.id}
             type={p.type}
             durationDays={p.durationDays}
             price={p.price}
-            selected={chosen === p.type}
+            selected={chosen === p.id}
             onSelect={() =>
-              form.setValue("promotion", p.type, { shouldValidate: !!message })
+              form.setValue("promotion", p.id, { shouldValidate: !!message })
             }
           />
         ))}

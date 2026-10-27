@@ -186,7 +186,7 @@ describe("AdminListingsPage", () => {
       within(grant).getByRole("button", { name: "Grant promotion" })
     )
     await waitFor(() => expect(live(row)).toBe(true))
-    expect(row.promotions.at(-1)!.type).toBe("boost")
+    expect(row.promotions.at(-1)!.type).toBe("featured")
     await waitFor(() =>
       expect(add).toHaveBeenCalledWith({ title: "Promotion granted" })
     )

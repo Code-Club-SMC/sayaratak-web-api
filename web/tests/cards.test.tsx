@@ -240,6 +240,23 @@ describe("ratings", () => {
     expect(onChange).toHaveBeenCalledWith(5)
   })
 
+  // Native radios sharing one name: the browser moves between them with the arrow keys and Tab stops once, on the checked one.
+  it("is one keyboard stop whose arrows pick the rating", async () => {
+    const onChange = vi.fn()
+    await renderShell(
+      <RatingStars value={3} onChange={onChange} label="Your rating" />
+    )
+    const radios = within(
+      screen.getByRole("group", { name: "Your rating" })
+    ).getAllByRole<HTMLInputElement>("radio")
+    expect(new Set(radios.map((r) => r.name)).size).toBe(1)
+    expect(radios.every((r) => r.tabIndex === 0)).toBe(true)
+    radios[2]!.focus()
+    expect(document.activeElement).toBe(radios[2])
+    fireEvent.click(radios[3]!)
+    expect(onChange).toHaveBeenCalledWith(4)
+  })
+
   it("labels each histogram row and handles zero reviews", async () => {
     await renderShell(
       <RatingSummary avg={4.2} count={50} histogram={[2, 3, 5, 15, 25]} />

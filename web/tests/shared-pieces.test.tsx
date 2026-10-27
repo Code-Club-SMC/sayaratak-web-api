@@ -470,7 +470,7 @@ describe("focused flow pieces", () => {
     ).toBe("false")
     expect(screen.getByRole("button", { name: /Pause/ })).toBeTruthy()
     await waitFor(() =>
-      expect(screen.getByRole("link", { name: /Arabic/ })).toBeTruthy()
+      expect(screen.getByRole("link", { name: "العربية" })).toBeTruthy()
     )
   })
 })

@@ -15,10 +15,10 @@ describe("RoleForm", () => {
   it("selects the individual option and continues in one click", async () => {
     const { router } = await renderShell(<RoleForm />, { role: "user" })
     expect(
-      screen
-        .getByRole("radio", { name: /Buy, sell or rent vehicles/ })
-        .getAttribute("aria-checked")
-    ).toBe("true")
+      screen.getByRole<HTMLInputElement>("radio", {
+        name: /Buy, sell or rent vehicles/,
+      }).checked
+    ).toBe(true)
     fireEvent.click(screen.getByRole("button", { name: "Continue" }))
     await waitFor(() =>
       expect(router.state.location.pathname).toBe("/en/onboarding/user/details")
@@ -69,10 +69,9 @@ describe("RoleForm", () => {
     await renderShell(<RoleForm />, { role: "user" })
     await waitFor(() =>
       expect(
-        screen
-          .getByRole("radio", { name: /Mechanic/ })
-          .getAttribute("aria-checked")
-      ).toBe("true")
+        screen.getByRole<HTMLInputElement>("radio", { name: /Mechanic/ })
+          .checked
+      ).toBe(true)
     )
   })
 })

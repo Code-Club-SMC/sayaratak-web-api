@@ -81,6 +81,7 @@
   "nav.go_to_slide": "Go to slide {{number}}",
   "nav.carousel_pause": "Pause slideshow",
   "nav.carousel_play": "Play slideshow",
+  "common.upload_photo": "Add photo",
   "common.upload_photos": "Add photos",
   "common.upload_drop": "Drop photos here or choose files",
   "common.upload_change": "Change photo",

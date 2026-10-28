@@ -208,7 +208,11 @@ export function OnboardingStepPage({
             </div>
           </div>
         ) : (
-          <StickyFooter onBack={back} skip={skip}>
+          <StickyFooter
+            onBack={back}
+            skip={skip}
+            width={step.wide ? "max-w-236" : "max-w-130 lg:max-w-236 lg:pe-106"}
+          >
             {submitButton}
           </StickyFooter>
         )}

@@ -1,4 +1,5 @@
 import { useCityName } from "@/hooks/use-city-name"
+import { initials } from "@/lib/format"
 import { useT } from "@/lib/i18n/use-t"
 import type { WeeklyHours } from "@/schemas/fields"
 import { Badge } from "@/components/ui/badge"
@@ -36,15 +37,25 @@ export function ProfilePreview({
         />
       )}
       <div className="flex gap-3 p-4">
-        <MediaImage
-          src={imageUrl || null}
-          alt=""
-          sizes="64px"
-          fit={round ? "cover" : "contain"}
-          className={
-            round ? "size-16 shrink-0 rounded-full" : "size-16 shrink-0"
-          }
-        />
+        {imageUrl ? (
+          <MediaImage
+            src={imageUrl}
+            alt=""
+            sizes="64px"
+            fit={round ? "cover" : "contain"}
+            className={
+              round ? "size-16 shrink-0 rounded-full" : "size-16 shrink-0"
+            }
+          />
+        ) : (
+          // No photo yet: the name's initials, like a person's avatar.
+          <span
+            aria-hidden="true"
+            className={`grid size-16 shrink-0 place-items-center bg-accent text-lead font-semibold text-accent-foreground ${round ? "rounded-full" : "rounded-lg"}`}
+          >
+            <bdi>{initials(name)}</bdi>
+          </span>
+        )}
         <div className="flex min-w-0 flex-1 flex-col gap-1">
           <h3 className="truncate text-ui font-medium">
             {name ? <bdi>{name}</bdi> : t("form.preview_name")}

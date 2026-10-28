@@ -85,6 +85,7 @@
   "nav.go_to_slide": "الانتقال إلى الشريحة {{number}}",
   "nav.carousel_pause": "إيقاف العرض مؤقتًا",
   "nav.carousel_play": "تشغيل العرض",
+  "common.upload_photo": "إضافة صورة",
   "common.upload_photos": "إضافة صور",
   "common.upload_drop": "اسحب الصور إلى هنا أو اختر ملفات",
   "common.upload_change": "تغيير الصورة",

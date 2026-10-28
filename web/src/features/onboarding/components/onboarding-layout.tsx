@@ -5,7 +5,7 @@ import { StepIndicator } from "@/components/app/step-indicator"
 import { useT } from "@/lib/i18n/use-t"
 import { cn } from "@/lib/utils"
 
-// Role page: one column. Step pages add `progress` and `onExit`; business flows add `preview`, a 360 column beside the 520 form from lg. A `wide` step (the plan cards) takes that whole width instead.
+// Role page: `progress` and `wide` (four tiles in a row from lg). Step pages add `onExit`; business flows add `preview`, a 360 column beside the 520 form from lg. A `wide` step (the plan cards) takes that whole width instead.
 export function OnboardingLayout({
   children,
   progress,
@@ -32,7 +32,7 @@ export function OnboardingLayout({
         )}
       >
         {progress && (
-          <div className="max-w-130 pt-4">
+          <div className={cn("max-w-130 pt-4", preview && "mx-auto lg:mx-0")}>
             <StepIndicator {...progress} labelFromMd />
           </div>
         )}
@@ -44,7 +44,8 @@ export function OnboardingLayout({
           <main
             className={cn(
               "flex flex-col gap-8 pt-8 pb-12",
-              !wide && "max-w-130"
+              !wide && "max-w-130",
+              preview && "mx-auto lg:mx-0"
             )}
           >
             {children}

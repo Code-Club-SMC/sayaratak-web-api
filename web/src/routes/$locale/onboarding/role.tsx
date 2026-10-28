@@ -1,6 +1,5 @@
 import { createFileRoute, redirect } from "@tanstack/react-router"
 
-import { AuthShell } from "@/components/app/auth-shell"
 import { redirectSearch } from "@/features/auth/destination"
 import { requireUser } from "@/features/auth/guards"
 import { draftQuery } from "@/features/auth/queries"
@@ -40,10 +39,6 @@ export const Route = createFileRoute("/$locale/onboarding/role")({
       ? buildHead({ ...loaderData, path: "/onboarding/role", noindex: true })
       : {},
   component: function Role() {
-    return (
-      <AuthShell carousel={false}>
-        <RoleForm redirect={Route.useSearch().redirect} />
-      </AuthShell>
-    )
+    return <RoleForm redirect={Route.useSearch().redirect} />
   },
 })

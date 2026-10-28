@@ -87,7 +87,7 @@ export function ImageUploaderImpl({
             />
           ) : (
             <UploadDropzone onFiles={take} className="size-full">
-              {t("common.upload_photos")}
+              {t("common.upload_photo")}
             </UploadDropzone>
           )}
         </div>

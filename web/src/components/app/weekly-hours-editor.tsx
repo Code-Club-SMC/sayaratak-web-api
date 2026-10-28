@@ -57,39 +57,46 @@ export function WeeklyHoursEditor({
             key={day}
             role="group"
             aria-label={name}
-            className="flex flex-wrap items-center gap-x-3 gap-y-2"
+            className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-3"
           >
-            <span className="w-24 text-ui font-medium">{name}</span>
-            <Label className="min-h-(--row-h) font-normal">
-              <Checkbox
-                checked={row.closed}
-                onCheckedChange={(closed) => patch(day, { closed })}
+            {/* Phone: day and Closed, then the open-close pair, then Copy; one line from sm. */}
+            <div className="flex items-center justify-between gap-3 sm:contents">
+              <span className="w-24 text-ui font-medium">{name}</span>
+              <Label className="min-h-(--row-h) font-normal">
+                <Checkbox
+                  checked={row.closed}
+                  onCheckedChange={(closed) => patch(day, { closed })}
+                />
+                {t("hours.closed")}
+              </Label>
+            </div>
+            <div className="flex items-center gap-2">
+              <Input
+                type="time"
+                dir="ltr"
+                className="w-36"
+                aria-label={`${t("form.open_from")}, ${name}`}
+                aria-invalid={invalid}
+                disabled={row.closed}
+                value={row.open}
+                onChange={(e) => patch(day, { open: e.target.value })}
               />
-              {t("hours.closed")}
-            </Label>
-            <Input
-              type="time"
-              dir="ltr"
-              className="w-32"
-              aria-label={`${t("form.open_from")}, ${name}`}
-              aria-invalid={invalid}
-              disabled={row.closed}
-              value={row.open}
-              onChange={(e) => patch(day, { open: e.target.value })}
-            />
-            <Input
-              type="time"
-              dir="ltr"
-              className="w-32"
-              aria-label={`${t("form.close_at")}, ${name}`}
-              aria-invalid={invalid}
-              disabled={row.closed}
-              value={row.close}
-              onChange={(e) => patch(day, { close: e.target.value })}
-            />
+              <span aria-hidden="true">–</span>
+              <Input
+                type="time"
+                dir="ltr"
+                className="w-36"
+                aria-label={`${t("form.close_at")}, ${name}`}
+                aria-invalid={invalid}
+                disabled={row.closed}
+                value={row.close}
+                onChange={(e) => patch(day, { close: e.target.value })}
+              />
+            </div>
             <Button
               type="button"
               variant="ghost"
+              className="-ms-4 self-start sm:self-auto"
               aria-label={`${t("form.copy_to_all")}, ${name}`}
               onClick={() =>
                 onChange(value.map((r) => ({ ...row, day: r.day })))

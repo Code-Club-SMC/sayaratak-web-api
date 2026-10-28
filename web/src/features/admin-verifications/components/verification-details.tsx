@@ -81,7 +81,7 @@ export function VerificationDetails({
           <a
             href={localeHref(`/${request.targetType}s/${target.slug}`, locale)}
             target="_blank"
-            rel="noreferrer"
+            rel="noopener noreferrer"
             className="text-ui font-medium text-primary hover:underline"
           >
             {t("admin.review_open_target")}

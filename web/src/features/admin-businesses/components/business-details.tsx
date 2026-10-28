@@ -113,7 +113,7 @@ export function BusinessDetails({ business }: { business: AdminBusiness }) {
           <a
             href={localeHref(`/${business.type}s/${business.slug}`, locale)}
             target="_blank"
-            rel="noreferrer"
+            rel="noopener noreferrer"
             className={link}
           >
             {t("admin.business_public_page")}

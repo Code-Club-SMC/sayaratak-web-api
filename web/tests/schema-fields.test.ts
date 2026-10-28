@@ -185,6 +185,7 @@ runCases([
     bad: [
       ["not a file", "a.png", "validation.required"],
       ["not an image", file("application/pdf", 10), "validation.image_type"],
+      ["svg", file("image/svg+xml", 10), "validation.image_type"],
       [
         "over 5 MB",
         file("image/png", 5 * 1024 * 1024 + 1),

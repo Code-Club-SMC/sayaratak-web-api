@@ -64,7 +64,7 @@ export function ListingControls({
         <a
           href={localeHref(`/listing/${listing.slug}`, locale)}
           target="_blank"
-          rel="noreferrer"
+          rel="noopener noreferrer"
           className="text-ui font-medium text-primary hover:underline"
         >
           {t("admin.open_public_page")}

@@ -279,7 +279,7 @@ One review per author per target (409 `already_reviewed`). The target's owner ma
 
 ### Uploads
 
-Images up to 5 MB (the client already resizes them to WebP), video up to 30 MB with a poster up to 1 MB. The backend should read width, height and dominant color from the file instead of trusting the client, and serve `{w}` widths 320, 640, 960 and 1280 (the mock serves the original for every width).
+Images up to 5 MB (the client already resizes them to WebP; receipts and verification documents go up as they are, JPEG, PNG or WebP only), no SVG (it can carry script), video up to 30 MB with a poster up to 1 MB. The backend should read width, height and dominant color from the file instead of trusting the client, and serve `{w}` widths 320, 640, 960 and 1280 (the mock serves the original for every width).
 
 ### Scheduled jobs the mock does not have
 
@@ -293,6 +293,7 @@ The mock computes these at read time or not at all. The backend needs jobs for: 
 - **Authorization.** Check ownership on every `:id` route on the server, not only role. Admin endpoints check role `admin` on every call.
 - **Audit log.** Record every admin action (approve, reject, remove, ban, verify, suspend, payment decision, plan change, settings, taxonomy, broadcast, restore) with admin id, target, before and after, reason, time and IP. The admin activity feed can read from it.
 - **Sessions.** httpOnly, `Secure`, `SameSite=Lax` cookies; rotate on sign-in and on password change; sign out other sessions after a password reset. CSRF protection on state-changing requests.
+- **Response headers.** `src/server.ts` sets a per-request CSP nonce, `Content-Security-Policy`, `X-Content-Type-Options: nosniff` and `Referrer-Policy` on the web app. When the API moves to its own origin, add that origin to `connect-src` (it comes from `VITE_API_BASE_URL`) and image hosts to `IMAGE_ORIGINS`, and send `nosniff` from the API too.
 - **Payment receipts** are personal financial data: admins only, never public URLs.
 - **Location privacy.** Round positions on the server, never in the client.
 - **Browser web push.** Notifications are in-app only today. Web push needs VAPID keys, a subscription endpoint, per-device storage, and the same per-type preference check as in-app notifications.

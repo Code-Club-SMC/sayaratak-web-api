@@ -3,6 +3,7 @@ import { XIcon } from "lucide-react"
 
 import type { ControlProps } from "@/components/app/form-field"
 import { UploadDropzone } from "@/components/app/upload-dropzone"
+import { imageFileTypes } from "@/schemas/fields"
 import { RemoveButton } from "@/components/app/remove-button"
 import { useT } from "@/lib/i18n/use-t"
 
@@ -71,6 +72,7 @@ export function ImageFileInput({
     <UploadDropzone
       onFiles={(files) => pick(files[0])}
       inputProps={control}
+      accept={imageFileTypes.join(",")}
       className="min-h-24 rounded-xl"
     >
       {labels.choose}

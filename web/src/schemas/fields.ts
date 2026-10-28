@@ -88,9 +88,11 @@ export const lngSchema = z
   .max(180, "validation.number")
 export const geoSchema = z.object({ lat: latSchema, lng: lngSchema })
 export type Geo = z.infer<typeof geoSchema>
+// No SVG: it can carry script, and these files are opened as they are (receipts, documents).
+export const imageFileTypes = ["image/jpeg", "image/png", "image/webp"]
 export const imageFileSchema = z
   .instanceof(File, { message: "validation.required" })
-  .refine((f) => f.type.startsWith("image/"), "validation.image_type")
+  .refine((f) => imageFileTypes.includes(f.type), "validation.image_type")
   .refine((f) => f.size <= 5 * 1024 * 1024, "validation.file_size_5mb")
 export const hourSchema = z.object({
   day: z.number().int().min(0).max(6),

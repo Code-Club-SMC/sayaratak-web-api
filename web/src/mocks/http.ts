@@ -64,7 +64,7 @@ export const sessionUser = (req: Request) => {
   return id ? (find(db.users, id) ?? null) : null
 }
 export const sessionHeader = (userId: string | null) =>
-  `${SESSION_COOKIE}=${userId ?? ""}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${userId ? 60 * 60 * 24 * 30 : 0}`
+  `${SESSION_COOKIE}=${userId ?? ""}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${userId ? 60 * 60 * 24 * 30 : 0}${process.env.NODE_ENV === "production" ? "; Secure" : ""}`
 // Sign in or out: the body plus a Set-Cookie header.
 export const withSession = (
   userId: string | null,

@@ -97,7 +97,7 @@ export function PaymentDetails({ payment }: { payment: AdminPayment }) {
             <a
               href={localeHref(`/listings/${order.listing.slug}`, locale)}
               target="_blank"
-              rel="noreferrer"
+              rel="noopener noreferrer"
               className={link}
             >
               {t("admin.payment_open_listing")}

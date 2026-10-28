@@ -73,7 +73,7 @@ export function AdminCampaignRow({ campaign: c }: { campaign: AdminCampaign }) {
             <a
               href={c.receiptUrl}
               target="_blank"
-              rel="noreferrer"
+              rel="noopener noreferrer"
               className={buttonVariants({ variant: "link" })}
             >
               {t("billing.view_receipt")}

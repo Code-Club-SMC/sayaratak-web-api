@@ -8,7 +8,7 @@ export function ReceiptLink({ payment }: { payment: Payment }) {
     <a
       href={payment.receiptUrl}
       target="_blank"
-      rel="noreferrer"
+      rel="noopener noreferrer"
       className={buttonVariants({ variant: "link", size: "sm" })}
     >
       {t("billing.view_receipt")}

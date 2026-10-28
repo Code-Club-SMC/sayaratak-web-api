@@ -46,7 +46,10 @@ route("POST", "/uploads", async (c) => {
   if (!(file instanceof File))
     throw fail(422, "validation", { file: "validation.required" })
   const video = file.type.startsWith("video/")
-  if (!video && !file.type.startsWith("image/"))
+  if (
+    !video &&
+    (!file.type.startsWith("image/") || file.type === "image/svg+xml")
+  )
     throw fail(422, "validation", { file: "validation.image_type" })
   const stored = video
     ? await storeUpload(file, VIDEO_BYTES, "validation.video_size")

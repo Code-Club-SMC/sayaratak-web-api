@@ -1,13 +1,25 @@
 import { QueryClient } from "@tanstack/react-query"
 import { createRouter as createTanStackRouter } from "@tanstack/react-router"
 import { setupRouterSsrQueryIntegration } from "@tanstack/react-router-ssr-query"
+import {
+  createIsomorphicFn,
+  getGlobalStartContext,
+} from "@tanstack/react-start"
 
 import { sessionCaches } from "@/features/auth/session-ended"
 import { pageTransition } from "@/lib/motion"
 import { NotFound } from "@/components/app/not-found"
 import { PageSkeleton } from "@/components/app/page-skeleton"
 import { RouteError } from "@/components/app/route-error"
+import { z } from "zod"
+
 import { routeTree } from "./routeTree.gen"
+
+const nonceContext = z.object({ nonce: z.string() })
+// The CSP nonce that src/server.ts made for this request; none in the browser.
+const requestNonce = createIsomorphicFn()
+  .server(() => nonceContext.safeParse(getGlobalStartContext()).data?.nonce)
+  .client(() => undefined)
 
 // One QueryClient per router, and the router is created per request on the server, so nothing leaks between visitors.
 export function getRouter() {
@@ -30,6 +42,7 @@ export function getRouter() {
     defaultPendingMs: 400,
     defaultPendingMinMs: 300,
     defaultViewTransition: pageTransition,
+    ssr: { nonce: requestNonce() },
   })
   setupRouterSsrQueryIntegration({ router, queryClient })
   return router

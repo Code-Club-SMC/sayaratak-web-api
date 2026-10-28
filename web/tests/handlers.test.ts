@@ -1436,6 +1436,11 @@ describe("trust, content, map, uploads, analytics", () => {
     expect(
       (await call("POST", "/uploads", { form: pdf })).body.fields.file
     ).toBe("validation.image_type")
+    const svg = new FormData()
+    svg.set("file", file("d.svg", 10, "image/svg+xml"))
+    expect(
+      (await call("POST", "/uploads", { form: svg })).body.fields.file
+    ).toBe("validation.image_type")
   })
   it("a video upload stores its poster and allows 30 MB", async () => {
     const form = new FormData()

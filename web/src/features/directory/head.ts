@@ -1,5 +1,5 @@
 import { buildHead } from "@/lib/seo"
-import type { Locale } from "@/schemas/locale"
+import type { Locale } from "@sayaratak/shared/schemas/locale"
 import type { DealershipProfileSearch, DealershipSearch } from "./schemas"
 
 // A6: a directory with any query value other than `page` is noindex with the canonical on the plain directory.

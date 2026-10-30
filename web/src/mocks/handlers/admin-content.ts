@@ -6,22 +6,22 @@ import {
   settingsSchema,
   type Report,
   sitePageSchema,
-} from "@/schemas/admin"
-import { okSchema, taxonomyTypeSchema } from "@/schemas/api"
+} from "@sayaratak/shared/schemas/admin"
+import { okSchema, taxonomyTypeSchema } from "@sayaratak/shared/schemas/api"
 import {
   bilingualSchema,
   geoSchema,
   pageOf,
   type Bilingual,
-} from "@/schemas/fields"
+} from "@sayaratak/shared/schemas/fields"
 import {
   bannerInputSchema,
   noteInputSchema,
   pagePatchSchema,
   reportActionInputSchema,
-} from "@/schemas/inputs"
-import { vehicleTypeSchema } from "@/schemas/listing"
-import { reviewSchema } from "@/schemas/review"
+} from "@sayaratak/shared/schemas/inputs"
+import { vehicleTypeSchema } from "@sayaratak/shared/schemas/listing"
+import { reviewSchema } from "@sayaratak/shared/schemas/review"
 import { z } from "zod"
 
 import { slugify } from "../seed/util"

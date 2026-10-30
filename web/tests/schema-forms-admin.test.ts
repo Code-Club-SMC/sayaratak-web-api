@@ -23,7 +23,7 @@ import {
   listingSettingsSchema,
   paymentSettingsSchema,
 } from "@/features/admin-settings/schemas"
-import { broadcastInputSchema } from "@/schemas/inputs"
+import { broadcastInputSchema } from "@sayaratak/shared/schemas/inputs"
 import { runCases } from "./schema-case"
 
 const names = { nameAr: "سيارات", nameEn: "Cars" }

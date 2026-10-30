@@ -1,5 +1,5 @@
 import { useT } from "@/lib/i18n/use-t"
-import type { Backup } from "@/schemas/admin"
+import type { Backup } from "@sayaratak/shared/schemas/admin"
 import { Button } from "@/components/ui/button"
 
 // Only a finished backup can be restored, and only one restore runs at a time.

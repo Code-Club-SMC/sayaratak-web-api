@@ -1,7 +1,11 @@
-import type { Interest } from "@/schemas/user"
-import type { Taxonomy } from "@/schemas/taxonomy"
-import type { Dealership, Mechanic, Workshop } from "@/schemas/profile"
-import type { WeeklyHours } from "@/schemas/fields"
+import type { Interest } from "@sayaratak/shared/schemas/user"
+import type { Taxonomy } from "@sayaratak/shared/schemas/taxonomy"
+import type {
+  Dealership,
+  Mechanic,
+  Workshop,
+} from "@sayaratak/shared/schemas/profile"
+import type { WeeklyHours } from "@sayaratak/shared/schemas/fields"
 import type { UserRow } from "../types"
 import { businessMedia, businessPhoto } from "./photos"
 import {

@@ -2,8 +2,8 @@ import { beforeAll, describe, expect, it } from "vitest"
 
 import { ApiError, apiFetch } from "@/lib/api/client"
 import { handleMock } from "@/mocks/router"
-import { taxonomySchema } from "@/schemas/taxonomy"
-import { userSchema } from "@/schemas/user"
+import { taxonomySchema } from "@sayaratak/shared/schemas/taxonomy"
+import { userSchema } from "@sayaratak/shared/schemas/user"
 import { meQuery } from "@/features/auth/queries"
 import { useMockFetch } from "./mock-fetch"
 

@@ -1,9 +1,13 @@
 import { z } from "zod"
 
 import { defaultWeeklyHours } from "@/lib/hours"
-import { geoSchema, phoneSchema, weeklyHoursSchema } from "@/schemas/fields"
-import { onboardingInputSchema } from "@/schemas/inputs"
-import { interestSchema } from "@/schemas/user"
+import {
+  geoSchema,
+  phoneSchema,
+  weeklyHoursSchema,
+} from "@sayaratak/shared/schemas/fields"
+import { onboardingInputSchema } from "@sayaratak/shared/schemas/inputs"
+import { interestSchema } from "@sayaratak/shared/schemas/user"
 import { DAY, both, ratingFrom, slugify } from "@/mocks/seed/util"
 
 import { db, newId } from "../db"

@@ -1,5 +1,5 @@
 import { useT } from "@/lib/i18n/use-t"
-import type { TargetType } from "@/schemas/review"
+import type { TargetType } from "@sayaratak/shared/schemas/review"
 import { requiredDocuments } from "../schemas"
 
 // What this kind of business has to send, so nobody guesses before opening the form.

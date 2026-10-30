@@ -1,6 +1,6 @@
 import { formatDate } from "@/lib/format"
 import { useT } from "@/lib/i18n/use-t"
-import type { AdminUser } from "@/schemas/admin"
+import type { AdminUser } from "@sayaratak/shared/schemas/admin"
 import { UserCell } from "./user-cell"
 import { UserContact } from "./user-contact"
 import { UserStatusBadge } from "./user-status-badge"

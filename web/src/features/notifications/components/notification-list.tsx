@@ -4,7 +4,7 @@ import { SectionError } from "@/components/app/section-error"
 import { Skeleton } from "@/components/ui/skeleton"
 import { useT } from "@/lib/i18n/use-t"
 import { useDelayedFlag } from "@/lib/use-delayed-flag"
-import type { Notification } from "@/schemas/messaging"
+import type { Notification } from "@sayaratak/shared/schemas/messaging"
 import { NotificationItem } from "./notification-item"
 
 // The list with its three other states: loading skeleton (only if slow), error with Retry (only when nothing is loaded), and the caller's empty block.

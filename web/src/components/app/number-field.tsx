@@ -1,6 +1,6 @@
 import { useLayoutEffect, useRef, useState, type ComponentProps } from "react"
 
-import { normalizeDigits } from "@/lib/digits"
+import { normalizeDigits } from "@sayaratak/shared/lib/digits"
 import { formatNumber } from "@/lib/format"
 import { useT } from "@/lib/i18n/use-t"
 import { Input } from "@/components/ui/input"

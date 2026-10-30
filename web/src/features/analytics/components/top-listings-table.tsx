@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/table"
 import { formatNumber } from "@/lib/format"
 import { useT } from "@/lib/i18n/use-t"
-import type { Analytics } from "@/schemas/responses"
+import type { Analytics } from "@sayaratak/shared/schemas/responses"
 
 // Contacts (calls and WhatsApp) divided by views, as a whole percent.
 const conversion = (contacts: number, views: number) =>

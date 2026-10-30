@@ -10,25 +10,28 @@ import {
   settingsSchema,
   sitePageSchema,
   verificationRequestSchema,
-} from "@/schemas/admin"
-import { listingSchema } from "@/schemas/listing"
-import { messageSchema, notificationSchema } from "@/schemas/messaging"
+} from "@sayaratak/shared/schemas/admin"
+import { listingSchema } from "@sayaratak/shared/schemas/listing"
+import {
+  messageSchema,
+  notificationSchema,
+} from "@sayaratak/shared/schemas/messaging"
 import {
   paymentSchema,
   planSchema,
   promotionPriceSchema,
   promotionSchema,
   subscriptionSchema,
-} from "@/schemas/billing"
+} from "@sayaratak/shared/schemas/billing"
 import {
   dealershipSchema,
   mechanicSchema,
   workshopSchema,
-} from "@/schemas/profile"
-import { reviewSchema } from "@/schemas/review"
-import { savedSearchSchema } from "@/schemas/saved-search"
-import { taxonomySchema } from "@/schemas/taxonomy"
-import { userSchema } from "@/schemas/user"
+} from "@sayaratak/shared/schemas/profile"
+import { reviewSchema } from "@sayaratak/shared/schemas/review"
+import { savedSearchSchema } from "@sayaratak/shared/schemas/saved-search"
+import { taxonomySchema } from "@sayaratak/shared/schemas/taxonomy"
+import { userSchema } from "@sayaratak/shared/schemas/user"
 
 const db = buildSeed()
 const count = <T>(rows: T[], f: (r: T) => boolean) => rows.filter(f).length

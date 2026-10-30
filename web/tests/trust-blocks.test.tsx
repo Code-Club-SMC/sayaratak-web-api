@@ -2,7 +2,7 @@ import { fireEvent, screen, waitFor } from "@testing-library/react"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 
 import { authGate, closeAuthGate } from "@/features/auth/auth-gate"
-import { reportSchema } from "@/features/listings/schemas"
+import { reportSchema } from "@sayaratak/shared/listings/schemas"
 import { messageSchema } from "@/features/messaging/schemas"
 import { reviewSchema } from "@/features/reviews/schemas"
 import { ContactActions } from "@/components/app/contact-actions"

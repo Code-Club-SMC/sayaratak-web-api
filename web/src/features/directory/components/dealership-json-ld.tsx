@@ -2,7 +2,7 @@ import { useCityName } from "@/hooks/use-city-name"
 import { useT } from "@/lib/i18n/use-t"
 import { localeHref } from "@/lib/navigation"
 import { origin } from "@/lib/seo"
-import type { Dealership } from "@/schemas/profile"
+import type { Dealership } from "@sayaratak/shared/schemas/profile"
 import { dealershipJsonLd } from "../json-ld"
 
 export function DealershipJsonLd({

@@ -1,7 +1,7 @@
-import { countsSchema, okSchema } from "@/schemas/api"
-import { readInputSchema } from "@/schemas/inputs"
-import { notificationSchema } from "@/schemas/messaging"
-import { pageOf } from "@/schemas/fields"
+import { countsSchema, okSchema } from "@sayaratak/shared/schemas/api"
+import { readInputSchema } from "@sayaratak/shared/schemas/inputs"
+import { notificationSchema } from "@sayaratak/shared/schemas/messaging"
+import { pageOf } from "@sayaratak/shared/schemas/fields"
 
 import { db, paginate } from "../db"
 import { needUser, pageParams, route } from "../http"

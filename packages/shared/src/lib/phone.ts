@@ -1,4 +1,4 @@
-import { normalizeDigits } from "@/lib/digits"
+import { normalizeDigits } from "./digits"
 
 // Turns what people type (any digits, spaces, 0912..., 912...) into +249XXXXXXXXX; anything else passes through for the schema to reject.
 export function normalizePhone(input: string) {

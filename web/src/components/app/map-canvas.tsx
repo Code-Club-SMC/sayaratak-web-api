@@ -4,7 +4,7 @@ import { ClientOnly } from "@tanstack/react-router"
 import { useT } from "@/lib/i18n/use-t"
 import { usePrefs } from "@/lib/prefs"
 import { cn } from "@/lib/utils"
-import type { Geo } from "@/schemas/fields"
+import type { Geo } from "@sayaratak/shared/schemas/fields"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 

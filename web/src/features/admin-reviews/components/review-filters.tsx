@@ -1,7 +1,7 @@
 import { SelectInput } from "@/components/app/select-input"
 import { useT } from "@/lib/i18n/use-t"
 import { formatNumber } from "@/lib/format"
-import { targetTypeSchema } from "@/schemas/review"
+import { targetTypeSchema } from "@sayaratak/shared/schemas/review"
 import {
   reviewsSearchSchema,
   type ReviewsSearch,

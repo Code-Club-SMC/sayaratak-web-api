@@ -7,12 +7,12 @@ import { apiFetch } from "@/lib/api/client"
 import { errorText } from "@/lib/api/error-text"
 import { keys } from "@/lib/api/query-keys"
 import { useT } from "@/lib/i18n/use-t"
-import { okSchema } from "@/schemas/api"
+import { okSchema } from "@sayaratak/shared/schemas/api"
 import {
   listingSchema,
   type Listing,
   type ListingStatus,
-} from "@/schemas/listing"
+} from "@sayaratak/shared/schemas/listing"
 import {
   useDeleteListing,
   useDuplicateListing,

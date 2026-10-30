@@ -1,7 +1,7 @@
 import { PriceText } from "@/components/app/price-text"
 import { formatDate, formatNumber } from "@/lib/format"
 import { useT } from "@/lib/i18n/use-t"
-import type { Listing } from "@/schemas/listing"
+import type { Listing } from "@sayaratak/shared/schemas/listing"
 import { ListingCell } from "./listing-cell"
 import { ListingRowActions, type ListingActions } from "./listing-row-actions"
 import { ListingStatusSelect } from "./listing-status-select"

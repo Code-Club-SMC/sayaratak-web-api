@@ -6,7 +6,7 @@ import { NumberField } from "@/components/app/number-field"
 import { ProfilePreview } from "@/components/app/profile-preview"
 import { mediaFromUrl } from "@/features/onboarding/media"
 import { useT } from "@/lib/i18n/use-t"
-import type { Bilingual } from "@/schemas/fields"
+import type { Bilingual } from "@sayaratak/shared/schemas/fields"
 import { DetailsFields } from "./details-fields"
 
 type About = {

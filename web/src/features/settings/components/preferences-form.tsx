@@ -8,7 +8,7 @@ import { useUpdateProfile } from "@/features/auth/queries"
 import { useT } from "@/lib/i18n/use-t"
 import { localeHref } from "@/lib/navigation"
 import { usePrefs, useSetPrefs } from "@/lib/prefs"
-import { localeSchema } from "@/schemas/locale"
+import { localeSchema } from "@sayaratak/shared/schemas/locale"
 
 // Both apply at once. The language lives in the URL, so a change remembers the choice on the account and reloads this page in the other language, like the header switch.
 export function PreferencesForm() {

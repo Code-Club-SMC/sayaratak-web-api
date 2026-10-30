@@ -1,7 +1,7 @@
 import { searchPath } from "@/features/search/href"
 import { useT } from "@/lib/i18n/use-t"
 import { localeHref } from "@/lib/navigation"
-import type { Taxonomy } from "@/schemas/taxonomy"
+import type { Taxonomy } from "@sayaratak/shared/schemas/taxonomy"
 import { MakeLogo } from "./make-logo"
 
 // A make's logo on a grey tile with its name and count, linking to that make's results. `count` is already formatted.

@@ -1,4 +1,4 @@
-import type { WeeklyHours } from "@/schemas/fields"
+import type { WeeklyHours } from "@sayaratak/shared/schemas/fields"
 
 const KHARTOUM_OFFSET_MS = 2 * 3_600_000
 

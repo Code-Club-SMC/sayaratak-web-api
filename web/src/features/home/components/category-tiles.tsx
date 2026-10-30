@@ -5,7 +5,7 @@ import { typeSlug } from "@/features/search/landing"
 import { formatNumber } from "@/lib/format"
 import { useT } from "@/lib/i18n/use-t"
 import { localeHref } from "@/lib/navigation"
-import type { VehicleType } from "@/schemas/listing"
+import type { VehicleType } from "@sayaratak/shared/schemas/listing"
 import { homeQueries } from "../queries"
 
 // Photos live in public/images/categories as <name>-320.webp and <name>-640.webp.

@@ -1,7 +1,7 @@
 import { formatRelative } from "@/lib/format"
 import { useT } from "@/lib/i18n/use-t"
 import { useNow } from "@/lib/now"
-import type { AdminVerification } from "@/schemas/admin"
+import type { AdminVerification } from "@sayaratak/shared/schemas/admin"
 import { VerificationBusinessCell } from "./verification-business-cell"
 
 // One request below md: the business button, then type, owner, when and how many documents.

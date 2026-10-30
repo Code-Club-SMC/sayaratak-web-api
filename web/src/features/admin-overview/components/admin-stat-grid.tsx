@@ -3,7 +3,7 @@ import type { UseQueryResult } from "@tanstack/react-query"
 import { SectionError } from "@/components/app/section-error"
 import { StatCard } from "@/components/app/stat-card"
 import { useT } from "@/lib/i18n/use-t"
-import type { AdminStats } from "@/schemas/responses"
+import type { AdminStats } from "@sayaratak/shared/schemas/responses"
 
 // Two rows of four site totals, each a link to the screen that lists what it counts. Only revenue follows the period; the rest are counts of now.
 export function AdminStatGrid({

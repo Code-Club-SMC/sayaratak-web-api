@@ -1,6 +1,6 @@
 # Swap to the real API
 
-The app talks to the API only through `apiFetch` (`src/lib/api/client.ts`) and validates every response with the schemas in `src/schemas`. The real API that implements `BACKEND_HANDOFF.md` with those schemas needs the steps below. Authentication is the exception: the backend uses Better-Auth's own endpoints (owner decision, 2026-10-27), so step 4 changes frontend code.
+The app talks to the API only through `apiFetch` (`src/lib/api/client.ts`) and validates every response with the schemas in `packages/shared/src/schemas`. The real API that implements `BACKEND_HANDOFF.md` with those schemas needs the steps below. Authentication is the exception: the backend uses Better-Auth's own endpoints (owner decision, 2026-10-27), so step 4 changes frontend code.
 
 ## 1. Point the app at the API
 

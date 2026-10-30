@@ -4,7 +4,7 @@ import { ArchiveIcon } from "lucide-react"
 
 import { errorText } from "@/lib/api/error-text"
 import { useT } from "@/lib/i18n/use-t"
-import type { Backup } from "@/schemas/admin"
+import type { Backup } from "@sayaratak/shared/schemas/admin"
 import { adminQueries, useRestoreBackup } from "@/features/admin/queries"
 import { DataTable } from "@/components/app/data-table"
 import { EmptyState } from "@/components/app/empty-state"

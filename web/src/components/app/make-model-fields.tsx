@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query"
 
 import { taxonomyQuery } from "@/features/listings/queries"
 import { useT } from "@/lib/i18n/use-t"
-import type { VehicleType } from "@/schemas/listing"
+import type { VehicleType } from "@sayaratak/shared/schemas/listing"
 import { Input } from "@/components/ui/input"
 import { FormField } from "./form-field"
 import { MakeLogo } from "./make-logo"

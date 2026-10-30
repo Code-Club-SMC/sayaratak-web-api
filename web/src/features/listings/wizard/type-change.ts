@@ -1,7 +1,7 @@
 import type { FieldValues } from "react-hook-form"
 
-import type { Taxonomy } from "@/schemas/taxonomy"
-import type { VehicleType } from "@/schemas/listing"
+import type { Taxonomy } from "@sayaratak/shared/schemas/taxonomy"
+import type { VehicleType } from "@sayaratak/shared/schemas/listing"
 import { inapplicable } from "./field-rules"
 import { detailsDefaults } from "./wizard-defaults"
 

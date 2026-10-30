@@ -12,7 +12,7 @@ import { reviewQueries } from "@/features/reviews/queries"
 import { ApiError } from "@/lib/api/client"
 import { getCopy } from "@/lib/i18n/server"
 import { mediaSrc } from "@/lib/media"
-import type { Locale } from "@/schemas/locale"
+import type { Locale } from "@sayaratak/shared/schemas/locale"
 import { directoryQueries } from "./queries"
 import {
   inventorySearch,

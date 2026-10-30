@@ -1,11 +1,15 @@
-import { pageOf } from "@/schemas/fields"
-import { okSchema } from "@/schemas/api"
+import { pageOf } from "@sayaratak/shared/schemas/fields"
+import { okSchema } from "@sayaratak/shared/schemas/api"
 import {
   replyInputSchema,
   reviewInputSchema,
   reviewPatchSchema,
-} from "@/schemas/inputs"
-import { reviewSchema, targetTypeSchema, type Review } from "@/schemas/review"
+} from "@sayaratak/shared/schemas/inputs"
+import {
+  reviewSchema,
+  targetTypeSchema,
+  type Review,
+} from "@sayaratak/shared/schemas/review"
 
 import { ratingFrom } from "../seed/util"
 import { db, find, insert, newId, paginate } from "../db"

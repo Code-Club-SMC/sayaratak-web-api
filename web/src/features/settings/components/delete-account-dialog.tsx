@@ -19,7 +19,7 @@ import { Input } from "@/components/ui/input"
 import { useDeleteAccount } from "@/features/auth/queries"
 import { useT } from "@/lib/i18n/use-t"
 import { localeHref } from "@/lib/navigation"
-import type { Role } from "@/schemas/fields"
+import type { Role } from "@sayaratak/shared/schemas/fields"
 import { deleteAccountSchema, type DeleteAccountForm } from "../schemas"
 import { useAppForm } from "@/hooks/use-app-form"
 

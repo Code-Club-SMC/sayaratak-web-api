@@ -20,10 +20,10 @@ import {
   useVerifyOtp,
 } from "@/features/auth/queries"
 import { otpFormSchema } from "@/features/auth/schemas"
-import { normalizeDigits } from "@/lib/digits"
+import { normalizeDigits } from "@sayaratak/shared/lib/digits"
 import { useT } from "@/lib/i18n/use-t"
 import { useCountdown } from "@/lib/use-countdown"
-import type { User } from "@/schemas/user"
+import type { User } from "@sayaratak/shared/schemas/user"
 
 const COOLDOWN = 30
 

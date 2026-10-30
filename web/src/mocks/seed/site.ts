@@ -4,8 +4,8 @@ import type {
   Report,
   Settings,
   VerificationRequest,
-} from "@/schemas/admin"
-import type { EventType } from "@/schemas/api"
+} from "@sayaratak/shared/schemas/admin"
+import type { EventType } from "@sayaratak/shared/schemas/api"
 import type { EventRow, ListingRow, SitePageRow, UserRow } from "../types"
 import { DAY, HOUR, ago, ahead, chance, int } from "./util"
 

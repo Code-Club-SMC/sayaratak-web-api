@@ -8,7 +8,7 @@ import { siteQuery } from "@/features/pages/queries"
 import { getCopy } from "@/lib/i18n/server"
 import { useT } from "@/lib/i18n/use-t"
 import { localeHref } from "@/lib/navigation"
-import { toWhatsappUrl } from "@/lib/phone"
+import { toWhatsappUrl } from "@sayaratak/shared/lib/phone"
 import { buildHead } from "@/lib/seo"
 
 // Where a signed-in banned account lands (see `$locale/route.tsx`). The contact page is open to a banned account too.

@@ -8,8 +8,8 @@ import {
   requiredInt,
   requiredText,
   weeklyHoursSchema,
-} from "@/schemas/fields"
-import { interestSchema } from "@/schemas/user"
+} from "@sayaratak/shared/schemas/fields"
+import { interestSchema } from "@sayaratak/shared/schemas/user"
 
 export const roleChoiceSchema = z.object({
   role: z.enum(["user", "dealership", "workshop", "mechanic"]),

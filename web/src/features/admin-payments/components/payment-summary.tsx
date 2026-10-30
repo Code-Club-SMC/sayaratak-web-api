@@ -1,6 +1,6 @@
 import { formatPrice } from "@/lib/format"
 import { useT } from "@/lib/i18n/use-t"
-import type { AdminPaymentsPage } from "@/schemas/responses"
+import type { AdminPaymentsPage } from "@sayaratak/shared/schemas/responses"
 import { StatCard } from "@/components/app/stat-card"
 
 // Three numbers above the table: approved this month (Khartoum calendar), how many wait and how much they add up to.

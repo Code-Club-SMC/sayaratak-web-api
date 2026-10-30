@@ -1,7 +1,7 @@
 import { z } from "zod"
 
-import { requiredText } from "@/schemas/fields"
-import { vehicleTypeSchema } from "@/schemas/listing"
+import { requiredText } from "@sayaratak/shared/schemas/fields"
+import { vehicleTypeSchema } from "@sayaratak/shared/schemas/listing"
 
 export const makeSchema = z.object({
   nameAr: requiredText(40),

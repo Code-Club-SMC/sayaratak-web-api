@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { useRequireAuth } from "@/features/auth/auth-gate"
 import { useCreateSavedSearch } from "@/features/search/queries"
-import type { SearchParams } from "@/features/search/schemas"
+import type { SearchParams } from "@sayaratak/shared/search/schemas"
 import { useActiveFilters } from "@/features/search/use-active-filters"
 import { useT } from "@/lib/i18n/use-t"
 import { Button } from "@/components/ui/button"

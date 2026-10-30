@@ -1,4 +1,8 @@
-import type { Dealership, Mechanic, Workshop } from "@/schemas/profile"
+import type {
+  Dealership,
+  Mechanic,
+  Workshop,
+} from "@sayaratak/shared/schemas/profile"
 
 export type SetupItem = { key: string; done: boolean; href: string }
 

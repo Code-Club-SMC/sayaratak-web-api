@@ -3,7 +3,7 @@ import { createFileRoute } from "@tanstack/react-router"
 import { SearchPage } from "@/features/search/components/search-page"
 import { searchHead } from "@/features/search/head"
 import { searchLoader } from "@/features/search/loader"
-import { fullSearch, partsRouteSchema } from "@/features/search/schemas"
+import { fullSearch, partsRouteSchema } from "@sayaratak/shared/search/schemas"
 import { useSearchNavigation } from "@/features/search/use-search-navigation"
 
 export const Route = createFileRoute("/$locale/_public/parts")({

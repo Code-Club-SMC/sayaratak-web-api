@@ -1,7 +1,7 @@
 import { useId } from "react"
 
 import { useT } from "@/lib/i18n/use-t"
-import type { Plan } from "@/schemas/billing"
+import type { Plan } from "@sayaratak/shared/schemas/billing"
 import { PlanCard, type PlanRow } from "./plan-card"
 
 type Props = { plans: Plan[]; currentId?: string } & (

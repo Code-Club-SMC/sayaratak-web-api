@@ -1,5 +1,5 @@
 import { defaultLocale } from "@/lib/i18n/server"
-import type { Locale } from "@/schemas/locale"
+import type { Locale } from "@sayaratak/shared/schemas/locale"
 
 const locales: Locale[] = ["ar", "en"]
 const ogLocale = { ar: "ar_AR", en: "en_US" } as const

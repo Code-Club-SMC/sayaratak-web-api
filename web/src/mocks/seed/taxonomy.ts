@@ -1,5 +1,5 @@
-import type { VehicleType } from "@/schemas/listing"
-import type { Taxonomy } from "@/schemas/taxonomy"
+import type { VehicleType } from "@sayaratak/shared/schemas/listing"
+import type { Taxonomy } from "@sayaratak/shared/schemas/taxonomy"
 import type { Country } from "../types"
 import { slugify } from "./util"
 

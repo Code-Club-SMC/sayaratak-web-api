@@ -1,7 +1,7 @@
 import { readdirSync, readFileSync } from "node:fs"
 import { expect, it } from "vitest"
 
-import { normalizeDigits } from "@/lib/digits"
+import { normalizeDigits } from "@sayaratak/shared/lib/digits"
 import { formatRelative } from "@/lib/format"
 import { createI18n, type Messages } from "@/lib/i18n/create"
 

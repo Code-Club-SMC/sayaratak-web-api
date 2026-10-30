@@ -8,7 +8,7 @@ import { toast } from "@/components/ui/toast"
 import { ApiError } from "@/lib/api/client"
 import { errorText } from "@/lib/api/error-text"
 import { useT } from "@/lib/i18n/use-t"
-import type { Listing } from "@/schemas/listing"
+import type { Listing } from "@sayaratak/shared/schemas/listing"
 import { useCreateListing, useUpdateListing } from "../queries"
 import { toListingInput } from "./to-listing-input"
 

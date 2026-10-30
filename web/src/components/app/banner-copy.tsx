@@ -2,7 +2,7 @@ import { ArrowRightIcon } from "lucide-react"
 
 import { useT } from "@/lib/i18n/use-t"
 import { cn } from "@/lib/utils"
-import type { Banner } from "@/schemas/admin"
+import type { Banner } from "@sayaratak/shared/schemas/admin"
 import { Badge } from "@/components/ui/badge"
 
 type Copy = NonNullable<Banner["copy"]>["en"]

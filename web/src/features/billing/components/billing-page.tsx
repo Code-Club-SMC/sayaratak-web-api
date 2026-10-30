@@ -6,7 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { usePageTitle } from "@/features/dashboard/components/page-title"
 import { useT } from "@/lib/i18n/use-t"
 import { localeHref } from "@/lib/navigation"
-import type { Plan } from "@/schemas/billing"
+import type { Plan } from "@sayaratak/shared/schemas/billing"
 import {
   billingSearchSchema,
   pruneBillingSearch,

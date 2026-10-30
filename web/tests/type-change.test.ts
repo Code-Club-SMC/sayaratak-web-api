@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest"
 
-import type { Taxonomy } from "@/schemas/taxonomy"
-import { typeStepSchema } from "@/features/listings/schemas"
+import type { Taxonomy } from "@sayaratak/shared/schemas/taxonomy"
+import { typeStepSchema } from "@sayaratak/shared/listings/schemas"
 import {
   applyTile,
   detailsTouched,

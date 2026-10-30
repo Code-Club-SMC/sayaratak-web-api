@@ -1,8 +1,11 @@
 import { z } from "zod"
 
-import { requiredText } from "@/schemas/fields"
-import { broadcastAudienceSchema } from "@/schemas/api"
-import { pathSchema, type broadcastInputSchema } from "@/schemas/inputs"
+import { requiredText } from "@sayaratak/shared/schemas/fields"
+import { broadcastAudienceSchema } from "@sayaratak/shared/schemas/api"
+import {
+  pathSchema,
+  type broadcastInputSchema,
+} from "@sayaratak/shared/schemas/inputs"
 
 // The form keeps both languages flat; `toBroadcastInput` nests them for the wire.
 export const broadcastFormSchema = broadcastAudienceSchema.extend({

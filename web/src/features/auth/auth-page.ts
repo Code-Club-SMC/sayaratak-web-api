@@ -1,8 +1,8 @@
 import { redirect } from "@tanstack/react-router"
 
 import { getCopy } from "@/lib/i18n/server"
-import type { Locale } from "@/schemas/locale"
-import type { User } from "@/schemas/user"
+import type { Locale } from "@sayaratak/shared/schemas/locale"
+import type { User } from "@sayaratak/shared/schemas/user"
 import { buildHead } from "@/lib/seo"
 import { redirectSearch, signInDestination } from "./destination"
 

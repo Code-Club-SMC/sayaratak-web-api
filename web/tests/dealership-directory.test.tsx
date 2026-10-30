@@ -16,7 +16,7 @@ import {
 } from "@/features/directory/schemas"
 import { useDealershipNavigation } from "@/features/directory/use-dealership-navigation"
 import { NowProvider } from "@/lib/now"
-import { dealershipSchema } from "@/schemas/profile"
+import { dealershipSchema } from "@sayaratak/shared/schemas/profile"
 import { HoursTable } from "@/components/app/hours-table"
 import { db, resetDb } from "@/mocks/db"
 import { renderShell } from "./shell-render"

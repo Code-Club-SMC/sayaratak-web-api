@@ -1,5 +1,5 @@
 import { useT } from "@/lib/i18n/use-t"
-import type { Workshop } from "@/schemas/profile"
+import type { Workshop } from "@sayaratak/shared/schemas/profile"
 import { OpenNowBadge } from "./open-now-badge"
 import { ProviderCard } from "./provider-card"
 

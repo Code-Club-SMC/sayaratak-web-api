@@ -2,7 +2,7 @@ import { XIcon } from "lucide-react"
 
 import { useT } from "@/lib/i18n/use-t"
 import { localeHref } from "@/lib/navigation"
-import type { MapPoint } from "@/schemas/responses"
+import type { MapPoint } from "@sayaratak/shared/schemas/responses"
 import { buttonVariants } from "@/components/ui/button"
 import { PointSummary, pointPath } from "./point-summary"
 

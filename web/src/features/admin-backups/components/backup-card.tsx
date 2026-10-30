@@ -1,6 +1,6 @@
 import { formatNumber } from "@/lib/format"
 import { useT } from "@/lib/i18n/use-t"
-import type { Backup } from "@/schemas/admin"
+import type { Backup } from "@sayaratak/shared/schemas/admin"
 import { Badge } from "@/components/ui/badge"
 import { BackupStatus } from "./backup-status"
 import { RestoreButton } from "./restore-button"

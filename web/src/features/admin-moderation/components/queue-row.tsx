@@ -6,7 +6,7 @@ import { formatRelative } from "@/lib/format"
 import { useT } from "@/lib/i18n/use-t"
 import { useNow } from "@/lib/now"
 import { cn } from "@/lib/utils"
-import type { Listing } from "@/schemas/listing"
+import type { Listing } from "@sayaratak/shared/schemas/listing"
 
 // One 72 px row: a checkbox for bulk approve, then a button that opens the listing. The open row has the accent background.
 export function QueueRow({

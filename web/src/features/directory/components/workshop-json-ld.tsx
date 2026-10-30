@@ -2,7 +2,7 @@ import { useCityName } from "@/hooks/use-city-name"
 import { useT } from "@/lib/i18n/use-t"
 import { localeHref } from "@/lib/navigation"
 import { origin } from "@/lib/seo"
-import type { Workshop } from "@/schemas/profile"
+import type { Workshop } from "@sayaratak/shared/schemas/profile"
 import { workshopJsonLd } from "../json-ld"
 
 export function WorkshopJsonLd({ workshop: w }: { workshop: Workshop }) {

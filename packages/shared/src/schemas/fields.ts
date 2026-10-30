@@ -1,6 +1,6 @@
 import { z } from "zod"
 
-import { normalizePhone } from "@/lib/phone"
+import { normalizePhone } from "../lib/phone"
 
 export { localeSchema, type Locale } from "./locale"
 export const roleSchema = z.enum([

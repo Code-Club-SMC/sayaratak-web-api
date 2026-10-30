@@ -3,7 +3,7 @@ import { lazyRouteComponent } from "@tanstack/react-router"
 import { dashboardPage } from "@/features/dashboard/overview-route"
 import { withProps } from "@/lib/lazy-page"
 import { dashboardPath } from "@/lib/navigation"
-import type { TargetType } from "@/schemas/review"
+import type { TargetType } from "@sayaratak/shared/schemas/review"
 
 const VerificationPage = lazyRouteComponent(
   () => import("./components/verification-page"),

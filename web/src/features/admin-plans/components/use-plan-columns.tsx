@@ -1,7 +1,7 @@
 import { formatNumber } from "@/lib/format"
 import { useT } from "@/lib/i18n/use-t"
 import type { DataColumn } from "@/lib/table"
-import type { AdminPlan } from "@/schemas/admin"
+import type { AdminPlan } from "@sayaratak/shared/schemas/admin"
 import { PlanActions } from "./plan-actions"
 import { PlanCapValue } from "./plan-cap-value"
 import { capHeader, capsOf } from "./plan-caps"

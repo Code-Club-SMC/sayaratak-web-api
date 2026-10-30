@@ -5,7 +5,7 @@ import { PageHeader } from "@/components/app/page-header"
 import { buttonVariants } from "@/components/ui/button"
 import { useT } from "@/lib/i18n/use-t"
 import { dashboardPath, localeHref } from "@/lib/navigation"
-import type { Plan } from "@/schemas/billing"
+import type { Plan } from "@sayaratak/shared/schemas/billing"
 
 // An unknown, foreign or already paid item: the checkout says so inside the dashboard and points back to billing.
 export function CheckoutNotFound({ audience }: { audience: Plan["audience"] }) {

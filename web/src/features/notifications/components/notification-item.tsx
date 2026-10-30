@@ -3,7 +3,7 @@ import type { MouseEvent } from "react"
 import { RelativeTime } from "@/components/app/relative-time"
 import { useT } from "@/lib/i18n/use-t"
 import { localeHref } from "@/lib/navigation"
-import type { Notification } from "@/schemas/messaging"
+import type { Notification } from "@sayaratak/shared/schemas/messaging"
 import { notificationIcon } from "../notification-icon"
 
 // One row: icon by type, title, body, time. A row with a page is a link; one without is a button until it is read, then plain text. The unread dot has a text twin for screen readers. Without `onOpen` (the broadcast preview) it is plain text.

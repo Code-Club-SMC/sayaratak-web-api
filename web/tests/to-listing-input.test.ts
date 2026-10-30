@@ -1,7 +1,7 @@
 // @vitest-environment node
 import { describe, expect, it } from "vitest"
 
-import { listingInputSchema } from "@/features/listings/schemas"
+import { listingInputSchema } from "@sayaratak/shared/listings/schemas"
 import {
   listingToValues,
   toFlatInput,
@@ -9,7 +9,7 @@ import {
 } from "@/features/listings/wizard/to-listing-input"
 import { wizardDefaults } from "@/features/listings/wizard/wizard-defaults"
 import { db, resetDb } from "@/mocks/db"
-import { listingSchema } from "@/schemas/listing"
+import { listingSchema } from "@sayaratak/shared/schemas/listing"
 
 const photo = (id: string) => ({
   id,

@@ -5,7 +5,7 @@ import {
   intentSchema,
   transmissionSchema,
   vehicleTypeSchema,
-} from "@/schemas/listing"
+} from "../schemas/listing"
 
 // Bad URL values are dropped, never crash the page.
 export const optional = <T extends z.ZodTypeAny>(s: T) =>

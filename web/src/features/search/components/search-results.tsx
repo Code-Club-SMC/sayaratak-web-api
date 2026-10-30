@@ -16,7 +16,7 @@ import { ResultsRegion } from "@/components/app/results-region"
 import { SectionError } from "@/components/app/section-error"
 import { SortSelect } from "@/components/app/sort-select"
 import type { FilterGroup } from "../filters"
-import type { SearchParams } from "../schemas"
+import type { SearchParams } from "@sayaratak/shared/search/schemas"
 import { ViewToggle } from "./view-toggle"
 
 const vehicleSorts = [

@@ -4,7 +4,7 @@ import { z } from "zod"
 
 import { toListingInput } from "@/features/listings/wizard/to-listing-input"
 import { wizardDefaults } from "@/features/listings/wizard/wizard-defaults"
-import type { Review } from "@/schemas/review"
+import type { Review } from "@sayaratak/shared/schemas/review"
 import { db, resetDb } from "@/mocks/db"
 import { handleMock } from "@/mocks/router"
 import { capPaid } from "@/mocks/search"

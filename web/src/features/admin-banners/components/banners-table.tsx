@@ -6,7 +6,7 @@ import { useT } from "@/lib/i18n/use-t"
 import { AdminTable } from "@/features/admin/components/admin-table"
 import { adminQueries } from "@/features/admin/queries"
 import type { AdminTableSearch } from "@/features/admin/schemas"
-import type { Banner } from "@/schemas/admin"
+import type { Banner } from "@sayaratak/shared/schemas/admin"
 import { EmptyState } from "@/components/app/empty-state"
 import { useBannerColumns } from "./use-banner-columns"
 

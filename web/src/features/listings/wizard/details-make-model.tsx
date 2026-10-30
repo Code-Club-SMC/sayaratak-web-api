@@ -1,5 +1,5 @@
 import { MakeModelFields } from "@/components/app/make-model-fields"
-import type { VehicleType } from "@/schemas/listing"
+import type { VehicleType } from "@sayaratak/shared/schemas/listing"
 import { useStepFields } from "./use-step-fields"
 
 // Make and model of the details step, stored as four plain fields of the one form.

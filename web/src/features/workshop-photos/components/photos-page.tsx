@@ -15,7 +15,7 @@ import {
 import { errorText } from "@/lib/api/error-text"
 import { useT } from "@/lib/i18n/use-t"
 import { localeHref } from "@/lib/navigation"
-import { workshopSchema } from "@/schemas/profile"
+import { workshopSchema } from "@sayaratak/shared/schemas/profile"
 
 // The workshop's public gallery: upload, reorder, remove. Each change saves at once.
 export function PhotosPage() {

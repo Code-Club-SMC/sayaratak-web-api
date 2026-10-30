@@ -1,6 +1,6 @@
 import { Badge } from "@/components/ui/badge"
 import { useT } from "@/lib/i18n/use-t"
-import type { Report } from "@/schemas/admin"
+import type { Report } from "@sayaratak/shared/schemas/admin"
 
 const reasonVariant = {
   scam: "destructive",

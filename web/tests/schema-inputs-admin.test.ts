@@ -1,7 +1,10 @@
 import { expect, it } from "vitest"
 
-import { bannerCopySchema, bulkResultSchema } from "@/schemas/admin"
-import { resetTokenSchema, uploadSchema } from "@/schemas/api"
+import {
+  bannerCopySchema,
+  bulkResultSchema,
+} from "@sayaratak/shared/schemas/admin"
+import { resetTokenSchema, uploadSchema } from "@sayaratak/shared/schemas/api"
 import {
   adPagePatchSchema,
   adminListingPatchSchema,
@@ -26,7 +29,7 @@ import {
   serviceInputSchema,
   settingsPatchSchema,
   taxonomyInputSchema,
-} from "@/schemas/inputs"
+} from "@sayaratak/shared/schemas/inputs"
 import { runCases } from "./schema-case"
 
 const bi = (s: string) => ({ ar: s, en: s })

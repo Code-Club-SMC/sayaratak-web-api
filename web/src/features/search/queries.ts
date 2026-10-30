@@ -13,12 +13,12 @@ import {
   useApiMutation,
 } from "@/lib/api/mutation"
 import { keys } from "@/lib/api/query-keys"
-import { okSchema } from "@/schemas/api"
+import { okSchema } from "@sayaratak/shared/schemas/api"
 import type {
   savedSearchInputSchema,
   savedSearchPatchSchema,
-} from "@/schemas/inputs"
-import { savedSearchSchema } from "@/schemas/saved-search"
+} from "@sayaratak/shared/schemas/inputs"
+import { savedSearchSchema } from "@sayaratak/shared/schemas/saved-search"
 
 export const savedSearchQueries = {
   list: queryOptions({

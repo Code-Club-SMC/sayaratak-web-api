@@ -5,25 +5,33 @@ import type {
   Settings,
   SitePage,
   VerificationRequest,
-} from "@/schemas/admin"
-import type { AdPage, Campaign } from "@/schemas/ads"
-import type { Broadcast, EventType, NotificationPrefs } from "@/schemas/api"
-import type { Bilingual, Locale } from "@/schemas/fields"
-import type { contactSubjects } from "@/schemas/inputs"
-import type { Listing, Media } from "@/schemas/listing"
-import type { Message, Notification } from "@/schemas/messaging"
+} from "@sayaratak/shared/schemas/admin"
+import type { AdPage, Campaign } from "@sayaratak/shared/schemas/ads"
+import type {
+  Broadcast,
+  EventType,
+  NotificationPrefs,
+} from "@sayaratak/shared/schemas/api"
+import type { Bilingual, Locale } from "@sayaratak/shared/schemas/fields"
+import type { contactSubjects } from "@sayaratak/shared/schemas/inputs"
+import type { Listing, Media } from "@sayaratak/shared/schemas/listing"
+import type { Message, Notification } from "@sayaratak/shared/schemas/messaging"
 import type {
   Payment,
   Plan,
   Promotion,
   PromotionPrice,
   Subscription,
-} from "@/schemas/billing"
-import type { Dealership, Mechanic, Workshop } from "@/schemas/profile"
-import type { Review } from "@/schemas/review"
-import type { SavedSearch } from "@/schemas/saved-search"
-import type { Taxonomy } from "@/schemas/taxonomy"
-import type { User } from "@/schemas/user"
+} from "@sayaratak/shared/schemas/billing"
+import type {
+  Dealership,
+  Mechanic,
+  Workshop,
+} from "@sayaratak/shared/schemas/profile"
+import type { Review } from "@sayaratak/shared/schemas/review"
+import type { SavedSearch } from "@sayaratak/shared/schemas/saved-search"
+import type { Taxonomy } from "@sayaratak/shared/schemas/taxonomy"
+import type { User } from "@sayaratak/shared/schemas/user"
 
 // Rows are the API shapes plus the few server-only columns; handlers parse through the schemas, which drops the extras.
 export type UserRow = Omit<User, "hasPassword"> & {

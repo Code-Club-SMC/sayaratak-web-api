@@ -8,7 +8,7 @@ import { toast } from "@/components/ui/toast"
 import { NowProvider } from "@/lib/now"
 import { db, resetDb } from "@/mocks/db"
 import { handleMock } from "@/mocks/router"
-import type { AdminBusiness } from "@/schemas/admin"
+import type { AdminBusiness } from "@sayaratak/shared/schemas/admin"
 import { renderShell } from "./shell-render"
 
 Element.prototype.scrollIntoView = () => {}

@@ -1,7 +1,7 @@
 import { expect, it } from "vitest"
 
 import { buildHead } from "@/lib/seo"
-import { makeListingSlug, parseListingId } from "@/lib/slug"
+import { makeListingSlug, parseListingId } from "@sayaratak/shared/lib/slug"
 
 it("builds Latin and Arabic slugs and reads the id back", () => {
   expect(makeListingSlug("Toyota Hilux 2019", "Khartoum", "k3f9a2")).toBe(

@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query"
 
 import { useT } from "@/lib/i18n/use-t"
 import { promotionLabel } from "@/lib/promotion"
-import type { PromotionPrice } from "@/schemas/billing"
+import type { PromotionPrice } from "@sayaratak/shared/schemas/billing"
 import { adminQueries } from "@/features/admin/queries"
 import { PriceText } from "@/components/app/price-text"
 import { SectionError } from "@/components/app/section-error"

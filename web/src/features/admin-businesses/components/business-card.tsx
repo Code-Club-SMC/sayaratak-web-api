@@ -1,6 +1,6 @@
 import { formatDate } from "@/lib/format"
 import { useT } from "@/lib/i18n/use-t"
-import type { AdminBusiness } from "@/schemas/admin"
+import type { AdminBusiness } from "@sayaratak/shared/schemas/admin"
 import { BusinessCell } from "./business-cell"
 import type { BusinessChange } from "./business-change"
 import { BusinessSwitch } from "./business-switches"

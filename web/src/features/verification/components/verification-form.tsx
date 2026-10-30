@@ -13,7 +13,7 @@ import { errorText } from "@/lib/api/error-text"
 import { keys } from "@/lib/api/query-keys"
 import { focusFirstInvalid } from "@/lib/focus-invalid"
 import { useT } from "@/lib/i18n/use-t"
-import type { TargetType } from "@/schemas/review"
+import type { TargetType } from "@sayaratak/shared/schemas/review"
 import { useRequestVerification } from "../queries"
 import {
   MAX_DOCUMENTS,

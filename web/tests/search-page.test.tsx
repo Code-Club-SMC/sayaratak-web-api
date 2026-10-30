@@ -15,7 +15,7 @@ import {
   routeSearchSchema,
   searchParamsSchema,
   type SearchParams,
-} from "@/features/search/schemas"
+} from "@sayaratak/shared/search/schemas"
 import { fill, searchTitle } from "@/features/search/title"
 import { useSearchNavigation } from "@/features/search/use-search-navigation"
 import enSearch from "@/messages/en/search.json"

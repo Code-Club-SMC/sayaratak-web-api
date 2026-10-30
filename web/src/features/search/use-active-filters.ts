@@ -9,7 +9,7 @@ import {
   listKeys,
   listPrefix,
   type SearchParams,
-} from "./schemas"
+} from "@sayaratak/shared/search/schemas"
 
 const dropOne = (list: string[] | undefined, value: string) => {
   const rest = (list ?? []).filter((x) => x !== value)

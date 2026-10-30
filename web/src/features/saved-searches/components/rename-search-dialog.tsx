@@ -9,7 +9,7 @@ import { toast } from "@/components/ui/toast"
 import { errorText } from "@/lib/api/error-text"
 import { useT } from "@/lib/i18n/use-t"
 import { useUpdateSavedSearch } from "@/features/search/queries"
-import type { SavedSearch } from "@/schemas/saved-search"
+import type { SavedSearch } from "@sayaratak/shared/schemas/saved-search"
 import { renameSearchSchema, type RenameSearchForm } from "../schemas"
 import { useAppForm } from "@/hooks/use-app-form"
 

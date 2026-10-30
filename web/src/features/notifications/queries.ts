@@ -9,9 +9,9 @@ import type { ApiError } from "@/lib/api/client"
 import { apiFetch } from "@/lib/api/client"
 import { patchRows, restore, snapshot } from "@/lib/api/mutation"
 import { keys } from "@/lib/api/query-keys"
-import { okSchema, type Counts } from "@/schemas/api"
-import { pageOf } from "@/schemas/fields"
-import { notificationSchema } from "@/schemas/messaging"
+import { okSchema, type Counts } from "@sayaratak/shared/schemas/api"
+import { pageOf } from "@sayaratak/shared/schemas/fields"
+import { notificationSchema } from "@sayaratak/shared/schemas/messaging"
 import { countsQuery } from "./counts-query"
 
 export const notificationQueries = {

@@ -4,8 +4,8 @@ import type { z } from "zod"
 import { apiFetch } from "@/lib/api/client"
 import { useApiMutation } from "@/lib/api/mutation"
 import { keys } from "@/lib/api/query-keys"
-import type { onboardingInputSchema } from "@/schemas/inputs"
-import { userSchema } from "@/schemas/user"
+import type { onboardingInputSchema } from "@sayaratak/shared/schemas/inputs"
+import { userSchema } from "@sayaratak/shared/schemas/user"
 
 // Creates the dealership, workshop or mechanic record and ends onboarding.
 export function useCompleteOnboarding() {

@@ -18,7 +18,7 @@ import {
   detailsBaseSchema,
   promotionChoiceSchema,
   reviewProfileSchema,
-} from "@/features/listings/schemas"
+} from "@sayaratak/shared/listings/schemas"
 import { mapFilterSchema } from "@/features/map/schemas"
 import { portfolioFormSchema } from "@/features/mechanic-portfolio/schemas"
 import {
@@ -28,9 +28,9 @@ import {
   serviceRowSchema,
   workshopBusinessSchema,
 } from "@/features/onboarding/schemas"
-import { partsRouteSchema } from "@/features/search/schemas"
+import { partsRouteSchema } from "@sayaratak/shared/search/schemas"
 import { serviceFormSchema } from "@/features/workshop-services/schemas"
-import { extraDefaults } from "@/schemas/listing-fields"
+import { extraDefaults } from "@sayaratak/shared/schemas/listing-fields"
 import { runCases } from "./schema-case"
 
 const phone = "+249912345678"

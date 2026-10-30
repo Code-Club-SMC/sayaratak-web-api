@@ -5,8 +5,8 @@ import {
   featureGroupsFor,
   specOptions,
   type ExtraFields,
-} from "@/schemas/listing-fields"
-import type { Intent, VehicleType } from "@/schemas/listing"
+} from "@sayaratak/shared/schemas/listing-fields"
+import type { Intent, VehicleType } from "@sayaratak/shared/schemas/listing"
 
 // Specs, history, papers, deal and rent terms of a seeded listing. Every value comes from a hash of the listing's number, never from the seeded random generator, so adding a field moves no other number of the seed.
 const hash = (n: number, salt: number) => {

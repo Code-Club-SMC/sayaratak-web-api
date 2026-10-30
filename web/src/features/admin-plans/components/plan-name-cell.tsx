@@ -1,5 +1,5 @@
 import { useT } from "@/lib/i18n/use-t"
-import type { AdminPlan } from "@/schemas/admin"
+import type { AdminPlan } from "@sayaratak/shared/schemas/admin"
 
 // The plan's name in the admin's language, the other one under it at the same start edge.
 export function PlanNameCell({ plan }: { plan: AdminPlan }) {

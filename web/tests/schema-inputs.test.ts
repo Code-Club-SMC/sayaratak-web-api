@@ -31,7 +31,7 @@ import {
   savedSearchPatchSchema,
   signupInputSchema,
   threadInputSchema,
-} from "@/schemas/inputs"
+} from "@sayaratak/shared/schemas/inputs"
 import { runCases } from "./schema-case"
 
 const email = "a@b.co"

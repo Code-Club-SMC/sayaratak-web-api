@@ -1,5 +1,5 @@
 import { TYPE_SLUGS } from "@/features/search/landing"
-import { intentSchema } from "@/schemas/listing"
+import { intentSchema } from "@sayaratak/shared/schemas/listing"
 import type { SitemapEntry } from "@/lib/sitemap"
 import { db } from "./db"
 import { listed } from "./lib"

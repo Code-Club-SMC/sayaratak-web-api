@@ -1,7 +1,7 @@
 import { formatMonthYear, initials } from "@/lib/format"
 import { useT } from "@/lib/i18n/use-t"
 import { localeHref } from "@/lib/navigation"
-import type { Listing } from "@/schemas/listing"
+import type { Listing } from "@sayaratak/shared/schemas/listing"
 import { ContactActions } from "@/components/app/contact-actions"
 import { VerifiedBadge } from "@/components/app/verified-badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"

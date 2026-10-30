@@ -3,7 +3,7 @@ import { XIcon } from "lucide-react"
 
 import type { ControlProps } from "@/components/app/form-field"
 import { UploadDropzone } from "@/components/app/upload-dropzone"
-import { imageFileTypes } from "@/schemas/fields"
+import { imageFileTypes } from "@sayaratak/shared/schemas/fields"
 import { RemoveButton } from "@/components/app/remove-button"
 import { useT } from "@/lib/i18n/use-t"
 

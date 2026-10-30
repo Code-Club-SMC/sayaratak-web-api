@@ -3,7 +3,7 @@ import { Badge } from "@/components/ui/badge"
 import { formatDate } from "@/lib/format"
 import { useT } from "@/lib/i18n/use-t"
 import type { DataColumn } from "@/lib/table"
-import type { MyPromotion } from "@/schemas/responses"
+import type { MyPromotion } from "@sayaratak/shared/schemas/responses"
 import { EndPromotionButton } from "./end-promotion-button"
 
 // Listing, type, source, start, end and End now. Newest first from the server, so no column sorts.

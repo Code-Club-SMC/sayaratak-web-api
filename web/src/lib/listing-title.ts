@@ -1,6 +1,6 @@
-import type { Listing } from "@/schemas/listing"
-import type { Locale } from "@/schemas/locale"
-import type { Taxonomy } from "@/schemas/taxonomy"
+import type { Listing } from "@sayaratak/shared/schemas/listing"
+import type { Locale } from "@sayaratak/shared/schemas/locale"
+import type { Taxonomy } from "@sayaratak/shared/schemas/taxonomy"
 
 export type Titled = Pick<
   Listing,

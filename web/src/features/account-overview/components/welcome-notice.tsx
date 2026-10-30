@@ -4,7 +4,7 @@ import { XIcon } from "lucide-react"
 import { Button, buttonVariants } from "@/components/ui/button"
 import { useT } from "@/lib/i18n/use-t"
 import { localeHref } from "@/lib/navigation"
-import type { User } from "@/schemas/user"
+import type { User } from "@sayaratak/shared/schemas/user"
 
 type Role = Exclude<User["role"], "admin">
 

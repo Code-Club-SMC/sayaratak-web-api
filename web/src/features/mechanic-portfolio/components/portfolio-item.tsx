@@ -4,7 +4,7 @@ import { MediaImage } from "@/components/app/media-image"
 import { RowActions } from "@/components/app/row-actions"
 import { Button } from "@/components/ui/button"
 import { useT } from "@/lib/i18n/use-t"
-import type { Mechanic } from "@/schemas/profile"
+import type { Mechanic } from "@sayaratak/shared/schemas/profile"
 
 type Item = Mechanic["portfolio"][number]
 

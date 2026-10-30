@@ -3,17 +3,17 @@ import {
   dealershipSchema,
   mechanicSchema,
   workshopSchema,
-} from "@/schemas/profile"
-import { pageOf } from "@/schemas/fields"
+} from "@sayaratak/shared/schemas/profile"
+import { pageOf } from "@sayaratak/shared/schemas/fields"
 import {
   businessPatchSchema,
   idsInputSchema,
   imagesInputSchema,
   portfolioInputSchema,
   serviceInputSchema,
-} from "@/schemas/inputs"
-import { okSchema } from "@/schemas/api"
-import type { Mechanic, Workshop } from "@/schemas/profile"
+} from "@sayaratak/shared/schemas/inputs"
+import { okSchema } from "@sayaratak/shared/schemas/api"
+import type { Mechanic, Workshop } from "@sayaratak/shared/schemas/profile"
 import type { z } from "zod"
 
 import { db, insert, newId, paginate } from "../db"

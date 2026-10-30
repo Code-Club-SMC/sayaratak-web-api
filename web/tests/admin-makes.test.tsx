@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it } from "vitest"
 
 import { db, resetDb } from "@/mocks/db"
 import { handleMock } from "@/mocks/router"
-import { taxonomySchema } from "@/schemas/taxonomy"
+import { taxonomySchema } from "@sayaratak/shared/schemas/taxonomy"
 
 beforeEach(resetDb)
 

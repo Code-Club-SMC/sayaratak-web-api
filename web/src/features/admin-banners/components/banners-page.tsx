@@ -8,7 +8,7 @@ import {
   type AdminTableSearch,
 } from "@/features/admin/schemas"
 import { usePageTitle } from "@/features/dashboard/components/page-title"
-import type { Banner } from "@/schemas/admin"
+import type { Banner } from "@sayaratak/shared/schemas/admin"
 import { PageHeader } from "@/components/app/page-header"
 import { Button } from "@/components/ui/button"
 import { fromBanner, bannerFormDefaults, type BannerForm } from "../schemas"

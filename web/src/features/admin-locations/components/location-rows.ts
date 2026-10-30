@@ -1,5 +1,5 @@
-import type { Bilingual } from "@/schemas/fields"
-import type { Locale } from "@/schemas/locale"
+import type { Bilingual } from "@sayaratak/shared/schemas/fields"
+import type { Locale } from "@sayaratak/shared/schemas/locale"
 
 const pageSize = 24
 

@@ -1,4 +1,4 @@
-import { localeSchema } from "@/schemas/locale"
+import { localeSchema } from "@sayaratak/shared/schemas/locale"
 
 const locales = localeSchema.options
 const defaultLocale = "ar"

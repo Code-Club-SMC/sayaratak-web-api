@@ -1,5 +1,5 @@
-import { uploadSchema } from "@/schemas/api"
-import { mediaSchema } from "@/schemas/listing"
+import { uploadSchema } from "@sayaratak/shared/schemas/api"
+import { mediaSchema } from "@sayaratak/shared/schemas/listing"
 
 import { db, newId } from "../db"
 import { fail, route } from "../http"

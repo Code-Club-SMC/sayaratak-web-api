@@ -6,17 +6,20 @@ import {
   listingInputSchema,
   photosStepSchema,
   typeStepSchema,
-} from "@/features/listings/schemas"
-import { arrayKeys, searchParamsSchema } from "@/features/search/schemas"
-import { listingAnalyticsSchema } from "@/schemas/api"
+} from "@sayaratak/shared/listings/schemas"
+import { arrayKeys, searchParamsSchema } from "@sayaratak/shared/search/schemas"
+import { listingAnalyticsSchema } from "@sayaratak/shared/schemas/api"
 import {
   listingCreateSchema,
   listingPatchSchema,
   listingStatusInputSchema,
-} from "@/schemas/inputs"
-import { listingPageSchema, listingSchema } from "@/schemas/listing"
-import { taxonomySchema } from "@/schemas/taxonomy"
-import { makeListingSlug, parseListingId } from "@/lib/slug"
+} from "@sayaratak/shared/schemas/inputs"
+import {
+  listingPageSchema,
+  listingSchema,
+} from "@sayaratak/shared/schemas/listing"
+import { taxonomySchema } from "@sayaratak/shared/schemas/taxonomy"
+import { makeListingSlug, parseListingId } from "@sayaratak/shared/lib/slug"
 import { bilingualName, both } from "@/mocks/seed/util"
 
 import { db, find, insert, newListingId, paginate, remove } from "../db"

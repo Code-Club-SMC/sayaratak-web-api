@@ -1,9 +1,9 @@
-import { reportInputSchema } from "@/schemas/inputs"
+import { reportInputSchema } from "@sayaratak/shared/schemas/inputs"
 import {
   reportSchema,
   verificationLabels,
   verificationRequestSchema,
-} from "@/schemas/admin"
+} from "@sayaratak/shared/schemas/admin"
 
 import { db, insert, newId } from "../db"
 import { fail, needRole, needUser, route } from "../http"

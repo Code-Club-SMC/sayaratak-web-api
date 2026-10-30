@@ -1,10 +1,13 @@
 import type { z } from "zod"
 
-import { adminPlanSchema, adminSubscriptionSchema } from "@/schemas/admin"
-import { okSchema } from "@/schemas/api"
-import type { Plan } from "@/schemas/billing"
-import { pageOf } from "@/schemas/fields"
-import { planInputSchema } from "@/schemas/inputs"
+import {
+  adminPlanSchema,
+  adminSubscriptionSchema,
+} from "@sayaratak/shared/schemas/admin"
+import { okSchema } from "@sayaratak/shared/schemas/api"
+import type { Plan } from "@sayaratak/shared/schemas/billing"
+import { pageOf } from "@sayaratak/shared/schemas/fields"
+import { planInputSchema } from "@sayaratak/shared/schemas/inputs"
 
 import { db, find, insert, newId, remove } from "../db"
 import { fail, needRole, route } from "../http"

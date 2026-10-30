@@ -2,22 +2,22 @@ import {
   activitySchema,
   adminSearchSchema,
   adminStatsSchema,
-} from "@/schemas/responses"
+} from "@sayaratak/shared/schemas/responses"
 import {
   adminListingSchema,
   adminUserSchema,
   adminVerificationSchema,
   bulkResultSchema,
   type VerificationRequest,
-} from "@/schemas/admin"
+} from "@sayaratak/shared/schemas/admin"
 import {
   adminListingPatchSchema,
   banInputSchema,
   bulkInputSchema,
   rejectInputSchema,
-} from "@/schemas/inputs"
-import { listingSchema } from "@/schemas/listing"
-import { pageOf } from "@/schemas/fields"
+} from "@sayaratak/shared/schemas/inputs"
+import { listingSchema } from "@sayaratak/shared/schemas/listing"
+import { pageOf } from "@sayaratak/shared/schemas/fields"
 import type { z } from "zod"
 import { both } from "@/mocks/seed/util"
 

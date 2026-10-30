@@ -6,9 +6,9 @@ import { formatDate } from "@/lib/format"
 import { useT } from "@/lib/i18n/use-t"
 import { useNow } from "@/lib/now"
 import { cn } from "@/lib/utils"
-import type { Plan } from "@/schemas/billing"
-import type { Role } from "@/schemas/fields"
-import type { MeSubscription } from "@/schemas/responses"
+import type { Plan } from "@sayaratak/shared/schemas/billing"
+import type { Role } from "@sayaratak/shared/schemas/fields"
+import type { MeSubscription } from "@sayaratak/shared/schemas/responses"
 import { PlanHeader } from "./plan-header"
 
 const DAY_MS = 24 * 60 * 60 * 1000

@@ -1,4 +1,4 @@
-import { makeListingSlug } from "@/lib/slug"
+import { makeListingSlug } from "@sayaratak/shared/lib/slug"
 import type {
   Fuel,
   Intent,
@@ -8,10 +8,10 @@ import type {
   PromotionType,
   Transmission,
   VehicleType,
-} from "@/schemas/listing"
-import type { Promotion } from "@/schemas/billing"
-import type { Dealership } from "@/schemas/profile"
-import type { Taxonomy } from "@/schemas/taxonomy"
+} from "@sayaratak/shared/schemas/listing"
+import type { Promotion } from "@sayaratak/shared/schemas/billing"
+import type { Dealership } from "@sayaratak/shared/schemas/profile"
+import type { Taxonomy } from "@sayaratak/shared/schemas/taxonomy"
 import { faker } from "@faker-js/faker"
 import type { ListingRow, UserRow } from "../types"
 import { pickMockPhoto } from "./photos"

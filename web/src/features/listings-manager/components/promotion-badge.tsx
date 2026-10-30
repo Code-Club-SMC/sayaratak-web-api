@@ -2,7 +2,7 @@ import { Badge } from "@/components/ui/badge"
 import { formatDate } from "@/lib/format"
 import { useT } from "@/lib/i18n/use-t"
 import { useNow } from "@/lib/now"
-import type { Listing } from "@/schemas/listing"
+import type { Listing } from "@sayaratak/shared/schemas/listing"
 
 // The promotion running now, with its end date. Amber stays for paid promotion only (A5).
 export function PromotionBadge({ listing }: { listing: Listing }) {

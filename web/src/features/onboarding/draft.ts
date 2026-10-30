@@ -2,7 +2,7 @@ import { z } from "zod"
 
 import { withRedirect } from "@/features/auth/destination"
 import { localeHref } from "@/lib/navigation"
-import type { Locale } from "@/schemas/locale"
+import type { Locale } from "@sayaratak/shared/schemas/locale"
 import type { FlowStep } from "./flows"
 
 export type DraftData = Record<string, unknown>

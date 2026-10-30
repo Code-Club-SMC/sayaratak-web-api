@@ -23,8 +23,8 @@ import {
   roleSchema,
   weeklyHoursSchema,
   yearSchema,
-} from "@/schemas/fields"
-import { localeSchema } from "@/schemas/locale"
+} from "@sayaratak/shared/schemas/fields"
+import { localeSchema } from "@sayaratak/shared/schemas/locale"
 import { runCases } from "./schema-case"
 
 const year = new Date().getFullYear()

@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest"
 
 import { ServicesPage } from "@/features/workshop-services/components/services-page"
 import { db, resetDb } from "@/mocks/db"
-import type { Workshop } from "@/schemas/profile"
+import type { Workshop } from "@sayaratak/shared/schemas/profile"
 import { renderShell } from "./shell-render"
 
 type Service = Workshop["services"][number]

@@ -1,6 +1,6 @@
 import { MediaImage } from "@/components/app/media-image"
 import { useT } from "@/lib/i18n/use-t"
-import type { AdminBusiness } from "@/schemas/admin"
+import type { AdminBusiness } from "@sayaratak/shared/schemas/admin"
 
 // Logo or photo and the business name as one button that opens its sheet.
 export function BusinessCell({

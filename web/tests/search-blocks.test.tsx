@@ -6,7 +6,7 @@ import { applyDraft, clearFilters, toDraft } from "@/features/search/filters"
 import {
   searchParamsSchema,
   type SearchParams,
-} from "@/features/search/schemas"
+} from "@sayaratak/shared/search/schemas"
 import { ActiveFilterChips } from "@/components/app/active-filter-chips"
 import { EmptyResults } from "@/components/app/empty-results"
 import { FilterPanel } from "@/components/app/filter-panel"

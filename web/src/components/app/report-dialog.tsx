@@ -8,7 +8,7 @@ import {
   reportReasons,
   reportSchema,
   type ReportForm,
-} from "@/features/listings/schemas"
+} from "@sayaratak/shared/listings/schemas"
 import { useReportListing } from "@/features/verification/queries"
 import { errorText } from "@/lib/api/error-text"
 import { useT } from "@/lib/i18n/use-t"

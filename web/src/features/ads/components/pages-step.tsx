@@ -8,7 +8,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { formatPrice } from "@/lib/format"
 import { useT } from "@/lib/i18n/use-t"
 import { cn } from "@/lib/utils"
-import type { AdPageId } from "@/schemas/ads"
+import type { AdPageId } from "@sayaratak/shared/schemas/ads"
 import { adsQueries } from "../queries"
 import type { CampaignForm } from "../schemas"
 

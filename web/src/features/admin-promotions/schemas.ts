@@ -1,6 +1,6 @@
 import { z } from "zod"
 
-import { requiredInt } from "@/schemas/fields"
+import { requiredInt } from "@sayaratak/shared/schemas/fields"
 
 // What one promotion costs and how long it runs (A9). A price of 0 is allowed.
 export const promotionPriceFormSchema = z.object({

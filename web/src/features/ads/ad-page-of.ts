@@ -1,5 +1,5 @@
-import type { AdPageId } from "@/schemas/ads"
-import type { SearchParams } from "@/features/search/schemas"
+import type { AdPageId } from "@sayaratak/shared/schemas/ads"
+import type { SearchParams } from "@sayaratak/shared/search/schemas"
 
 // The ad page of a search: one per category. Rickshaws share the tuk-tuk page; the all-vehicles search shows the Cars page's ads.
 export function adPageOf(s: Pick<SearchParams, "kind" | "type">): AdPageId {

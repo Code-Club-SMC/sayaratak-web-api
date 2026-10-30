@@ -2,7 +2,7 @@ import { Outlet, createFileRoute, notFound } from "@tanstack/react-router"
 
 import { ClientLinks } from "@/components/app/client-links"
 import { redirectBanned } from "@/features/auth/guards"
-import { localeSchema } from "@/schemas/locale"
+import { localeSchema } from "@sayaratak/shared/schemas/locale"
 
 // Unknown locale segments are a 404. The `locale` cookie is set by the root loader (once per document).
 export const Route = createFileRoute("/$locale")({

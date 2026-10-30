@@ -4,7 +4,7 @@ import { ConfirmDialog } from "@/components/app/confirm-dialog"
 import { Button } from "@/components/ui/button"
 import { useT } from "@/lib/i18n/use-t"
 import { useNow } from "@/lib/now"
-import type { Listing } from "@/schemas/listing"
+import type { Listing } from "@sayaratak/shared/schemas/listing"
 import { canChangeStatus, canRenew } from "../use-listing-actions"
 import type { ListingActions } from "./listing-row-actions"
 

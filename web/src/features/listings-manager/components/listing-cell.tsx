@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query"
 
 import { taxonomyQuery } from "@/features/listings/queries"
-import type { Listing } from "@/schemas/listing"
+import type { Listing } from "@sayaratak/shared/schemas/listing"
 import { MakeLogo } from "@/components/app/make-logo"
 import { MediaImage } from "@/components/app/media-image"
 

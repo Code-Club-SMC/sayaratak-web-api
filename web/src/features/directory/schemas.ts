@@ -1,6 +1,6 @@
 import { z } from "zod"
 
-import { optional, searchParamsSchema } from "@/features/search/schemas"
+import { optional, searchParamsSchema } from "@sayaratak/shared/search/schemas"
 
 export const dealershipSorts = ["rating", "listings", "newest"] as const
 

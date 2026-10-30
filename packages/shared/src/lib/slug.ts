@@ -1,4 +1,4 @@
-import { normalizeDigits } from "@/lib/digits"
+import { normalizeDigits } from "./digits"
 
 // Readable URL: Arabic letters kept, harakat and tatweel dropped, Latin lowercased, 60 characters of words, then the short id.
 export function makeListingSlug(title: string, city: string, id: string) {

@@ -1,7 +1,7 @@
 import { Controller } from "react-hook-form"
 
 import { useT } from "@/lib/i18n/use-t"
-import type { Settings } from "@/schemas/admin"
+import type { Settings } from "@sayaratak/shared/schemas/admin"
 import { FormField } from "@/components/app/form-field"
 import { PhoneInput } from "@/components/app/phone-input"
 import { Input } from "@/components/ui/input"

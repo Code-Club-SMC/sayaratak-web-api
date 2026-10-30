@@ -1,7 +1,7 @@
 import type { TFunction } from "i18next"
 
-import type { Locale } from "@/schemas/locale"
-import type { AdminPayment } from "@/schemas/responses"
+import type { Locale } from "@sayaratak/shared/schemas/locale"
+import type { AdminPayment } from "@sayaratak/shared/schemas/responses"
 
 // What the payment buys, in one line: "Plus plan", "Boost: <listing>", "Banner campaign".
 export function paymentItem(t: TFunction, p: AdminPayment, locale: Locale) {

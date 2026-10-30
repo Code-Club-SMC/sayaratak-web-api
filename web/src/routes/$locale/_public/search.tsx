@@ -4,7 +4,7 @@ import { SearchPage } from "@/features/search/components/search-page"
 import { searchHead } from "@/features/search/head"
 import { searchRoute } from "@/features/search/landing"
 import { searchLoader } from "@/features/search/loader"
-import { fullSearch, routeSearchSchema } from "@/features/search/schemas"
+import { fullSearch, routeSearchSchema } from "@sayaratak/shared/search/schemas"
 import { useSearchNavigation } from "@/features/search/use-search-navigation"
 
 export const Route = createFileRoute("/$locale/_public/search")({

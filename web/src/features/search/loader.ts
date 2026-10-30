@@ -5,8 +5,8 @@ import { adPageOf } from "@/features/ads/ad-page-of"
 import { listingQueries, taxonomyQuery } from "@/features/listings/queries"
 import { bannersQuery } from "@/features/pages/queries"
 import { getCopy } from "@/lib/i18n/server"
-import type { Locale } from "@/schemas/locale"
-import type { SearchParams } from "./schemas"
+import type { Locale } from "@sayaratak/shared/schemas/locale"
+import type { SearchParams } from "@sayaratak/shared/search/schemas"
 import { fill, searchTitle, titleKeys } from "./title"
 
 // First visit waits for the first page, so the server renders results. A filter, sort or page change on the same page does not: the old results stay and dim while the new ones load (A5b). The taxonomy is awaited either way, for the localized titles.

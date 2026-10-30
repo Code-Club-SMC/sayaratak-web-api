@@ -14,10 +14,17 @@ import {
   useApiMutation,
 } from "@/lib/api/mutation"
 import { keys } from "@/lib/api/query-keys"
-import { okSchema, type Counts } from "@/schemas/api"
-import { pageOf } from "@/schemas/fields"
-import type { messageInputSchema, threadInputSchema } from "@/schemas/inputs"
-import { messageSchema, threadSchema, type Message } from "@/schemas/messaging"
+import { okSchema, type Counts } from "@sayaratak/shared/schemas/api"
+import { pageOf } from "@sayaratak/shared/schemas/fields"
+import type {
+  messageInputSchema,
+  threadInputSchema,
+} from "@sayaratak/shared/schemas/inputs"
+import {
+  messageSchema,
+  threadSchema,
+  type Message,
+} from "@sayaratak/shared/schemas/messaging"
 
 const messagePageSchema = pageOf(messageSchema)
 type MessagePage = z.infer<typeof messagePageSchema>

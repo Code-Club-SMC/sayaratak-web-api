@@ -1,5 +1,5 @@
 import { buildUrl } from "@/lib/api/client"
-import type { Media } from "@/schemas/listing"
+import type { Media } from "@sayaratak/shared/schemas/listing"
 
 export const uploadTemplate = (id: string) =>
   `${buildUrl(`/uploads/${id}`)}?w={w}`

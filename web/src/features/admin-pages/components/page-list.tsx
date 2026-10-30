@@ -5,7 +5,7 @@ import { formatDate } from "@/lib/format"
 import { useT } from "@/lib/i18n/use-t"
 import { cn } from "@/lib/utils"
 import { adminQueries } from "@/features/admin/queries"
-import type { SitePage } from "@/schemas/admin"
+import type { SitePage } from "@sayaratak/shared/schemas/admin"
 import { Skeleton } from "@/components/ui/skeleton"
 import { pageSlugs } from "../schemas"
 

@@ -2,7 +2,7 @@ import { useId } from "react"
 
 import { PriceText } from "@/components/app/price-text"
 import { useT } from "@/lib/i18n/use-t"
-import type { Checkout } from "@/schemas/responses"
+import type { Checkout } from "@sayaratak/shared/schemas/responses"
 
 // What is being bought, in the reader's language. Everything comes from the checkout response.
 export function OrderSummary({

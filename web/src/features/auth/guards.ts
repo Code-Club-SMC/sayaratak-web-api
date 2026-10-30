@@ -2,8 +2,8 @@ import { redirect } from "@tanstack/react-router"
 
 import { dashboardPath, localeHref, personalHref } from "@/lib/navigation"
 import { withRedirect } from "./destination"
-import type { Locale } from "@/schemas/locale"
-import type { User } from "@/schemas/user"
+import type { Locale } from "@sayaratak/shared/schemas/locale"
+import type { User } from "@sayaratak/shared/schemas/user"
 
 type Guard = {
   context: { me: User | null; locale: Locale }

@@ -5,7 +5,7 @@ import { GlobeIcon, PlusIcon } from "lucide-react"
 import { errorText } from "@/lib/api/error-text"
 import { useT } from "@/lib/i18n/use-t"
 import type { DataColumn } from "@/lib/table"
-import type { AdminCountry } from "@/schemas/admin"
+import type { AdminCountry } from "@sayaratak/shared/schemas/admin"
 import { AdminTable } from "@/features/admin/components/admin-table"
 import { StatusSwitch } from "@/features/admin/components/status-switch"
 import {

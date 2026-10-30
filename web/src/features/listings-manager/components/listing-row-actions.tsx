@@ -3,7 +3,7 @@ import { useNavigate } from "@tanstack/react-router"
 import { RowActions, type RowAction } from "@/components/app/row-actions"
 import { useT } from "@/lib/i18n/use-t"
 import { useNow } from "@/lib/now"
-import type { Listing } from "@/schemas/listing"
+import type { Listing } from "@sayaratak/shared/schemas/listing"
 import { canRenew, type useListingActions } from "../use-listing-actions"
 
 export type ListingActions = ReturnType<typeof useListingActions>

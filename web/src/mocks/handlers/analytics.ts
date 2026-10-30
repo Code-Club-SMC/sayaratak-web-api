@@ -1,6 +1,6 @@
-import { okSchema } from "@/schemas/api"
-import { analyticsSchema } from "@/schemas/responses"
-import { eventInputSchema } from "@/schemas/inputs"
+import { okSchema } from "@sayaratak/shared/schemas/api"
+import { analyticsSchema } from "@sayaratak/shared/schemas/responses"
+import { eventInputSchema } from "@sayaratak/shared/schemas/inputs"
 
 import { db, find, insert } from "../db"
 import { needUser, route } from "../http"

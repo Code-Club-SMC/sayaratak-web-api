@@ -1,20 +1,20 @@
 import { z } from "zod"
 
-import { optional } from "@/features/search/schemas"
+import { optional } from "@sayaratak/shared/search/schemas"
 import {
   optionalInt,
   optionalText,
   requiredInt,
   requiredText,
   roleSchema,
-} from "@/schemas/fields"
-import { banInputSchema } from "@/schemas/inputs"
+} from "@sayaratak/shared/schemas/fields"
+import { banInputSchema } from "@sayaratak/shared/schemas/inputs"
 import {
   promotionTypeSchema,
   typeFilterSchema,
   vehicleTypeSchema,
-} from "@/schemas/listing"
-import { targetTypeSchema } from "@/schemas/review"
+} from "@sayaratak/shared/schemas/listing"
+import { targetTypeSchema } from "@sayaratak/shared/schemas/review"
 
 // A decision the admin writes down: a rejection, a dismissal note, a suspension.
 export const reasonSchema = z.object({ reason: requiredText(300) })

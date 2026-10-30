@@ -4,7 +4,7 @@ import { FormField } from "@/components/app/form-field"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { useT } from "@/lib/i18n/use-t"
-import type { Bilingual } from "@/schemas/fields"
+import type { Bilingual } from "@sayaratak/shared/schemas/fields"
 
 type Details = { name: Bilingual; description: Bilingual; bio: Bilingual }
 const langs = ["ar", "en"] as const

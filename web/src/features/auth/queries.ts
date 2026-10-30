@@ -16,7 +16,7 @@ import {
   okSchema,
   resetTokenSchema,
   type NotificationPrefs,
-} from "@/schemas/api"
+} from "@sayaratak/shared/schemas/api"
 import type { z } from "zod"
 import type {
   codeInputSchema,
@@ -29,8 +29,8 @@ import type {
   profilePatchSchema,
   resetInputSchema,
   signupInputSchema,
-} from "@/schemas/inputs"
-import { userSchema, type User } from "@/schemas/user"
+} from "@sayaratak/shared/schemas/inputs"
+import { userSchema, type User } from "@sayaratak/shared/schemas/user"
 
 export { meQuery } from "./me-query"
 export const prefsQuery = queryOptions({

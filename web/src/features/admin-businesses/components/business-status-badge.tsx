@@ -1,6 +1,6 @@
 import { Badge } from "@/components/ui/badge"
 import { useT } from "@/lib/i18n/use-t"
-import type { AdminBusiness } from "@/schemas/admin"
+import type { AdminBusiness } from "@sayaratak/shared/schemas/admin"
 
 export function BusinessStatusBadge({ business }: { business: AdminBusiness }) {
   const { t } = useT()

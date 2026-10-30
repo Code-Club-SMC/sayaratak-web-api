@@ -16,7 +16,7 @@ import { formatPrice } from "@/lib/format"
 import { useT } from "@/lib/i18n/use-t"
 import { dashboardPath, localeHref } from "@/lib/navigation"
 import { takeSignIn } from "@/lib/sign-in-flag"
-import type { User } from "@/schemas/user"
+import type { User } from "@sayaratak/shared/schemas/user"
 import { billingQueries, useKeepFreePlan } from "../queries"
 
 // Once per sign in, while a paid plan picked in onboarding waits for payment: the free plan next to the picked one, the price and what happens next. "Not now" asks again at the next sign in; "Keep the free plan" stops asking. Never over a checkout.

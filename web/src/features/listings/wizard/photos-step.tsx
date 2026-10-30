@@ -4,7 +4,7 @@ import { FieldError } from "@/components/app/field-error"
 import { ImageUploader } from "@/components/app/image-uploader"
 import { VideoUploader } from "@/components/app/video-uploader"
 import { useT } from "@/lib/i18n/use-t"
-import type { Media } from "@/schemas/listing"
+import type { Media } from "@sayaratak/shared/schemas/listing"
 import { useStepFields } from "./use-step-fields"
 
 const tips = {

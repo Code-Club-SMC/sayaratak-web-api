@@ -1,8 +1,8 @@
 import { z } from "zod"
 
-import { imageFileSchema } from "@/schemas/fields"
-import { verificationLabels } from "@/schemas/admin"
-import type { TargetType } from "@/schemas/review"
+import { imageFileSchema } from "@sayaratak/shared/schemas/fields"
+import { verificationLabels } from "@sayaratak/shared/schemas/admin"
+import type { TargetType } from "@sayaratak/shared/schemas/review"
 
 export const MAX_DOCUMENTS = 5
 

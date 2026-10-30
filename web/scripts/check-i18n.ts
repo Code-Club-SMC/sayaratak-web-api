@@ -1,4 +1,4 @@
-// Fails when a key is missing in one language, a plural key lacks a form, a key is defined twice, or src/** uses a key that does not exist.
+// Fails when a key is missing in one language, a plural key lacks a form, a key is defined twice, or src/** or packages/shared uses a key that does not exist.
 import { readdirSync, readFileSync } from "node:fs"
 import process from "node:process"
 
@@ -120,14 +120,20 @@ const literal = new RegExp(
   `["'\`]((?:${[...groups].join("|")})\\.[a-z0-9_]+)["'\`]`,
   "g"
 )
-for (const file of readdirSync("src", { recursive: true, encoding: "utf8" })) {
-  if (
-    !/\.tsx?$/.test(file) ||
-    file.startsWith("components/ui/") ||
-    file.startsWith("messages/")
-  )
-    continue
-  const text = readFileSync(`src/${file}`, "utf8")
+const sourceFiles = [
+  ...readdirSync("src", { recursive: true, encoding: "utf8" })
+    .filter(
+      (f) => !f.startsWith("components/ui/") && !f.startsWith("messages/")
+    )
+    .map((f) => `src/${f}`),
+  ...readdirSync("../packages/shared/src", {
+    recursive: true,
+    encoding: "utf8",
+  }).map((f) => `../packages/shared/src/${f}`),
+]
+for (const file of sourceFiles) {
+  if (!/\.tsx?$/.test(file)) continue
+  const text = readFileSync(file, "utf8")
   const used = new Set(
     [tCall, literal].flatMap((re) =>
       [...text.matchAll(re)].map((m) => m[1] as string)
@@ -135,8 +141,7 @@ for (const file of readdirSync("src", { recursive: true, encoding: "utf8" })) {
   )
   for (const key of used) {
     for (const lang of ["ar", "en"] as const) {
-      if (!bases[lang].has(key))
-        fail(`src/${file}: "${key}" is missing in ${lang}`)
+      if (!bases[lang].has(key)) fail(`${file}: "${key}" is missing in ${lang}`)
     }
   }
 }

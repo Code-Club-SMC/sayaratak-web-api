@@ -1,6 +1,6 @@
 import { expect, it } from "vitest"
 
-import { normalizeDigits } from "@/lib/digits"
+import { normalizeDigits } from "@sayaratak/shared/lib/digits"
 import {
   formatDate,
   formatMileage,

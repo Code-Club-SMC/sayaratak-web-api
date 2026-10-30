@@ -1,6 +1,6 @@
 import { z } from "zod"
 
-import { searchParamsSchema } from "@/features/search/schemas"
+import { searchParamsSchema } from "../search/schemas"
 import { idSchema } from "./fields"
 
 export const savedSearchSchema = z.object({

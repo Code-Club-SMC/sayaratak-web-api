@@ -1,6 +1,10 @@
 import { z } from "zod"
 
-import { optionalInt, optionalText, requiredText } from "@/schemas/fields"
+import {
+  optionalInt,
+  optionalText,
+  requiredText,
+} from "@sayaratak/shared/schemas/fields"
 
 export const serviceFormSchema = z.object({
   name: requiredText(60),

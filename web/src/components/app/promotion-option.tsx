@@ -1,6 +1,6 @@
 import { formatPrice } from "@/lib/format"
 import { useT } from "@/lib/i18n/use-t"
-import type { PromotionType } from "@/schemas/listing"
+import type { PromotionType } from "@sayaratak/shared/schemas/listing"
 import { PromotedBadge } from "./promoted-badge"
 
 // A radio row. The amber badge says the option is paid, as everywhere else.

@@ -4,7 +4,7 @@ import { useState } from "react"
 
 import { apiFetch } from "@/lib/api/client"
 import { keys } from "@/lib/api/query-keys"
-import { okSchema } from "@/schemas/api"
+import { okSchema } from "@sayaratak/shared/schemas/api"
 import { meQuery } from "@/features/auth/me-query"
 import { useLogin, useLogout } from "@/features/auth/queries"
 import { useResetDemoData } from "@/features/admin/queries"

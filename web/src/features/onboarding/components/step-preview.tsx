@@ -2,7 +2,7 @@ import { useWatch } from "react-hook-form"
 import { z } from "zod"
 
 import { ProfilePreview } from "@/components/app/profile-preview"
-import { weeklyHoursSchema } from "@/schemas/fields"
+import { weeklyHoursSchema } from "@sayaratak/shared/schemas/fields"
 import { flatValues, type DraftData } from "../draft"
 import type { FlowStep } from "../flows"
 import { uploadTemplate } from "../media"

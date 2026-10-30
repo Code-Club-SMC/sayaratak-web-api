@@ -1,7 +1,7 @@
 import { WrenchIcon } from "lucide-react"
 
 import { useT } from "@/lib/i18n/use-t"
-import type { Workshop } from "@/schemas/profile"
+import type { Workshop } from "@sayaratak/shared/schemas/profile"
 import { EmptyState } from "@/components/app/empty-state"
 import { PriceText } from "@/components/app/price-text"
 

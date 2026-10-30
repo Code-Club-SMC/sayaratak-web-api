@@ -5,7 +5,7 @@ import {
   listingStatusSchema,
   type Listing,
   type ListingStatus,
-} from "@/schemas/listing"
+} from "@sayaratak/shared/schemas/listing"
 import { canChangeStatus, statusOptions } from "../use-listing-actions"
 
 // The inline status control. Only an approved listing has a status to change; the others show it as text.

@@ -10,7 +10,7 @@ import { SubmitButton } from "@/components/app/submit-button"
 import { Button } from "@/components/ui/button"
 import { useAppForm } from "@/hooks/use-app-form"
 import { useT } from "@/lib/i18n/use-t"
-import { promotionTypeSchema } from "@/schemas/listing"
+import { promotionTypeSchema } from "@sayaratak/shared/schemas/listing"
 import { grantSchema, type GrantForm } from "@/features/admin/schemas"
 
 // Promotion type and, for Featured, length in days. The caller closes the dialog when its mutation settles.

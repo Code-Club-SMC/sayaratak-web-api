@@ -2,7 +2,7 @@ import { useState } from "react"
 
 import { errorText } from "@/lib/api/error-text"
 import { useT } from "@/lib/i18n/use-t"
-import type { MyPromotion } from "@/schemas/responses"
+import type { MyPromotion } from "@sayaratak/shared/schemas/responses"
 import { useEndPromotion } from "@/features/admin/queries"
 import { ConfirmDialog } from "@/components/app/confirm-dialog"
 import { Button } from "@/components/ui/button"

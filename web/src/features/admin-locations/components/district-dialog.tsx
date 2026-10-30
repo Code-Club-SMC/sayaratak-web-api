@@ -4,7 +4,7 @@ import { Controller } from "react-hook-form"
 
 import { errorText } from "@/lib/api/error-text"
 import { useT } from "@/lib/i18n/use-t"
-import type { AdminDistrict } from "@/schemas/admin"
+import type { AdminDistrict } from "@sayaratak/shared/schemas/admin"
 import {
   useCreateTaxonomyRow,
   useUpdateTaxonomyRow,

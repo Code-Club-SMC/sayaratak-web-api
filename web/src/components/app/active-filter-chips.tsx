@@ -2,7 +2,7 @@ import { XIcon } from "lucide-react"
 
 import { useActiveFilters } from "@/features/search/use-active-filters"
 import { clearFilters } from "@/features/search/filters"
-import type { SearchParams } from "@/features/search/schemas"
+import type { SearchParams } from "@sayaratak/shared/search/schemas"
 import { useT } from "@/lib/i18n/use-t"
 import { Button } from "@/components/ui/button"
 

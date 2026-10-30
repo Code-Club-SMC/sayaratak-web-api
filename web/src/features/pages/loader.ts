@@ -3,8 +3,8 @@ import { notFound } from "@tanstack/react-router"
 
 import { ApiError } from "@/lib/api/client"
 import { buildHead } from "@/lib/seo"
-import type { SitePage } from "@/schemas/admin"
-import type { Locale } from "@/schemas/locale"
+import type { SitePage } from "@sayaratak/shared/schemas/admin"
+import type { Locale } from "@sayaratak/shared/schemas/locale"
 import { bodySummary } from "./body"
 import { pageQuery } from "./queries"
 

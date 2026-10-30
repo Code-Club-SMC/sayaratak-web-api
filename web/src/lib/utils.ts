@@ -1,4 +1,4 @@
-import type { Locale } from "@/schemas/locale"
+import type { Locale } from "@sayaratak/shared/schemas/locale"
 
 export { cn } from "cn"
 

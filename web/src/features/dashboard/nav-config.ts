@@ -35,8 +35,8 @@ import {
 } from "lucide-react"
 
 import { dashboardPath } from "@/lib/navigation"
-import type { Counts } from "@/schemas/api"
-import type { User } from "@/schemas/user"
+import type { Counts } from "@sayaratak/shared/schemas/api"
+import type { User } from "@sayaratak/shared/schemas/user"
 
 type Role = User["role"]
 

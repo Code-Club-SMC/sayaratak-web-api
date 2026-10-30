@@ -8,7 +8,7 @@ import { toast } from "@/components/ui/toast"
 import { prefsQuery, useUpdateNotificationPrefs } from "@/features/auth/queries"
 import { errorText } from "@/lib/api/error-text"
 import { useT } from "@/lib/i18n/use-t"
-import { notificationPrefsSchema } from "@/schemas/api"
+import { notificationPrefsSchema } from "@sayaratak/shared/schemas/api"
 
 // Message keys are snake_case: savedSearchMatches reads `pref_saved_search_matches`.
 const snake = (key: string) =>

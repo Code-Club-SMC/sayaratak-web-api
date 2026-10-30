@@ -1,4 +1,4 @@
-import type { SearchParams } from "@/features/search/schemas"
+import type { SearchParams } from "@sayaratak/shared/search/schemas"
 
 type Params = Record<string, unknown> | undefined
 

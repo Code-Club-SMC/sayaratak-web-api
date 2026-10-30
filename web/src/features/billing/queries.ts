@@ -4,20 +4,20 @@ import { z } from "zod"
 import { ApiError, apiFetch } from "@/lib/api/client"
 import { useApiMutation } from "@/lib/api/mutation"
 import { keys } from "@/lib/api/query-keys"
-import { pageOf } from "@/schemas/fields"
+import { pageOf } from "@sayaratak/shared/schemas/fields"
 import {
   paymentSchema,
   planSchema,
   promotionPriceSchema,
   promotionSchema,
-} from "@/schemas/billing"
-import type { promotionInputSchema } from "@/schemas/inputs"
-import { userSchema } from "@/schemas/user"
+} from "@sayaratak/shared/schemas/billing"
+import type { promotionInputSchema } from "@sayaratak/shared/schemas/inputs"
+import { userSchema } from "@sayaratak/shared/schemas/user"
 import {
   checkoutSchema,
   meSubscriptionSchema,
   myPromotionsSchema,
-} from "@/schemas/responses"
+} from "@sayaratak/shared/schemas/responses"
 
 export const billingQueries = {
   plans: (audience?: string) =>

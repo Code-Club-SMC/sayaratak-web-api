@@ -3,7 +3,7 @@ import { PlayIcon } from "lucide-react"
 
 import { useT } from "@/lib/i18n/use-t"
 import { mediaSrc } from "@/lib/media"
-import type { Media } from "@/schemas/listing"
+import type { Media } from "@sayaratak/shared/schemas/listing"
 import { MediaImage } from "./media-image"
 
 // An image, or a video that shows its poster until the person presses play.

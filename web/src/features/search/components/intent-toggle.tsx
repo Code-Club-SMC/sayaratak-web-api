@@ -1,5 +1,5 @@
 import { useT } from "@/lib/i18n/use-t"
-import { intentSchema, type Intent } from "@/schemas/listing"
+import { intentSchema, type Intent } from "@sayaratak/shared/schemas/listing"
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 
 // Buy or rent. Pressing the chosen one again shows both.

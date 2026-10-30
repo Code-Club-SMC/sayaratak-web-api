@@ -1,7 +1,11 @@
 import { mediaSrc } from "@/lib/media"
-import type { Geo, WeeklyHours } from "@/schemas/fields"
-import type { Rating } from "@/schemas/review"
-import type { Dealership, Mechanic, Workshop } from "@/schemas/profile"
+import type { Geo, WeeklyHours } from "@sayaratak/shared/schemas/fields"
+import type { Rating } from "@sayaratak/shared/schemas/review"
+import type {
+  Dealership,
+  Mechanic,
+  Workshop,
+} from "@sayaratak/shared/schemas/profile"
 
 const days = [
   "Sunday",

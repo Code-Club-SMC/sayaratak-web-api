@@ -8,7 +8,7 @@ import { meQuery } from "@/features/auth/me-query"
 import { getCopy } from "@/lib/i18n/server"
 import { useT } from "@/lib/i18n/use-t"
 import { buildHead } from "@/lib/seo"
-import type { Locale } from "@/schemas/locale"
+import type { Locale } from "@sayaratak/shared/schemas/locale"
 import { usePageTitle } from "./components/page-title"
 
 function Overview() {

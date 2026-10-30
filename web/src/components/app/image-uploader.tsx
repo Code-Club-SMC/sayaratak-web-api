@@ -1,6 +1,6 @@
 import { lazy, Suspense } from "react"
 
-import type { Media } from "@/schemas/listing"
+import type { Media } from "@sayaratak/shared/schemas/listing"
 import { cn } from "@/lib/utils"
 import { Skeleton } from "@/components/ui/skeleton"
 

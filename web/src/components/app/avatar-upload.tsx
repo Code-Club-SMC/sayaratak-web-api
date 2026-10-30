@@ -1,4 +1,4 @@
-import type { Media } from "@/schemas/listing"
+import type { Media } from "@sayaratak/shared/schemas/listing"
 import { ImageUploader } from "./image-uploader"
 
 // Forms store `media.id` and never call ImageUploader directly for this.

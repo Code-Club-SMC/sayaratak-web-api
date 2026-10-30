@@ -6,7 +6,7 @@ import { bannersQuery } from "@/features/pages/queries"
 import { ApiError } from "@/lib/api/client"
 import { listingTitle } from "@/lib/listing-title"
 import { mediaSrc } from "@/lib/media"
-import type { Locale } from "@/schemas/locale"
+import type { Locale } from "@sayaratak/shared/schemas/locale"
 import { formatPrice } from "@/lib/format"
 import { listingQueries, taxonomyQuery } from "./queries"
 

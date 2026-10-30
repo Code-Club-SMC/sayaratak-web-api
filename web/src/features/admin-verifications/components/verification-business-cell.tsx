@@ -1,6 +1,6 @@
 import { MediaImage } from "@/components/app/media-image"
 import { useT } from "@/lib/i18n/use-t"
-import type { AdminVerification } from "@/schemas/admin"
+import type { AdminVerification } from "@sayaratak/shared/schemas/admin"
 
 // Logo and business name as one button that opens the request's sheet.
 export function VerificationBusinessCell({

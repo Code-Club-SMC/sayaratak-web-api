@@ -1,7 +1,7 @@
 import { useCityName } from "@/hooks/use-city-name"
 import { useListingTitle } from "@/hooks/use-listing-title"
 import { useT } from "@/lib/i18n/use-t"
-import type { Listing } from "@/schemas/listing"
+import type { Listing } from "@sayaratak/shared/schemas/listing"
 import { ListingCard } from "./listing-card"
 import { MediaImage } from "./media-image"
 import { PriceText } from "./price-text"

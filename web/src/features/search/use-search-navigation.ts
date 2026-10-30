@@ -3,7 +3,7 @@ import { useNavigate } from "@tanstack/react-router"
 import { useT } from "@/lib/i18n/use-t"
 import { localeHref } from "@/lib/navigation"
 import { routeHref, searchRoute } from "./landing"
-import type { SearchParams } from "./schemas"
+import type { SearchParams } from "@sayaratak/shared/search/schemas"
 
 // Filters write to the URL (A13). The page stays: replace, no scroll reset, no view transition. A filter the path holds (type, intent, city) moves to the matching landing, and a search that fits none goes to /search.
 export function useSearchNavigation(search: SearchParams) {

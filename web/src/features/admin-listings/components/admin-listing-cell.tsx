@@ -1,6 +1,6 @@
 import { MediaImage } from "@/components/app/media-image"
 import { useListingTitle } from "@/hooks/use-listing-title"
-import type { Listing } from "@/schemas/listing"
+import type { Listing } from "@sayaratak/shared/schemas/listing"
 
 // Thumbnail, title and id as one button that opens the listing's sheet.
 export function AdminListingCell({

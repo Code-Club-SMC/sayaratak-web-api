@@ -1,5 +1,5 @@
 import { useT } from "@/lib/i18n/use-t"
-import type { Payment } from "@/schemas/billing"
+import type { Payment } from "@sayaratak/shared/schemas/billing"
 import { Badge } from "@/components/ui/badge"
 
 const variants = {

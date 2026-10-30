@@ -4,7 +4,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest"
 import { LocationsPage } from "@/features/admin-locations/components/locations-page"
 import { db, resetDb } from "@/mocks/db"
 import { handleMock } from "@/mocks/router"
-import { taxonomySchema } from "@/schemas/taxonomy"
+import { taxonomySchema } from "@sayaratak/shared/schemas/taxonomy"
 import { renderShell } from "./shell-render"
 
 Element.prototype.scrollIntoView = () => {}

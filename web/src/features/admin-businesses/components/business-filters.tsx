@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query"
 
 import { SelectInput } from "@/components/app/select-input"
 import { useT } from "@/lib/i18n/use-t"
-import type { AdminBusiness } from "@/schemas/admin"
+import type { AdminBusiness } from "@sayaratak/shared/schemas/admin"
 import { taxonomyQuery } from "@/features/listings/queries"
 import { adminQueries } from "@/features/admin/queries"
 import {

@@ -1,8 +1,11 @@
 import { SortSelect } from "@/components/app/sort-select"
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 import { useT } from "@/lib/i18n/use-t"
-import { favoriteSortSchema } from "@/schemas/inputs"
-import { typeFilterSchema, vehicleTypeSchema } from "@/schemas/listing"
+import { favoriteSortSchema } from "@sayaratak/shared/schemas/inputs"
+import {
+  typeFilterSchema,
+  vehicleTypeSchema,
+} from "@sayaratak/shared/schemas/listing"
 import type { FavoritesSearch } from "../schemas"
 
 const types = ["all", ...vehicleTypeSchema.options, "part"] as const

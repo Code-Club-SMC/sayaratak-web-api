@@ -26,8 +26,8 @@ import {
   pagesSearchSchema,
   toPagePatch,
 } from "@/features/admin-pages/schemas"
-import { sitePageSchema } from "@/schemas/admin"
-import { pagePatchSchema } from "@/schemas/inputs"
+import { sitePageSchema } from "@sayaratak/shared/schemas/admin"
+import { pagePatchSchema } from "@sayaratak/shared/schemas/inputs"
 import { runCases } from "./schema-case"
 
 const long = "a".repeat(61)

@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 import { clearFilters } from "../filters"
-import type { SearchParams } from "../schemas"
+import type { SearchParams } from "@sayaratak/shared/search/schemas"
 import { IntentToggle } from "./intent-toggle"
 
 // The home search card, compact: vehicles or parts, buy or rent, and the keyword. City, make and price live in the filter panel.

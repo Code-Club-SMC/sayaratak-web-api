@@ -1,6 +1,6 @@
 import { defaultStringifySearch, useNavigate } from "@tanstack/react-router"
 
-import type { SearchParams } from "@/features/search/schemas"
+import type { SearchParams } from "@sayaratak/shared/search/schemas"
 import { useT } from "@/lib/i18n/use-t"
 import { localeHref } from "@/lib/navigation"
 import {

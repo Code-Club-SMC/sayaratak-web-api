@@ -6,8 +6,8 @@ import { formatDate, formatNumber } from "@/lib/format"
 import { useT } from "@/lib/i18n/use-t"
 import { useNow } from "@/lib/now"
 import { dashboardPath } from "@/lib/navigation"
-import type { Campaign } from "@/schemas/ads"
-import type { User } from "@/schemas/user"
+import type { Campaign } from "@sayaratak/shared/schemas/ads"
+import type { User } from "@sayaratak/shared/schemas/user"
 import { campaignState, stateVariant } from "../campaign-state"
 
 // One campaign: its banner photo and heading, state, pages, dates, price and results. An unpaid one links to its checkout.

@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query"
 
 import { formatNumber } from "@/lib/format"
 import { useT } from "@/lib/i18n/use-t"
-import type { BroadcastAudience } from "@/schemas/api"
+import type { BroadcastAudience } from "@sayaratak/shared/schemas/api"
 import { adminQueries } from "@/features/admin/queries"
 
 // How many bells the audience reaches now (accounts that turned announcements off are left out). Read aloud as it changes. A span, so it also fits inside the confirm text.

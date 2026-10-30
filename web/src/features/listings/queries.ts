@@ -6,7 +6,7 @@ import {
 } from "@tanstack/react-query"
 import { z } from "zod"
 
-import type { SearchParams } from "@/features/search/schemas"
+import type { SearchParams } from "@sayaratak/shared/search/schemas"
 import { apiFetch, type ApiError } from "@/lib/api/client"
 import {
   patchRows,
@@ -15,9 +15,16 @@ import {
   useApiMutation,
 } from "@/lib/api/mutation"
 import { keys } from "@/lib/api/query-keys"
-import { listingAnalyticsSchema, okSchema, type Range } from "@/schemas/api"
-import { pageOf } from "@/schemas/fields"
-import type { listingCreateSchema, listingPatchSchema } from "@/schemas/inputs"
+import {
+  listingAnalyticsSchema,
+  okSchema,
+  type Range,
+} from "@sayaratak/shared/schemas/api"
+import { pageOf } from "@sayaratak/shared/schemas/fields"
+import type {
+  listingCreateSchema,
+  listingPatchSchema,
+} from "@sayaratak/shared/schemas/inputs"
 import {
   favoritePageSchema,
   listingPageSchema,
@@ -25,8 +32,8 @@ import {
   mediaSchema,
   type FavoritePage,
   type ListingStatus,
-} from "@/schemas/listing"
-import { taxonomySchema } from "@/schemas/taxonomy"
+} from "@sayaratak/shared/schemas/listing"
+import { taxonomySchema } from "@sayaratak/shared/schemas/taxonomy"
 
 type Query = Record<string, unknown>
 

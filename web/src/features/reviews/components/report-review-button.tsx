@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { toast } from "@/components/ui/toast"
 import { errorText } from "@/lib/api/error-text"
 import { useT } from "@/lib/i18n/use-t"
-import type { Review } from "@/schemas/review"
+import type { Review } from "@sayaratak/shared/schemas/review"
 import { useFlagReview } from "../queries"
 
 // Asks the moderators to look at a review. Once sent, or once they hid it, there is nothing left to press.

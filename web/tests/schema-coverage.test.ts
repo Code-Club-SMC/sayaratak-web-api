@@ -4,13 +4,21 @@ import { join } from "node:path"
 import { expect, it } from "vitest"
 import { z } from "zod"
 
-// Every schema in src/schemas and the feature folders is named in a test (enums are checked one by one in schema-responses), and every message key a schema can return is asserted somewhere.
+// Every schema in packages/shared and the feature folders is named in a test (enums are checked one by one in schema-responses), and every message key a schema can return is asserted somewhere.
 const modules = import.meta.glob<Record<string, unknown>>(
-  ["../src/schemas/*.ts", "../src/features/*/schemas.ts"],
+  [
+    "../../packages/shared/src/schemas/*.ts",
+    "../../packages/shared/src/*/schemas.ts",
+    "../src/features/*/schemas.ts",
+  ],
   { eager: true }
 )
 const sources = import.meta.glob<string>(
-  ["../src/schemas/*.ts", "../src/features/*/schemas.ts"],
+  [
+    "../../packages/shared/src/schemas/*.ts",
+    "../../packages/shared/src/*/schemas.ts",
+    "../src/features/*/schemas.ts",
+  ],
   { eager: true, query: "?raw", import: "default" }
 )
 const testsDir = join(process.cwd(), "tests")

@@ -2,7 +2,7 @@ import { PriceText } from "@/components/app/price-text"
 import { Badge } from "@/components/ui/badge"
 import { formatDate } from "@/lib/format"
 import { useT } from "@/lib/i18n/use-t"
-import type { MyPromotion } from "@/schemas/responses"
+import type { MyPromotion } from "@sayaratak/shared/schemas/responses"
 import { PromotionListing } from "./promotion-listing"
 import { PromotionStatus } from "./promotion-status"
 

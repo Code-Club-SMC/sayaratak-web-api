@@ -2,7 +2,7 @@ import { useId } from "react"
 import { Controller, type UseFormReturn } from "react-hook-form"
 
 import { useT } from "@/lib/i18n/use-t"
-import { broadcastRoleSchema } from "@/schemas/api"
+import { broadcastRoleSchema } from "@sayaratak/shared/schemas/api"
 import { CheckboxGroup } from "@/components/app/checkbox-group"
 import { CitySelect } from "@/components/app/city-select"
 import { Label } from "@/components/ui/label"

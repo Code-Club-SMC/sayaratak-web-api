@@ -9,15 +9,18 @@ import { z } from "zod"
 import { apiFetch, type ApiError } from "@/lib/api/client"
 import { useApiMutation } from "@/lib/api/mutation"
 import { keys } from "@/lib/api/query-keys"
-import { okSchema } from "@/schemas/api"
-import type { Media } from "@/schemas/listing"
-import { pageOf } from "@/schemas/fields"
-import type { portfolioInputSchema, serviceInputSchema } from "@/schemas/inputs"
+import { okSchema } from "@sayaratak/shared/schemas/api"
+import type { Media } from "@sayaratak/shared/schemas/listing"
+import { pageOf } from "@sayaratak/shared/schemas/fields"
+import type {
+  portfolioInputSchema,
+  serviceInputSchema,
+} from "@sayaratak/shared/schemas/inputs"
 import {
   dealershipSchema,
   mechanicSchema,
   workshopSchema,
-} from "@/schemas/profile"
+} from "@sayaratak/shared/schemas/profile"
 
 type Query = Record<string, unknown>
 export type DirectoryType = "dealerships" | "workshops" | "mechanics"

@@ -4,7 +4,7 @@ import { Controller } from "react-hook-form"
 
 import { errorText } from "@/lib/api/error-text"
 import { useT } from "@/lib/i18n/use-t"
-import type { Settings } from "@/schemas/admin"
+import type { Settings } from "@sayaratak/shared/schemas/admin"
 import { useUpdateSettings } from "@/features/admin/queries"
 import { FieldError } from "@/components/app/field-error"
 import { LeaveGuard } from "@/components/app/leave-guard"

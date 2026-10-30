@@ -4,7 +4,7 @@ import { PriceText } from "@/components/app/price-text"
 import { RowActions } from "@/components/app/row-actions"
 import { Button } from "@/components/ui/button"
 import { useT } from "@/lib/i18n/use-t"
-import type { Workshop } from "@/schemas/profile"
+import type { Workshop } from "@sayaratak/shared/schemas/profile"
 
 type Service = Workshop["services"][number]
 

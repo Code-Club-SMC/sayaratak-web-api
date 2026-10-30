@@ -1,7 +1,7 @@
 import { StarIcon } from "lucide-react"
 
 import { useT } from "@/lib/i18n/use-t"
-import type { MapPoint } from "@/schemas/responses"
+import type { MapPoint } from "@sayaratak/shared/schemas/responses"
 import { MediaImage } from "@/components/app/media-image"
 import { PriceText } from "@/components/app/price-text"
 

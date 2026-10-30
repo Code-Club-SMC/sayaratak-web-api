@@ -1,10 +1,13 @@
 import type { FieldValues } from "react-hook-form"
 import type { z } from "zod"
 
-import type { listingCreateSchema } from "@/schemas/inputs"
-import type { Listing } from "@/schemas/listing"
-import type { Locale } from "@/schemas/locale"
-import { listingInputSchema, type ListingInput } from "../schemas"
+import type { listingCreateSchema } from "@sayaratak/shared/schemas/inputs"
+import type { Listing } from "@sayaratak/shared/schemas/listing"
+import type { Locale } from "@sayaratak/shared/schemas/locale"
+import {
+  listingInputSchema,
+  type ListingInput,
+} from "@sayaratak/shared/listings/schemas"
 import { applies } from "./field-rules"
 import { wizardDefaults } from "./wizard-defaults"
 

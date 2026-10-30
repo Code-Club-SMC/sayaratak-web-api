@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query"
 
 import { useT } from "@/lib/i18n/use-t"
 import { marketplaceLinks, serviceLinks } from "@/lib/navigation"
-import { toWhatsappUrl } from "@/lib/phone"
+import { toWhatsappUrl } from "@sayaratak/shared/lib/phone"
 import { siteQuery } from "@/features/pages/queries"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"

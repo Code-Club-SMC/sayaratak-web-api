@@ -5,7 +5,7 @@ import {
   nameSchema,
   passwordSchema,
   phoneSchema,
-} from "@/schemas/fields"
+} from "@sayaratak/shared/schemas/fields"
 
 // The fields are strings, "" meaning empty, so every input stays controlled. The avatar is the stored url, as `PATCH /me` takes it.
 export const profileFormSchema = z

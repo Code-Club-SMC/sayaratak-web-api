@@ -2,15 +2,15 @@ import { fireEvent, screen, waitFor } from "@testing-library/react"
 import { useRouterState } from "@tanstack/react-router"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 
-import { contactStepSchema } from "@/features/listings/schemas"
+import { contactStepSchema } from "@sayaratak/shared/listings/schemas"
 import { ListingWizard } from "@/features/listings/wizard/listing-wizard"
 import { wizardDefaults } from "@/features/listings/wizard/wizard-defaults"
 import { wizardSteps } from "@/features/listings/wizard/wizard-steps"
-import type { Media } from "@/schemas/listing"
+import type { Media } from "@sayaratak/shared/schemas/listing"
 import { db, resetDb } from "@/mocks/db"
 import { pick } from "./pick"
 import { renderShell } from "./shell-render"
-import type { User } from "@/schemas/user"
+import type { User } from "@sayaratak/shared/schemas/user"
 
 vi.mock("@/components/app/map-canvas-impl", () => ({
   MapCanvasImpl: () => null,

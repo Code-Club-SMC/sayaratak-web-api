@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query"
 
 import { useT } from "@/lib/i18n/use-t"
 import { useDelayedFlag } from "@/lib/use-delayed-flag"
-import type { Listing } from "@/schemas/listing"
+import type { Listing } from "@sayaratak/shared/schemas/listing"
 import { ListingRail } from "@/components/app/listing-rail"
 import { GridCard } from "@/components/app/page-skeleton"
 import { listingQueries } from "../queries"

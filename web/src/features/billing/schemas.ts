@@ -1,6 +1,6 @@
 import { z } from "zod"
 
-import { imageFileSchema, nameSchema } from "@/schemas/fields"
+import { imageFileSchema, nameSchema } from "@sayaratak/shared/schemas/fields"
 
 // The amount, reference and Bankak account come from GET /checkout, never from this form.
 export const paymentFormSchema = z.object({

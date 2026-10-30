@@ -1,5 +1,5 @@
 import { mediaSrc } from "@/lib/media"
-import type { Listing } from "@/schemas/listing"
+import type { Listing } from "@sayaratak/shared/schemas/listing"
 
 const availability = {
   available: "InStock",

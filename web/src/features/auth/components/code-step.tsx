@@ -8,7 +8,7 @@ import {
   InputOTPSlot,
 } from "@/components/ui/input-otp"
 import type { ApiError } from "@/lib/api/client"
-import { normalizeDigits } from "@/lib/digits"
+import { normalizeDigits } from "@sayaratak/shared/lib/digits"
 import { useT } from "@/lib/i18n/use-t"
 import { useCountdown } from "@/lib/use-countdown"
 import { AuthHeading } from "./auth-heading"

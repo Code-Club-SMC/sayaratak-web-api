@@ -6,7 +6,7 @@ import {
   photosStepSchema,
   reviewProfileSchema,
   typeStepSchema,
-} from "../schemas"
+} from "@sayaratak/shared/listings/schemas"
 import { ContactStep } from "./contact-step"
 import { DetailsStep } from "./details-step"
 import { PhotosStep } from "./photos-step"

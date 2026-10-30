@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query"
 import { LayersIcon, PlusIcon } from "lucide-react"
 
 import { useT } from "@/lib/i18n/use-t"
-import type { AdminPlan } from "@/schemas/admin"
+import type { AdminPlan } from "@sayaratak/shared/schemas/admin"
 import { adminQueries } from "@/features/admin/queries"
 import { DataTable } from "@/components/app/data-table"
 import { EmptyState } from "@/components/app/empty-state"

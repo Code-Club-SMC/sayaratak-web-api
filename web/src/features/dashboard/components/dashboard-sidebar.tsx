@@ -3,7 +3,7 @@ import { useLocation } from "@tanstack/react-router"
 
 import { useT } from "@/lib/i18n/use-t"
 import { localeHref } from "@/lib/navigation"
-import type { User } from "@/schemas/user"
+import type { User } from "@sayaratak/shared/schemas/user"
 import { BrandLogo } from "@/components/app/brand-logo"
 import {
   Sidebar,

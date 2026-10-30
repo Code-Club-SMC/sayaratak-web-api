@@ -1,7 +1,7 @@
 import { Badge } from "@/components/ui/badge"
 import { formatDate } from "@/lib/format"
 import { useT } from "@/lib/i18n/use-t"
-import type { User } from "@/schemas/user"
+import type { User } from "@sayaratak/shared/schemas/user"
 
 // Active, or banned with the day a timed ban ends.
 export function UserStatusBadge({ user }: { user: User }) {

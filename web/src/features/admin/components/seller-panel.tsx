@@ -6,7 +6,7 @@ import { formatMonthYear, formatNumber } from "@/lib/format"
 import { useT } from "@/lib/i18n/use-t"
 import { localeHref } from "@/lib/navigation"
 import { cn } from "@/lib/utils"
-import type { Listing } from "@/schemas/listing"
+import type { Listing } from "@sayaratak/shared/schemas/listing"
 import { adminQueries } from "../queries"
 
 // Who posted a listing under review, with their track record. The counts read the totals of two one-row pages.

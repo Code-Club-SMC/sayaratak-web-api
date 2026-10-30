@@ -6,8 +6,11 @@ import { isOpenNow } from "@/lib/hours"
 import { NowProvider } from "@/lib/now"
 import { isFeatured, promotionLabel } from "@/lib/promotion"
 import type { TFunction } from "i18next"
-import { dealershipSchema, mechanicSchema } from "@/schemas/profile"
-import { listingSchema, type Listing } from "@/schemas/listing"
+import {
+  dealershipSchema,
+  mechanicSchema,
+} from "@sayaratak/shared/schemas/profile"
+import { listingSchema, type Listing } from "@sayaratak/shared/schemas/listing"
 import { DealershipCard } from "@/components/app/dealership-card"
 import { FavoriteButton } from "@/components/app/favorite-button"
 import { ListingCard } from "@/components/app/listing-card"

@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react"
 import { useT } from "@/lib/i18n/use-t"
 import { bannerHref } from "@/lib/navigation"
 import { cn } from "@/lib/utils"
-import type { Banner } from "@/schemas/admin"
+import type { Banner } from "@sayaratak/shared/schemas/admin"
 import { useTrackEvent } from "@/features/listings/events"
 import { BannerCopy } from "./banner-copy"
 

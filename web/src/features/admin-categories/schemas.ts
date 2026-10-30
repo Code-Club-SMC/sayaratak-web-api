@@ -1,6 +1,6 @@
 import { z } from "zod"
 
-import { requiredText } from "@/schemas/fields"
+import { requiredText } from "@sayaratak/shared/schemas/fields"
 
 // Both lists edit the two names; the enabled switch of a vehicle type sits on its row and asks first.
 export const categoryFormSchema = z.object({

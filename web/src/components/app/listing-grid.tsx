@@ -1,5 +1,5 @@
 import { usePrefs } from "@/lib/prefs"
-import type { Listing } from "@/schemas/listing"
+import type { Listing } from "@sayaratak/shared/schemas/listing"
 import { ListingCard } from "./listing-card"
 
 // The view comes from the saved preference unless the page passes one. `eager` is how many first photos load at once; `sidebar` is for a page with a filter panel beside it, which leaves room for three columns until xl.

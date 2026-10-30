@@ -1,6 +1,6 @@
 import { SelectInput } from "@/components/app/select-input"
 import { useT } from "@/lib/i18n/use-t"
-import { roleSchema } from "@/schemas/fields"
+import { roleSchema } from "@sayaratak/shared/schemas/fields"
 import {
   userStatuses,
   usersSearchSchema,

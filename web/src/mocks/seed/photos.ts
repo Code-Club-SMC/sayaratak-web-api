@@ -1,4 +1,4 @@
-import type { Media, VehicleType } from "@/schemas/listing"
+import type { Media, VehicleType } from "@sayaratak/shared/schemas/listing"
 import { pad } from "./util"
 
 export type PhotoType = VehicleType | "part"

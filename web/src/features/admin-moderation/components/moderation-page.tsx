@@ -7,7 +7,7 @@ import { errorText } from "@/lib/api/error-text"
 import { formatNumber } from "@/lib/format"
 import { useT } from "@/lib/i18n/use-t"
 import { cn } from "@/lib/utils"
-import type { Listing } from "@/schemas/listing"
+import type { Listing } from "@sayaratak/shared/schemas/listing"
 import { ReasonDialog } from "@/features/admin/components/reason-dialog"
 import {
   adminQueries,

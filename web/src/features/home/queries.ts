@@ -1,6 +1,6 @@
 import { directoryQueries } from "@/features/directory/queries"
 import { listingQueries } from "@/features/listings/queries"
-import type { Geo } from "@/schemas/fields"
+import type { Geo } from "@sayaratak/shared/schemas/fields"
 
 const RAIL = 8
 

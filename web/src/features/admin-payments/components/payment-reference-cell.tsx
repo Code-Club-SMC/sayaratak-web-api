@@ -1,4 +1,4 @@
-import type { AdminPayment } from "@/schemas/responses"
+import type { AdminPayment } from "@sayaratak/shared/schemas/responses"
 
 // The payment reference as the button that opens the payment's sheet.
 export function PaymentReferenceCell({

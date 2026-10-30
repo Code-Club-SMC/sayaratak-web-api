@@ -1,7 +1,7 @@
 import { formatRelative } from "@/lib/format"
 import { useT } from "@/lib/i18n/use-t"
 import { useNow } from "@/lib/now"
-import type { AdminReport } from "@/schemas/admin"
+import type { AdminReport } from "@sayaratak/shared/schemas/admin"
 import { ReasonBadge, ReportStatusBadge } from "./report-badges"
 import { ReportListingCell } from "./report-listing-cell"
 

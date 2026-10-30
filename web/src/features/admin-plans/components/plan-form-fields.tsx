@@ -2,7 +2,7 @@ import { useId } from "react"
 import { Controller, type UseFormReturn } from "react-hook-form"
 
 import { useT } from "@/lib/i18n/use-t"
-import type { AdminPlan } from "@/schemas/admin"
+import type { AdminPlan } from "@sayaratak/shared/schemas/admin"
 import { FormField } from "@/components/app/form-field"
 import { Input } from "@/components/ui/input"
 import { Switch } from "@/components/ui/switch"

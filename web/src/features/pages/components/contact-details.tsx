@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query"
 import { MailIcon, MapPinIcon, PhoneIcon } from "lucide-react"
 
 import { useT } from "@/lib/i18n/use-t"
-import { toWhatsappUrl } from "@/lib/phone"
+import { toWhatsappUrl } from "@sayaratak/shared/lib/phone"
 import { BrandIcon } from "@/components/app/brand-icon"
 import { SectionError } from "@/components/app/section-error"
 import { siteQuery } from "../queries"

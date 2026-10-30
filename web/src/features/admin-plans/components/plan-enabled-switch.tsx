@@ -1,6 +1,6 @@
 import { errorText } from "@/lib/api/error-text"
 import { useT } from "@/lib/i18n/use-t"
-import type { AdminPlan } from "@/schemas/admin"
+import type { AdminPlan } from "@sayaratak/shared/schemas/admin"
 import { useUpdatePlan } from "@/features/admin/queries"
 import { StatusSwitch } from "@/features/admin/components/status-switch"
 import { Switch } from "@/components/ui/switch"

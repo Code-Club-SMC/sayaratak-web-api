@@ -1,8 +1,8 @@
 import { z } from "zod"
 
-import { sitePageSchema, type SitePage } from "@/schemas/admin"
-import { requiredText } from "@/schemas/fields"
-import type { pagePatchSchema } from "@/schemas/inputs"
+import { sitePageSchema, type SitePage } from "@sayaratak/shared/schemas/admin"
+import { requiredText } from "@sayaratak/shared/schemas/fields"
+import type { pagePatchSchema } from "@sayaratak/shared/schemas/inputs"
 
 export const pageSlugs = sitePageSchema.shape.slug.options
 

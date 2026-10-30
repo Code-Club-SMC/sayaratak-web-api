@@ -2,7 +2,7 @@ import type { ReactNode } from "react"
 import { useSuspenseQuery } from "@tanstack/react-query"
 
 import { useT } from "@/lib/i18n/use-t"
-import type { SitePage } from "@/schemas/admin"
+import type { SitePage } from "@sayaratak/shared/schemas/admin"
 import { Breadcrumbs } from "@/components/app/breadcrumbs"
 import { pageQuery } from "../queries"
 import { PageBody } from "./page-body"

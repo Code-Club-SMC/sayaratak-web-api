@@ -1,5 +1,5 @@
 import { canRenew } from "@/features/listings-manager/use-listing-actions"
-import type { Listing } from "@/schemas/listing"
+import type { Listing } from "@sayaratak/shared/schemas/listing"
 
 const DAY_MS = 24 * 60 * 60 * 1000
 export const RESERVED_DAYS = 14

@@ -5,8 +5,8 @@ import { buttonVariants } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 import { formatNumber } from "@/lib/format"
 import { useT } from "@/lib/i18n/use-t"
-import type { Range } from "@/schemas/api"
-import type { Analytics } from "@/schemas/responses"
+import type { Range } from "@sayaratak/shared/schemas/api"
+import type { Analytics } from "@sayaratak/shared/schemas/responses"
 
 // Whole percent of the step before; nothing when the step before is 0.
 const rate = (count: number, before: number) =>

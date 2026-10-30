@@ -2,7 +2,7 @@ import { Link } from "@tanstack/react-router"
 
 import { MediaImage } from "@/components/app/media-image"
 import { useT } from "@/lib/i18n/use-t"
-import type { MyPromotion } from "@/schemas/responses"
+import type { MyPromotion } from "@sayaratak/shared/schemas/responses"
 
 // Thumbnail and title of the promoted listing; the title opens its public page.
 export function PromotionListing({ promotion }: { promotion: MyPromotion }) {

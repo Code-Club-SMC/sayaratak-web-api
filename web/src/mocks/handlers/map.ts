@@ -1,5 +1,8 @@
-import { arrayKeys, searchParamsSchema } from "@/features/search/schemas"
-import { mapResponseSchema, type MapPoint } from "@/schemas/responses"
+import { arrayKeys, searchParamsSchema } from "@sayaratak/shared/search/schemas"
+import {
+  mapResponseSchema,
+  type MapPoint,
+} from "@sayaratak/shared/schemas/responses"
 import { both } from "@/mocks/seed/util"
 
 import { db } from "../db"

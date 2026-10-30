@@ -1,6 +1,6 @@
 import { errorText } from "@/lib/api/error-text"
 import { useT } from "@/lib/i18n/use-t"
-import type { Banner } from "@/schemas/admin"
+import type { Banner } from "@sayaratak/shared/schemas/admin"
 import { useDeleteBanner, useUpdateBanner } from "@/features/admin/queries"
 import { RowActions } from "@/components/app/row-actions"
 import { toast } from "@/components/ui/toast"

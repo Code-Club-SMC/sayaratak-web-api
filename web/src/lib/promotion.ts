@@ -1,6 +1,6 @@
 import type { TFunction } from "i18next"
-import type { PromotionPrice } from "@/schemas/billing"
-import type { Listing } from "@/schemas/listing"
+import type { PromotionPrice } from "@sayaratak/shared/schemas/billing"
+import type { Listing } from "@sayaratak/shared/schemas/listing"
 
 // A listing wears the Featured badge while a Featured promotion runs. A bump leaves no badge.
 export function isFeatured(promotions: Listing["promotions"], now: number) {

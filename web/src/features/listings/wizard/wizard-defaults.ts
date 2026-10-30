@@ -1,6 +1,6 @@
 import type { FieldValues } from "react-hook-form"
 
-import { extraDefaults } from "@/schemas/listing-fields"
+import { extraDefaults } from "@sayaratak/shared/schemas/listing-fields"
 
 // What the form holds before anyone typed. The details values are compared with these to tell whether that step was touched.
 export const typeDefaults = {

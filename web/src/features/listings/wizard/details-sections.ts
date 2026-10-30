@@ -1,8 +1,14 @@
 import type { FieldValues } from "react-hook-form"
 
-import { bodyTypes, specOptions } from "@/schemas/listing-fields"
-import { fuelSchema, transmissionSchema } from "@/schemas/listing"
-import { listingColors } from "../schemas"
+import {
+  bodyTypes,
+  specOptions,
+} from "@sayaratak/shared/schemas/listing-fields"
+import {
+  fuelSchema,
+  transmissionSchema,
+} from "@sayaratak/shared/schemas/listing"
+import { listingColors } from "@sayaratak/shared/listings/schemas"
 
 // What the details step shows: sections of fields. A field is data here (its kind, range and choices), so one renderer draws all of them; where a field applies comes from `field-rules.ts`. A few items are drawn by their own component.
 export type FieldDef = {

@@ -5,8 +5,8 @@ import { StatCard } from "@/components/app/stat-card"
 import { businessQueries } from "@/features/directory/queries"
 import { countsQuery } from "@/features/notifications/counts-query"
 import { useT } from "@/lib/i18n/use-t"
-import type { Range } from "@/schemas/api"
-import type { Analytics } from "@/schemas/responses"
+import type { Range } from "@sayaratak/shared/schemas/api"
+import type { Analytics } from "@sayaratak/shared/schemas/responses"
 
 const paths = {
   workshop: {

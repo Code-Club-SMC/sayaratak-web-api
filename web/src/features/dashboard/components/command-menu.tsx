@@ -6,7 +6,7 @@ import { GlobeIcon, PlusIcon, SearchIcon } from "lucide-react"
 import { useDebounced } from "@/hooks/use-debounced"
 import { useT } from "@/lib/i18n/use-t"
 import { localeHref, postPath } from "@/lib/navigation"
-import type { User } from "@/schemas/user"
+import type { User } from "@sayaratak/shared/schemas/user"
 import { Button } from "@/components/ui/button"
 import {
   Command,

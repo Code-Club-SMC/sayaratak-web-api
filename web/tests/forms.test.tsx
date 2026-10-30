@@ -2,7 +2,7 @@ import { useState } from "react"
 import { fireEvent, screen, waitFor, within } from "@testing-library/react"
 import { beforeEach, describe, expect, it, vi } from "vitest"
 
-import type { WeeklyHours } from "@/schemas/fields"
+import type { WeeklyHours } from "@sayaratak/shared/schemas/fields"
 import { CheckboxGroup } from "@/components/app/checkbox-group"
 import { ChipMultiSelect } from "@/components/app/chip-multi-select"
 import { ChipSingleSelect } from "@/components/app/chip-single-select"

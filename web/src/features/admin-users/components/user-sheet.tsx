@@ -2,7 +2,7 @@ import { useState } from "react"
 
 import { errorText } from "@/lib/api/error-text"
 import { useT } from "@/lib/i18n/use-t"
-import type { AdminUser } from "@/schemas/admin"
+import type { AdminUser } from "@sayaratak/shared/schemas/admin"
 import { BanDialog } from "@/features/admin/components/ban-dialog"
 import { EntitySheet } from "@/features/admin/components/entity-sheet"
 import { useBanUser, useUnbanUser } from "@/features/admin/queries"

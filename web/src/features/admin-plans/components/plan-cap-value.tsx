@@ -1,6 +1,6 @@
 import { formatNumber } from "@/lib/format"
 import { useT } from "@/lib/i18n/use-t"
-import type { Plan } from "@/schemas/billing"
+import type { Plan } from "@sayaratak/shared/schemas/billing"
 import type { CapKey } from "./plan-caps"
 
 // A cap as a number, or "No limit" when the plan has none.

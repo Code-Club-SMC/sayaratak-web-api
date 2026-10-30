@@ -1,7 +1,7 @@
 import { PriceText } from "@/components/app/price-text"
 import { formatDate } from "@/lib/format"
 import { useT } from "@/lib/i18n/use-t"
-import type { Payment } from "@/schemas/billing"
+import type { Payment } from "@sayaratak/shared/schemas/billing"
 import { PaymentStatusBadge } from "./payment-status-badge"
 import { ReceiptLink } from "./receipt-link"
 

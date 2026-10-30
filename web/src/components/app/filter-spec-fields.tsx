@@ -8,14 +8,14 @@ import {
   type FlagKey,
   type ListKey,
   type SearchParams,
-} from "@/features/search/schemas"
+} from "@sayaratak/shared/search/schemas"
 import { useT } from "@/lib/i18n/use-t"
 import {
   bodyTypes,
   featureGroups,
   featureGroupsFor,
   specOptions,
-} from "@/schemas/listing-fields"
+} from "@sayaratak/shared/schemas/listing-fields"
 import { CheckboxGroup } from "./checkbox-group"
 import { ChipMultiSelect } from "./chip-multi-select"
 import { FilterSection } from "./filter-section"

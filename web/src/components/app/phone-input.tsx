@@ -1,7 +1,7 @@
 import type { ComponentProps } from "react"
 
-import { normalizeDigits } from "@/lib/digits"
-import { normalizePhone } from "@/lib/phone"
+import { normalizeDigits } from "@sayaratak/shared/lib/digits"
+import { normalizePhone } from "@sayaratak/shared/lib/phone"
 import { Input } from "@/components/ui/input"
 
 const PREFIX = "+249"

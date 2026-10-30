@@ -11,7 +11,11 @@ import { SaveSearchButton } from "@/components/app/save-search-button"
 import { buttonVariants } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { routeHref, searchRoute } from "../landing"
-import { compact, searchParamsSchema, type SearchParams } from "../schemas"
+import {
+  compact,
+  searchParamsSchema,
+  type SearchParams,
+} from "@sayaratak/shared/search/schemas"
 import { searchTitle } from "../title"
 import { SearchBar } from "./search-bar"
 import { SearchResults } from "./search-results"

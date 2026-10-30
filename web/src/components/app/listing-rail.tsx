@@ -3,7 +3,7 @@ import { CarIcon } from "lucide-react"
 
 import { useT } from "@/lib/i18n/use-t"
 import { localeHref } from "@/lib/navigation"
-import type { Listing } from "@/schemas/listing"
+import type { Listing } from "@sayaratak/shared/schemas/listing"
 import { EmptyState } from "./empty-state"
 import { ListingCard } from "./listing-card"
 

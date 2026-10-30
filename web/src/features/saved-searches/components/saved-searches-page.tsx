@@ -12,7 +12,7 @@ import { savedSearchQueries } from "@/features/search/queries"
 import { formatNumber } from "@/lib/format"
 import { useT } from "@/lib/i18n/use-t"
 import { localeHref } from "@/lib/navigation"
-import type { SavedSearch } from "@/schemas/saved-search"
+import type { SavedSearch } from "@sayaratak/shared/schemas/saved-search"
 import { RenameSearchDialog } from "./rename-search-dialog"
 import { SavedSearchRow } from "./saved-search-row"
 

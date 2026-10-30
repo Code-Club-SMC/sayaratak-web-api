@@ -1,7 +1,7 @@
 import { useCityName } from "@/hooks/use-city-name"
 import { initials } from "@/lib/format"
 import { useT } from "@/lib/i18n/use-t"
-import type { WeeklyHours } from "@/schemas/fields"
+import type { WeeklyHours } from "@sayaratak/shared/schemas/fields"
 import { Badge } from "@/components/ui/badge"
 import { MediaImage } from "./media-image"
 import { OpenNowBadge } from "./open-now-badge"

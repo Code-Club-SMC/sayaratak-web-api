@@ -1,7 +1,7 @@
 import { SearchResults } from "@/features/search/components/search-results"
 import { IntentToggle } from "@/features/search/components/intent-toggle"
 import type { FilterGroup } from "@/features/search/filters"
-import type { SearchParams } from "@/features/search/schemas"
+import type { SearchParams } from "@sayaratak/shared/search/schemas"
 import { useT } from "@/lib/i18n/use-t"
 
 // The profile's URL holds type, intent, make, price and year; the other filter blocks would be dropped on the next navigation, so the panel leaves them out.

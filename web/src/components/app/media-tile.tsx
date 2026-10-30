@@ -1,7 +1,7 @@
 import { ChevronLeftIcon, ChevronRightIcon, XIcon } from "lucide-react"
 
 import { useT } from "@/lib/i18n/use-t"
-import type { Media } from "@/schemas/listing"
+import type { Media } from "@sayaratak/shared/schemas/listing"
 import { Button } from "@/components/ui/button"
 import { MediaImage } from "./media-image"
 import { RemoveButton } from "./remove-button"

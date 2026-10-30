@@ -8,7 +8,7 @@ import {
 } from "@/features/reviews/schemas"
 import { errorText } from "@/lib/api/error-text"
 import { useT } from "@/lib/i18n/use-t"
-import type { Review, TargetType } from "@/schemas/review"
+import type { Review, TargetType } from "@sayaratak/shared/schemas/review"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { toast } from "@/components/ui/toast"

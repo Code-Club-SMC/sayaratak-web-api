@@ -4,7 +4,7 @@ import { AvatarUpload } from "@/components/app/avatar-upload"
 import { ChipMultiSelect } from "@/components/app/chip-multi-select"
 import { CitySelect } from "@/components/app/city-select"
 import { useT } from "@/lib/i18n/use-t"
-import { interestSchema, type Interest } from "@/schemas/user"
+import { interestSchema, type Interest } from "@sayaratak/shared/schemas/user"
 import { mediaFromId } from "../media"
 import type { UserOnboarding } from "../schemas"
 

@@ -15,7 +15,7 @@ import {
   type WorkshopSearch,
 } from "@/features/directory/workshop-schemas"
 import { NowProvider } from "@/lib/now"
-import { workshopSchema } from "@/schemas/profile"
+import { workshopSchema } from "@sayaratak/shared/schemas/profile"
 import { db, resetDb } from "@/mocks/db"
 import { renderShell } from "./shell-render"
 

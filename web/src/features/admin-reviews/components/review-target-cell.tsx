@@ -1,5 +1,5 @@
 import { useT } from "@/lib/i18n/use-t"
-import type { AdminReview } from "@/schemas/admin"
+import type { AdminReview } from "@sayaratak/shared/schemas/admin"
 
 // The business the review is about, and what kind of business it is.
 export function ReviewTargetCell({ review }: { review: AdminReview }) {

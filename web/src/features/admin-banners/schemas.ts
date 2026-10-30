@@ -1,9 +1,9 @@
 import { z } from "zod"
 
-import { requiredText } from "@/schemas/fields"
-import type { Banner } from "@/schemas/admin"
-import type { bannerInputSchema } from "@/schemas/inputs"
-import type { Media } from "@/schemas/listing"
+import { requiredText } from "@sayaratak/shared/schemas/fields"
+import type { Banner } from "@sayaratak/shared/schemas/admin"
+import type { bannerInputSchema } from "@sayaratak/shared/schemas/inputs"
+import type { Media } from "@sayaratak/shared/schemas/listing"
 
 export const placements = [
   "home_top",

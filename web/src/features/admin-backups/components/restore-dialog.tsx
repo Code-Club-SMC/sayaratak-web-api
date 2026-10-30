@@ -2,7 +2,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { CircleCheckIcon } from "lucide-react"
 
 import { useT } from "@/lib/i18n/use-t"
-import type { Backup } from "@/schemas/admin"
+import type { Backup } from "@sayaratak/shared/schemas/admin"
 import { FormField } from "@/components/app/form-field"
 import { ResponsiveDialog } from "@/components/app/responsive-dialog"
 import { SubmitButton } from "@/components/app/submit-button"

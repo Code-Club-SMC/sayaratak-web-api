@@ -1,7 +1,7 @@
 import { origin } from "@/lib/seo"
 import { localeHref } from "@/lib/navigation"
 import { useT } from "@/lib/i18n/use-t"
-import type { Listing } from "@/schemas/listing"
+import type { Listing } from "@sayaratak/shared/schemas/listing"
 import { listingJsonLd } from "../json-ld"
 
 export function ListingJsonLd({

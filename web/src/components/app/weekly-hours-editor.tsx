@@ -1,7 +1,7 @@
 import { formatWeekday } from "@/lib/format"
 import { SAT_FIRST } from "@/lib/hours"
 import { useT } from "@/lib/i18n/use-t"
-import type { WeeklyHours } from "@/schemas/fields"
+import type { WeeklyHours } from "@sayaratak/shared/schemas/fields"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Input } from "@/components/ui/input"

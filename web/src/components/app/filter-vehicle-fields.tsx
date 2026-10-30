@@ -9,7 +9,7 @@ import {
 } from "@/features/search/filters"
 import { useFacetLabel } from "@/features/search/use-facet-label"
 import { useT } from "@/lib/i18n/use-t"
-import type { ListingPage } from "@/schemas/listing"
+import type { ListingPage } from "@sayaratak/shared/schemas/listing"
 import { ChipMultiSelect } from "./chip-multi-select"
 import { FilterSection } from "./filter-section"
 import { FormField } from "./form-field"

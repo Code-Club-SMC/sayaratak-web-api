@@ -3,7 +3,7 @@ import { MapPinIcon } from "lucide-react"
 
 import { useCityName } from "@/hooks/use-city-name"
 import { useT } from "@/lib/i18n/use-t"
-import type { Geo } from "@/schemas/fields"
+import type { Geo } from "@sayaratak/shared/schemas/fields"
 import { Button } from "@/components/ui/button"
 import { MapCanvas } from "./map-canvas"
 

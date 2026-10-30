@@ -6,7 +6,7 @@ import {
   phoneSchema,
   requiredInt,
   requiredText,
-} from "@/schemas/fields"
+} from "@sayaratak/shared/schemas/fields"
 
 export const listingSettingsSchema = z.object({
   autoApproveVerifiedDealers: z.boolean(),

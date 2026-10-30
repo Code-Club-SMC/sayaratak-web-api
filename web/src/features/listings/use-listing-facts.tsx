@@ -2,11 +2,11 @@ import { useQuery } from "@tanstack/react-query"
 
 import { formatMileage, formatNumber } from "@/lib/format"
 import { useT } from "@/lib/i18n/use-t"
-import type { Listing } from "@/schemas/listing"
+import type { Listing } from "@sayaratak/shared/schemas/listing"
 import { MakeLogo } from "@/components/app/make-logo"
 import type { Spec } from "@/components/app/specs-list"
 import { taxonomyQuery } from "./queries"
-import { listingColors } from "./schemas"
+import { listingColors } from "@sayaratak/shared/listings/schemas"
 
 // `gold` is not in the post form, but older listings use it.
 const knownColors: string[] = [...listingColors, "gold"]

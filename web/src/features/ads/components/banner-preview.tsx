@@ -1,5 +1,5 @@
 import { BannerCopy } from "@/components/app/banner-copy"
-import type { Creative } from "@/schemas/ads"
+import type { Creative } from "@sayaratak/shared/schemas/ads"
 
 // The banner as visitors will see it, without the link or the view tracking of `BannerItem`.
 export function BannerPreview({

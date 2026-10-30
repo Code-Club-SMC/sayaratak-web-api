@@ -8,7 +8,10 @@ import { CollapsibleSection } from "@/components/app/collapsible-section"
 import { FieldGrid } from "@/components/app/field-grid"
 import { Button } from "@/components/ui/button"
 import { FieldLegend, FieldSet } from "@/components/ui/field"
-import { featureGroups, featureGroupsFor } from "@/schemas/listing-fields"
+import {
+  featureGroups,
+  featureGroupsFor,
+} from "@sayaratak/shared/schemas/listing-fields"
 import { DescriptionBlock, PriceBlock, TitleField } from "./common-fields"
 import { ConditionField } from "./condition-field"
 import { DetailField } from "./details-field"

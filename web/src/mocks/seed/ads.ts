@@ -1,4 +1,4 @@
-import type { AdPageId } from "@/schemas/ads"
+import type { AdPageId } from "@sayaratak/shared/schemas/ads"
 import type { AdPageRow, CampaignRow } from "../types"
 
 const DAY_MS = 24 * 60 * 60 * 1000

@@ -22,7 +22,7 @@ import {
   settingsSchema,
   sitePageSchema,
   type Settings,
-} from "@/schemas/admin"
+} from "@sayaratak/shared/schemas/admin"
 import {
   type BroadcastAudience,
   broadcastSchema,
@@ -30,9 +30,12 @@ import {
   taxonomyRowSchema,
   type Range,
   type taxonomyTypeSchema,
-} from "@/schemas/api"
-import { paymentSchema, promotionPriceSchema } from "@/schemas/billing"
-import { pageOf } from "@/schemas/fields"
+} from "@sayaratak/shared/schemas/api"
+import {
+  paymentSchema,
+  promotionPriceSchema,
+} from "@sayaratak/shared/schemas/billing"
+import { pageOf } from "@sayaratak/shared/schemas/fields"
 import {
   activitySchema,
   adminPaymentsPageSchema,
@@ -40,7 +43,7 @@ import {
   adminStatsSchema,
   estimateSchema,
   myPromotionSchema,
-} from "@/schemas/responses"
+} from "@sayaratak/shared/schemas/responses"
 import type {
   assignPlanInputSchema,
   banInputSchema,
@@ -52,10 +55,10 @@ import type {
   pagePatchSchema,
   planInputSchema,
   reportActionInputSchema,
-} from "@/schemas/inputs"
-import { listingSchema } from "@/schemas/listing"
-import { reviewSchema } from "@/schemas/review"
-import { userSchema } from "@/schemas/user"
+} from "@sayaratak/shared/schemas/inputs"
+import { listingSchema } from "@sayaratak/shared/schemas/listing"
+import { reviewSchema } from "@sayaratak/shared/schemas/review"
+import { userSchema } from "@sayaratak/shared/schemas/user"
 
 type Params = Record<string, unknown>
 const adminList = <TSchema extends z.ZodType>(

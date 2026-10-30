@@ -2,7 +2,7 @@ import { PromotionListing } from "@/features/billing/components/promotion-listin
 import { Badge } from "@/components/ui/badge"
 import { formatDate } from "@/lib/format"
 import { useT } from "@/lib/i18n/use-t"
-import type { MyPromotion } from "@/schemas/responses"
+import type { MyPromotion } from "@sayaratak/shared/schemas/responses"
 import { EndPromotionButton } from "./end-promotion-button"
 
 // One active promotion below md.

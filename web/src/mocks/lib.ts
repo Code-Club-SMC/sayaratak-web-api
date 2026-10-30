@@ -1,15 +1,18 @@
 import { z } from "zod"
 
-import type { Bilingual } from "@/schemas/fields"
-import { extraDefaults, extraFields } from "@/schemas/listing-fields"
-import type { NotificationPrefs } from "@/schemas/api"
-import type { Notification } from "@/schemas/messaging"
+import type { Bilingual } from "@sayaratak/shared/schemas/fields"
+import {
+  extraDefaults,
+  extraFields,
+} from "@sayaratak/shared/schemas/listing-fields"
+import type { NotificationPrefs } from "@sayaratak/shared/schemas/api"
+import type { Notification } from "@sayaratak/shared/schemas/messaging"
 import { db, find, newId, paginate } from "./db"
 import { fail, pageParams, type Ctx } from "./http"
-import type { Plan, Promotion } from "@/schemas/billing"
+import type { Plan, Promotion } from "@sayaratak/shared/schemas/billing"
 import { notificationHref } from "./seed/util"
 import type { ListingRow, UserRow } from "./types"
-import { userSchema } from "@/schemas/user"
+import { userSchema } from "@sayaratak/shared/schemas/user"
 
 export const publicUser = (u: UserRow) =>
   userSchema.parse({ ...u, hasPassword: Boolean(u.password) })

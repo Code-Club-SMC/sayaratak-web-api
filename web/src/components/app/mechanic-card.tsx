@@ -1,5 +1,5 @@
 import { useT } from "@/lib/i18n/use-t"
-import type { Mechanic } from "@/schemas/profile"
+import type { Mechanic } from "@sayaratak/shared/schemas/profile"
 import { Badge } from "@/components/ui/badge"
 import { ProviderCard } from "./provider-card"
 

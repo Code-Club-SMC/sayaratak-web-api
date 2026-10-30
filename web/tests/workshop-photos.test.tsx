@@ -6,7 +6,7 @@ import { toast } from "@/components/ui/toast"
 import { processImage } from "@/lib/image-process"
 import { uploadMedia } from "@/lib/api/upload"
 import { db, resetDb } from "@/mocks/db"
-import type { Media } from "@/schemas/listing"
+import type { Media } from "@sayaratak/shared/schemas/listing"
 import { confirmRemove } from "./confirm"
 import { renderShell } from "./shell-render"
 

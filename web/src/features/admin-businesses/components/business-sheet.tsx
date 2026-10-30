@@ -2,7 +2,7 @@ import { useState } from "react"
 
 import { errorText } from "@/lib/api/error-text"
 import { useT } from "@/lib/i18n/use-t"
-import type { AdminBusiness } from "@/schemas/admin"
+import type { AdminBusiness } from "@sayaratak/shared/schemas/admin"
 import { EntitySheet } from "@/features/admin/components/entity-sheet"
 import { useAssignPlan } from "@/features/admin/queries"
 import { Button } from "@/components/ui/button"

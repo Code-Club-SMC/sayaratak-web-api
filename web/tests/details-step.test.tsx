@@ -2,7 +2,7 @@ import { fireEvent, screen, waitFor } from "@testing-library/react"
 import { useRouterState } from "@tanstack/react-router"
 import { beforeEach, describe, expect, it, vi } from "vitest"
 
-import { detailsSchema } from "@/features/listings/schemas"
+import { detailsSchema } from "@sayaratak/shared/listings/schemas"
 import { ListingWizard } from "@/features/listings/wizard/listing-wizard"
 import { wizardDefaults } from "@/features/listings/wizard/wizard-defaults"
 import { wizardSteps } from "@/features/listings/wizard/wizard-steps"

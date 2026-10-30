@@ -5,7 +5,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 import { useT } from "@/lib/i18n/use-t"
-import type { Listing } from "@/schemas/listing"
+import type { Listing } from "@sayaratak/shared/schemas/listing"
 
 // The moderation state. A rejected listing explains itself in a popover that opens on hover, click and tap (a tooltip never opens on a phone).
 export function ReviewBadge({ listing }: { listing: Listing }) {

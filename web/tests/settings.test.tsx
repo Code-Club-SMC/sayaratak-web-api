@@ -10,7 +10,7 @@ import {
 import { db, resetDb } from "@/mocks/db"
 import { DEMO_PASSWORD } from "@/mocks/seed/people"
 import { dashboardPath } from "@/lib/navigation"
-import type { Role } from "@/schemas/fields"
+import type { Role } from "@sayaratak/shared/schemas/fields"
 import { pick } from "./pick"
 import { renderShell } from "./shell-render"
 

@@ -4,7 +4,7 @@ import { GlobeIcon, LogOutIcon } from "lucide-react"
 import { initials } from "@/lib/format"
 import { useT } from "@/lib/i18n/use-t"
 import { localeHref } from "@/lib/navigation"
-import type { User } from "@/schemas/user"
+import type { User } from "@sayaratak/shared/schemas/user"
 import { useLogout } from "@/features/auth/queries"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import {

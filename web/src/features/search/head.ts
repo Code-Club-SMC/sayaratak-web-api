@@ -1,7 +1,7 @@
 import { buildHead } from "@/lib/seo"
-import type { Locale } from "@/schemas/locale"
+import type { Locale } from "@sayaratak/shared/schemas/locale"
 import { routePath, searchRoute } from "./landing"
-import { compact, type SearchParams } from "./schemas"
+import { compact, type SearchParams } from "@sayaratak/shared/search/schemas"
 
 const presetKeys = ["kind", "intent", "type", "city"]
 

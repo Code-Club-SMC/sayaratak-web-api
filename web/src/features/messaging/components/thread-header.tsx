@@ -5,7 +5,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { initials } from "@/lib/format"
 import { useT } from "@/lib/i18n/use-t"
-import type { Thread } from "@/schemas/messaging"
+import type { Thread } from "@sayaratak/shared/schemas/messaging"
 import { counterpart } from "../counterpart"
 
 const basePath = {

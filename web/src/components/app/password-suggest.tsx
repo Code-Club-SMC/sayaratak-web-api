@@ -3,7 +3,7 @@ import { KeyRoundIcon } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { useT } from "@/lib/i18n/use-t"
-import { passwordSchema } from "@/schemas/fields"
+import { passwordSchema } from "@sayaratak/shared/schemas/fields"
 import { CopyButton } from "./copy-button"
 
 // 64 characters without look-alikes (I, l, O, 0, 1), so a random byte masked to 6 bits picks one without bias.

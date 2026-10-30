@@ -2,7 +2,7 @@ import { useState } from "react"
 
 import { errorText } from "@/lib/api/error-text"
 import { useT } from "@/lib/i18n/use-t"
-import type { AdminVerification } from "@/schemas/admin"
+import type { AdminVerification } from "@sayaratak/shared/schemas/admin"
 import { EntitySheet } from "@/features/admin/components/entity-sheet"
 import { ReasonDialog } from "@/features/admin/components/reason-dialog"
 import {

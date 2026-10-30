@@ -4,8 +4,11 @@ import type { z } from "zod"
 import { apiFetch } from "@/lib/api/client"
 import { useApiMutation } from "@/lib/api/mutation"
 import { keys } from "@/lib/api/query-keys"
-import { reportSchema, verificationRequestSchema } from "@/schemas/admin"
-import type { reportInputSchema } from "@/schemas/inputs"
+import {
+  reportSchema,
+  verificationRequestSchema,
+} from "@sayaratak/shared/schemas/admin"
+import type { reportInputSchema } from "@sayaratak/shared/schemas/inputs"
 import type { VerificationForm } from "./schemas"
 
 export const verificationQuery = queryOptions({

@@ -1,6 +1,6 @@
 import { z } from "zod"
 
-import { optional } from "@/features/search/schemas"
+import { optional } from "@sayaratak/shared/search/schemas"
 
 export const workshopSorts = ["rating", "newest", "nearest"] as const
 

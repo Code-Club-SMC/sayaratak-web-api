@@ -1,6 +1,6 @@
 import { useId } from "react"
 
-import { rangeSchema, type Range } from "@/schemas/api"
+import { rangeSchema, type Range } from "@sayaratak/shared/schemas/api"
 import { useT } from "@/lib/i18n/use-t"
 import { SelectInput } from "./select-input"
 

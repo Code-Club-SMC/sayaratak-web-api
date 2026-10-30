@@ -14,7 +14,7 @@ import { searchPath } from "@/features/search/href"
 import { setCookie } from "@/lib/cookie"
 import { useT } from "@/lib/i18n/use-t"
 import { localeHref } from "@/lib/navigation"
-import { intentSchema } from "@/schemas/listing"
+import { intentSchema } from "@sayaratak/shared/schemas/listing"
 import { heroSearchSchema, type HeroSearch as HeroValues } from "../schemas"
 import { useAppForm } from "@/hooks/use-app-form"
 

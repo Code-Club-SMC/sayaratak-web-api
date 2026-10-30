@@ -1,7 +1,11 @@
-import type { Bilingual } from "@/schemas/fields"
-import type { Message } from "@/schemas/messaging"
-import type { Review } from "@/schemas/review"
-import type { Dealership, Mechanic, Workshop } from "@/schemas/profile"
+import type { Bilingual } from "@sayaratak/shared/schemas/fields"
+import type { Message } from "@sayaratak/shared/schemas/messaging"
+import type { Review } from "@sayaratak/shared/schemas/review"
+import type {
+  Dealership,
+  Mechanic,
+  Workshop,
+} from "@sayaratak/shared/schemas/profile"
 import { faker } from "@faker-js/faker"
 import type {
   FavoriteRow,

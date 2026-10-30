@@ -1,8 +1,8 @@
 import { z } from "zod"
 
-import { optional } from "@/features/search/schemas"
-import { favoriteSortSchema } from "@/schemas/inputs"
-import { typeFilterSchema } from "@/schemas/listing"
+import { optional } from "@sayaratak/shared/search/schemas"
+import { favoriteSortSchema } from "@sayaratak/shared/schemas/inputs"
+import { typeFilterSchema } from "@sayaratak/shared/schemas/listing"
 
 // The page keeps its type, sort and page in the URL.
 export const favoritesSearchSchema = z.object({

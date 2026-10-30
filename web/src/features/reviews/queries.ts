@@ -4,14 +4,14 @@ import type { z } from "zod"
 import { apiFetch } from "@/lib/api/client"
 import { useApiMutation } from "@/lib/api/mutation"
 import { keys } from "@/lib/api/query-keys"
-import { okSchema } from "@/schemas/api"
-import { pageOf } from "@/schemas/fields"
+import { okSchema } from "@sayaratak/shared/schemas/api"
+import { pageOf } from "@sayaratak/shared/schemas/fields"
 import type {
   replyInputSchema,
   reviewInputSchema,
   reviewPatchSchema,
-} from "@/schemas/inputs"
-import { reviewSchema, type TargetType } from "@/schemas/review"
+} from "@sayaratak/shared/schemas/inputs"
+import { reviewSchema, type TargetType } from "@sayaratak/shared/schemas/review"
 
 export const reviewQueries = {
   list: (

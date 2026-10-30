@@ -1,6 +1,6 @@
 import { ListingCard } from "@/components/app/listing-card"
 import { useFavoriteActions } from "@/features/listings/favorite-actions"
-import type { FavoriteListing } from "@/schemas/listing"
+import type { FavoriteListing } from "@sayaratak/shared/schemas/listing"
 import { UnavailableCard } from "./unavailable-card"
 
 // Same columns as the result grids that sit beside a panel. The heart on a card removes it; an unavailable listing has a Remove button instead.

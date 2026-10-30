@@ -8,7 +8,7 @@ import type { FieldValues } from "react-hook-form"
 import type { z } from "zod"
 
 import { defaultWeeklyHours } from "@/lib/hours"
-import type { User } from "@/schemas/user"
+import type { User } from "@sayaratak/shared/schemas/user"
 import {
   dealerBusinessSchema,
   dealerLocationSchema,

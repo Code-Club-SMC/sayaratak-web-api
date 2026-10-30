@@ -2,7 +2,7 @@ import type { DataColumn } from "@/lib/table"
 import { formatNumber, formatRelative } from "@/lib/format"
 import { useT } from "@/lib/i18n/use-t"
 import { useNow } from "@/lib/now"
-import type { AdminVerification } from "@/schemas/admin"
+import type { AdminVerification } from "@sayaratak/shared/schemas/admin"
 import { VerificationBusinessCell } from "./verification-business-cell"
 
 // Columns of the verifications table. The server keeps them newest first, so no column sorts.

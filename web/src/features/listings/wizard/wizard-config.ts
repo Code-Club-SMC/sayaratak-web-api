@@ -2,7 +2,7 @@ import type { ComponentType } from "react"
 import type { FieldValues } from "react-hook-form"
 import { z } from "zod"
 
-import { optional } from "@/features/search/schemas"
+import { optional } from "@sayaratak/shared/search/schemas"
 
 export const wizardStepIds = [
   "type",

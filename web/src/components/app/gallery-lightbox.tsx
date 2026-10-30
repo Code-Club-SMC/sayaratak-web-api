@@ -10,7 +10,7 @@ import {
 import { useT } from "@/lib/i18n/use-t"
 import { arrowStep } from "@/lib/media"
 import { clamp, cn } from "@/lib/utils"
-import type { Media } from "@/schemas/listing"
+import type { Media } from "@sayaratak/shared/schemas/listing"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog"
 import { useDirection } from "@/components/ui/direction"

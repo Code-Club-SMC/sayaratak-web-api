@@ -3,8 +3,8 @@ import { useId } from "react"
 import { PriceText } from "@/components/app/price-text"
 import { Button } from "@/components/ui/button"
 import { useT } from "@/lib/i18n/use-t"
-import type { Plan } from "@/schemas/billing"
-import type { MeSubscription } from "@/schemas/responses"
+import type { Plan } from "@sayaratak/shared/schemas/billing"
+import type { MeSubscription } from "@sayaratak/shared/schemas/responses"
 import { PlanSummary } from "./plan-summary"
 
 // The plan the account runs on, on the billing page: the shared summary with the price and the way to the history.

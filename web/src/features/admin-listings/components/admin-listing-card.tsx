@@ -3,7 +3,7 @@ import { StatusBadge } from "@/components/app/status-badge"
 import { formatRelative } from "@/lib/format"
 import { useT } from "@/lib/i18n/use-t"
 import { useNow } from "@/lib/now"
-import type { AdminListing } from "@/schemas/admin"
+import type { AdminListing } from "@sayaratak/shared/schemas/admin"
 import { ReviewBadge } from "@/features/listings-manager/components/review-badge"
 import { AdminListingCell } from "./admin-listing-cell"
 

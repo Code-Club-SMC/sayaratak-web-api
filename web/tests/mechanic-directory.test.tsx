@@ -14,7 +14,7 @@ import {
   type MechanicSearch,
 } from "@/features/directory/mechanic-schemas"
 import { useMechanicNavigation } from "@/features/directory/use-mechanic-navigation"
-import { mechanicSchema } from "@/schemas/profile"
+import { mechanicSchema } from "@sayaratak/shared/schemas/profile"
 import { db, resetDb } from "@/mocks/db"
 import { renderShell } from "./shell-render"
 

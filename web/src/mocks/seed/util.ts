@@ -1,9 +1,9 @@
 import { faker } from "@faker-js/faker"
 
 import { dashboardPath, messagesPath } from "@/lib/navigation"
-import type { NotificationPrefs } from "@/schemas/api"
-import type { Bilingual } from "@/schemas/fields"
-import type { User } from "@/schemas/user"
+import type { NotificationPrefs } from "@sayaratak/shared/schemas/api"
+import type { Bilingual } from "@sayaratak/shared/schemas/fields"
+import type { User } from "@sayaratak/shared/schemas/user"
 
 import { nameEn } from "./words"
 

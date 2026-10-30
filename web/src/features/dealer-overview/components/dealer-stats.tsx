@@ -7,8 +7,8 @@ import { businessQueries } from "@/features/directory/queries"
 import { countsQuery } from "@/features/notifications/counts-query"
 import { formatNumber } from "@/lib/format"
 import { useT } from "@/lib/i18n/use-t"
-import type { Range } from "@/schemas/api"
-import type { Analytics } from "@/schemas/responses"
+import type { Range } from "@sayaratak/shared/schemas/api"
+import type { Analytics } from "@sayaratak/shared/schemas/responses"
 
 // Five numbers, each a link to the page that explains it. Views and contacts follow the range; the others are counts of now.
 export function DealerStats({

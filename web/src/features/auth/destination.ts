@@ -1,8 +1,8 @@
 import { z } from "zod"
 
 import { dashboardPath, localeHref, safeRedirect } from "@/lib/navigation"
-import type { Locale } from "@/schemas/locale"
-import type { User } from "@/schemas/user"
+import type { Locale } from "@sayaratak/shared/schemas/locale"
+import type { User } from "@sayaratak/shared/schemas/user"
 
 // The `redirect` search param of /auth and the onboarding pages: a path on this site, else nothing.
 export const redirectSearch = z.object({

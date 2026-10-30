@@ -3,7 +3,7 @@ import { PhoneIcon } from "lucide-react"
 
 import { useTrackEvent } from "@/features/listings/events"
 import { useT } from "@/lib/i18n/use-t"
-import { formatPhone, toWhatsappUrl } from "@/lib/phone"
+import { formatPhone, toWhatsappUrl } from "@sayaratak/shared/lib/phone"
 import { usePageUrl } from "@/lib/use-page-url"
 import { cn } from "@/lib/utils"
 import { buttonVariants, Button } from "@/components/ui/button"

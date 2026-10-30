@@ -5,7 +5,7 @@ import { useT } from "@/lib/i18n/use-t"
 import { bannerHref } from "@/lib/navigation"
 import type { Slide } from "@/lib/slide"
 import { isRtl } from "@/lib/utils"
-import type { Banner } from "@/schemas/admin"
+import type { Banner } from "@sayaratak/shared/schemas/admin"
 import { HeroCarousel } from "./hero-carousel"
 
 // The home hero: every banner of the slot as one carousel slide. A banner without `copy` (the older finished-image form) has no title or button to show, so it is left out. A slide counts as viewed after one second on screen; a click on its button counts as a click. The page's own h1 is the search card's, so the first slide takes an h2.

@@ -1,4 +1,4 @@
-import type { User } from "@/schemas/user"
+import type { User } from "@sayaratak/shared/schemas/user"
 
 // Phone, then email, each on its own line and kept left to right.
 export function UserContact({ user }: { user: User }) {

@@ -10,7 +10,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { usePageTitle } from "@/features/dashboard/components/page-title"
 import { useT } from "@/lib/i18n/use-t"
 import { dashboardPath } from "@/lib/navigation"
-import type { User } from "@/schemas/user"
+import type { User } from "@sayaratak/shared/schemas/user"
 import { adsQueries } from "../queries"
 import { CampaignCard } from "./campaign-card"
 

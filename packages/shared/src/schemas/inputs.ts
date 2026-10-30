@@ -31,7 +31,7 @@ import { adPageIdSchema, creativeSchema } from "./ads"
 import { extraFields } from "./listing-fields"
 import { targetTypeSchema } from "./review"
 import { interestSchema } from "./user"
-import { searchParamsSchema } from "@/features/search/schemas"
+import { searchParamsSchema } from "../search/schemas"
 
 // Request bodies. Messages are i18n keys, as everywhere else.
 export const loginInputSchema = z.object({

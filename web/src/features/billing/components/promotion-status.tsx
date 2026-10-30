@@ -3,7 +3,7 @@ import { Link } from "@tanstack/react-router"
 import { Badge } from "@/components/ui/badge"
 import { buttonVariants } from "@/components/ui/button"
 import { useT } from "@/lib/i18n/use-t"
-import type { MyPromotion } from "@/schemas/responses"
+import type { MyPromotion } from "@sayaratak/shared/schemas/responses"
 
 // Active and ended are badges. An unpaid promotion links to its checkout, unless its receipt is waiting for the admin.
 export function PromotionStatus({ promotion }: { promotion: MyPromotion }) {

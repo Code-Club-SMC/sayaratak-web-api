@@ -1,5 +1,5 @@
 import { useT } from "@/lib/i18n/use-t"
-import type { AdminSubscription } from "@/schemas/admin"
+import type { AdminSubscription } from "@sayaratak/shared/schemas/admin"
 import { Badge } from "@/components/ui/badge"
 
 const variants = {

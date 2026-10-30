@@ -1,7 +1,7 @@
-import { okSchema } from "@/schemas/api"
-import { bannerSchema, sitePageSchema } from "@/schemas/admin"
-import { contactInputSchema } from "@/schemas/inputs"
-import { siteSchema } from "@/schemas/responses"
+import { okSchema } from "@sayaratak/shared/schemas/api"
+import { bannerSchema, sitePageSchema } from "@sayaratak/shared/schemas/admin"
+import { contactInputSchema } from "@sayaratak/shared/schemas/inputs"
+import { siteSchema } from "@sayaratak/shared/schemas/responses"
 import { z } from "zod"
 
 import { db, insert, newId, resetDb } from "../db"

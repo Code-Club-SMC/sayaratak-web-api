@@ -1,16 +1,16 @@
-import { promotionInputSchema } from "@/schemas/inputs"
-import { pageOf } from "@/schemas/fields"
+import { promotionInputSchema } from "@sayaratak/shared/schemas/inputs"
+import { pageOf } from "@sayaratak/shared/schemas/fields"
 import {
   paymentSchema,
   planSchema,
   promotionPriceSchema,
   promotionSchema,
-} from "@/schemas/billing"
+} from "@sayaratak/shared/schemas/billing"
 import {
   checkoutSchema,
   meSubscriptionSchema,
   myPromotionsSchema,
-} from "@/schemas/responses"
+} from "@sayaratak/shared/schemas/responses"
 import { z } from "zod"
 
 import { db, find, insert, newId, paginate } from "../db"

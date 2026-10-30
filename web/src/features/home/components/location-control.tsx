@@ -2,7 +2,7 @@ import { LocateFixedIcon } from "lucide-react"
 
 import { radii } from "@/features/search/filters"
 import { useT } from "@/lib/i18n/use-t"
-import type { Geo } from "@/schemas/fields"
+import type { Geo } from "@sayaratak/shared/schemas/fields"
 import { Button } from "@/components/ui/button"
 import { SelectInput } from "@/components/app/select-input"
 

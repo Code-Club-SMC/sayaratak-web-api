@@ -1,5 +1,5 @@
 import { useT } from "@/lib/i18n/use-t"
-import type { User } from "@/schemas/user"
+import type { User } from "@sayaratak/shared/schemas/user"
 import { AccountMenu } from "@/components/app/account-menu"
 import { LanguageSwitcher } from "@/components/app/language-switcher"
 import { NotificationBell } from "@/components/app/notification-bell"

@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query"
 
 import { useT } from "@/lib/i18n/use-t"
 import { adminQueries } from "@/features/admin/queries"
-import type { SitePage } from "@/schemas/admin"
+import type { SitePage } from "@sayaratak/shared/schemas/admin"
 import { SectionError } from "@/components/app/section-error"
 import { Skeleton } from "@/components/ui/skeleton"
 import { PageForm } from "./page-form"

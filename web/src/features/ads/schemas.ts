@@ -1,7 +1,7 @@
 import { z } from "zod"
 
-import { adPageIdSchema, creativeSchema } from "@/schemas/ads"
-import { mediaSchema } from "@/schemas/listing"
+import { adPageIdSchema, creativeSchema } from "@sayaratak/shared/schemas/ads"
+import { mediaSchema } from "@sayaratak/shared/schemas/listing"
 
 // The campaign wizard's form. The photo is the uploaded media; it becomes `creative.imageUrl` on submit.
 export const campaignFormSchema = z.object({

@@ -4,7 +4,7 @@ import { nanoid } from "nanoid"
 import { ApiError } from "@/lib/api/client"
 import { uploadMedia } from "@/lib/api/upload"
 import { processImage, type ProcessedImage } from "@/lib/image-process"
-import type { Media } from "@/schemas/listing"
+import type { Media } from "@sayaratak/shared/schemas/listing"
 
 // `failed` can be retried; `error` cannot (the file itself is the problem) and carries a validation key.
 export type PendingUpload = {

@@ -1,12 +1,15 @@
-import { okSchema } from "@/schemas/api"
+import { okSchema } from "@sayaratak/shared/schemas/api"
 import {
   favoriteInputSchema,
   favoriteSortSchema,
   savedSearchInputSchema,
   savedSearchPatchSchema,
-} from "@/schemas/inputs"
-import { favoritePageSchema, typeFilterSchema } from "@/schemas/listing"
-import { savedSearchSchema } from "@/schemas/saved-search"
+} from "@sayaratak/shared/schemas/inputs"
+import {
+  favoritePageSchema,
+  typeFilterSchema,
+} from "@sayaratak/shared/schemas/listing"
+import { savedSearchSchema } from "@sayaratak/shared/schemas/saved-search"
 import { z } from "zod"
 
 import { db, find, insert, newId, paginate } from "../db"

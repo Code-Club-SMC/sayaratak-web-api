@@ -2,7 +2,7 @@ import { formatWeekday } from "@/lib/format"
 import { khartoumDay, SAT_FIRST } from "@/lib/hours"
 import { useT } from "@/lib/i18n/use-t"
 import { useNow } from "@/lib/now"
-import type { WeeklyHours } from "@/schemas/fields"
+import type { WeeklyHours } from "@sayaratak/shared/schemas/fields"
 
 // The week from Saturday, today marked with weight and a tint (and `aria-current`, so it never rests on color alone).
 export function HoursTable({ hours }: { hours: WeeklyHours }) {

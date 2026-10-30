@@ -8,7 +8,11 @@ import {
   mechanicExpertiseSchema,
   workshopLocationSchema,
 } from "@/features/onboarding/schemas"
-import type { Dealership, Mechanic, Workshop } from "@/schemas/profile"
+import type {
+  Dealership,
+  Mechanic,
+  Workshop,
+} from "@sayaratak/shared/schemas/profile"
 
 type Business = Dealership | Workshop
 

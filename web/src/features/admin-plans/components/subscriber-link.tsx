@@ -1,6 +1,6 @@
 import { useT } from "@/lib/i18n/use-t"
 import { localeHref } from "@/lib/navigation"
-import type { AdminSubscription } from "@/schemas/admin"
+import type { AdminSubscription } from "@sayaratak/shared/schemas/admin"
 
 const businessPage = {
   dealership: "dealerships",

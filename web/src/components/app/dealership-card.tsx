@@ -1,5 +1,5 @@
 import { useT } from "@/lib/i18n/use-t"
-import type { Dealership } from "@/schemas/profile"
+import type { Dealership } from "@sayaratak/shared/schemas/profile"
 import { OpenNowBadge } from "./open-now-badge"
 import { ProviderCard } from "./provider-card"
 

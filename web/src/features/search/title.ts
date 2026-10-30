@@ -1,6 +1,6 @@
-import type { Locale } from "@/schemas/locale"
-import type { Taxonomy } from "@/schemas/taxonomy"
-import type { SearchParams } from "./schemas"
+import type { Locale } from "@sayaratak/shared/schemas/locale"
+import type { Taxonomy } from "@sayaratak/shared/schemas/taxonomy"
+import type { SearchParams } from "@sayaratak/shared/search/schemas"
 
 export type Translate = (key: string, vars?: Record<string, string>) => string
 

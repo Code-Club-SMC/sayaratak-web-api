@@ -1,7 +1,11 @@
 import { defaultStringifySearch } from "@tanstack/react-router"
 
-import { intentSchema, type Intent, type VehicleType } from "@/schemas/listing"
-import { compact, type SearchParams } from "./schemas"
+import {
+  intentSchema,
+  type Intent,
+  type VehicleType,
+} from "@sayaratak/shared/schemas/listing"
+import { compact, type SearchParams } from "@sayaratak/shared/search/schemas"
 
 // URL segment of a landing preset (`/vehicles/cars/sale`) to the stored vehicle type.
 export const TYPE_SLUGS = {

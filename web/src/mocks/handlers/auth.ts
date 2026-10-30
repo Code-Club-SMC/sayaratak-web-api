@@ -1,13 +1,13 @@
 import { customAlphabet, nanoid } from "nanoid"
 
-import { normalizePhone } from "@/lib/phone"
+import { normalizePhone } from "@sayaratak/shared/lib/phone"
 import {
   codeSentSchema,
   notificationPrefsSchema,
   okSchema,
   draftSchema,
   resetTokenSchema,
-} from "@/schemas/api"
+} from "@sayaratak/shared/schemas/api"
 import {
   codeInputSchema,
   draftInputSchema,
@@ -21,7 +21,7 @@ import {
   profilePatchSchema,
   resetInputSchema,
   signupInputSchema,
-} from "@/schemas/inputs"
+} from "@sayaratak/shared/schemas/inputs"
 import { defaultPrefs, slugify } from "@/mocks/seed/util"
 
 import { db, find, insert, newId } from "../db"

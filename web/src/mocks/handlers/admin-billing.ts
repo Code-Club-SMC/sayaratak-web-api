@@ -2,23 +2,23 @@ import {
   type BroadcastAudience,
   broadcastAudienceSchema,
   broadcastSchema,
-} from "@/schemas/api"
+} from "@sayaratak/shared/schemas/api"
 import {
   paymentSchema,
   type Payment,
   promotionPriceSchema,
-} from "@/schemas/billing"
-import { pageOf } from "@/schemas/fields"
+} from "@sayaratak/shared/schemas/billing"
+import { pageOf } from "@sayaratak/shared/schemas/fields"
 import {
   adminPaymentsPageSchema,
   estimateSchema,
   myPromotionSchema,
-} from "@/schemas/responses"
+} from "@sayaratak/shared/schemas/responses"
 import {
   broadcastInputSchema,
   grantInputSchema,
   rejectInputSchema,
-} from "@/schemas/inputs"
+} from "@sayaratak/shared/schemas/inputs"
 
 import { db, find, insert, newId } from "../db"
 import { fail, needRole, route, type Ctx } from "../http"

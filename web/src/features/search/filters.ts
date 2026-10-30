@@ -1,6 +1,14 @@
-import type { Geo } from "@/schemas/fields"
-import type { Fuel, Transmission, VehicleType } from "@/schemas/listing"
-import { flagKeys, type FlagKey, type SearchParams } from "./schemas"
+import type { Geo } from "@sayaratak/shared/schemas/fields"
+import type {
+  Fuel,
+  Transmission,
+  VehicleType,
+} from "@sayaratak/shared/schemas/listing"
+import {
+  flagKeys,
+  type FlagKey,
+  type SearchParams,
+} from "@sayaratak/shared/search/schemas"
 
 // How many filters are set among these draft values: an array counts each choice, anything else counts once when it holds a value. It feeds the count on a section heading.
 export const activeCount = (...values: unknown[]) =>

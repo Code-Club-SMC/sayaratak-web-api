@@ -2,7 +2,7 @@ import { useState } from "react"
 
 import { errorText } from "@/lib/api/error-text"
 import { useT } from "@/lib/i18n/use-t"
-import type { AdminPayment } from "@/schemas/responses"
+import type { AdminPayment } from "@sayaratak/shared/schemas/responses"
 import { EntitySheet } from "@/features/admin/components/entity-sheet"
 import { ReasonDialog } from "@/features/admin/components/reason-dialog"
 import { useApprovePayment, useRejectPayment } from "@/features/admin/queries"

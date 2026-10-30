@@ -1,7 +1,7 @@
 import { BannerSlot } from "@/components/app/banner-slot"
 import { searchPath } from "@/features/search/href"
 import { useT } from "@/lib/i18n/use-t"
-import type { Geo } from "@/schemas/fields"
+import type { Geo } from "@sayaratak/shared/schemas/fields"
 import { homeQueries } from "../queries"
 import { CategoryTiles } from "./category-tiles"
 import { DealershipRow } from "./dealership-row"

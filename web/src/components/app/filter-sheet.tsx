@@ -1,10 +1,10 @@
 import { useState } from "react"
 
 import { filterKeys, type FilterGroup } from "@/features/search/filters"
-import type { SearchParams } from "@/features/search/schemas"
+import type { SearchParams } from "@sayaratak/shared/search/schemas"
 import { useIsMobile } from "@/hooks/use-mobile"
 import { useT } from "@/lib/i18n/use-t"
-import type { ListingPage } from "@/schemas/listing"
+import type { ListingPage } from "@sayaratak/shared/schemas/listing"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,

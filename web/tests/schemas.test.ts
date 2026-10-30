@@ -1,8 +1,8 @@
-import { extraDefaults } from "@/schemas/listing-fields"
+import { extraDefaults } from "@sayaratak/shared/schemas/listing-fields"
 import { expect, it } from "vitest"
 import type { z } from "zod"
 
-import { searchParamsSchema } from "@/features/search/schemas"
+import { searchParamsSchema } from "@sayaratak/shared/search/schemas"
 import {
   backupSchema,
   bannerSchema,
@@ -10,36 +10,39 @@ import {
   settingsSchema,
   sitePageSchema,
   verificationRequestSchema,
-} from "@/schemas/admin"
+} from "@sayaratak/shared/schemas/admin"
 import {
   paymentSchema,
   planSchema,
   promotionPriceSchema,
   promotionSchema,
   subscriptionSchema,
-} from "@/schemas/billing"
+} from "@sayaratak/shared/schemas/billing"
 import {
   identifierSchema,
   passwordSchema,
   phoneSchema,
   priceSchema,
   weeklyHoursSchema,
-} from "@/schemas/fields"
-import { listingPageSchema, listingSchema } from "@/schemas/listing"
+} from "@sayaratak/shared/schemas/fields"
+import {
+  listingPageSchema,
+  listingSchema,
+} from "@sayaratak/shared/schemas/listing"
 import {
   messageSchema,
   notificationSchema,
   threadSchema,
-} from "@/schemas/messaging"
+} from "@sayaratak/shared/schemas/messaging"
 import {
   dealershipSchema,
   mechanicSchema,
   workshopSchema,
-} from "@/schemas/profile"
-import { reviewSchema } from "@/schemas/review"
-import { savedSearchSchema } from "@/schemas/saved-search"
-import { taxonomySchema } from "@/schemas/taxonomy"
-import { userSchema } from "@/schemas/user"
+} from "@sayaratak/shared/schemas/profile"
+import { reviewSchema } from "@sayaratak/shared/schemas/review"
+import { savedSearchSchema } from "@sayaratak/shared/schemas/saved-search"
+import { taxonomySchema } from "@sayaratak/shared/schemas/taxonomy"
+import { userSchema } from "@sayaratak/shared/schemas/user"
 
 const t = "2026-10-04T10:00:00.000Z"
 const bi = { ar: "ب", en: "b" }

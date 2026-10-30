@@ -15,7 +15,7 @@ import { businessQueries } from "@/features/directory/queries"
 import { formatNumber } from "@/lib/format"
 import { useT } from "@/lib/i18n/use-t"
 import { localeHref } from "@/lib/navigation"
-import type { TargetType } from "@/schemas/review"
+import type { TargetType } from "@sayaratak/shared/schemas/review"
 import { reviewQueries } from "../queries"
 import {
   pruneReviewsSearch,

@@ -3,7 +3,7 @@ import { CheckIcon, MinusIcon } from "lucide-react"
 import { formatPrice } from "@/lib/format"
 import { useT } from "@/lib/i18n/use-t"
 import { cn } from "@/lib/utils"
-import type { Plan } from "@/schemas/billing"
+import type { Plan } from "@sayaratak/shared/schemas/billing"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 

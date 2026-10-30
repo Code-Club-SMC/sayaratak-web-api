@@ -9,9 +9,12 @@ import {
   adTargetSchema,
   campaignSchema,
   type AdPage,
-} from "@/schemas/ads"
-import { bannerSchema } from "@/schemas/admin"
-import type { adPagePatchSchema, campaignInputSchema } from "@/schemas/inputs"
+} from "@sayaratak/shared/schemas/ads"
+import { bannerSchema } from "@sayaratak/shared/schemas/admin"
+import type {
+  adPagePatchSchema,
+  campaignInputSchema,
+} from "@sayaratak/shared/schemas/inputs"
 
 export const adminCampaignSchema = campaignSchema.extend({
   receiptUrl: z.string().nullable(),

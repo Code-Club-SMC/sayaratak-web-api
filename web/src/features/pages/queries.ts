@@ -4,10 +4,10 @@ import { z } from "zod"
 import { apiFetch } from "@/lib/api/client"
 import { useApiMutation } from "@/lib/api/mutation"
 import { keys } from "@/lib/api/query-keys"
-import { bannerSchema, sitePageSchema } from "@/schemas/admin"
-import { okSchema } from "@/schemas/api"
-import type { contactInputSchema } from "@/schemas/inputs"
-import { siteSchema } from "@/schemas/responses"
+import { bannerSchema, sitePageSchema } from "@sayaratak/shared/schemas/admin"
+import { okSchema } from "@sayaratak/shared/schemas/api"
+import type { contactInputSchema } from "@sayaratak/shared/schemas/inputs"
+import { siteSchema } from "@sayaratak/shared/schemas/responses"
 
 // Contact details and locales for the footer, the contact page and the suspended page (`GET /site`).
 export const siteQuery = queryOptions({

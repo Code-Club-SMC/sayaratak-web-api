@@ -1,6 +1,10 @@
 import { expect, it } from "vitest"
 
-import { formatPhone, normalizePhone, toWhatsappUrl } from "@/lib/phone"
+import {
+  formatPhone,
+  normalizePhone,
+  toWhatsappUrl,
+} from "@sayaratak/shared/lib/phone"
 
 it("normalizes every accepted phone shape to +249 and 9 digits", () => {
   for (const input of [

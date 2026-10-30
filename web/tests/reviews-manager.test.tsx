@@ -21,7 +21,7 @@ import {
   reviewsSearchSchema,
 } from "@/features/reviews/schemas"
 import { db, resetDb } from "@/mocks/db"
-import type { Review } from "@/schemas/review"
+import type { Review } from "@sayaratak/shared/schemas/review"
 import { renderShell } from "./shell-render"
 
 Element.prototype.scrollIntoView = () => {}

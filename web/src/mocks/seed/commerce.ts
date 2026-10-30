@@ -1,4 +1,9 @@
-import type { Payment, Plan, Promotion, Subscription } from "@/schemas/billing"
+import type {
+  Payment,
+  Plan,
+  Promotion,
+  Subscription,
+} from "@sayaratak/shared/schemas/billing"
 import type { ListingRow, PromotionPriceRow, UserRow } from "../types"
 import { DAY, ago, ahead, int, pick } from "./util"
 

@@ -6,8 +6,8 @@ import { processImage } from "@/lib/image-process"
 import { uploadMedia } from "@/lib/api/upload"
 import { db, resetDb } from "@/mocks/db"
 import { handleMock } from "@/mocks/router"
-import type { Media } from "@/schemas/listing"
-import { mechanicSchema } from "@/schemas/profile"
+import type { Media } from "@sayaratak/shared/schemas/listing"
+import { mechanicSchema } from "@sayaratak/shared/schemas/profile"
 import { renderShell } from "./shell-render"
 
 vi.mock("@/lib/image-process", () => ({ processImage: vi.fn() }))

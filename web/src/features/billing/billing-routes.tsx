@@ -9,8 +9,8 @@ import { dashboardPage } from "@/features/dashboard/overview-route"
 import { ApiError } from "@/lib/api/client"
 import { withProps } from "@/lib/lazy-page"
 import { dashboardPath } from "@/lib/navigation"
-import type { Plan } from "@/schemas/billing"
-import type { Locale } from "@/schemas/locale"
+import type { Plan } from "@sayaratak/shared/schemas/billing"
+import type { Locale } from "@sayaratak/shared/schemas/locale"
 import { billingQueries } from "./queries"
 import {
   billingSearchDefaults,

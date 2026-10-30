@@ -1,6 +1,6 @@
 import { SelectInput } from "@/components/app/select-input"
 import { useT } from "@/lib/i18n/use-t"
-import { vehicleTypeSchema } from "@/schemas/listing"
+import { vehicleTypeSchema } from "@sayaratak/shared/schemas/listing"
 import {
   moderationSearchSchema,
   sellerKinds,

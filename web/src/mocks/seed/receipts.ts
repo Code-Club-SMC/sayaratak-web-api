@@ -1,4 +1,4 @@
-import type { Payment } from "@/schemas/billing"
+import type { Payment } from "@sayaratak/shared/schemas/billing"
 import type { UploadRow } from "../types"
 
 const escape = (s: string) =>

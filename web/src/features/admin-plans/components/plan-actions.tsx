@@ -1,7 +1,7 @@
 import { LockIcon } from "lucide-react"
 
 import { useT } from "@/lib/i18n/use-t"
-import type { AdminPlan } from "@/schemas/admin"
+import type { AdminPlan } from "@sayaratak/shared/schemas/admin"
 import { Button } from "@/components/ui/button"
 import { PlanRemoveButton } from "./plan-remove-button"
 

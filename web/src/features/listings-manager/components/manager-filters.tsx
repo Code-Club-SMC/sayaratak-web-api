@@ -1,6 +1,9 @@
 import { SelectInput } from "@/components/app/select-input"
 import { useT } from "@/lib/i18n/use-t"
-import { intentSchema, vehicleTypeSchema } from "@/schemas/listing"
+import {
+  intentSchema,
+  vehicleTypeSchema,
+} from "@sayaratak/shared/schemas/listing"
 import {
   listingsManagerSearchSchema,
   type ListingsManagerSearch,

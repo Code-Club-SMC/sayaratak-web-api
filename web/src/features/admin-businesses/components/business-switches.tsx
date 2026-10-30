@@ -1,6 +1,6 @@
 import { Switch } from "@/components/ui/switch"
 import { useT } from "@/lib/i18n/use-t"
-import type { AdminBusiness } from "@/schemas/admin"
+import type { AdminBusiness } from "@sayaratak/shared/schemas/admin"
 import type { BusinessChange } from "./business-change"
 
 // The Verified or Active switch of a row. It only asks: the page's dialog confirms (or takes the suspension reason) and saves.

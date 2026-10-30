@@ -16,7 +16,7 @@ import {
 import { useAppForm } from "@/hooks/use-app-form"
 import { errorText } from "@/lib/api/error-text"
 import { useT } from "@/lib/i18n/use-t"
-import type { Media } from "@/schemas/listing"
+import type { Media } from "@sayaratak/shared/schemas/listing"
 import { portfolioFormSchema, type PortfolioForm } from "../schemas"
 
 // A new item (photo and caption) or a saved one (its id; only the caption changes).

@@ -4,7 +4,7 @@ import { StatusBadge } from "@/components/app/status-badge"
 import { useListingTitle } from "@/hooks/use-listing-title"
 import { useT } from "@/lib/i18n/use-t"
 import { cardSizes } from "@/lib/media"
-import type { FavoriteListing } from "@/schemas/listing"
+import type { FavoriteListing } from "@sayaratak/shared/schemas/listing"
 
 // A saved listing that cannot be opened any more. Same shape as a `ListingCard` so rows line up: the photo grayed out with the Sold or Rented badge, the title, why, and a Remove button. No link.
 export function UnavailableCard({

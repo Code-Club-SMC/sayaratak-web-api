@@ -5,7 +5,7 @@ What the real API has to provide so the frontend works unchanged, and what the m
 ## Conventions
 
 - Base path `/api`. JSON in and out, except the multipart uploads named below.
-- Every request and response is checked by a Zod schema in `src/schemas`. In the tables, `inputs:loginInputSchema` means the export `loginInputSchema` of `src/schemas/inputs.ts`. The backend imports the same files (see the Decisions log: through a Bun workspace and a path alias), so the contract cannot drift.
+- Every request and response is checked by a Zod schema in `packages/shared/src/schemas`. In the tables, `inputs:loginInputSchema` means the export `loginInputSchema` of `packages/shared/src/schemas/inputs.ts`. The backend imports the same files (the workspace package `@sayaratak/shared`), so the contract cannot drift.
 - `Page<X>` is `{ items: X[], total, page, pageSize }` (`fields:pageOf`). Page lists take `page` and `pageSize`; short lists and rails take `limit` (1 to 24) instead.
 - Array query params repeat the key: `fuel=petrol&fuel=diesel`.
 - Errors: HTTP status plus `{ code, message, fields?, retryAfter? }`. `fields` maps a field name to an i18n key such as `validation.required`. The UI reacts to `code` only.
@@ -72,7 +72,7 @@ The auth rows are the mock's contract. The backend plan replaces them with Bette
 | Endpoint | Input | Output |
 |---|---|---|
 | `GET /taxonomy` (public) | | `taxonomy:taxonomySchema` |
-| `GET /listings` (public) | query `search/schemas:searchParamsSchema` (`src/features/search/schemas.ts`), plus `limit`, `exclude` | `listing:listingPageSchema` (page plus `facets`) |
+| `GET /listings` (public) | query `search/schemas:searchParamsSchema` (`packages/shared/src/search/schemas.ts`), plus `limit`, `exclude` | `listing:listingPageSchema` (page plus `facets`) |
 | `GET /listings/:slug` (public) | slug resolves by its trailing id | `listing:listingSchema` |
 | `GET /listings/:id/similar` (public) | | `listing:listingSchema[]`, up to 8 |
 | `POST /listings` | `inputs:listingCreateSchema` (`submit` true sends for review, false saves a draft) | `listing:listingSchema` |
@@ -205,14 +205,14 @@ The auth rows are the mock's contract. The backend plan replaces them with Bette
 ### Listings lifecycle (`handlers/listings.ts`, `handlers/admin.ts`)
 
 - Moderation states: `draft`, `pending`, `approved`, `rejected`, `removed`. Sale status: `available`, `reserved`, `sold`, `rented`.
-- Submitting runs the full wizard validation (`features/listings/schemas.ts`: the flat `listingInputSchema`, then the type, details, photos and contact step rules). A draft may be incomplete.
+- Submitting runs the full wizard validation (`packages/shared/src/listings/schemas.ts`: the flat `listingInputSchema`, then the type, details, photos and contact step rules). A draft may be incomplete.
 - Auto-approve: when `settings.autoApproveVerifiedDealers` is on and the owner is a verified dealership, a submitted listing is `approved` at once; otherwise `pending`.
 - Editing title, description, media, kind, vehicle type or part category of an approved listing sends it back to review (unless auto-approved). Price and status never do. Admin edits never do.
 - Approve and restore set `approved` and clear the rejection reason. Reject stores the reason. Each notifies the owner.
 - Renew sets `expiresAt` to the later of now and the current end, plus `settings.listingExpiryDays`.
 - Duplicate makes a new draft copy.
 - Delete removes the listing and its favorites. Deleting an account marks its listings removed and keeps them for the admin history (`mocks/account.ts`).
-- Slugs: `src/lib/slug.ts` `makeListingSlug(title, city, id)`. Rebuilt when the title or city changes. The id is six characters and never changes; a city slug is made once from its English name and never changes.
+- Slugs: `packages/shared/src/lib/slug.ts` `makeListingSlug(title, city, id)`. Rebuilt when the title or city changes. The id is six characters and never changes; a city slug is made once from its English name and never changes.
 
 ### Plans, limits and credits (`mocks/lib.ts`, `handlers/billing.ts`)
 

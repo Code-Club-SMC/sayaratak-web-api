@@ -18,7 +18,7 @@ import {
   dealershipSchema,
   mechanicSchema,
   workshopSchema,
-} from "@/schemas/profile"
+} from "@sayaratak/shared/schemas/profile"
 import * as s from "../schemas"
 import { BrandingFields } from "./branding-fields"
 import { ContactFields } from "./contact-fields"

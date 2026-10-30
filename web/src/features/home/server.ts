@@ -1,7 +1,7 @@
 import { createServerFn } from "@tanstack/react-start"
 import { getCookie } from "@tanstack/react-start/server"
 
-import { geoSchema } from "@/schemas/fields"
+import { geoSchema } from "@sayaratak/shared/schemas/fields"
 
 // `city` and `geo` are written in the browser (hero city select, "Use my location"); the loader reads them here so the server HTML matches.
 export const getHomePrefs = createServerFn().handler(() => {

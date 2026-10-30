@@ -1,7 +1,7 @@
 import { formatDate, formatNumber, formatTime } from "@/lib/format"
 import { useT } from "@/lib/i18n/use-t"
 import type { DataColumn } from "@/lib/table"
-import type { Broadcast } from "@/schemas/api"
+import type { Broadcast } from "@sayaratak/shared/schemas/api"
 import { useAudienceSummary } from "./use-audience-summary"
 
 // Sent, title, audience and recipients, newest first from the server.

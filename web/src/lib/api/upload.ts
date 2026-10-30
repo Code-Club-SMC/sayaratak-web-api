@@ -1,4 +1,4 @@
-import { mediaSchema, type Media } from "@/schemas/listing"
+import { mediaSchema, type Media } from "@sayaratak/shared/schemas/listing"
 import { ApiError, buildUrl, errorFrom } from "./client"
 
 // fetch has no upload progress, so uploads go through XMLHttpRequest.

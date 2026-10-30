@@ -1,5 +1,5 @@
 import { useT } from "@/lib/i18n/use-t"
-import type { Backup } from "@/schemas/admin"
+import type { Backup } from "@sayaratak/shared/schemas/admin"
 import { Badge } from "@/components/ui/badge"
 import { Spinner } from "@/components/ui/spinner"
 

@@ -1,7 +1,7 @@
 import { createInstance } from "i18next"
 import { initReactI18next } from "react-i18next"
 
-import type { Locale } from "@/schemas/locale"
+import type { Locale } from "@sayaratak/shared/schemas/locale"
 
 export const namespaces = [
   "common",

@@ -1,6 +1,6 @@
 import type { ComponentType } from "react"
 
-import type { Checkout } from "@/schemas/responses"
+import type { Checkout } from "@sayaratak/shared/schemas/responses"
 import { PaymentForm } from "./components/payment-form"
 import { TransferInstructions } from "./components/transfer-instructions"
 

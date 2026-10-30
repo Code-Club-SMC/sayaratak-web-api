@@ -11,8 +11,8 @@ import { wizardDefaults } from "@/features/listings/wizard/wizard-defaults"
 import { wizardSteps } from "@/features/listings/wizard/wizard-steps"
 import { keys } from "@/lib/api/query-keys"
 import { db, resetDb } from "@/mocks/db"
-import type { Media } from "@/schemas/listing"
-import { userSchema } from "@/schemas/user"
+import type { Media } from "@sayaratak/shared/schemas/listing"
+import { userSchema } from "@sayaratak/shared/schemas/user"
 import { renderShell } from "./shell-render"
 
 vi.mock("@/components/app/map-canvas-impl", () => ({

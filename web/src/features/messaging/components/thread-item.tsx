@@ -4,7 +4,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { formatNumber, initials } from "@/lib/format"
 import { useT } from "@/lib/i18n/use-t"
-import type { Thread } from "@/schemas/messaging"
+import type { Thread } from "@sayaratak/shared/schemas/messaging"
 import { counterpart } from "../counterpart"
 
 // One row of the inbox: who, what it is about, the last words, and how many are unread.

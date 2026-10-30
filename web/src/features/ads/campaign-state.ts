@@ -1,4 +1,4 @@
-import type { Campaign } from "@/schemas/ads"
+import type { Campaign } from "@sayaratak/shared/schemas/ads"
 
 // What the advertiser sees: an approved campaign is scheduled, running or ended by its dates.
 export type CampaignState =

@@ -1,6 +1,10 @@
 import { z } from "zod"
 
-import { optionalInt, requiredInt, requiredText } from "@/schemas/fields"
+import {
+  optionalInt,
+  requiredInt,
+  requiredText,
+} from "@sayaratak/shared/schemas/fields"
 
 export const individualSettingsSchema = z.object({
   individualSubscriptionsEnabled: z.boolean(),

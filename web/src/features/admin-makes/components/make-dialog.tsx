@@ -4,8 +4,8 @@ import { Controller } from "react-hook-form"
 
 import { errorText } from "@/lib/api/error-text"
 import { useT } from "@/lib/i18n/use-t"
-import { vehicleTypeSchema } from "@/schemas/listing"
-import type { Taxonomy } from "@/schemas/taxonomy"
+import { vehicleTypeSchema } from "@sayaratak/shared/schemas/listing"
+import type { Taxonomy } from "@sayaratak/shared/schemas/taxonomy"
 import {
   useCreateTaxonomyRow,
   useUpdateTaxonomyRow,

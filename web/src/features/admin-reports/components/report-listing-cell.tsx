@@ -1,7 +1,7 @@
 import { MediaImage } from "@/components/app/media-image"
 import { useListingTitle } from "@/hooks/use-listing-title"
 import { useT } from "@/lib/i18n/use-t"
-import type { AdminReport } from "@/schemas/admin"
+import type { AdminReport } from "@sayaratak/shared/schemas/admin"
 
 // Thumbnail and title as one button that opens the report's sheet.
 export function ReportListingCell({

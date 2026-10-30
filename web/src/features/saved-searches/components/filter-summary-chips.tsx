@@ -1,5 +1,5 @@
 import { useActiveFilters } from "@/features/search/use-active-filters"
-import type { SearchParams } from "@/features/search/schemas"
+import type { SearchParams } from "@sayaratak/shared/search/schemas"
 import { formatNumber } from "@/lib/format"
 import { useT } from "@/lib/i18n/use-t"
 

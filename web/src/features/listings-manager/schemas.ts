@@ -1,7 +1,10 @@
 import { z } from "zod"
 
-import { optional } from "@/features/search/schemas"
-import { intentSchema, typeFilterSchema } from "@/schemas/listing"
+import { optional } from "@sayaratak/shared/search/schemas"
+import {
+  intentSchema,
+  typeFilterSchema,
+} from "@sayaratak/shared/schemas/listing"
 
 export const managerTabs = [
   "all",

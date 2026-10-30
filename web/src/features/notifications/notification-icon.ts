@@ -13,7 +13,7 @@ import {
   type LucideIcon,
 } from "lucide-react"
 
-import type { Notification } from "@/schemas/messaging"
+import type { Notification } from "@sayaratak/shared/schemas/messaging"
 
 export const notificationIcon: Record<Notification["type"], LucideIcon> = {
   message: MessageSquareIcon,

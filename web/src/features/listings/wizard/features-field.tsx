@@ -3,7 +3,10 @@ import { useQuery } from "@tanstack/react-query"
 import { ChipMultiSelect } from "@/components/app/chip-multi-select"
 import { taxonomyQuery } from "@/features/listings/queries"
 import { useT } from "@/lib/i18n/use-t"
-import { featureGroups, featureGroupsFor } from "@/schemas/listing-fields"
+import {
+  featureGroups,
+  featureGroupsFor,
+} from "@sayaratak/shared/schemas/listing-fields"
 import { useStepFields } from "./use-step-fields"
 
 // The equipment of a vehicle: one chip group per kind of feature, all stored in the one `features` list.

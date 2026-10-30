@@ -2,8 +2,8 @@ import type { ReactNode } from "react"
 import { PhoneIcon } from "lucide-react"
 
 import { useT } from "@/lib/i18n/use-t"
-import { formatPhone } from "@/lib/phone"
-import type { Geo, WeeklyHours } from "@/schemas/fields"
+import { formatPhone } from "@sayaratak/shared/lib/phone"
+import type { Geo, WeeklyHours } from "@sayaratak/shared/schemas/fields"
 import { HoursTable } from "@/components/app/hours-table"
 import { LocationBlock } from "@/components/app/location-block"
 

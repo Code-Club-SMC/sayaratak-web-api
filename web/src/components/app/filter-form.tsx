@@ -10,11 +10,11 @@ import {
   toDraft,
   type FilterGroup,
 } from "@/features/search/filters"
-import type { SearchParams } from "@/features/search/schemas"
+import type { SearchParams } from "@sayaratak/shared/search/schemas"
 import { useDebounced } from "@/hooks/use-debounced"
 import { useFacetLabel } from "@/features/search/use-facet-label"
 import { useT } from "@/lib/i18n/use-t"
-import type { ListingPage } from "@/schemas/listing"
+import type { ListingPage } from "@sayaratak/shared/schemas/listing"
 import { Button } from "@/components/ui/button"
 import { ChipSingleSelect } from "./chip-single-select"
 import { CheckboxGroup } from "./checkbox-group"

@@ -21,10 +21,10 @@ import {
   fullSearch,
   routeSearchSchema,
   type SearchParams,
-} from "@/features/search/schemas"
+} from "@sayaratak/shared/search/schemas"
 import { useActiveFilters } from "@/features/search/use-active-filters"
-import { listingSchema } from "@/schemas/listing"
-import { extraDefaults } from "@/schemas/listing-fields"
+import { listingSchema } from "@sayaratak/shared/schemas/listing"
+import { extraDefaults } from "@sayaratak/shared/schemas/listing-fields"
 import { db, resetDb } from "@/mocks/db"
 import { matches } from "@/mocks/search"
 import type { ListingRow } from "@/mocks/types"

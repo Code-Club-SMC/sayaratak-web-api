@@ -2,7 +2,7 @@ import { useCityName, useCityNames } from "@/hooks/use-city-name"
 import { useT } from "@/lib/i18n/use-t"
 import { localeHref } from "@/lib/navigation"
 import { origin } from "@/lib/seo"
-import type { Mechanic } from "@/schemas/profile"
+import type { Mechanic } from "@sayaratak/shared/schemas/profile"
 import { mechanicJsonLd } from "../json-ld"
 
 export function MechanicJsonLd({ mechanic: m }: { mechanic: Mechanic }) {

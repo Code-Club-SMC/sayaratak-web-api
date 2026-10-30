@@ -17,9 +17,9 @@ import {
   signupFormSchema,
 } from "@/features/auth/schemas"
 import { newPasswordFormSchema as socialPasswordFormSchema } from "@/features/settings/schemas"
-import { bannerSchema } from "@/schemas/admin"
-import { bannerInputSchema } from "@/schemas/inputs"
-import { mediaSchema } from "@/schemas/listing"
+import { bannerSchema } from "@sayaratak/shared/schemas/admin"
+import { bannerInputSchema } from "@sayaratak/shared/schemas/inputs"
+import { mediaSchema } from "@sayaratak/shared/schemas/listing"
 import { runCases } from "./schema-case"
 
 const password = "abcd1234"

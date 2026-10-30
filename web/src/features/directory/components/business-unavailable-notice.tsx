@@ -2,7 +2,7 @@ import { InfoIcon } from "lucide-react"
 
 import { useT } from "@/lib/i18n/use-t"
 import { localeHref } from "@/lib/navigation"
-import type { TargetType } from "@/schemas/review"
+import type { TargetType } from "@sayaratak/shared/schemas/review"
 import { buttonVariants } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 

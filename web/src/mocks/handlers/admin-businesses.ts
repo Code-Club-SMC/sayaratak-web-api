@@ -1,10 +1,10 @@
 import { dashboardPath } from "@/lib/navigation"
-import { adminBusinessSchema } from "@/schemas/admin"
-import { pageOf } from "@/schemas/fields"
+import { adminBusinessSchema } from "@sayaratak/shared/schemas/admin"
+import { pageOf } from "@sayaratak/shared/schemas/fields"
 import {
   assignPlanInputSchema,
   businessAdminPatchSchema,
-} from "@/schemas/inputs"
+} from "@sayaratak/shared/schemas/inputs"
 
 import { db, find, insert, newId } from "../db"
 import { fail, needRole, route } from "../http"

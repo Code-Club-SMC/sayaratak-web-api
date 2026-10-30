@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query"
 
 import { useT } from "@/lib/i18n/use-t"
-import type { BroadcastAudience } from "@/schemas/api"
+import type { BroadcastAudience } from "@sayaratak/shared/schemas/api"
 import { taxonomyQuery } from "@/features/listings/queries"
 
 // "Dealerships, Workshops · Khartoum · Verified only"; every role reads "Everyone".

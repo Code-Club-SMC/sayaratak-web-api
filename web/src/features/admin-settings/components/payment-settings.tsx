@@ -1,5 +1,5 @@
 import { useT } from "@/lib/i18n/use-t"
-import type { Settings } from "@/schemas/admin"
+import type { Settings } from "@sayaratak/shared/schemas/admin"
 import { FormField } from "@/components/app/form-field"
 import { Input } from "@/components/ui/input"
 import { paymentSettingsSchema } from "../schemas"

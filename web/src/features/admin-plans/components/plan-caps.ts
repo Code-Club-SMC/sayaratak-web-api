@@ -1,4 +1,4 @@
-import type { Plan } from "@/schemas/billing"
+import type { Plan } from "@sayaratak/shared/schemas/billing"
 
 export type CapKey =
   | "listingLimit"

@@ -1,7 +1,7 @@
 import { CircleCheckIcon, CircleIcon } from "lucide-react"
 
 import { useT } from "@/lib/i18n/use-t"
-import { passwordSchema } from "@/schemas/fields"
+import { passwordSchema } from "@sayaratak/shared/schemas/fields"
 
 // Each rule is a message of `passwordSchema`, so the hint and the validation cannot disagree.
 const rules = [

@@ -14,7 +14,7 @@ import { usePageTitle } from "@/features/dashboard/components/page-title"
 import { SetupChecklist } from "@/features/onboarding/components/setup-checklist"
 import { RecentReviewsCard } from "@/features/reviews/components/recent-reviews-card"
 import { useT } from "@/lib/i18n/use-t"
-import type { Range } from "@/schemas/api"
+import type { Range } from "@sayaratak/shared/schemas/api"
 import { WorkshopStats } from "./workshop-stats"
 
 // The first screen of a workshop or a mechanic: availability (mechanic only), setup until done, five numbers, profile views over the period, the newest reviews with a reply in place, and the plan. The period lives in the URL.

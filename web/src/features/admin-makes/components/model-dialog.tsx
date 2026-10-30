@@ -3,7 +3,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 
 import { errorText } from "@/lib/api/error-text"
 import { useT } from "@/lib/i18n/use-t"
-import type { Bilingual } from "@/schemas/fields"
+import type { Bilingual } from "@sayaratak/shared/schemas/fields"
 import {
   useCreateTaxonomyRow,
   useUpdateTaxonomyRow,

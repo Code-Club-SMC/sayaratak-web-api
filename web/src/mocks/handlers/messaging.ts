@@ -1,7 +1,14 @@
-import { okSchema } from "@/schemas/api"
-import { messageInputSchema, threadInputSchema } from "@/schemas/inputs"
-import { messageSchema, threadSchema, type Thread } from "@/schemas/messaging"
-import { pageOf } from "@/schemas/fields"
+import { okSchema } from "@sayaratak/shared/schemas/api"
+import {
+  messageInputSchema,
+  threadInputSchema,
+} from "@sayaratak/shared/schemas/inputs"
+import {
+  messageSchema,
+  threadSchema,
+  type Thread,
+} from "@sayaratak/shared/schemas/messaging"
+import { pageOf } from "@sayaratak/shared/schemas/fields"
 import { both } from "@/mocks/seed/util"
 
 import { db, find, insert, newId, paginate } from "../db"

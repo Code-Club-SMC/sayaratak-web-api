@@ -2,18 +2,18 @@
 import { beforeAll, describe, expect, it } from "vitest"
 import { z } from "zod"
 
-import * as adminSchemas from "@/schemas/admin"
-import * as adsSchemas from "@/schemas/ads"
-import * as apiSchemas from "@/schemas/api"
-import * as billingSchemas from "@/schemas/billing"
-import * as listingSchemas from "@/schemas/listing"
-import * as messagingSchemas from "@/schemas/messaging"
-import * as profileSchemas from "@/schemas/profile"
-import * as responseSchemas from "@/schemas/responses"
-import * as reviewSchemas from "@/schemas/review"
-import * as savedSearchSchemas from "@/schemas/saved-search"
-import * as taxonomySchemas from "@/schemas/taxonomy"
-import * as userSchemas from "@/schemas/user"
+import * as adminSchemas from "@sayaratak/shared/schemas/admin"
+import * as adsSchemas from "@sayaratak/shared/schemas/ads"
+import * as apiSchemas from "@sayaratak/shared/schemas/api"
+import * as billingSchemas from "@sayaratak/shared/schemas/billing"
+import * as listingSchemas from "@sayaratak/shared/schemas/listing"
+import * as messagingSchemas from "@sayaratak/shared/schemas/messaging"
+import * as profileSchemas from "@sayaratak/shared/schemas/profile"
+import * as responseSchemas from "@sayaratak/shared/schemas/responses"
+import * as reviewSchemas from "@sayaratak/shared/schemas/review"
+import * as savedSearchSchemas from "@sayaratak/shared/schemas/saved-search"
+import * as taxonomySchemas from "@sayaratak/shared/schemas/taxonomy"
+import * as userSchemas from "@sayaratak/shared/schemas/user"
 import { db, resetDb } from "@/mocks/db"
 import { handleMock } from "@/mocks/router"
 
@@ -395,7 +395,11 @@ describe("response schemas match the mock", () => {
 
 describe("enums", () => {
   const all = import.meta.glob<Record<string, unknown>>(
-    ["../src/schemas/*.ts", "../src/features/*/schemas.ts"],
+    [
+      "../../packages/shared/src/schemas/*.ts",
+      "../../packages/shared/src/*/schemas.ts",
+      "../src/features/*/schemas.ts",
+    ],
     { eager: true }
   )
   const enums = Object.values(all).flatMap((m) =>

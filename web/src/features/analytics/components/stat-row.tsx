@@ -1,6 +1,6 @@
 import { StatCard } from "@/components/app/stat-card"
 import { useT } from "@/lib/i18n/use-t"
-import type { Analytics } from "@/schemas/responses"
+import type { Analytics } from "@sayaratak/shared/schemas/responses"
 
 type Role = "dealership" | "workshop" | "mechanic"
 type Key = keyof Analytics["totals"]

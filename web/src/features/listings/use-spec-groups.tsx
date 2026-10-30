@@ -3,8 +3,11 @@ import { useQuery } from "@tanstack/react-query"
 import type { Spec } from "@/components/app/specs-list"
 import { formatDate, formatNumber, formatPrice } from "@/lib/format"
 import { useT } from "@/lib/i18n/use-t"
-import type { Listing } from "@/schemas/listing"
-import { featureGroups, featureGroupsFor } from "@/schemas/listing-fields"
+import type { Listing } from "@sayaratak/shared/schemas/listing"
+import {
+  featureGroups,
+  featureGroupsFor,
+} from "@sayaratak/shared/schemas/listing-fields"
 import { taxonomyQuery } from "./queries"
 import {
   labelKey,

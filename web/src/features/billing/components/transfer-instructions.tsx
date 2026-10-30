@@ -1,7 +1,7 @@
 import { useId } from "react"
 
 import { useT } from "@/lib/i18n/use-t"
-import type { Checkout } from "@/schemas/responses"
+import type { Checkout } from "@sayaratak/shared/schemas/responses"
 import { AccountDetails } from "./account-details"
 import { CopyRow } from "./copy-row"
 

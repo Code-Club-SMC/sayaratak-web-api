@@ -19,7 +19,7 @@ import { listingQueries } from "@/features/listings/queries"
 import { formatNumber } from "@/lib/format"
 import { useT } from "@/lib/i18n/use-t"
 import { dashboardPath, localeHref } from "@/lib/navigation"
-import type { Listing } from "@/schemas/listing"
+import type { Listing } from "@sayaratak/shared/schemas/listing"
 import {
   listingsManagerSearchSchema,
   managerTabs,

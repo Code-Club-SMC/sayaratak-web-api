@@ -2,7 +2,7 @@ import {
   flagKeys,
   type FlagKey,
   type SearchParams,
-} from "@/features/search/schemas"
+} from "@sayaratak/shared/search/schemas"
 import { db } from "./db"
 import type { ListingRow } from "./types"
 

@@ -24,7 +24,7 @@ import {
   useMarkNotificationsRead,
 } from "@/features/notifications/queries"
 import { db, resetDb } from "@/mocks/db"
-import { searchParamsSchema } from "@/features/search/schemas"
+import { searchParamsSchema } from "@sayaratak/shared/search/schemas"
 import { useMockFetch } from "./mock-fetch"
 
 const setup = () => {

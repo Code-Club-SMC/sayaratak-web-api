@@ -1,6 +1,10 @@
 import { z } from "zod"
 
-import { latSchema, lngSchema, requiredText } from "@/schemas/fields"
+import {
+  latSchema,
+  lngSchema,
+  requiredText,
+} from "@sayaratak/shared/schemas/fields"
 
 // The code is given once, on create; Edit shows it read-only because cities point to it.
 export const countrySchema = z.object({

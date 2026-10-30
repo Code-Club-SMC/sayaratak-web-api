@@ -4,7 +4,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest"
 import { BusinessProfilePage } from "@/features/business-profile/components/business-profile-page"
 import { db, resetDb } from "@/mocks/db"
 import { handleMock } from "@/mocks/router"
-import { mechanicSchema } from "@/schemas/profile"
+import { mechanicSchema } from "@sayaratak/shared/schemas/profile"
 import { renderShell } from "./shell-render"
 
 Element.prototype.scrollIntoView = () => {}

@@ -1,7 +1,10 @@
 import { z } from "zod"
 
-import { adPageSchema, campaignSchema } from "@/schemas/ads"
-import { adPagePatchSchema, rejectInputSchema } from "@/schemas/inputs"
+import { adPageSchema, campaignSchema } from "@sayaratak/shared/schemas/ads"
+import {
+  adPagePatchSchema,
+  rejectInputSchema,
+} from "@sayaratak/shared/schemas/inputs"
 
 import { db, find } from "../db"
 import { fail, needRole, route, type Ctx } from "../http"

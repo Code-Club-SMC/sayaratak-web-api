@@ -1,7 +1,7 @@
 import { ImagesIcon } from "lucide-react"
 
 import { useT } from "@/lib/i18n/use-t"
-import type { Mechanic } from "@/schemas/profile"
+import type { Mechanic } from "@sayaratak/shared/schemas/profile"
 import { EmptyState } from "@/components/app/empty-state"
 import { PhotoGrid } from "@/components/app/photo-grid"
 

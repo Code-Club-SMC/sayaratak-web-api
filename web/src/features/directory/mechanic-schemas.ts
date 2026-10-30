@@ -1,6 +1,6 @@
 import { z } from "zod"
 
-import { optional } from "@/features/search/schemas"
+import { optional } from "@sayaratak/shared/search/schemas"
 
 export const mechanicSorts = ["rating", "experience", "newest"] as const
 export const minYearsOptions = [3, 5, 10] as const

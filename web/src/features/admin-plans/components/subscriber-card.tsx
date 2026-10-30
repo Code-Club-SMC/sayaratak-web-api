@@ -1,6 +1,6 @@
 import { formatDate } from "@/lib/format"
 import { useT } from "@/lib/i18n/use-t"
-import type { AdminSubscription } from "@/schemas/admin"
+import type { AdminSubscription } from "@sayaratak/shared/schemas/admin"
 import { SubscriberLink } from "./subscriber-link"
 import { SubscriptionStatusBadge } from "./subscription-status-badge"
 import { SubscriptionUsage } from "./subscription-usage"

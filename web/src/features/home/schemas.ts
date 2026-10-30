@@ -1,7 +1,7 @@
 import { z } from "zod"
 
-import { optionalInt } from "@/schemas/fields"
-import { intentSchema } from "@/schemas/listing"
+import { optionalInt } from "@sayaratak/shared/schemas/fields"
+import { intentSchema } from "@sayaratak/shared/schemas/listing"
 
 export const heroSearchSchema = z.object({
   kind: z.enum(["vehicle", "part"]),

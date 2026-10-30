@@ -7,7 +7,7 @@ import { SectionError } from "@/components/app/section-error"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 import { useT } from "@/lib/i18n/use-t"
-import type { Listing } from "@/schemas/listing"
+import type { Listing } from "@sayaratak/shared/schemas/listing"
 import { QueueRow } from "./queue-row"
 
 // The waiting listings, newest first. Bulk approve sits under the rows while some are checked.

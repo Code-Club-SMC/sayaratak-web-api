@@ -2,7 +2,7 @@ import type { ReactNode } from "react"
 
 import { formatDate } from "@/lib/format"
 import { useT } from "@/lib/i18n/use-t"
-import type { Review } from "@/schemas/review"
+import type { Review } from "@sayaratak/shared/schemas/review"
 import { Button } from "@/components/ui/button"
 import { RatingStars } from "./rating-stars"
 

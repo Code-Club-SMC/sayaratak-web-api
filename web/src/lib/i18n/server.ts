@@ -6,7 +6,7 @@ import {
 } from "@tanstack/react-start/server"
 import { z } from "zod"
 
-import { localeSchema, type Locale } from "@/schemas/locale"
+import { localeSchema, type Locale } from "@sayaratak/shared/schemas/locale"
 import type { Messages } from "./create"
 
 export const defaultLocale: Locale = "ar"

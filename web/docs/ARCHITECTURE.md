@@ -35,7 +35,7 @@ The router and its `QueryClient` are created per request on the server (`src/rou
 /sitemap.xml  /robots.txt  /api/$
 ```
 
-- Listing slug: words of the title and city (Arabic letters kept, diacritics and tatweel dropped, Latin lowercased, 60 characters), then a hyphen and the six-character id (`src/lib/slug.ts`). The page resolves by the id and redirects when the words differ.
+- Listing slug: words of the title and city (Arabic letters kept, diacritics and tatweel dropped, Latin lowercased, 60 characters), then a hyphen and the six-character id (`packages/shared/src/lib/slug.ts`). The page resolves by the id and redirects when the words differ.
 - Landing `$type` is `cars`, `trucks`, `motorcycles`, `tuk-tuks`, `rickshaws`; `$intent` is `sale` or `rent`; the city is a taxonomy slug.
 - Lists show 24 items per page with numbered pagination.
 
@@ -70,7 +70,7 @@ The router and its `QueryClient` are created per request on the server (`src/rou
 ## Forms
 
 - React Hook Form with `zodResolver`, typed `useForm<z.input<S>, unknown, z.output<S>>`. Validate on blur, then on change; an empty field stays quiet until the first submit. A failed submit focuses the first invalid field. Server `fields` errors are set on their fields.
-- Number fields hold `number | null` and use `requiredInt`, `optionalInt`, `latSchema`, `lngSchema` from `src/schemas/fields.ts`. `z.coerce` is only for URL search params.
+- Number fields hold `number | null` and use `requiredInt`, `optionalInt`, `latSchema`, `lngSchema` from `packages/shared/src/schemas/fields.ts`. `z.coerce` is only for URL search params.
 - A form marks its minority: "(Optional)" by default, or `<FieldMarks value="required">` (asterisks) when optional fields outnumber required ones.
 - Long forms (post wizard, onboarding) save a draft to `sessionStorage` and, signed in, to `PATCH /api/drafts/:key`. Forms with unsaved changes warn before leaving.
 - Every Remove asks for confirmation first through `RemoveButton` (`src/components/app/remove-button.tsx`). Un-saving a favorite and dismissing a filter chip are not removals.

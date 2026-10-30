@@ -1,6 +1,6 @@
 import { routeHref, searchRoute } from "@/features/search/landing"
-import { searchParamsSchema } from "@/features/search/schemas"
-import type { Listing } from "@/schemas/listing"
+import { searchParamsSchema } from "@sayaratak/shared/search/schemas"
+import type { Listing } from "@sayaratak/shared/schemas/listing"
 
 // A dealership has its profile page; a private seller's other listings are a search on the owner id. Paths without the locale.
 export const sellerHref = (l: Listing) =>

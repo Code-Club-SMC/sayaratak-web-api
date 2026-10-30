@@ -1,6 +1,6 @@
 import { formatDate, formatNumber } from "@/lib/format"
 import { useT } from "@/lib/i18n/use-t"
-import type { Broadcast } from "@/schemas/api"
+import type { Broadcast } from "@sayaratak/shared/schemas/api"
 import { useAudienceSummary } from "./use-audience-summary"
 
 // One sent broadcast below md.

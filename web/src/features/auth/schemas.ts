@@ -1,6 +1,10 @@
 import { z } from "zod"
 
-import { emailSchema, nameSchema, passwordSchema } from "@/schemas/fields"
+import {
+  emailSchema,
+  nameSchema,
+  passwordSchema,
+} from "@sayaratak/shared/schemas/fields"
 
 const confirmed = <T extends { password: string; confirmPassword: string }>(
   v: T

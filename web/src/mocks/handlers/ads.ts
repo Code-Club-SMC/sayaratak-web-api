@@ -6,9 +6,9 @@ import {
   adTargetSchema,
   campaignSchema,
   type AdPageId,
-} from "@/schemas/ads"
-import { bannerSchema, type Banner } from "@/schemas/admin"
-import { campaignInputSchema } from "@/schemas/inputs"
+} from "@sayaratak/shared/schemas/ads"
+import { bannerSchema, type Banner } from "@sayaratak/shared/schemas/admin"
+import { campaignInputSchema } from "@sayaratak/shared/schemas/inputs"
 
 import { db, find, insert, newId } from "../db"
 import { fail, needRole, needUser, route } from "../http"

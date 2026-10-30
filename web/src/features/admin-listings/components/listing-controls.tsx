@@ -5,8 +5,11 @@ import { Button } from "@/components/ui/button"
 import { formatNumber } from "@/lib/format"
 import { useT } from "@/lib/i18n/use-t"
 import { localeHref } from "@/lib/navigation"
-import type { AdminListing } from "@/schemas/admin"
-import { listingStatusSchema, type ListingStatus } from "@/schemas/listing"
+import type { AdminListing } from "@sayaratak/shared/schemas/admin"
+import {
+  listingStatusSchema,
+  type ListingStatus,
+} from "@sayaratak/shared/schemas/listing"
 import { PromotionBadge } from "@/features/listings-manager/components/promotion-badge"
 import { ReviewBadge } from "@/features/listings-manager/components/review-badge"
 

@@ -2,6 +2,7 @@
   "name": "sayaratak",
   "private": true,
   "workspaces": [
+    "packages/*",
     "web",
     "api"
   ]

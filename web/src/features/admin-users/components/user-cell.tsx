@@ -1,6 +1,6 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { initials } from "@/lib/format"
-import type { AdminUser } from "@/schemas/admin"
+import type { AdminUser } from "@sayaratak/shared/schemas/admin"
 
 // Avatar, name and id as one button that opens the person's sheet.
 export function UserCell({

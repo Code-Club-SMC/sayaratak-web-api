@@ -13,8 +13,8 @@ import {
 import { listingQueries } from "@/features/listings/queries"
 import { formatNumber } from "@/lib/format"
 import { useT } from "@/lib/i18n/use-t"
-import type { Range } from "@/schemas/api"
-import type { Listing } from "@/schemas/listing"
+import type { Range } from "@sayaratak/shared/schemas/api"
+import type { Listing } from "@sayaratak/shared/schemas/listing"
 
 // Views, contacts and totals of one listing, for a period.
 export function ListingAnalyticsSheet({

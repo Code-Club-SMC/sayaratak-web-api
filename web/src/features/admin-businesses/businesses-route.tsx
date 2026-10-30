@@ -10,8 +10,8 @@ import { dashboardPage } from "@/features/dashboard/overview-route"
 import { taxonomyQuery } from "@/features/listings/queries"
 import { adminQueries } from "@/features/admin/queries"
 import { withProps } from "@/lib/lazy-page"
-import type { AdminBusiness } from "@/schemas/admin"
-import type { Locale } from "@/schemas/locale"
+import type { AdminBusiness } from "@sayaratak/shared/schemas/admin"
+import type { Locale } from "@sayaratak/shared/schemas/locale"
 
 const BusinessesPage = lazyRouteComponent(
   () => import("./components/businesses-page"),

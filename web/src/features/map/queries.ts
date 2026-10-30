@@ -2,7 +2,7 @@ import { keepPreviousData, queryOptions } from "@tanstack/react-query"
 
 import { apiFetch } from "@/lib/api/client"
 import { keys } from "@/lib/api/query-keys"
-import { mapResponseSchema } from "@/schemas/responses"
+import { mapResponseSchema } from "@sayaratak/shared/schemas/responses"
 import type { MapSearch } from "./schemas"
 
 // The vehicle filters apply to the vehicles layer only; `layers` repeats in the query string like every array param.

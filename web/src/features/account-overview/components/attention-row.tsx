@@ -17,7 +17,7 @@ import { formatRelative } from "@/lib/format"
 import { useT } from "@/lib/i18n/use-t"
 import { useNow } from "@/lib/now"
 import { cn } from "@/lib/utils"
-import type { Listing } from "@/schemas/listing"
+import type { Listing } from "@sayaratak/shared/schemas/listing"
 import { daysSince, type Attention } from "../attention"
 
 // One listing and the one thing to do about it: edit and resubmit, edit while in review, renew, or change the status of a long reservation.

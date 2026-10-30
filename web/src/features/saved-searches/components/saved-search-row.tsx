@@ -13,7 +13,7 @@ import { formatDate, formatNumber } from "@/lib/format"
 import { useT } from "@/lib/i18n/use-t"
 import { localeHref } from "@/lib/navigation"
 import { cn } from "@/lib/utils"
-import type { SavedSearch } from "@/schemas/saved-search"
+import type { SavedSearch } from "@sayaratak/shared/schemas/saved-search"
 import { FilterSummaryChips } from "./filter-summary-chips"
 
 // One saved search: its name, filters and new-match count, the alerts switch (saves at once), Open and a menu with Rename and Delete.

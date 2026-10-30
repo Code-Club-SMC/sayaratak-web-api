@@ -7,8 +7,8 @@ import {
   phoneSchema,
   priceSchema,
   yearSchema,
-} from "@/schemas/fields"
-import { extraFields } from "@/schemas/listing-fields"
+} from "../schemas/fields"
+import { extraFields } from "../schemas/listing-fields"
 import {
   fuelSchema,
   intentSchema,
@@ -16,7 +16,7 @@ import {
   transmissionSchema,
   vehicleTypeSchema,
   type VehicleType,
-} from "@/schemas/listing"
+} from "../schemas/listing"
 
 export const reportReasons = [
   "scam",

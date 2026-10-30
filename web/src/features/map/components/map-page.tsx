@@ -6,7 +6,7 @@ import { taxonomyQuery } from "@/features/listings/queries"
 import { useDebounced } from "@/hooks/use-debounced"
 import { useT } from "@/lib/i18n/use-t"
 import { defaultCenter } from "@/lib/map"
-import type { MapPoint } from "@/schemas/responses"
+import type { MapPoint } from "@sayaratak/shared/schemas/responses"
 import {
   MapCanvas,
   type MapMarker,

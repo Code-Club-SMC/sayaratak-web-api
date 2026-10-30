@@ -2,12 +2,15 @@ import { fireEvent, screen, waitFor, within } from "@testing-library/react"
 import { useRouterState } from "@tanstack/react-router"
 import { beforeEach, describe, expect, it, vi } from "vitest"
 
-import { detailsSchema } from "@/features/listings/schemas"
+import { detailsSchema } from "@sayaratak/shared/listings/schemas"
 import { ListingWizard } from "@/features/listings/wizard/listing-wizard"
 import { applies, inapplicable } from "@/features/listings/wizard/field-rules"
 import { wizardDefaults } from "@/features/listings/wizard/wizard-defaults"
 import { wizardSteps } from "@/features/listings/wizard/wizard-steps"
-import { extraDefaults, extraFields } from "@/schemas/listing-fields"
+import {
+  extraDefaults,
+  extraFields,
+} from "@sayaratak/shared/schemas/listing-fields"
 import { z } from "zod"
 import { db, resetDb } from "@/mocks/db"
 import { pick } from "./pick"

@@ -1,6 +1,6 @@
 import { formatNumber } from "@/lib/format"
 import { useT } from "@/lib/i18n/use-t"
-import type { AdminSubscription } from "@/schemas/admin"
+import type { AdminSubscription } from "@sayaratak/shared/schemas/admin"
 
 // Live listings against the cap while the subscription runs.
 export function SubscriptionUsage({ sub }: { sub: AdminSubscription }) {

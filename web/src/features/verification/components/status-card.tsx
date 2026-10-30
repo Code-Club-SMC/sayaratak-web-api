@@ -2,7 +2,10 @@ import { VerifiedBadge } from "@/components/app/verified-badge"
 import { Button } from "@/components/ui/button"
 import { formatDate } from "@/lib/format"
 import { useT } from "@/lib/i18n/use-t"
-import { verificationLabels, type VerificationRequest } from "@/schemas/admin"
+import {
+  verificationLabels,
+  type VerificationRequest,
+} from "@sayaratak/shared/schemas/admin"
 
 export type VerificationStatus = "none" | "pending" | "approved" | "rejected"
 

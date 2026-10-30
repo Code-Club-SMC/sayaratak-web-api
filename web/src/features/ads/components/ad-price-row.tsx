@@ -9,7 +9,7 @@ import { Switch } from "@/components/ui/switch"
 import { toast } from "@/components/ui/toast"
 import { errorText } from "@/lib/api/error-text"
 import { useT } from "@/lib/i18n/use-t"
-import type { AdPage } from "@/schemas/ads"
+import type { AdPage } from "@sayaratak/shared/schemas/ads"
 import { useUpdateAdPage } from "../queries"
 
 // One page's weekly price, how many advertisers rotate on it, and whether it is for sale. Saved per row; running campaigns keep the price they paid.

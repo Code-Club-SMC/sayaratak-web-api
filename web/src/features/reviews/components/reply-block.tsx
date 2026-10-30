@@ -2,7 +2,7 @@ import { useEffect, useRef, useState, type ReactNode } from "react"
 
 import { Button } from "@/components/ui/button"
 import { useT } from "@/lib/i18n/use-t"
-import type { Review } from "@/schemas/review"
+import type { Review } from "@sayaratak/shared/schemas/review"
 import { ReplyForm } from "./reply-form"
 
 // The owner's reply under a review: the text with "Edit", or a "Reply" button, and the form in place of either. A hidden review takes no reply, so it shows an old one at most. `children` are the other actions, kept beside "Reply" or under the reply text.

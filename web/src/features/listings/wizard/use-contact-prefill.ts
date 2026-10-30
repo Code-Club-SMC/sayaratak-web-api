@@ -4,7 +4,7 @@ import { useFormContext } from "react-hook-form"
 
 import { meQuery } from "@/features/auth/me-query"
 import { businessQueries } from "@/features/directory/queries"
-import type { Dealership } from "@/schemas/profile"
+import type { Dealership } from "@sayaratak/shared/schemas/profile"
 
 // What a dealership's own details put into the form. Without a WhatsApp number the first phone stands in, as for anyone who keeps "same number".
 export const dealerContact = (d: Dealership) => ({

@@ -1,5 +1,5 @@
-import type { Locale } from "@/schemas/locale"
-import type { User } from "@/schemas/user"
+import type { Locale } from "@sayaratak/shared/schemas/locale"
+import type { User } from "@sayaratak/shared/schemas/user"
 
 export const marketplaceLinks = [
   { key: "nav.cars", path: "/vehicles/cars/sale" },

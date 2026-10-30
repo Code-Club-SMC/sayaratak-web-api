@@ -5,7 +5,7 @@ import { Controller } from "react-hook-form"
 
 import { useT } from "@/lib/i18n/use-t"
 import { formatNumber } from "@/lib/format"
-import type { AdminBusiness } from "@/schemas/admin"
+import type { AdminBusiness } from "@sayaratak/shared/schemas/admin"
 import { adminQueries } from "@/features/admin/queries"
 import { assignPlanSchema, type AssignPlanForm } from "@/features/admin/schemas"
 import { FieldMarks, FormField } from "@/components/app/form-field"

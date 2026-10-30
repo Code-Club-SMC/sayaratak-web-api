@@ -5,13 +5,21 @@
   "scripts": {
     "dev": "bun --watch src/index.ts",
     "start": "bun src/index.ts",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "lint": "biome lint . && eslint .",
+    "format": "biome format --write .",
+    "check": "biome format .",
+    "test": "bun test"
   },
   "dependencies": {
     "@sayaratak/shared": "workspace:*",
     "hono": "^4.13.13"
   },
   "devDependencies": {
-    "@types/bun": "^1.4.4"
+    "@biomejs/biome": "2.6.4",
+    "@types/bun": "^1.4.4",
+    "eslint": "^10.12.0",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.71.0"
   }
 }

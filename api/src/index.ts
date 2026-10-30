@@ -5,4 +5,4 @@ const server = Bun.serve({
   fetch: app.fetch,
 })
 
-process.on("SIGTERM", () => server.stop())
+process.on("SIGTERM", () => void server.stop())

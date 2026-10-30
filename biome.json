@@ -1,0 +1,50 @@
+{
+  "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
+  "root": true,
+  "vcs": { "enabled": true, "clientKind": "git", "useIgnoreFile": true },
+  "files": {
+    "includes": ["api/**", "packages/shared/**", "!api/plan"]
+  },
+  "assist": { "enabled": false },
+  "formatter": {
+    "indentStyle": "space",
+    "indentWidth": 2,
+    "lineEnding": "lf",
+    "lineWidth": 80
+  },
+  "javascript": {
+    "formatter": {
+      "semicolons": "asNeeded",
+      "quoteStyle": "double",
+      "trailingCommas": "es5"
+    }
+  },
+  "linter": {
+    "rules": {
+      "preset": "recommended",
+      "suspicious": { "noConsole": "error" }
+    }
+  },
+  "overrides": [
+    {
+      "includes": ["api/src/**"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noRestrictedImports": {
+              "level": "error",
+              "options": {
+                "patterns": [
+                  {
+                    "group": ["**/web/**", "@/**"],
+                    "message": "api/src never imports web code (A4). Only scripts and tests may import web/src/mocks."
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

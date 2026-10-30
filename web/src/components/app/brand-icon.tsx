@@ -5,7 +5,7 @@ export function BrandIcon({
   name,
   className,
 }: {
-  name: "google" | "facebook" | "whatsapp"
+  name: "google" | "facebook" | "whatsapp" | "telegram" | "tiktok"
   className?: string
 }) {
   return (

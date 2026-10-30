@@ -1,9 +1,12 @@
 import { useSyncExternalStore } from "react"
-import { Share2Icon } from "lucide-react"
+import { LinkIcon, Share2Icon } from "lucide-react"
 
 import { useTrackEvent } from "@/features/listings/events"
+import { formatPrice } from "@/lib/format"
 import { useT } from "@/lib/i18n/use-t"
+import { localeHref } from "@/lib/navigation"
 import { usePageUrl } from "@/lib/use-page-url"
+import type { Listing } from "@/schemas/listing"
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
@@ -13,43 +16,52 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { toast } from "@/components/ui/toast"
 
+import { BrandIcon } from "./brand-icon"
+
 const noop = () => () => {}
 const canShare = () => typeof navigator.share === "function"
 
 // Facebook, Telegram and WhatsApp take a share URL. TikTok has none, so it copies the link and tells the person what to do.
+// The link is the short /listing/<id> form: the Arabic slug turns into %D8%.. in chat apps, and the loader redirects it to the canonical slug.
 export function ShareMenu({
-  targetId,
+  listing,
   title,
-  url: given,
   className,
 }: {
-  targetId: string
+  listing: Pick<Listing, "id" | "price" | "rentPeriod">
   title: string
-  // The address to share; the current page when left out.
-  url?: string
   className?: string
 }) {
-  const { t } = useT()
+  const { t, locale } = useT()
   const page = usePageUrl()
-  const url = given ?? page
+  const url =
+    page && new URL(localeHref(`/listing/${listing.id}`, locale), page).href
+  const { amount, unit } = formatPrice(listing.price, locale)
+  const period = listing.rentPeriod
+    ? ` ${t(`listing.per_${listing.rentPeriod}`)}`
+    : ""
+  const text = `${title} · ${amount} ${unit}${period}`
   const native = useSyncExternalStore(noop, canShare, () => false)
   const { mutate: track } = useTrackEvent()
   const enc = encodeURIComponent
   const links = [
     {
       key: "listing.whatsapp",
-      href: `https://wa.me/?text=${enc(`${title} ${url}`)}`,
+      icon: "whatsapp",
+      href: `https://wa.me/?text=${enc(`${text}\n${url}`)}`,
     },
     {
       key: "listing.share_facebook",
+      icon: "facebook",
       href: `https://www.facebook.com/sharer/sharer.php?u=${enc(url)}`,
     },
     {
       key: "listing.share_telegram",
-      href: `https://t.me/share/url?url=${enc(url)}&text=${enc(title)}`,
+      icon: "telegram",
+      href: `https://t.me/share/url?url=${enc(url)}&text=${enc(text)}`,
     },
-  ]
-  const done = () => track({ type: "share", targetId })
+  ] as const
+  const done = () => track({ type: "share", targetId: listing.id })
   const copy = (message: string) => {
     void navigator.clipboard
       .writeText(url)
@@ -71,9 +83,10 @@ export function ShareMenu({
           <DropdownMenuItem
             className={item}
             onClick={() => {
-              void navigator.share({ title, url }).then(done, () => {})
+              void navigator.share({ title, text, url }).then(done, () => {})
             }}
           >
+            <Share2Icon aria-hidden="true" strokeWidth={1.5} />
             {t("listing.share_more")}
           </DropdownMenuItem>
         )}
@@ -86,6 +99,7 @@ export function ShareMenu({
               <a href={l.href} target="_blank" rel="noopener noreferrer" />
             }
           >
+            <BrandIcon name={l.icon} />
             {t(l.key)}
           </DropdownMenuItem>
         ))}
@@ -93,12 +107,14 @@ export function ShareMenu({
           className={item}
           onClick={() => copy(t("toast.tiktok_copied"))}
         >
+          <BrandIcon name="tiktok" />
           {t("listing.share_tiktok")}
         </DropdownMenuItem>
         <DropdownMenuItem
           className={item}
           onClick={() => copy(t("toast.link_copied"))}
         >
+          <LinkIcon aria-hidden="true" strokeWidth={1.5} />
           {t("listing.share_copy")}
         </DropdownMenuItem>
       </DropdownMenuContent>

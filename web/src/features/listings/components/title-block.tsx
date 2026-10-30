@@ -43,7 +43,7 @@ export function TitleBlock({
         </h1>
         <div className="-ms-2 flex shrink-0 items-center md:ms-0">
           {!own && <FavoriteButton listingId={listing.id} variant="plain" />}
-          <ShareMenu targetId={listing.id} title={title} />
+          <ShareMenu listing={listing} title={title} />
           {!own && <ReportDialog listingId={listing.id} />}
         </div>
       </div>

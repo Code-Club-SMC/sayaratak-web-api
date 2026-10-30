@@ -8,7 +8,6 @@ import { buttonVariants } from "@/components/ui/button"
 import { meQuery } from "@/features/auth/me-query"
 import { useT } from "@/lib/i18n/use-t"
 import { localeHref } from "@/lib/navigation"
-import { usePageUrl } from "@/lib/use-page-url"
 import { listingQueries } from "../queries"
 import { PromotionOffer } from "./promotion-offer"
 import { WizardLayout } from "./wizard-layout"
@@ -24,7 +23,6 @@ export function DoneStep({
   const { t, locale } = useT()
   const router = useRouter()
   const start = useRouterState({ select: (s) => s.location.pathname })
-  const page = usePageUrl()
   const me = useQuery(meQuery)
   const user = me.data
   const asked = !!me.data && !!listingId
@@ -83,13 +81,7 @@ export function DoneStep({
           >
             {t("post.done_another")}
           </a>
-          {live && (
-            <ShareMenu
-              targetId={row.id}
-              title={row.title}
-              url={page && new URL(link(`/listing/${row.slug}`), page).href}
-            />
-          )}
+          {live && <ShareMenu listing={row} title={row.title} />}
         </div>
         {!live && (
           <p className="text-ui text-muted-foreground">

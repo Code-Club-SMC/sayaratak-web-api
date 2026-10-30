@@ -173,15 +173,30 @@ describe("ShareMenu", () => {
   it("copies the link and logs a share event", async () => {
     const writeText = vi.fn().mockResolvedValue(undefined)
     vi.stubGlobal("navigator", { ...navigator, clipboard: { writeText } })
-    await renderShell(<ShareMenu targetId={listing().id} title="x" />)
+    await renderShell(<ShareMenu listing={listing()} title="x" />)
     fireEvent.click(screen.getByRole("button", { name: "Share" }))
     fireEvent.click(await screen.findByRole("menuitem", { name: "Copy link" }))
-    await waitFor(() => expect(writeText).toHaveBeenCalled())
+    await waitFor(() =>
+      expect(writeText).toHaveBeenCalledWith(
+        expect.stringMatching(new RegExp(`/listing/${listing().id}$`))
+      )
+    )
     await waitFor(() =>
       expect(
         db.events.some((e) => e.targetId === listing().id && e.counts.share > 0)
       ).toBe(true)
     )
+  })
+
+  it("puts the title, price and short link in the WhatsApp text", async () => {
+    await renderShell(<ShareMenu listing={listing()} title="x" />)
+    fireEvent.click(screen.getByRole("button", { name: "Share" }))
+    const href = (
+      await screen.findByRole("menuitem", { name: "WhatsApp" })
+    ).getAttribute("href")
+    const text = new URL(href ?? "").searchParams.get("text") ?? ""
+    expect(text).toMatch(/^x · [\d,]+ /)
+    expect(text).toMatch(new RegExp(`\\n.*/listing/${listing().id}$`))
   })
 })
 

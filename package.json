@@ -1,0 +1,8 @@
+{
+  "name": "sayaratak",
+  "private": true,
+  "workspaces": [
+    "web",
+    "api"
+  ]
+}

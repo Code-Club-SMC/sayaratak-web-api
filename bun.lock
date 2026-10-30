@@ -3,7 +3,13 @@
   "configVersion": 1,
   "workspaces": {
     "": {
-      "name": "start-app",
+      "name": "sayaratak",
+    },
+    "api": {
+      "name": "api",
+    },
+    "web": {
+      "name": "web",
       "dependencies": {
         "@base-ui/react": "^1.8.0",
         "@faker-js/faker": "^10.6.0",

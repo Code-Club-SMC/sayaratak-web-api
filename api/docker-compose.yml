@@ -1,0 +1,27 @@
+# Local dev and test databases only. Credentials here are not secrets.
+name: sayaratak
+x-postgres: &postgres
+  image: postgres:18.3-alpine3.23
+  environment:
+    POSTGRES_USER: sayaratak
+    POSTGRES_PASSWORD: sayaratak
+    POSTGRES_DB: sayaratak
+  healthcheck:
+    test: ["CMD-SHELL", "pg_isready -U sayaratak -d sayaratak"]
+    interval: 2s
+    timeout: 3s
+    retries: 15
+
+services:
+  postgres:
+    <<: *postgres
+    ports: ["5432:5432"]
+    volumes: ["pgdata:/var/lib/postgresql"]
+
+  postgres-test:
+    <<: *postgres
+    ports: ["5434:5432"]
+    tmpfs: ["/var/lib/postgresql"]
+
+volumes:
+  pgdata:

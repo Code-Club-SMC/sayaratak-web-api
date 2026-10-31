@@ -15,6 +15,13 @@
       "when": 1793429171547,
       "tag": "0001_settings",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1793434379087,
+      "tag": "0002_idempotency_keys",
+      "breakpoints": true
     }
   ]
 }

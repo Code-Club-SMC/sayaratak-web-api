@@ -16,6 +16,14 @@ const SECURITY_SCHEMES = {
   bearer: { type: "http", scheme: "bearer" },
 }
 const SIGNED_IN = [{ session: [] }, { bearer: [] }]
+const IDEMPOTENCY_KEY = {
+  name: "Idempotency-Key",
+  in: "header",
+  required: false,
+  description:
+    "A UUID per user action, sent again on retry. Kept 24 hours (A18).",
+  schema: { type: "string", maxLength: 255 },
+}
 
 type Operation = { spec?: RouteSpec; inputs: InputSpec[] }
 type JsonSchema = Record<string, unknown>
@@ -82,11 +90,16 @@ function toOperation(path: string, { spec, inputs }: Required<Operation>) {
   const query = inputs.find((input) => input.target === "query")
   const body = inputs.find((input) => input.target !== "query")
   const errors = [...(spec.errors ?? [])]
-  if (inputs.length > 0) errors.push("validation")
+  if (inputs.length > 0 || spec.idempotent) errors.push("validation")
+  if (spec.idempotent) errors.push("in_progress", "idempotency_mismatch")
   return {
     summary: spec.summary,
     security: spec.access === "user" ? SIGNED_IN : [],
-    parameters: [...pathParameters(path), ...queryParameters(query)],
+    parameters: [
+      ...pathParameters(path),
+      ...queryParameters(query),
+      ...(spec.idempotent ? [IDEMPOTENCY_KEY] : []),
+    ],
     ...(body && { requestBody: requestBody(body) }),
     responses: { ...successResponses(spec), ...errorResponses(errors) },
   }

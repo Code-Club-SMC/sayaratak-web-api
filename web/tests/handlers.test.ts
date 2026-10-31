@@ -1966,17 +1966,16 @@ describe("account, settings side", () => {
     expect((await send()).status).toBe(200) // signed out, the code is for signing in
   })
 
-  it("removes an email or phone with an empty string, but never the last one", async () => {
-    user().email = "omar@example.com"
-    user().verifiedEmail = true
-    const cleared = await patch({ email: "" })
+  it("removes the phone with an empty string, never the email", async () => {
+    const email = user().email
+    const kept = await patch({ email: "" })
+    expect(kept.status).toBe(422)
+    expect(kept.body.code).toBe("contact_required")
+    expect(user().email).toBe(email)
+    const cleared = await patch({ phone: "" })
     expect(cleared.status).toBe(200)
-    expect(cleared.body.email).toBeUndefined()
-    expect(user().verifiedEmail).toBe(false)
-    const last = await patch({ phone: "" })
-    expect(last.status).toBe(422)
-    expect(last.body.code).toBe("contact_required")
-    expect(user().phone).toBeTruthy()
+    expect(cleared.body.phone).toBeUndefined()
+    expect(user().verifiedPhone).toBe(false)
   })
 
   it("keeps the language on the account and clears the city and avatar on empty", async () => {

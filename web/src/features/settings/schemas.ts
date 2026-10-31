@@ -8,18 +8,14 @@ import {
 } from "@sayaratak/shared/schemas/fields"
 
 // The fields are strings, "" meaning empty, so every input stays controlled. The avatar is the stored url, as `PATCH /me` takes it.
-export const profileFormSchema = z
-  .object({
-    fullName: nameSchema,
-    email: emailSchema.or(z.literal("")),
-    phone: phoneSchema.or(z.literal("")),
-    cityId: z.string(),
-    avatarUrl: z.string(),
-  })
-  .refine((v) => !!v.email || !!v.phone, {
-    path: ["email"],
-    message: "validation.contact_required",
-  })
+// Every account keeps an email (sign-in is by email); the phone is optional.
+export const profileFormSchema = z.object({
+  fullName: nameSchema,
+  email: z.string().trim().min(1, "validation.required").pipe(emailSchema),
+  phone: phoneSchema.or(z.literal("")),
+  cityId: z.string(),
+  avatarUrl: z.string(),
+})
 export type ProfileForm = z.infer<typeof profileFormSchema>
 
 export const passwordFormSchema = z

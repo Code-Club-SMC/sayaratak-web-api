@@ -28,7 +28,7 @@ const valuesOf = (me: User): ProfileForm => ({
   avatarUrl: me.avatarUrl ?? "",
 })
 
-// Name, city and photo save at once. A new phone or email gets its code first: one another account owns, or a failed send, shows under its field and nothing is saved; otherwise a dialog asks for each code. A cleared one is removed (the schema keeps at least one).
+// Name, city and photo save at once. A new phone or email gets its code first: one another account owns, or a failed send, shows under its field and nothing is saved; otherwise a dialog asks for each code. A cleared phone is removed; the email cannot be cleared.
 export function ProfileForm({ me }: { me: User }) {
   const { t } = useT()
   const update = useUpdateProfile()
@@ -111,7 +111,6 @@ export function ProfileForm({ me }: { me: User }) {
             </FieldLegend>
             <FieldDescription>{t("settings.contact_hint")}</FieldDescription>
             <FormField
-              optional
               label={t("settings.email_label")}
               error={form.formState.errors.email?.message}
             >

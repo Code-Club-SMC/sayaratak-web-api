@@ -150,13 +150,15 @@ export function seedPeople(taxonomy: Taxonomy, empty: boolean) {
   ]
   const individuals = empty ? 0 : 59
   for (let i = 1; i <= individuals; i++) {
+    // Draw kept from when only some had an email, so the rest of the seeded data does not shift.
+    chance(0.3)
     users.push(
       user({
         id: `u-${i}`,
         role: "user",
         fullName: personName(),
         phone: phone(),
-        email: chance(0.3) ? `user${i}@example.sy` : undefined,
+        email: `user${i}@example.sy`,
         cityId: pick(cities).id,
         verifiedPhone: chance(0.85),
         interests: faker.helpers.arrayElements(interests, int(1, 3)),
@@ -169,6 +171,7 @@ export function seedPeople(taxonomy: Taxonomy, empty: boolean) {
   const owner = (prefix: string, i: number, role: UserRow["role"]) => {
     const row = user({
       id: `${prefix}-${i}`,
+      email: `${prefix}${i}@example.sy`,
       role,
       fullName: personName(),
       phone: phone(),

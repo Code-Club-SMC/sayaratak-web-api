@@ -207,7 +207,7 @@ route("POST", "/auth/reset", async (c) => {
 })
 route("POST", "/auth/logout", () => withSession(null, { ok: true }))
 
-// A new phone or email is saved only with the code sent to it (always 123456), and counts as verified then. "" removes one, but never the last. "" on the city or the avatar clears it.
+// A new phone or email is saved only with the code sent to it (always 123456), and counts as verified then. "" removes the phone; the email stays, since sign-in is by email. "" on the city or the avatar clears it.
 route("PATCH", "/me", async (c) => {
   const user = needUser(c)
   const { code, email, phone, cityId, avatarUrl, locale, ...rest } =
@@ -219,8 +219,7 @@ route("PATCH", "/me", async (c) => {
   ) => {
     if (value === undefined || value === user[field]) return
     if (value === "") {
-      if (!user[field === "email" ? "phone" : "email"])
-        throw fail(422, "contact_required")
+      if (field === "email") throw fail(422, "contact_required")
       delete user[field]
       user[verified] = false
       return

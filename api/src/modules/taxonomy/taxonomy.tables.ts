@@ -1,31 +1,20 @@
-import type { Bilingual } from "@sayaratak/shared/schemas/fields"
 import { vehicleTypeSchema } from "@sayaratak/shared/schemas/listing"
-import { type SQL, sql } from "drizzle-orm"
+import { sql } from "drizzle-orm"
 import {
-  type AnyPgColumn,
   boolean,
   check,
   doublePrecision,
   index,
-  integer,
   pgEnum,
   pgTable,
   text,
 } from "drizzle-orm/pg-core"
 
-import { jsonb } from "~/shared/db/jsonb"
+import { bilingual, bilingualText, position } from "~/shared/db/columns"
 
 export const vehicleType = pgEnum("vehicle_type", vehicleTypeSchema.enum)
 
-// Lists answer in the mock's array order, new rows last, so every table keeps an insert position.
-const position = () => integer().generatedByDefaultAsIdentity().notNull()
-const name = () => jsonb().$type<Bilingual>().notNull()
-
-// A bilingual name is an object with a string in both slots. `is true` because a missing key
-// makes the test null, and a check that is null passes.
-function bilingual(column: AnyPgColumn): SQL {
-  return sql`(jsonb_typeof(${column} -> 'ar') = 'string' and jsonb_typeof(${column} -> 'en') = 'string') is true`
-}
+const name = bilingualText
 
 // The id is the lowercase ISO code, given once on create; only enabled countries reach the public site.
 export const countries = pgTable(

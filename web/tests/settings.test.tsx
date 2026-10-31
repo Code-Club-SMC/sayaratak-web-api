@@ -44,15 +44,15 @@ const save = (name = "Save") =>
 
 describe("settings schemas", () => {
   const base = { fullName: "Omar Hassan", cityId: "", avatarUrl: "" }
-  it("needs a phone or an email, either one", () => {
+  it("needs an email, the phone is optional", () => {
     const first = (v: object) =>
       profileFormSchema.safeParse({ ...base, ...v }).error?.issues[0]
-    expect(first({ email: "", phone: "" })).toMatchObject({
+    expect(first({ email: "", phone: "+249912345678" })).toMatchObject({
       path: ["email"],
-      message: "validation.contact_required",
+      message: "validation.required",
     })
+    expect(first({ email: "a@b", phone: "" })?.message).toBe("validation.email")
     expect(first({ email: "a@b.co", phone: "" })).toBeUndefined()
-    expect(first({ email: "", phone: "+249912345678" })).toBeUndefined()
   })
   it("refuses the same password as the new one", () => {
     const parse = (currentPassword: string, newPassword: string) =>

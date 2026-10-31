@@ -219,7 +219,7 @@
   "settings.profile_title": "الملف الشخصي",
   "settings.profile_body": "اسمك وصورتك وبيانات التواصل.",
   "settings.contact_legend": "بيانات التواصل",
-  "settings.contact_hint": "أضف رقم هاتف أو بريدًا إلكترونيًا أو الاثنين. نؤكد أي رقم جديد برمز.",
+  "settings.contact_hint": "تسجّل الدخول ببريدك الإلكتروني، ورقم الهاتف اختياري. نؤكد أي جديد برمز.",
   "settings.email_label": "البريد الإلكتروني",
   "settings.contact_taken": "حساب آخر يستخدم هذا الرقم أو البريد",
   "settings.save_error": "تعذّر الحفظ. تحقق من الاتصال وحاول مرة أخرى.",

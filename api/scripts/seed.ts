@@ -2,6 +2,8 @@ import { settings } from "~/modules/content/content.tables"
 import * as taxonomy from "~/modules/taxonomy/taxonomy.tables"
 import type { Executor } from "~/shared/db/tx"
 
+import { seedPeople } from "./seed-people"
+
 import { buildSeed } from "../../web/src/mocks/seed"
 
 /**
@@ -11,6 +13,7 @@ import { buildSeed } from "../../web/src/mocks/seed"
 export async function seed(ex: Executor) {
   const data = buildSeed()
   await seedTaxonomy(ex, data)
+  await seedPeople(ex, data)
   const { bankakAccount, ...rest } = data.settings
   await ex
     .insert(settings)

@@ -126,7 +126,7 @@ describe("db:seed", () => {
 describe("db:seed in production", () => {
   test("refuses to run and writes nothing", async () => {
     const run = Bun.spawn(["bun", "scripts/seed.ts"], {
-      env: { ...Bun.env, APP_ENV: "production" },
+      env: { ...process.env, APP_ENV: "production" },
       stderr: "pipe",
     })
     expect(await run.exited).toBe(1)

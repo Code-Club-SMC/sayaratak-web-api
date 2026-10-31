@@ -24,6 +24,12 @@ export async function expectSchema<S extends z.ZodType>(
 
 /** Empties every table and seeds it again, so each test starts from the mock's data. */
 export async function resetDb() {
+  await emptyDb()
+  await seed(db)
+}
+
+/** Empties every table, for tests that start from a new site (bootstrap, create-admin). */
+export async function emptyDb() {
   const rows = await db.execute<{ name: string }>(
     sql`select tablename as name from pg_tables where schemaname = 'public'`
   )
@@ -33,5 +39,4 @@ export async function resetDb() {
     sql`, `
   )
   await db.execute(sql`truncate ${tables} restart identity cascade`)
-  await seed(db)
 }

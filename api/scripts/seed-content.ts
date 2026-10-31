@@ -15,6 +15,28 @@ const BYTES_PER_MB = 1024 * 1024
 
 /** Settings, site pages, backups and event counters. */
 export async function seedContent(ex: Executor, data: Seed) {
+  await seedSite(ex, data)
+  // Demo backups have no dump behind their key; restoring one fails with the object missing.
+  await insert(
+    ex,
+    backups,
+    data.backups.map((b) => ({
+      id: b.id,
+      type: b.type,
+      status: b.status,
+      objectKey: `demo/${b.id}.dump`,
+      bytes: b.sizeMb * BYTES_PER_MB,
+      createdAt: new Date(b.createdAt),
+    }))
+  )
+  await seedEvents(ex, data)
+}
+
+/** The settings row and the site pages: reference data that production bootstrap writes too. */
+export async function seedSite(
+  ex: Executor,
+  data: Pick<Seed, "settings" | "pages">
+) {
   const { bankakAccount, ...rest } = data.settings
   await ex
     .insert(settings)
@@ -32,20 +54,6 @@ export async function seedContent(ex: Executor, data: Seed) {
       updatedAt: new Date(p.updatedAt),
     }))
   )
-  // Demo backups have no dump behind their key; restoring one fails with the object missing.
-  await insert(
-    ex,
-    backups,
-    data.backups.map((b) => ({
-      id: b.id,
-      type: b.type,
-      status: b.status,
-      objectKey: `demo/${b.id}.dump`,
-      bytes: b.sizeMb * BYTES_PER_MB,
-      createdAt: new Date(b.createdAt),
-    }))
-  )
-  await seedEvents(ex, data)
 }
 
 async function seedEvents(ex: Executor, data: Seed) {

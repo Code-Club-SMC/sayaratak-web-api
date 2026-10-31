@@ -1,4 +1,3 @@
-import * as taxonomy from "~/modules/taxonomy/taxonomy.tables"
 import type { Executor } from "~/shared/db/tx"
 
 import { seedBilling, seedPlans } from "./seed-billing"
@@ -7,6 +6,7 @@ import { writeDemoFiles } from "./seed-files"
 import { seedListings } from "./seed-listings"
 import { seedPeople } from "./seed-people"
 import { seedSocial } from "./seed-social"
+import { seedTaxonomy } from "./seed-taxonomy"
 
 import { buildSeed } from "../../web/src/mocks/seed"
 
@@ -24,38 +24,6 @@ export async function seed(ex: Executor) {
   await seedBilling(ex, data)
   await seedContent(ex, data)
   await writeDemoFiles(data)
-}
-
-// Parents before children; rows go in array order, so `position` keeps the mock's order.
-async function seedTaxonomy(ex: Executor, data: ReturnType<typeof buildSeed>) {
-  const { cities, districts, makes, models, ...lists } = data.taxonomy
-  await ex
-    .insert(taxonomy.countries)
-    .values(data.countries)
-    .onConflictDoNothing()
-  await ex
-    .insert(taxonomy.cities)
-    .values(cities.map(({ center, ...city }) => ({ ...city, ...center })))
-    .onConflictDoNothing()
-  await ex.insert(taxonomy.districts).values(districts).onConflictDoNothing()
-  await ex
-    .insert(taxonomy.vehicleTypes)
-    .values(lists.vehicleTypes)
-    .onConflictDoNothing()
-  await ex.insert(taxonomy.makes).values(makes).onConflictDoNothing()
-  await ex.insert(taxonomy.models).values(models).onConflictDoNothing()
-  await ex
-    .insert(taxonomy.partCategories)
-    .values(lists.partCategories)
-    .onConflictDoNothing()
-  await ex
-    .insert(taxonomy.specializations)
-    .values(lists.specializations)
-    .onConflictDoNothing()
-  await ex
-    .insert(taxonomy.serviceTemplates)
-    .values(lists.serviceTemplates)
-    .onConflictDoNothing()
 }
 
 if (import.meta.main) {

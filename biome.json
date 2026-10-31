@@ -13,6 +13,7 @@
       "!api/plan",
       "!api/drizzle",
       "!api/openapi.json",
+      "!api/scripts/bootstrap-data.ts",
       "!**/*.md"
     ]
   },

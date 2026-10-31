@@ -15,7 +15,10 @@ type Upload = typeof uploads.$inferInsert
 const date = (iso: string | undefined) => (iso ? new Date(iso) : null)
 
 /** Plans and promotion prices: reference data that accounts and listings point at, so they go first. */
-export async function seedPlans(ex: Executor, data: Seed) {
+export async function seedPlans(
+  ex: Executor,
+  data: Pick<Seed, "plans" | "promotionPrices" | "adPages">
+) {
   await ex.insert(plans).values(data.plans).onConflictDoNothing()
   await ex
     .insert(promo.promotionPrices)

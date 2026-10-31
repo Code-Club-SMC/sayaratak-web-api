@@ -1,8 +1,10 @@
-import type { Settings } from "@sayaratak/shared/schemas/admin"
+import { type Settings, sitePageSchema } from "@sayaratak/shared/schemas/admin"
+import { contactSubjects } from "@sayaratak/shared/schemas/inputs"
 import { sql } from "drizzle-orm"
 import {
   boolean,
   check,
+  index,
   integer,
   pgEnum,
   pgTable,
@@ -10,6 +12,7 @@ import {
   timestamp,
 } from "drizzle-orm/pg-core"
 
+import { bilingual, bilingualText, createdAt } from "~/shared/db/columns"
 import { jsonb } from "~/shared/db/jsonb"
 
 export const backupSchedule = pgEnum("backup_schedule", [
@@ -47,3 +50,39 @@ export const settings = pgTable(
 
 export type SettingsRow = typeof settings.$inferSelect
 export type NewSettingsRow = typeof settings.$inferInsert
+
+export const sitePageSlug = pgEnum(
+  "site_page_slug",
+  sitePageSchema.shape.slug.enum
+)
+
+// The four fixed pages (about, contact, privacy, terms); admins edit them, never add one.
+export const sitePages = pgTable(
+  "site_pages",
+  {
+    slug: sitePageSlug().primaryKey(),
+    title: bilingualText(),
+    body: bilingualText(),
+    updatedAt: timestamp({ withTimezone: true }).notNull(),
+  },
+  (table) => [
+    check("site_pages_title_bilingual", bilingual(table.title)),
+    check("site_pages_body_bilingual", bilingual(table.body)),
+  ]
+)
+
+export const contactSubject = pgEnum("contact_subject", contactSubjects)
+
+// Messages from the public contact form; `contact` is the phone or email the sender typed.
+export const contacts = pgTable(
+  "contacts",
+  {
+    id: text().primaryKey(),
+    name: text().notNull(),
+    contact: text().notNull(),
+    subject: contactSubject().notNull(),
+    message: text().notNull(),
+    createdAt: createdAt(),
+  },
+  (table) => [index().on(table.createdAt)]
+)

@@ -1,8 +1,8 @@
-import { settings } from "~/modules/content/content.tables"
 import * as taxonomy from "~/modules/taxonomy/taxonomy.tables"
 import type { Executor } from "~/shared/db/tx"
 
 import { seedBilling, seedPlans } from "./seed-billing"
+import { seedContent } from "./seed-content"
 import { seedListings } from "./seed-listings"
 import { seedPeople } from "./seed-people"
 import { seedSocial } from "./seed-social"
@@ -21,15 +21,7 @@ export async function seed(ex: Executor) {
   await seedListings(ex, data)
   await seedSocial(ex, data)
   await seedBilling(ex, data)
-  const { bankakAccount, ...rest } = data.settings
-  await ex
-    .insert(settings)
-    .values({
-      ...rest,
-      bankakName: bankakAccount.name,
-      bankakNumber: bankakAccount.number,
-    })
-    .onConflictDoNothing()
+  await seedContent(ex, data)
 }
 
 // Parents before children; rows go in array order, so `position` keeps the mock's order.

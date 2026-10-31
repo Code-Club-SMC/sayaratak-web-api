@@ -4,7 +4,7 @@ import { isNull, sql } from "drizzle-orm"
 import { db } from "~/shared/db/client"
 
 import { buildSeed, resetDb } from "../../../tests/helpers"
-import { notifications } from "./notifications.tables"
+import { broadcasts, notifications } from "./notifications.tables"
 
 const seeded = buildSeed()
 
@@ -26,5 +26,23 @@ describe("notification table", () => {
       )
       .catch((error) => error)
     expect(error.cause.constraint).toBe("notifications_title")
+  })
+})
+
+describe("broadcast table", () => {
+  test("refuses a broadcast with no role in its audience", async () => {
+    const error = await db
+      .insert(broadcasts)
+      .values({
+        id: "bc-1",
+        title: { ar: "x", en: "x" },
+        body: { ar: "x", en: "x" },
+        roles: [],
+        verifiedOnly: false,
+        recipients: 0,
+        createdAt: new Date(),
+      })
+      .catch((error) => error)
+    expect(error.cause.constraint).toBe("broadcasts_roles")
   })
 })

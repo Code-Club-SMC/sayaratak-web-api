@@ -1,11 +1,12 @@
 import { beforeEach, describe, expect, test } from "bun:test"
 import { siteSchema } from "@sayaratak/shared/schemas/responses"
+import { sql } from "drizzle-orm"
 import { z } from "zod"
 
 import { db } from "~/shared/db/client"
 
 import { buildSeed, expectSchema, req, resetDb } from "../../../tests/helpers"
-import { settings } from "./content.tables"
+import { contacts, settings, sitePages } from "./content.tables"
 
 const seeded = buildSeed().settings
 const CONTACT_KEYS = ["address", "email", "phone", "whatsapp"]
@@ -33,5 +34,25 @@ describe("GET /site", () => {
     const res = await req("/site")
     expect(res.status).toBe(404)
     expect(await res.json()).toMatchObject({ code: "not_found" })
+  })
+})
+
+describe("content tables", () => {
+  test("hold the four mock site pages and no contact message", async () => {
+    const pages = await db.select({ slug: sitePages.slug }).from(sitePages)
+    expect(pages.map((p) => p.slug).sort()).toEqual(
+      buildSeed()
+        .pages.map((p) => p.slug)
+        .sort()
+    )
+    expect(await db.$count(contacts)).toBe(0)
+  })
+
+  test("refuse a page body missing a language", async () => {
+    // Raw SQL: the column type would not let a one-language value through.
+    const error = await db
+      .execute(sql`update site_pages set body = '{"ar": "x"}'`)
+      .catch((error) => error)
+    expect(error.cause.constraint).toBe("site_pages_body_bilingual")
   })
 })

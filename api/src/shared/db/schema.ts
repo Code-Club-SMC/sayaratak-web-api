@@ -1,7 +1,10 @@
 // Re-exports every module's *.tables.ts so drizzle-kit and the client see the
 // whole schema. Add a line here when a module adds tables.
 export * from "~/modules/account/account.tables"
+export * from "~/modules/admin-backups/admin-backups.tables"
 export * from "~/modules/ads/ads.tables"
+export * from "~/modules/analytics/analytics.tables"
+export * from "~/modules/audit/audit.tables"
 export * from "~/modules/auth/auth.tables"
 export * from "~/modules/businesses/businesses.tables"
 export * from "~/modules/content/content.tables"

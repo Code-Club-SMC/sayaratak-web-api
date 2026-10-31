@@ -1,11 +1,13 @@
-import { describe, expect, test } from "bun:test"
+import { describe, expect, spyOn, test } from "bun:test"
 import { Hono } from "hono"
+import { requestId } from "hono/request-id"
 
 import { fail, onError, onNotFound } from "~/shared/http/errors"
 
 const app = new Hono()
   .onError(onError)
   .notFound(onNotFound)
+  .use(requestId())
   .get("/conflict", () => fail.conflict("bump_wait"))
   .get("/too-many", () => fail.tooMany(30))
   .get("/crash", () => {
@@ -40,6 +42,20 @@ describe("error responses", () => {
       message: "server_error",
     })
     expect(text).not.toContain("hunter2")
+  })
+
+  test("the 500 is logged with its request id and masked", async () => {
+    const write = spyOn(process.stdout, "write").mockImplementation(() => true)
+    try {
+      await app.request("/crash", { headers: { "x-request-id": "req-1" } })
+      const line = String(write.mock.calls[0]?.[0])
+      expect(line).toContain('"requestId":"req-1"')
+      expect(line).toContain('"path":"/crash"')
+      expect(line).toContain("password=[redacted]")
+      expect(line).not.toContain("hunter2")
+    } finally {
+      write.mockRestore()
+    }
   })
 
   test("an unknown route is 404 not_found", async () => {

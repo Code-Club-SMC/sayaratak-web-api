@@ -1,6 +1,8 @@
 import type { Context } from "hono"
 import type { ContentfulStatusCode } from "hono/utils/http-status"
 
+import { log } from "~/shared/log/logger"
+
 // Handoff "Error codes", plus 500 server_error and the app-only codes of A7.
 // The status of a code never changes, so callers name only the code.
 const STATUS = {
@@ -90,6 +92,12 @@ export const fail: Fail = {
 /** `app.onError`: an ApiError answers with its code; anything else is a 500 that leaks nothing. */
 export function onError(error: Error, c: Context) {
   if (error instanceof ApiError) return errorResponse(c, error)
+  log.error("server_error", {
+    requestId: c.get("requestId"),
+    method: c.req.method,
+    path: c.req.path,
+    error,
+  })
   return errorResponse(c, new ApiError("server_error"))
 }
 

@@ -209,10 +209,18 @@ export function seedPayments(
   for (let i = 0; i < 13; i++) {
     const pending = i < 5
     const rejected = !pending && i >= 11
-    const promo =
+    let promo =
       i % 3 === 2 && !rejected
         ? (pending ? waiting : reviewed).shift()
         : undefined
+    // One receipt under review per item: a payer whose plan is already under review pays the next waiting promotion instead.
+    const planPending = out.some(
+      (p) =>
+        p.userId === payers[i % payers.length]?.id &&
+        p.itemType === "plan" &&
+        p.status === "pending_review"
+    )
+    if (!promo && pending && planPending) promo = waiting.shift()
     const listing = promo && listings.find((l) => l.id === promo.listingId)
     const user =
       (listing && users.find((u) => u.id === listing.ownerUserId)) ??

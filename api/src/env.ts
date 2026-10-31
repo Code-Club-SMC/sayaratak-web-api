@@ -1,6 +1,7 @@
 import { z } from "zod"
 
 const text = z.string().min(1)
+const semver = z.string().regex(/^\d+\.\d+\.\d+$/)
 
 // Third-party accounts the owner fills in over time (A14). Optional in
 // development and test, required when APP_ENV is production.
@@ -48,8 +49,9 @@ const core = {
     ),
   BETTER_AUTH_SECRET: z.string().min(32),
   BETTER_AUTH_URL: z.url(),
-  MIN_APP_VERSION_IOS: text.optional(),
-  MIN_APP_VERSION_ANDROID: text.optional(),
+  // Semver such as 1.4.0 (A18 426 gate).
+  MIN_APP_VERSION_IOS: semver.optional(),
+  MIN_APP_VERSION_ANDROID: semver.optional(),
   LOG_LEVEL: z.enum(["debug", "info", "warn", "error"]).default("info"),
 }
 

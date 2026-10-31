@@ -12,7 +12,7 @@ Each module has these files and no others. A file that would be empty is left ou
 
 | File | Holds | Never holds |
 |---|---|---|
-| `<m>.routes.ts` | One Hono router. Each route: middleware (auth, rate limit), validate input with the shared web schema, call one service function, return `c.json(...)` | Rules, SQL, `if` on business state, try/catch |
+| `<m>.routes.ts` | One Hono router. Each route: `spec()` (its OpenAPI entry), middleware (auth, rate limit), validate input with the shared web schema, call one service function, return `c.json(...)` | Rules, SQL, `if` on business state, try/catch |
 | `<m>.service.ts` | The rules of the domain, one exported function per use case (`approvePayment`, `submitReceipt`). Transactions start here. Throws `ApiError` through `fail.*` | Hono types (`Context`), SQL, response shaping |
 | `<m>.queries.ts` | Every database read and write of the module, as small named functions that take an executor (`db` or `tx`) first | Rules, `fail.*`, other modules' tables (read them through that module's queries) |
 | `<m>.tables.ts` | Drizzle table definitions, indexes and constraints of the module | Logic |
@@ -51,11 +51,13 @@ The payments module, shortened, is the reference. Copy its shape; do not invent 
 **`payments.routes.ts`**
 
 ```ts
+import { paymentSchema } from "@sayaratak/shared/schemas/billing"
 import { paymentFormSchema } from "@sayaratak/shared/schemas/inputs"
 import { Hono } from "hono"
 
 import { rateLimit } from "~/shared/http/rate-limit"
 import { validate } from "~/shared/http/validate"
+import { spec } from "~/shared/openapi/registry"
 import { requireUser } from "~/modules/auth/auth.middleware"
 
 import { submitReceipt } from "./payments.service"
@@ -66,6 +68,13 @@ export const paymentsRoutes = new Hono()
 
 paymentsRoutes.post(
   "/payments",
+  // Documents the route in openapi.json; inputs come from validate.* (A18).
+  spec({
+    summary: "Send a Bankak receipt for review",
+    access: "user",
+    responses: { 201: paymentSchema },
+    errors: ["unauthenticated", "banned", "not_found", "payment_pending"],
+  }),
   requireUser,
   rateLimit("payments"),
   validate.form(paymentFormSchema),
@@ -241,7 +250,7 @@ Tick every line in the step's Notes in `progress.md`:
 
 1. The module has only A17.1 files, each holding only what its row allows.
 2. Imports follow A17.2; `bun run lint` passes with no disabled rules (`biome-ignore` is not allowed; a test fails on it).
-3. Each route does validate, one service call, answer.
+3. Each route has `spec()`, then does validate, one service call, answer; `bun run openapi` was run and `openapi.json` is in the commit.
 4. Each service function has its one-line JSDoc, guard clauses first, a transaction when it writes twice or more.
 5. Each query is named by A17.4 and takes the executor first.
 6. No hand-written type that `@sayaratak/shared/schemas` or Drizzle already gives.
@@ -258,6 +267,7 @@ Copy the reference, rename, fill in. For a module called `saved-searches`:
 2. Rename the exports: `contentRoutes` becomes `savedSearchesRoutes`, `toSite` becomes the `to<WebType>` the shared schema names, `getSettings` becomes the A17.4 query name.
 3. Tables: write them in `saved-searches.tables.ts` with every invariant as a constraint (A1 rule 16), add `export * from "~/modules/saved-searches/saved-searches.tables"` to `src/shared/db/schema.ts`, then `bun run db:generate --name <what-changed>` and commit the SQL file and the snapshot together.
 4. Seed: add the module's rows from `buildSeed()` to `scripts/seed.ts`, so tests and parity start from the mock's data.
-5. Mount the router in `src/app.ts` on the `v1` app.
-6. Tests: one `describe` per endpoint in `saved-searches.test.ts`, named after behavior; read endpoints also get `expectParity` cases in `saved-searches.parity.test.ts`. Tests call `resetDb()` from `tests/helpers.ts`.
-7. Run `bun run typecheck && bun run lint && bun run check && bun run test`, then go through the checklist in section 7 line by line.
+5. Mount the router in `src/app.ts` on the `v1` app. Every v1 route carries `spec()`; a route without one fails the OpenAPI build and its test.
+6. Run `bun run openapi` and commit `openapi.json`. The apps are built from it, so inside `/api/v1` changes are additive only: new optional inputs, new response fields, new routes. Removing or renaming anything, or making an input required, needs `/api/v2`.
+7. Tests: one `describe` per endpoint in `saved-searches.test.ts`, named after behavior; read endpoints also get `expectParity` cases in `saved-searches.parity.test.ts`. Tests call `resetDb()` from `tests/helpers.ts`.
+8. Run `bun run typecheck && bun run lint && bun run check && bun run test`, then go through the checklist in section 7 line by line.

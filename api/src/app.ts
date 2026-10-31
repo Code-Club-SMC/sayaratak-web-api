@@ -2,17 +2,37 @@ import { Hono } from "hono"
 import { cors } from "hono/cors"
 import { requestId } from "hono/request-id"
 import { secureHeaders } from "hono/secure-headers"
+import { z } from "zod"
 
 import { env } from "~/env"
-import { contentRoutes } from "~/modules/content/content.routes"
+import { appVersion } from "~/shared/http/app-version"
 import { clientIp } from "~/shared/http/client-ip"
 import { csrfOrigin } from "~/shared/http/csrf-origin"
 import { onError, onNotFound } from "~/shared/http/errors"
+import { buildOpenApi } from "~/shared/openapi/build"
+import { spec } from "~/shared/openapi/registry"
+import { contentRoutes } from "~/modules/content/content.routes"
 
 // The Origin header never has a trailing slash; WEB_ORIGIN may.
 const webOrigin = new URL(env.WEB_ORIGIN).origin
 
-const v1 = new Hono().route("/", contentRoutes)
+// Built once, on the first request: the router no longer changes by then.
+let openApi: ReturnType<typeof buildOpenApi> | undefined
+
+const v1 = new Hono()
+  .get(
+    "/openapi.json",
+    spec({
+      summary: "This contract, OpenAPI 3.1",
+      access: "public",
+      responses: { 200: z.looseObject({ openapi: z.literal("3.1.0") }) },
+    }),
+    (c) => {
+      openApi ??= buildOpenApi(app)
+      return c.json(openApi)
+    }
+  )
+  .route("/", contentRoutes)
 
 // Middleware in A3 order. The per-request log line comes with 10.4; the 500
 // log line is in onError.
@@ -43,6 +63,12 @@ export const app = new Hono()
       credentials: true,
       allowMethods: ["GET", "POST", "PATCH", "PUT", "DELETE"],
       allowHeaders: ["content-type"],
+    })
+  )
+  .use(
+    appVersion({
+      ios: env.MIN_APP_VERSION_IOS,
+      android: env.MIN_APP_VERSION_ANDROID,
     })
   )
   .use(csrfOrigin(webOrigin))

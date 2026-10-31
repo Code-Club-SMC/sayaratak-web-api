@@ -28,14 +28,20 @@ describe("transaction and afterCommit", () => {
 
   test("a failing callback is logged and the result still returns", async () => {
     const write = spyOn(process.stdout, "write").mockImplementation(() => true)
-    const result = await transaction(async (tx) => {
-      afterCommit(tx, () => {
-        throw new Error("cloudinary down")
+    try {
+      const result = await transaction(async (tx) => {
+        afterCommit(tx, () => {
+          throw new Error("cloudinary down")
+        })
+        return "saved"
       })
-      return "saved"
-    })
-    write.mockRestore()
-    expect(result).toBe("saved")
-    expect(String(write.mock.calls[0]?.[0])).toContain("after_commit_failed")
+      expect(result).toBe("saved")
+      const lines = write.mock.calls.map(([line]) => String(line))
+      expect(lines.some((line) => line.includes("after_commit_failed"))).toBe(
+        true
+      )
+    } finally {
+      write.mockRestore()
+    }
   })
 })

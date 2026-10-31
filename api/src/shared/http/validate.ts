@@ -2,6 +2,7 @@ import type { Context, Env, MiddlewareHandler } from "hono"
 import type { z } from "zod"
 
 import { type ErrorFields, fail } from "~/shared/http/errors"
+import { registerInput } from "~/shared/openapi/registry"
 
 type Target = "json" | "query" | "form"
 type Validated<T extends Target, S extends z.ZodType> = MiddlewareHandler<
@@ -29,13 +30,17 @@ function middleware<T extends Target>(target: T, read: Reader) {
   return <S extends z.ZodType<object>>(
     schema: S,
     arrayKeys: string[] = []
-  ): Validated<T, S> =>
-    async (c, next) => {
+  ): Validated<T, S> => {
+    const handler: Validated<T, S> = async (c, next) => {
       const parsed = schema.safeParse(await read(c, arrayKeys))
       if (!parsed.success) fail.validation(toFields(parsed.error))
       c.req.addValidatedData(target, parsed.data)
       await next()
     }
+    // The same schema documents the route in openapi.json (A18).
+    registerInput(handler, { target, schema })
+    return handler
+  }
 }
 
 // A body that is not JSON reads as `{}`, so the schema reports the missing

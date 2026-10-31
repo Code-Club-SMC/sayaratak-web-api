@@ -38,6 +38,10 @@ type CodeWithStatus<S> = {
   [K in ErrorCode]: (typeof STATUS)[K] extends S ? K : never
 }[ErrorCode]
 
+export function statusOf(code: ErrorCode) {
+  return STATUS[code]
+}
+
 /** Field name to i18n key, as the shared schemas write their messages. */
 export type ErrorFields = Record<string, string>
 

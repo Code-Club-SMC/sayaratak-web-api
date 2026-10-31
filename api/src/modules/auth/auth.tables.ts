@@ -180,3 +180,4 @@ export const twoFactorRelations = relations(twoFactor, ({ one }) => ({
 }))
 
 export type UserRow = typeof user.$inferSelect
+export type NewUserRow = typeof user.$inferInsert

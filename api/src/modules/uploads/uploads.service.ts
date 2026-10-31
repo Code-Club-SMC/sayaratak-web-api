@@ -11,3 +11,14 @@ export async function uploadUrl(ex: Executor, id: string | null) {
   const row = await q.getUpload(ex, id)
   return row?.url ?? undefined
 }
+
+/**
+ * The user's own image upload behind an address the web sends back (an avatar).
+ * Demo uploads match on `url`; Cloudinary addresses come with 4.2.
+ */
+export function getOwnImageId(
+  ex: Executor,
+  image: { ownerUserId: string; url: string }
+) {
+  return q.getImageIdByUrl(ex, image)
+}

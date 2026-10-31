@@ -1,9 +1,27 @@
+import {
+  notificationPrefsSchema,
+  okSchema,
+} from "@sayaratak/shared/schemas/api"
+import {
+  notificationPrefsInputSchema,
+  passwordInputSchema,
+  profilePatchSchema,
+} from "@sayaratak/shared/schemas/inputs"
 import { userSchema } from "@sayaratak/shared/schemas/user"
-import { Hono } from "hono"
+import { type Context, Hono } from "hono"
 
+import { validate } from "~/shared/http/validate"
 import { spec } from "~/shared/openapi/registry"
 
+import {
+  changePassword,
+  getPrefs,
+  updatePrefs,
+  updateProfile,
+} from "./auth.account.service"
 import { auth, CLIENT_IP_HEADER } from "./auth.config"
+import { deleteAccount } from "./auth.deletion.service"
+import { requireUser } from "./auth.middleware"
 import { getMe } from "./auth.service"
 
 export const authRoutes = new Hono()
@@ -30,3 +48,104 @@ authRoutes.get(
     return c.json(me)
   }
 )
+
+authRoutes.patch(
+  "/me",
+  spec({
+    summary: "Save the settings form; a new email needs its code",
+    access: "user",
+    responses: { 200: userSchema },
+    errors: [
+      "unauthenticated",
+      "banned",
+      "validation",
+      "exists",
+      "otp_invalid",
+      "code_expired",
+      "contact_required",
+    ],
+  }),
+  requireUser,
+  validate.json(profilePatchSchema),
+  async (c) => {
+    const { me, headers } = await updateProfile(
+      c.get("user"),
+      c.req.valid("json"),
+      c.req.raw.headers
+    )
+    passCookies(c, headers)
+    return c.json(me)
+  }
+)
+
+authRoutes.post(
+  "/me/password",
+  spec({
+    summary: "Change the password, or set a first one",
+    access: "user",
+    responses: { 200: okSchema },
+    errors: ["unauthenticated", "banned", "validation", "invalid_credentials"],
+  }),
+  requireUser,
+  validate.json(passwordInputSchema),
+  async (c) => {
+    const headers = await changePassword(
+      c.get("user"),
+      c.req.valid("json"),
+      c.req.raw.headers
+    )
+    passCookies(c, headers)
+    return c.json({ ok: true })
+  }
+)
+
+authRoutes.delete(
+  "/me",
+  spec({
+    summary: "Delete the account for good",
+    access: "user",
+    responses: { 200: okSchema },
+    errors: ["unauthenticated", "banned", "forbidden"],
+  }),
+  requireUser,
+  async (c) => {
+    const headers = await deleteAccount(c.get("user"), c.req.raw.headers)
+    passCookies(c, headers)
+    return c.json({ ok: true })
+  }
+)
+
+authRoutes.get(
+  "/me/notification-prefs",
+  spec({
+    summary: "The notification switches",
+    access: "user",
+    responses: { 200: notificationPrefsSchema },
+    errors: ["unauthenticated", "banned"],
+  }),
+  requireUser,
+  (c) => c.json(getPrefs(c.get("user")))
+)
+
+authRoutes.patch(
+  "/me/notification-prefs",
+  spec({
+    summary: "Save the notification switches",
+    access: "user",
+    responses: { 200: notificationPrefsSchema },
+    errors: ["unauthenticated", "banned", "validation"],
+  }),
+  requireUser,
+  validate.json(notificationPrefsInputSchema),
+  async (c) => {
+    const prefs = await updatePrefs(c.get("user"), c.req.valid("json"))
+    return c.json(prefs)
+  }
+)
+
+// Better-Auth's new or cleared session cookie, on our own answer.
+function passCookies(c: Context, headers: Headers) {
+  for (const cookie of headers.getSetCookie()) {
+    c.header("set-cookie", cookie, { append: true })
+  }
+}

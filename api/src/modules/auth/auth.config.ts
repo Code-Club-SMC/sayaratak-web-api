@@ -126,6 +126,8 @@ export const auth = betterAuth({
       // Sign-up needs a name and password (/sign-up/email); a code alone
       // never creates an account.
       disableSignUp: true,
+      // PATCH /me checks the code sent to a new address (3.5).
+      changeEmail: { enabled: true },
       // A database dump never holds a live code (A9).
       storeOTP: "hashed",
       // Not awaited (A6): the answer time must not tell whether the email exists.

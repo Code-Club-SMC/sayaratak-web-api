@@ -1,9 +1,16 @@
 import { beforeEach, describe, expect, test } from "bun:test"
-import { isNull, sql } from "drizzle-orm"
+import { countsSchema } from "@sayaratak/shared/schemas/api"
+import { eq, isNull, sql } from "drizzle-orm"
 
 import { db } from "~/shared/db/client"
 
-import { buildSeed, resetDb } from "../../../tests/helpers"
+import {
+  buildSeed,
+  expectSchema,
+  req,
+  resetDb,
+  signIn,
+} from "../../../tests/helpers"
 import { broadcasts, notifications } from "./notifications.tables"
 
 const seeded = buildSeed()
@@ -44,5 +51,49 @@ describe("broadcast table", () => {
       })
       .catch((error) => error)
     expect(error.cause.constraint).toBe("broadcasts_roles")
+  })
+})
+
+describe("GET /me/counts", () => {
+  test("a non-admin gets only the unread counts", async () => {
+    const { cookie } = await signIn("user")
+    const res = await req("/me/counts", { headers: { cookie } })
+    const counts = await expectSchema(res, countsSchema)
+    expect(Object.keys(counts).sort()).toEqual([
+      "unreadMessages",
+      "unreadNotifications",
+    ])
+  })
+
+  test("an admin also gets the queue sizes", async () => {
+    const { cookie } = await signIn("admin")
+    const counts = await expectSchema(
+      await req("/me/counts", { headers: { cookie } }),
+      countsSchema
+    )
+    expect(counts.pendingListings).toBeNumber()
+    expect(counts.flaggedReviews).toBeNumber()
+  })
+
+  test("reading a notification lowers the count", async () => {
+    const { cookie } = await signIn("user")
+    const before = await expectSchema(
+      await req("/me/counts", { headers: { cookie } }),
+      countsSchema
+    )
+    await db
+      .update(notifications)
+      .set({ readAt: new Date() })
+      .where(eq(notifications.userId, "u-omar"))
+    const after = await expectSchema(
+      await req("/me/counts", { headers: { cookie } }),
+      countsSchema
+    )
+    expect(before.unreadNotifications).toBeGreaterThan(0)
+    expect(after.unreadNotifications).toBe(0)
+  })
+
+  test("returns 401 signed out", async () => {
+    expect((await req("/me/counts")).status).toBe(401)
   })
 })

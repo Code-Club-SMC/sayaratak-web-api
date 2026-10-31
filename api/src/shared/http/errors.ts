@@ -68,7 +68,10 @@ type Fail = {
   conflict(code?: CodeWithStatus<409>): never
   gone(code?: CodeWithStatus<410>): never
   validation(fields: ErrorFields): never
-  invalid(code: Exclude<CodeWithStatus<422>, "validation">): never
+  invalid(
+    code: Exclude<CodeWithStatus<422>, "validation">,
+    fields?: ErrorFields
+  ): never
   upgradeRequired(): never
   tooMany(retryAfterSeconds: number): never
 }
@@ -86,7 +89,9 @@ export const fail: Fail = {
   validation: (fields) => {
     throw new ApiError("validation", fields)
   },
-  invalid: (code) => raise(code),
+  invalid: (code, fields) => {
+    throw new ApiError(code, fields)
+  },
   upgradeRequired: () => raise("upgrade_required"),
   tooMany: (retryAfterSeconds) => {
     throw new ApiError("too_many_attempts", undefined, retryAfterSeconds)

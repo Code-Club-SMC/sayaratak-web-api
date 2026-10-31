@@ -1,8 +1,9 @@
-import { and, eq, isNotNull } from "drizzle-orm"
+import type { NotificationPrefs } from "@sayaratak/shared/schemas/api"
+import { and, eq, isNotNull, ne, type SQL } from "drizzle-orm"
 
 import type { Executor } from "~/shared/db/tx"
 
-import { account, user } from "./auth.tables"
+import { account, type NewUserRow, user } from "./auth.tables"
 
 export function getUserLocale(ex: Executor, email: string) {
   return ex
@@ -38,4 +39,52 @@ export function updateBanLifted(ex: Executor, id: string) {
     .where(eq(user.id, id))
     .returning()
     .then(([row]) => row)
+}
+
+export function updateProfile(
+  ex: Executor,
+  id: string,
+  fields: Partial<NewUserRow>
+) {
+  return ex
+    .update(user)
+    .set(fields)
+    .where(eq(user.id, id))
+    .returning()
+    .then(([row]) => row)
+}
+
+export function updatePrefs(
+  ex: Executor,
+  id: string,
+  prefs: NotificationPrefs
+) {
+  return ex.update(user).set({ prefs }).where(eq(user.id, id))
+}
+
+export function hasOtherWithEmail(
+  ex: Executor,
+  match: { email: string; userId: string }
+) {
+  return hasOther(ex, eq(user.email, match.email), match.userId)
+}
+
+export function hasOtherWithPhone(
+  ex: Executor,
+  match: { phone: string; userId: string }
+) {
+  return hasOther(ex, eq(user.phone, match.phone), match.userId)
+}
+
+export function deleteUser(ex: Executor, id: string) {
+  return ex.delete(user).where(eq(user.id, id))
+}
+
+function hasOther(ex: Executor, where: SQL, userId: string) {
+  return ex
+    .select({ id: user.id })
+    .from(user)
+    .where(and(where, ne(user.id, userId)))
+    .limit(1)
+    .then((rows) => rows.length > 0)
 }

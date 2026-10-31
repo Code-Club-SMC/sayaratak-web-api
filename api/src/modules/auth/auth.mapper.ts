@@ -10,6 +10,11 @@ export function placeholderEmail(facebookId: string) {
   return `fb-${facebookId}${PLACEHOLDER_DOMAIN}`
 }
 
+/** A placeholder, not an address the person gave. */
+export function isPlaceholderEmail(email: string) {
+  return email.endsWith(PLACEHOLDER_DOMAIN)
+}
+
 type Extras = { hasPassword: boolean; avatarUrl: string | undefined }
 
 /** The account as `GET /me` answers it, in `userSchema` order (the mock's `publicUser`). */
@@ -18,7 +23,7 @@ export function toUser(row: UserRow, extras: Extras): User {
     id: row.id,
     role: row.role,
     fullName: row.name,
-    email: row.email.endsWith(PLACEHOLDER_DOMAIN) ? undefined : row.email,
+    email: isPlaceholderEmail(row.email) ? undefined : row.email,
     phone: row.phone ?? undefined,
     avatarUrl: extras.avatarUrl,
     cityId: row.cityId ?? undefined,

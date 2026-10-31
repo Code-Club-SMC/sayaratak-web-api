@@ -1,4 +1,5 @@
 import { settings } from "~/modules/content/content.tables"
+import * as taxonomy from "~/modules/taxonomy/taxonomy.tables"
 import type { Executor } from "~/shared/db/tx"
 
 import { buildSeed } from "../../web/src/mocks/seed"
@@ -8,7 +9,9 @@ import { buildSeed } from "../../web/src/mocks/seed"
  * accounts match the mock (A13). Each Phase 2 step adds its tables here.
  */
 export async function seed(ex: Executor) {
-  const { bankakAccount, ...rest } = buildSeed().settings
+  const data = buildSeed()
+  await seedTaxonomy(ex, data)
+  const { bankakAccount, ...rest } = data.settings
   await ex
     .insert(settings)
     .values({
@@ -16,6 +19,38 @@ export async function seed(ex: Executor) {
       bankakName: bankakAccount.name,
       bankakNumber: bankakAccount.number,
     })
+    .onConflictDoNothing()
+}
+
+// Parents before children; rows go in array order, so `position` keeps the mock's order.
+async function seedTaxonomy(ex: Executor, data: ReturnType<typeof buildSeed>) {
+  const { cities, districts, makes, models, ...lists } = data.taxonomy
+  await ex
+    .insert(taxonomy.countries)
+    .values(data.countries)
+    .onConflictDoNothing()
+  await ex
+    .insert(taxonomy.cities)
+    .values(cities.map(({ center, ...city }) => ({ ...city, ...center })))
+    .onConflictDoNothing()
+  await ex.insert(taxonomy.districts).values(districts).onConflictDoNothing()
+  await ex
+    .insert(taxonomy.vehicleTypes)
+    .values(lists.vehicleTypes)
+    .onConflictDoNothing()
+  await ex.insert(taxonomy.makes).values(makes).onConflictDoNothing()
+  await ex.insert(taxonomy.models).values(models).onConflictDoNothing()
+  await ex
+    .insert(taxonomy.partCategories)
+    .values(lists.partCategories)
+    .onConflictDoNothing()
+  await ex
+    .insert(taxonomy.specializations)
+    .values(lists.specializations)
+    .onConflictDoNothing()
+  await ex
+    .insert(taxonomy.serviceTemplates)
+    .values(lists.serviceTemplates)
     .onConflictDoNothing()
 }
 

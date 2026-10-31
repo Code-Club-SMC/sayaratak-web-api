@@ -234,7 +234,13 @@
                     ],
                     "message": "A17.1: tables hold definitions only."
                   }
-                ]
+                ],
+                "paths": {
+                  "drizzle-orm/pg-core": {
+                    "importNames": ["jsonb"],
+                    "message": "Bun SQL stores Drizzle's jsonb as a JSON string; use jsonb from ~/shared/db/jsonb."
+                  }
+                }
               }
             }
           }
@@ -291,7 +297,13 @@
                     "group": ["~/modules/**", "**/modules/**"],
                     "message": "A17.2: shared never imports from modules."
                   }
-                ]
+                ],
+                "paths": {
+                  "drizzle-orm/pg-core": {
+                    "importNames": ["jsonb"],
+                    "message": "Bun SQL stores Drizzle's jsonb as a JSON string; use jsonb from ~/shared/db/jsonb."
+                  }
+                }
               }
             }
           }

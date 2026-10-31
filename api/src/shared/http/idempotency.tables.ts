@@ -1,11 +1,12 @@
 import {
   integer,
-  jsonb,
   pgTable,
   primaryKey,
   text,
   timestamp,
 } from "drizzle-orm/pg-core"
+
+import { jsonb } from "~/shared/db/jsonb"
 
 // A18. `owner` is `user:<id>` or `upload:<token>` (anonymous uploads), so it
 // has no foreign key. `status` stays null while the first request runs.

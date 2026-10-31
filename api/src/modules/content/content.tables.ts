@@ -4,12 +4,13 @@ import {
   boolean,
   check,
   integer,
-  jsonb,
   pgEnum,
   pgTable,
   text,
   timestamp,
 } from "drizzle-orm/pg-core"
+
+import { jsonb } from "~/shared/db/jsonb"
 
 export const backupSchedule = pgEnum("backup_schedule", [
   "daily",

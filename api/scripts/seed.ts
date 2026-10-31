@@ -3,6 +3,7 @@ import type { Executor } from "~/shared/db/tx"
 
 import { seedBilling, seedPlans } from "./seed-billing"
 import { seedContent } from "./seed-content"
+import { writeDemoFiles } from "./seed-files"
 import { seedListings } from "./seed-listings"
 import { seedPeople } from "./seed-people"
 import { seedSocial } from "./seed-social"
@@ -22,6 +23,7 @@ export async function seed(ex: Executor) {
   await seedSocial(ex, data)
   await seedBilling(ex, data)
   await seedContent(ex, data)
+  await writeDemoFiles(data)
 }
 
 // Parents before children; rows go in array order, so `position` keeps the mock's order.
@@ -57,9 +59,9 @@ async function seedTaxonomy(ex: Executor, data: ReturnType<typeof buildSeed>) {
 }
 
 if (import.meta.main) {
-  const { env } = await import("~/env")
-  // A2: demo people and listings never reach production.
-  if (env.APP_ENV === "production") {
+  // A2: demo people and listings never reach production. Read before `~/env` parses, so the
+  // refusal holds even when production variables are missing.
+  if (Bun.env.APP_ENV === "production") {
     process.stderr.write("db:seed refuses to run when APP_ENV=production\n")
     process.exit(1)
   }

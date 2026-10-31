@@ -9,6 +9,7 @@ import { savedSearches } from "~/modules/saved-searches/saved-searches.tables"
 import { uploads } from "~/modules/uploads/uploads.tables"
 import * as verification from "~/modules/verification/verification.tables"
 import type { Executor } from "~/shared/db/tx"
+import { demoUrl } from "~/shared/files/demo"
 
 import type { buildSeed } from "../../web/src/mocks/seed"
 
@@ -100,7 +101,8 @@ async function seedThreads(ex: Executor, data: Seed) {
     .onConflictDoNothing()
 }
 
-// Seeded documents are web's `public/mock` SVGs, kept as private `url` uploads (2.7 serves them).
+// Seeded documents are web's `public/mock` SVGs, copied into the demo folder by `writeDemoFiles`
+// and kept as private `url` uploads there.
 async function seedVerifications(ex: Executor, data: Seed) {
   if (!data.verifications.length) return
   const docs = data.verifications.flatMap((v) =>
@@ -114,7 +116,7 @@ async function seedVerifications(ex: Executor, data: Seed) {
         ownerUserId: v.ownerId,
         kind: "document" as const,
         delivery: "private" as const,
-        url: doc.url,
+        url: demoUrl(doc.url),
         attachedAt: new Date(v.createdAt),
         createdAt: new Date(v.createdAt),
       }))

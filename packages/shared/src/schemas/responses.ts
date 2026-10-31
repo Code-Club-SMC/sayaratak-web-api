@@ -105,6 +105,7 @@ export const siteSchema = z.object({
   }),
   locales: z.array(localeSchema),
 })
+export type Site = z.infer<typeof siteSchema>
 
 export const meSubscriptionSchema = z.object({
   subscription: subscriptionSchema.nullable(), // the active one, else the pending one, else null

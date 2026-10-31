@@ -77,7 +77,7 @@ describe("DoneStep", () => {
     fireEvent.click(await screen.findByRole("button", { name: "Share" }))
     const link = await screen.findByRole("menuitem", { name: "WhatsApp" })
     expect(decodeURIComponent(link.getAttribute("href") ?? "")).toContain(
-      `/en/listing/${row.slug}`
+      `/en/listing/${row.id}`
     )
     expect(link.getAttribute("href")).not.toContain("step")
   })

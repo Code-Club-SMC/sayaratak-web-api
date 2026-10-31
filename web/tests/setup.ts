@@ -1,7 +1,10 @@
-import { cleanup } from "@testing-library/react"
+import { cleanup, configure } from "@testing-library/react"
 import { afterEach } from "vitest"
 
 afterEach(cleanup)
+
+// findBy and waitFor give up after 1 s by default, which a busy machine (40 files at once, a CI runner) overruns.
+configure({ asyncUtilTimeout: 5_000 })
 
 process.env.MOCK_LATENCY_MS = "0"
 

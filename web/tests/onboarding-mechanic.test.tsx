@@ -171,6 +171,13 @@ describe("mechanic contact step and finish", () => {
 
   it("creates a listed mechanic profile on the free plan", async () => {
     const { router } = await open("contact-plan", saved)
+    // The saved draft reaches the form after the free plan is preselected and clears it for a moment; wait for both.
+    await waitFor(() =>
+      expect(
+        screen.getByRole<HTMLInputElement>("textbox", { name: "Phone number" })
+          .value
+      ).not.toBe("")
+    )
     await screen.findByRole("radio", { checked: true })
     fireEvent.click(screen.getByRole("button", { name: "Create my profile" }))
     await waitFor(

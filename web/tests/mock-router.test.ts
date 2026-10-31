@@ -1,4 +1,4 @@
-import { beforeAll, describe, expect, it } from "vitest"
+import { beforeAll, describe, expect, it, vi } from "vitest"
 
 import { ApiError, apiFetch } from "@/lib/api/client"
 import { handleMock } from "@/mocks/router"
@@ -41,12 +41,15 @@ describe("mock router", () => {
       expect(res.status).toBe(status)
     }
     const original = globalThis.fetch
-    globalThis.fetch = (input, init) =>
-      original(input, { ...init, headers: { "x-mock-fail": "500" } })
+    const spy = vi
+      .spyOn(globalThis, "fetch")
+      .mockImplementation((input, init) =>
+        original(input, { ...init, headers: { "x-mock-fail": "500" } })
+      )
     await expect(
       apiFetch("/taxonomy", { schema: taxonomySchema })
     ).rejects.toMatchObject({ status: 500, code: "server_error" })
-    globalThis.fetch = original
+    spy.mockRestore()
   })
   it("exposes the query options used by the root route", () => {
     expect(meQuery.queryKey).toEqual(["me"])

@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it } from "bun:test"
 import { eq } from "drizzle-orm"
 
 import { db } from "~/shared/db/client"
-import { testInbox } from "~/shared/mail/send"
+import { flushMail, testInbox } from "~/shared/mail/send"
 
 import { req, resetDb } from "../../../tests/helpers"
 import { session, user, verification } from "./auth.tables"
@@ -30,7 +30,8 @@ function verify(otp: string) {
   return post("/auth/email-otp/verify-email", { email: EMAIL, otp })
 }
 
-function lastCode() {
+async function lastCode() {
+  await flushMail()
   const mail = testInbox.findLast((sent) => sent.to === EMAIL)
   if (!mail) throw new Error(`no mail to ${EMAIL}`)
   return mail.code
@@ -60,16 +61,16 @@ describe("Better-Auth sign-up with an email code", () => {
 
     expect(res.status).toBe(200)
     expect(res.headers.get("set-cookie") ?? "").not.toContain("session_token")
+    expect(await lastCode()).toMatch(/^\d{6}$/)
     expect(testInbox).toMatchObject([
-      { to: EMAIL, template: "otp", purpose: "email-verification" },
+      { to: EMAIL, template: "email-verification" },
     ])
-    expect(lastCode()).toMatch(/^\d{6}$/)
     expect(await sessionsOf(EMAIL)).toHaveLength(0)
   })
 
   it("the right code verifies the email and signs in", async () => {
     await signUp()
-    const res = await verify(lastCode())
+    const res = await verify(await lastCode())
 
     expect(res.status).toBe(200)
     expect(res.headers.get("set-cookie")).toContain("sy.session_token=")
@@ -92,7 +93,7 @@ describe("Better-Auth sign-up with an email code", () => {
 
   it("five wrong codes kill the code", async () => {
     await signUp()
-    const code = lastCode()
+    const code = await lastCode()
     for (let i = 0; i < 5; i++) {
       expect((await verify(wrong(code))).status).toBe(400)
     }
@@ -104,7 +105,7 @@ describe("Better-Auth sign-up with an email code", () => {
 
   it("a code that waited over 10 minutes is refused", async () => {
     await signUp()
-    const code = lastCode()
+    const code = await lastCode()
     await db
       .update(verification)
       .set({ expiresAt: new Date(Date.now() - 1000) })
@@ -116,13 +117,13 @@ describe("Better-Auth sign-up with an email code", () => {
 
   it("asking again replaces the code", async () => {
     await signUp()
-    const first = lastCode()
+    const first = await lastCode()
     const resend = await post("/auth/email-otp/send-verification-otp", {
       email: EMAIL,
       type: "email-verification",
     })
     expect(resend.status).toBe(200)
-    const second = lastCode()
+    const second = await lastCode()
 
     expect(testInbox).toHaveLength(2)
     expect((await verify(first)).status).toBe(400)

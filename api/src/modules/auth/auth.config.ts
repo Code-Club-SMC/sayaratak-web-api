@@ -6,8 +6,9 @@ import { env } from "~/env"
 import { db } from "~/shared/db/client"
 import { ALL_PREFS } from "~/shared/db/defaults"
 import * as schema from "~/shared/db/schema"
-import { localeOf } from "~/shared/mail/locale"
 import { send } from "~/shared/mail/send"
+
+import { mailCode } from "./auth.service"
 
 // 600 s and 5 tries: the web code step says "10 minutes" and "5 tries";
 // Better-Auth's defaults are 300 and 3.
@@ -101,13 +102,8 @@ export const auth = betterAuth({
       // A database dump never holds a live code (A9).
       storeOTP: "hashed",
       // Not awaited (A6): the answer time must not tell whether the email exists.
-      sendVerificationOTP: async ({ email, otp, type }, ctx) => {
-        send.otp({
-          to: email,
-          code: otp,
-          purpose: type,
-          locale: localeOf(ctx?.request),
-        })
+      sendVerificationOTP: async (mail, ctx) => {
+        mailCode(mail, ctx?.request)
       },
     }),
     twoFactor({

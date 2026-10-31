@@ -74,7 +74,7 @@ const expected = new Map<PgTable, number>([
   [schema.broadcasts, count(seeded.broadcasts)],
 ])
 
-// Tables the mock has no rows for: runtime state (sessions, codes, throttles, keys, audit).
+// Tables the mock has no rows for: runtime state (sessions, codes, throttles, keys, audit, mail).
 const runtimeOnly = new Set([
   schema.session,
   schema.verification,
@@ -83,6 +83,7 @@ const runtimeOnly = new Set([
   schema.loginFailures,
   schema.auditLog,
   schema.idempotencyKeys,
+  schema.outbox,
 ])
 
 beforeAll(resetDb)

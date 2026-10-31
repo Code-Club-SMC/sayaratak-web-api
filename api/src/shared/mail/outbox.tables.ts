@@ -1,0 +1,41 @@
+import { sql } from "drizzle-orm"
+import {
+  index,
+  integer,
+  pgEnum,
+  pgTable,
+  text,
+  timestamp,
+} from "drizzle-orm/pg-core"
+
+import { createdAt } from "~/shared/db/columns"
+import { jsonb } from "~/shared/db/jsonb"
+
+export const outboxChannel = pgEnum("outbox_channel", ["email", "push"])
+
+export type OutboxPayload = { code?: string }
+
+// A9: every email (and later push, A18) is a row first, so the HTTP answer
+// never waits on SMTP. `payload` holds the code until it is sent or expires,
+// then it is emptied: a database dump never holds a live code.
+export const outbox = pgTable(
+  "outbox",
+  {
+    id: text().primaryKey(),
+    channel: outboxChannel().notNull(),
+    to: text().notNull(),
+    template: text().notNull(),
+    locale: text().notNull(),
+    payload: jsonb().$type<OutboxPayload>().notNull(),
+    attempts: integer().default(0).notNull(),
+    sendAfter: timestamp({ withTimezone: true }).notNull(),
+    sentAt: timestamp({ withTimezone: true }),
+    lastError: text(),
+    createdAt: createdAt(),
+  },
+  // The retry job reads unsent rows that are due.
+  (table) => [index().on(table.sendAfter).where(sql`${table.sentAt} is null`)]
+)
+
+export type OutboxRow = typeof outbox.$inferSelect
+export type NewOutboxRow = typeof outbox.$inferInsert

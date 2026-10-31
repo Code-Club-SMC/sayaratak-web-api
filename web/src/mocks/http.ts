@@ -12,7 +12,7 @@ export type Ctx = {
   body: <TSchema extends z.ZodType>(
     schema: TSchema
   ) => Promise<z.output<TSchema>>
-  form: () => Promise<FormData>
+  form: Request["formData"]
 }
 type Handler = (c: Ctx) => unknown
 

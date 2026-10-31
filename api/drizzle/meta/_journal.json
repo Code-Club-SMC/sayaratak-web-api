@@ -36,6 +36,13 @@
       "when": 1793440614624,
       "tag": "0004_users_businesses",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1793441663602,
+      "tag": "0005_listings",
+      "breakpoints": true
     }
   ]
 }

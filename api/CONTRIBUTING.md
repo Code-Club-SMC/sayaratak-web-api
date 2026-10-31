@@ -269,5 +269,5 @@ Copy the reference, rename, fill in. For a module called `saved-searches`:
 4. Seed: add the module's rows from `buildSeed()` to `scripts/seed.ts`, so tests and parity start from the mock's data.
 5. Mount the router in `src/app.ts` on the `v1` app. Every v1 route carries `spec()`; a route without one fails the OpenAPI build and its test.
 6. Run `bun run openapi` and commit `openapi.json`. The apps are built from it, so inside `/api/v1` changes are additive only: new optional inputs, new response fields, new routes. Removing or renaming anything, or making an input required, needs `/api/v2`.
-7. Tests: one `describe` per endpoint in `saved-searches.test.ts`, named after behavior; read endpoints also get `expectParity` cases in `saved-searches.parity.test.ts`. Tests call `resetDb()` from `tests/helpers.ts`.
+7. Tests: one `describe` per endpoint in `saved-searches.test.ts`, named after behavior; read endpoints also get `expectParity` cases in `saved-searches.parity.test.ts`. Tests call `resetDb()` and take `buildSeed` from `tests/helpers.ts`, never from `web/` by a relative path.
 8. Run `bun run typecheck && bun run lint && bun run check && bun run test`, then go through the checklist in section 7 line by line.

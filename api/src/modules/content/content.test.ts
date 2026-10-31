@@ -4,8 +4,7 @@ import { z } from "zod"
 
 import { db } from "~/shared/db/client"
 
-import { buildSeed } from "../../../../web/src/mocks/seed"
-import { expectSchema, req, resetDb } from "../../../tests/helpers"
+import { buildSeed, expectSchema, req, resetDb } from "../../../tests/helpers"
 import { settings } from "./content.tables"
 
 const seeded = buildSeed().settings

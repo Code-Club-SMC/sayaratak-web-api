@@ -6,6 +6,9 @@ import { db } from "~/shared/db/client"
 
 import { seed } from "../scripts/seed"
 
+/** The mock's seed builder, re-exported so module tests never reach into `web/` by a deep relative path. */
+export { buildSeed } from "../../web/src/mocks/seed"
+
 /** A request to the api under `/api/v1`, through `app.request()` (no network). */
 export function req(path: string, init?: RequestInit) {
   return app.request(`/api/v1${path}`, init)

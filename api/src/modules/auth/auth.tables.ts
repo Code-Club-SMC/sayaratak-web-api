@@ -150,12 +150,14 @@ export const rateLimit = pgTable("rate_limit", {
   lastRequest: bigint({ mode: "number" }).notNull(),
 })
 
-// Failed password sign-ins per email, for the 5 in 10 minutes throttle (A6). Cleared on a
-// successful sign-in or password reset; the prune job drops rows older than a day.
+// Failed password sign-ins, for the throttle in auth.guard.service.ts (owner, 3.6): per
+// email and IP, and per email from every IP. Cleared on a successful sign-in or password
+// reset; the prune job drops rows older than a day.
 export const loginFailures = pgTable(
   "login_failures",
   {
     email: text().notNull(),
+    ip: text().notNull(),
     failedAt: at().notNull(),
   },
   (table) => [index().on(table.email, table.failedAt)]

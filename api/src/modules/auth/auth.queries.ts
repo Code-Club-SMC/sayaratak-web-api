@@ -1,9 +1,9 @@
 import type { NotificationPrefs } from "@sayaratak/shared/schemas/api"
-import { and, eq, isNotNull, ne, type SQL } from "drizzle-orm"
+import { and, eq, gt, isNotNull, ne, type SQL } from "drizzle-orm"
 
 import type { Executor } from "~/shared/db/tx"
 
-import { account, type NewUserRow, user } from "./auth.tables"
+import { account, loginFailures, type NewUserRow, user } from "./auth.tables"
 
 export function getUserLocale(ex: Executor, email: string) {
   return ex
@@ -87,4 +87,42 @@ function hasOther(ex: Executor, where: SQL, userId: string) {
     .where(and(where, ne(user.id, userId)))
     .limit(1)
     .then((rows) => rows.length > 0)
+}
+
+/** Failed sign-ins for the email since `since`, from every IP. */
+export function listLoginFailures(ex: Executor, email: string, since: Date) {
+  return ex
+    .select({ ip: loginFailures.ip, failedAt: loginFailures.failedAt })
+    .from(loginFailures)
+    .where(
+      and(eq(loginFailures.email, email), gt(loginFailures.failedAt, since))
+    )
+}
+
+export function insertLoginFailure(
+  ex: Executor,
+  failure: { email: string; ip: string; failedAt: Date }
+) {
+  return ex.insert(loginFailures).values(failure)
+}
+
+export function deleteLoginFailures(ex: Executor, email: string) {
+  return ex.delete(loginFailures).where(eq(loginFailures.email, email))
+}
+
+export function getUserByEmail(ex: Executor, email: string) {
+  return ex
+    .select()
+    .from(user)
+    .where(eq(user.email, email))
+    .then(([row]) => row)
+}
+
+/** Sign-in methods of an account: `credential`, `google`, `facebook`. */
+export function listProviders(ex: Executor, userId: string) {
+  return ex
+    .select({ providerId: account.providerId })
+    .from(account)
+    .where(eq(account.userId, userId))
+    .then((rows) => rows.map((row) => row.providerId))
 }

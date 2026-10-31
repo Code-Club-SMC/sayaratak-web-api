@@ -1,4 +1,4 @@
-import { eq, sql } from "drizzle-orm"
+import { and, eq, gt, sql } from "drizzle-orm"
 
 import type { Executor } from "~/shared/db/tx"
 
@@ -34,4 +34,9 @@ export function updateOutboxFailed(
       sendAfter: failure.sendAfter,
     })
     .where(eq(outbox.id, id))
+}
+
+/** Mails written to one address since `since`, sent or not. */
+export function countSentTo(ex: Executor, to: string, since: Date) {
+  return ex.$count(outbox, and(eq(outbox.to, to), gt(outbox.createdAt, since)))
 }

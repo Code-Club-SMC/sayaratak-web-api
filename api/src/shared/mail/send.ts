@@ -37,6 +37,12 @@ export type SentMail = CodeMail & {
   html: string
 }
 
+// Owner, 3.6: at most 5 codes an hour to one address, so nobody can flood an
+// inbox. Over the cap the mail is dropped quietly, off the request: every
+// route answers the same, so the cap tells nothing about which emails exist.
+const CODES_PER_HOUR = 5
+const HOUR_MS = 3_600_000
+
 // A9 backoff for the outbox job: 1, 2, 4, 8 minutes, then it gives up.
 const RETRY_MINUTES = [1, 2, 4, 8]
 const MINUTE_MS = 60_000
@@ -114,6 +120,15 @@ async function writeAndDeliver(mail: QueuedMail) {
   try {
     const locale = await mail.locale
     const now = clock.now()
+    const recent = await q.countSentTo(
+      db,
+      mail.to,
+      new Date(now.getTime() - HOUR_MS)
+    )
+    if (recent >= CODES_PER_HOUR) {
+      log.warn("mail_capped", { to: mail.to, template: mail.template })
+      return
+    }
     const row = await q.insertOutbox(db, {
       id: newId("out"),
       channel: "email",

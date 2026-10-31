@@ -4,6 +4,9 @@ import { runMigrations } from "../scripts/migrate"
 const url = process.env.TEST_DATABASE_URL
 if (!url) throw new Error("TEST_DATABASE_URL is not set")
 process.env.DATABASE_URL = url
+// app.request() has no socket, so every test request comes from 127.0.0.1.
+// Trusting it as a proxy lets a test pick its client IP with X-Forwarded-For.
+process.env.TRUSTED_PROXIES = "127.0.0.1"
 // Fixed provider apps, so social sign-in tests run against a stubbed provider
 // whatever the owner put in .env (auth.social.test.ts).
 process.env.GOOGLE_CLIENT_ID = "test-google-id"

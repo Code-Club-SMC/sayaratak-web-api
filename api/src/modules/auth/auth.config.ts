@@ -1,6 +1,7 @@
 import { betterAuth } from "better-auth"
 import { drizzleAdapter } from "better-auth/adapters/drizzle"
 import { admin, bearer, emailOTP, twoFactor } from "better-auth/plugins"
+import { createAuthMiddleware } from "better-auth/api"
 import type { FacebookProfile } from "better-auth/social-providers"
 
 import { env } from "~/env"
@@ -9,6 +10,7 @@ import { ALL_PREFS } from "~/shared/db/defaults"
 import * as schema from "~/shared/db/schema"
 import { send } from "~/shared/mail/send"
 
+import { authAfter, authBefore, CLIENT_IP_HEADER } from "./auth.guard.service"
 import { mailCode } from "./auth.mail.service"
 import { placeholderEmail } from "./auth.mapper"
 
@@ -16,14 +18,17 @@ import { placeholderEmail } from "./auth.mapper"
 // Better-Auth's defaults are 300 and 3.
 const OTP_SECONDS = 600
 const OTP_TRIES = 5
-// Per IP on each code route. Better-Auth's 3 a minute would cut the 5 tries
-// short, and phones share IPs (A12); 3.6 sets the final per-email limits.
-const OTP_RATE = { window: 60, max: 10 }
+// Per-IP ceilings (owner, 3.6). Loose on purpose: whole mobile carriers share
+// a few IPs (A12), so these only stop one machine flooding a route. The real
+// guards are per email: the sign-in throttle in auth.guard.service.ts and the
+// 5 codes an hour cap in send.ts. Windows in seconds.
+const SIGN_IN_PER_IP = { window: 60, max: 100 }
+const SIGN_UP_PER_IP = { window: 600, max: 20 }
+const CODE_SEND_PER_IP = { window: 600, max: 30 }
+const CODE_CHECK_PER_IP = { window: 60, max: 60 }
 // A6: 60 days, extended once a day on use.
 const SESSION_SECONDS = 60 * 24 * 3600
 const SESSION_REFRESH_SECONDS = 24 * 3600
-// Set by `authRoutes` from our own `clientIp` (A3), never by the client.
-export const CLIENT_IP_HEADER = "x-sy-client-ip"
 
 const isProduction = env.APP_ENV === "production"
 
@@ -50,8 +55,7 @@ const facebook = {
 
 /**
  * The one Better-Auth instance (A6), served under /api/v1/auth/* by
- * auth.routes.ts. The hooks (password rules,
- * login throttle) with 3.6, the admin step with 3.7.
+ * auth.routes.ts. The admin step comes with 3.7.
  *
  * Regenerate the tables after changing fields or plugins:
  * `bunx --bun auth@1.7.10 generate --config src/modules/auth/auth.config.ts --output src/modules/auth/auth.tables.ts`,
@@ -114,13 +118,32 @@ export const auth = betterAuth({
     // forged X-Forwarded-For cannot dodge its limits.
     ipAddress: { ipAddressHeaders: [CLIENT_IP_HEADER] },
   },
-  rateLimit: { enabled: true, storage: "database" },
+  rateLimit: {
+    enabled: true,
+    storage: "database",
+    customRules: {
+      "/sign-in/*": SIGN_IN_PER_IP,
+      "/sign-up/*": SIGN_UP_PER_IP,
+      "/email-otp/send-verification-otp": CODE_SEND_PER_IP,
+      "/email-otp/request-password-reset": CODE_SEND_PER_IP,
+      "/email-otp/request-email-change": CODE_SEND_PER_IP,
+      "/email-otp/verify-email": CODE_CHECK_PER_IP,
+      "/email-otp/check-verification-otp": CODE_CHECK_PER_IP,
+      "/email-otp/reset-password": CODE_CHECK_PER_IP,
+      "/email-otp/change-email": CODE_CHECK_PER_IP,
+    },
+  },
+  hooks: {
+    before: createAuthMiddleware(authBefore),
+    after: createAuthMiddleware((ctx) =>
+      authAfter({ ...ctx, returned: ctx.context.returned })
+    ),
+  },
   plugins: [
     emailOTP({
       otpLength: 6,
       expiresIn: OTP_SECONDS,
       allowedAttempts: OTP_TRIES,
-      rateLimit: OTP_RATE,
       sendVerificationOnSignUp: true,
       overrideDefaultEmailVerification: true,
       // Sign-up needs a name and password (/sign-up/email); a code alone

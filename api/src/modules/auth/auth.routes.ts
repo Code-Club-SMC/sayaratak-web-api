@@ -1,6 +1,10 @@
+import { userSchema } from "@sayaratak/shared/schemas/user"
 import { Hono } from "hono"
 
+import { spec } from "~/shared/openapi/registry"
+
 import { auth, CLIENT_IP_HEADER } from "./auth.config"
+import { getMe } from "./auth.service"
 
 export const authRoutes = new Hono()
 
@@ -13,3 +17,16 @@ authRoutes.all("/auth/*", (c) => {
   headers.set(CLIENT_IP_HEADER, c.get("clientIp"))
   return auth.handler(new Request(c.req.raw, { headers }))
 })
+
+authRoutes.get(
+  "/me",
+  spec({
+    summary: "The signed-in account, or null when signed out",
+    access: "public",
+    responses: { 200: userSchema.nullable() },
+  }),
+  async (c) => {
+    const me = await getMe(c.get("viewer"))
+    return c.json(me)
+  }
+)

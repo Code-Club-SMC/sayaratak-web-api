@@ -11,6 +11,7 @@ import { csrfOrigin } from "~/shared/http/csrf-origin"
 import { onError, onNotFound } from "~/shared/http/errors"
 import { buildOpenApi } from "~/shared/openapi/build"
 import { spec } from "~/shared/openapi/registry"
+import { session } from "~/modules/auth/auth.middleware"
 import { authRoutes } from "~/modules/auth/auth.routes"
 import { contentRoutes } from "~/modules/content/content.routes"
 
@@ -21,6 +22,7 @@ const webOrigin = new URL(env.WEB_ORIGIN).origin
 let openApi: ReturnType<typeof buildOpenApi> | undefined
 
 const v1 = new Hono()
+  .use(session)
   .get(
     "/openapi.json",
     spec({

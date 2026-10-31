@@ -55,7 +55,10 @@ export const idempotency: MiddlewareHandler = async (c, next) => {
 
 // Upload token only until the session middleware (3.3) sets the
 // user; then `user:<id>` comes first.
+// The signed-in account first; an anonymous upload token only without one.
 function ownerOf(c: Context) {
+  const userId = c.get("viewer")?.id
+  if (userId) return `user:${userId}`
   const token = c.req.header("x-upload-token") ?? getCookie(c, "sy_upload")
   return token ? `upload:${token}` : undefined
 }

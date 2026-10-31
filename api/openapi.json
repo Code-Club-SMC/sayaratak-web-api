@@ -40,6 +40,122 @@
         }
       }
     },
+    "/api/v1/me": {
+      "get": {
+        "operationId": "getMe",
+        "summary": "The signed-in account, or null when signed out",
+        "security": [],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "role": {
+                          "type": "string",
+                          "enum": [
+                            "user",
+                            "dealership",
+                            "workshop",
+                            "mechanic",
+                            "admin"
+                          ]
+                        },
+                        "fullName": {
+                          "type": "string"
+                        },
+                        "email": {
+                          "type": "string",
+                          "format": "email",
+                          "pattern": "^(?:[A-Za-z0-9_'+\\-]+\\.)*[A-Za-z0-9_'+\\-]*[A-Za-z0-9_+-]@(?:[A-Za-z0-9][A-Za-z0-9\\-]*\\.)+[A-Za-z]{2,}$"
+                        },
+                        "phone": {
+                          "type": "string",
+                          "pattern": "^\\+[1-9]\\d{7,14}$"
+                        },
+                        "avatarUrl": {
+                          "type": "string"
+                        },
+                        "cityId": {
+                          "type": "string"
+                        },
+                        "verifiedPhone": {
+                          "type": "boolean"
+                        },
+                        "verifiedEmail": {
+                          "type": "boolean"
+                        },
+                        "hasPassword": {
+                          "type": "boolean"
+                        },
+                        "banned": {
+                          "type": "boolean"
+                        },
+                        "bannedReason": {
+                          "type": "string"
+                        },
+                        "bannedUntil": {
+                          "type": "string"
+                        },
+                        "createdAt": {
+                          "type": "string"
+                        },
+                        "onboardingDone": {
+                          "type": "boolean"
+                        },
+                        "interests": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "enum": [
+                              "cars",
+                              "trucks",
+                              "motorcycles",
+                              "tuk_tuks",
+                              "parts",
+                              "workshops",
+                              "mechanics"
+                            ]
+                          }
+                        },
+                        "chosenPlanId": {
+                          "type": "string",
+                          "minLength": 1
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "role",
+                        "fullName",
+                        "verifiedPhone",
+                        "verifiedEmail",
+                        "hasPassword",
+                        "banned",
+                        "createdAt",
+                        "onboardingDone",
+                        "interests"
+                      ]
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/site": {
       "get": {
         "operationId": "getSite",

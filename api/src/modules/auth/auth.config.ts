@@ -8,7 +8,7 @@ import { ALL_PREFS } from "~/shared/db/defaults"
 import * as schema from "~/shared/db/schema"
 import { send } from "~/shared/mail/send"
 
-import { mailCode } from "./auth.service"
+import { mailCode } from "./auth.mail.service"
 
 // 600 s and 5 tries: the web code step says "10 minutes" and "5 tries";
 // Better-Auth's defaults are 300 and 3.

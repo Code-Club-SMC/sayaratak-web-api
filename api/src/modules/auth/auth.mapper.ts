@@ -2,6 +2,14 @@ import type { User } from "@sayaratak/shared/schemas/user"
 
 import type { UserRow } from "./auth.tables"
 
+// RFC 2606 reserves `.invalid`: no mail can ever reach it.
+const PLACEHOLDER_DOMAIN = "@facebook.invalid"
+
+/** The email of a Facebook account that gave none (owner, 3.4). */
+export function placeholderEmail(facebookId: string) {
+  return `fb-${facebookId}${PLACEHOLDER_DOMAIN}`
+}
+
 type Extras = { hasPassword: boolean; avatarUrl: string | undefined }
 
 /** The account as `GET /me` answers it, in `userSchema` order (the mock's `publicUser`). */
@@ -10,7 +18,7 @@ export function toUser(row: UserRow, extras: Extras): User {
     id: row.id,
     role: row.role,
     fullName: row.name,
-    email: row.email,
+    email: row.email.endsWith(PLACEHOLDER_DOMAIN) ? undefined : row.email,
     phone: row.phone ?? undefined,
     avatarUrl: extras.avatarUrl,
     cityId: row.cityId ?? undefined,

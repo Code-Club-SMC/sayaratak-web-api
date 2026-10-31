@@ -100,6 +100,9 @@ type QueuedMail = Omit<CodeMail, "locale"> & {
 }
 
 function queue(mail: QueuedMail) {
+  // A reserved `.invalid` address (Facebook accounts with no email) never
+  // gets mail; nothing is written either.
+  if (mail.to.endsWith(".invalid")) return
   const work = writeAndDeliver(mail)
   running.add(work)
   // The one fire-and-forget in the API (A17.5): the caller's answer never

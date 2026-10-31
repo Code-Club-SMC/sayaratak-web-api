@@ -1,6 +1,7 @@
 import { betterAuth } from "better-auth"
 import { drizzleAdapter } from "better-auth/adapters/drizzle"
 import { admin, bearer, emailOTP, twoFactor } from "better-auth/plugins"
+import type { FacebookProfile } from "better-auth/social-providers"
 
 import { env } from "~/env"
 import { db } from "~/shared/db/client"
@@ -9,6 +10,7 @@ import * as schema from "~/shared/db/schema"
 import { send } from "~/shared/mail/send"
 
 import { mailCode } from "./auth.mail.service"
+import { placeholderEmail } from "./auth.mapper"
 
 // 600 s and 5 tries: the web code step says "10 minutes" and "5 tries";
 // Better-Auth's defaults are 300 and 3.
@@ -25,9 +27,30 @@ export const CLIENT_IP_HEADER = "x-sy-client-ip"
 
 const isProduction = env.APP_ENV === "production"
 
+// A provider is on once the owner has filled both values in .env (T2).
+const google = {
+  enabled: Boolean(env.GOOGLE_CLIENT_ID && env.GOOGLE_CLIENT_SECRET),
+  clientId: env.GOOGLE_CLIENT_ID ?? "",
+  clientSecret: env.GOOGLE_CLIENT_SECRET ?? "",
+  prompt: "select_account" as const,
+}
+const facebook = {
+  enabled: Boolean(env.FACEBOOK_CLIENT_ID && env.FACEBOOK_CLIENT_SECRET),
+  clientId: env.FACEBOOK_CLIENT_ID ?? "",
+  clientSecret: env.FACEBOOK_CLIENT_SECRET ?? "",
+  // Facebook accounts made with a phone give no email: the account gets a
+  // placeholder that is never mailed and /me leaves out (owner, 3.4).
+  mapProfileToUser: (profile: FacebookProfile) =>
+    profile.email
+      ? {}
+      : {
+          email: placeholderEmail("sub" in profile ? profile.sub : profile.id),
+        },
+}
+
 /**
  * The one Better-Auth instance (A6), served under /api/v1/auth/* by
- * auth.routes.ts. Social providers come with 3.4, the hooks (password rules,
+ * auth.routes.ts. The hooks (password rules,
  * login throttle) with 3.6, the admin step with 3.7.
  *
  * Regenerate the tables after changing fields or plugins:
@@ -58,6 +81,10 @@ export const auth = betterAuth({
     revokeSessionsOnPasswordReset: true,
   },
   emailVerification: { autoSignInAfterVerification: true },
+  // Better-Auth links a provider to an existing account only when the
+  // provider says the email is verified and ours is verified too (A6); new
+  // accounts get role `user` and onboarding not done from the field defaults.
+  socialProviders: { google, facebook },
   session: {
     expiresIn: SESSION_SECONDS,
     updateAge: SESSION_REFRESH_SECONDS,

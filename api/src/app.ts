@@ -11,6 +11,7 @@ import { csrfOrigin } from "~/shared/http/csrf-origin"
 import { onError, onNotFound } from "~/shared/http/errors"
 import { buildOpenApi } from "~/shared/openapi/build"
 import { spec } from "~/shared/openapi/registry"
+import { authRoutes } from "~/modules/auth/auth.routes"
 import { contentRoutes } from "~/modules/content/content.routes"
 
 // The Origin header never has a trailing slash; WEB_ORIGIN may.
@@ -32,6 +33,7 @@ const v1 = new Hono()
       return c.json(openApi)
     }
   )
+  .route("/", authRoutes)
   .route("/", contentRoutes)
 
 // Middleware in A3 order. The per-request log line comes with 10.4; the 500

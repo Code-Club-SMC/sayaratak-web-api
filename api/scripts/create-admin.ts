@@ -1,4 +1,4 @@
-import { notificationPrefsSchema } from "@sayaratak/shared/schemas/api"
+import { ALL_PREFS } from "~/shared/db/defaults"
 import {
   emailSchema,
   nameSchema,
@@ -20,13 +20,6 @@ export const adminInputSchema = z.object({
   password: passwordSchema,
 })
 type AdminInput = z.input<typeof adminInputSchema>
-
-// An admin gets every notification kind.
-const ALL_PREFS = notificationPrefsSchema.parse(
-  Object.fromEntries(
-    notificationPrefsSchema.keyof().options.map((k) => [k, true])
-  )
-)
 
 /**
  * Creates a verified admin with a password and two-factor on (the email code step, A6), and one

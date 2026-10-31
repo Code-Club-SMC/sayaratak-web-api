@@ -1,0 +1,76 @@
+import { z } from "zod"
+
+const text = z.string().min(1)
+
+// Third-party accounts the owner fills in over time (A14). Optional in
+// development and test, required when APP_ENV is production.
+const services = {
+  COOKIE_DOMAIN: text,
+  GOOGLE_CLIENT_ID: text,
+  GOOGLE_CLIENT_SECRET: text,
+  FACEBOOK_CLIENT_ID: text,
+  FACEBOOK_CLIENT_SECRET: text,
+  CLOUDINARY_URL: text,
+  SMTP_HOST: text,
+  SMTP_PORT: z.coerce.number().int().positive(),
+  SMTP_SECURE: z.stringbool(),
+  SMTP_USER: text,
+  SMTP_PASS: text,
+  MAIL_FROM: text,
+  R2_ACCOUNT_ID: text,
+  R2_ACCESS_KEY_ID: text,
+  R2_SECRET_ACCESS_KEY: text,
+  R2_BUCKET: text,
+  FCM_SERVICE_ACCOUNT: text,
+  APPLE_CLIENT_ID: text,
+  APPLE_TEAM_ID: text,
+  APPLE_KEY_ID: text,
+  APPLE_PRIVATE_KEY: text,
+  APPLE_APP_BUNDLE_ID: text,
+}
+
+const core = {
+  NODE_ENV: z.enum(["development", "test", "production"]),
+  APP_ENV: z.enum(["development", "test", "production"]),
+  PORT: z.coerce.number().int().positive().default(4000),
+  DATABASE_URL: z.url(),
+  TEST_DATABASE_URL: z.url().optional(),
+  DB_POOL_MAX: z.coerce.number().int().positive().default(10),
+  WEB_ORIGIN: z.url(),
+  TRUSTED_PROXIES: z
+    .string()
+    .default("")
+    .transform((value) =>
+      value
+        .split(",")
+        .map((ip) => ip.trim())
+        .filter(Boolean)
+    ),
+  BETTER_AUTH_SECRET: z.string().min(32),
+  BETTER_AUTH_URL: z.url(),
+  MIN_APP_VERSION_IOS: text.optional(),
+  MIN_APP_VERSION_ANDROID: text.optional(),
+  LOG_LEVEL: z.enum(["debug", "info", "warn", "error"]).default("info"),
+}
+
+const devSchema = z.object({ ...core, ...z.object(services).partial().shape })
+const prodSchema = z.object({ ...core, ...services })
+
+export type Env = z.infer<typeof devSchema>
+
+// A blank line in .env (`SMTP_HOST=`) counts as not set.
+const source = Object.fromEntries(
+  Object.entries(process.env).filter(([, value]) => value !== "")
+)
+const schema = source.APP_ENV === "production" ? prodSchema : devSchema
+const result = schema.safeParse(source)
+
+if (!result.success) {
+  const lines = result.error.issues.map(
+    (issue) => `- ${issue.path.join(".")}: ${issue.message}`
+  )
+  process.stderr.write(`Missing or invalid env:\n${lines.join("\n")}\n`)
+  process.exit(1)
+}
+
+export const env: Env = result.data

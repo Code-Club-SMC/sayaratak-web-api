@@ -11,6 +11,7 @@ concurrency:
 jobs:
   api:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     services:
       # Same image and port as the postgres-test service in api/docker-compose.yml.
       postgres:
@@ -55,6 +56,7 @@ jobs:
 
   web:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     defaults:
       run:
         working-directory: web

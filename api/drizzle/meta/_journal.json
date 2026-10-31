@@ -43,6 +43,13 @@
       "when": 1793441663602,
       "tag": "0005_listings",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1793441901582,
+      "tag": "0006_social",
+      "breakpoints": true
     }
   ]
 }

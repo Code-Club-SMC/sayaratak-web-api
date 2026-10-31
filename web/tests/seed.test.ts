@@ -65,7 +65,12 @@ describe("seed counts (A9)", () => {
     expect(db.mechanics).toHaveLength(18)
     expect(count(db.mechanics, (d) => d.verified)).toBe(10)
     expect(db.reviews).toHaveLength(120)
-    expect(db.threads).toHaveLength(25)
+    // 25 draws; two repeat a pair and subject and join the first thread (one thread per pair, as POST /threads).
+    expect(db.threads).toHaveLength(23)
+    const pairs = db.threads.map((t) =>
+      [t.subjectType, t.subjectId, ...[...t.participantIds].sort()].join(":")
+    )
+    expect(new Set(pairs).size).toBe(pairs.length)
     expect(db.reports).toHaveLength(6)
     expect(db.verifications).toHaveLength(6)
     expect(db.banners).toHaveLength(7)

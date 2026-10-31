@@ -146,8 +146,17 @@ export function seedThreads(
           subjectTitle: biz?.name ?? both(""),
           subjectImage: biz?.photo,
         }
-    const id = `t-${i + 1}`
-    threads.push({ id, ...subject, participantIds: [other.id, me.id] })
+    // One thread per pair and subject, as POST /threads keeps it: a repeat draw adds its messages to the first one.
+    const same = threads.find(
+      (t) =>
+        t.subjectType === subject.subjectType &&
+        t.subjectId === subject.subjectId &&
+        t.participantIds.includes(other.id) &&
+        t.participantIds.includes(me.id)
+    )
+    const id = same?.id ?? `t-${i + 1}`
+    if (!same)
+      threads.push({ id, ...subject, participantIds: [other.id, me.id] })
     const [buyerSet, sellerSet] = listing
       ? [buyerLines, sellerLines]
       : [customerLines, providerLines]

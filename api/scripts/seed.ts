@@ -4,6 +4,7 @@ import type { Executor } from "~/shared/db/tx"
 
 import { seedListings } from "./seed-listings"
 import { seedPeople } from "./seed-people"
+import { seedSocial } from "./seed-social"
 
 import { buildSeed } from "../../web/src/mocks/seed"
 
@@ -16,6 +17,7 @@ export async function seed(ex: Executor) {
   await seedTaxonomy(ex, data)
   await seedPeople(ex, data)
   await seedListings(ex, data)
+  await seedSocial(ex, data)
   const { bankakAccount, ...rest } = data.settings
   await ex
     .insert(settings)

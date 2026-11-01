@@ -7,11 +7,16 @@ import { newId } from "~/shared/text/ids"
 import { clock } from "~/shared/time/clock"
 import type { SessionUser } from "~/modules/auth/auth.types"
 import { listingMatchesSearch } from "~/modules/listings/listings.search.service"
+import { notify } from "~/modules/notifications/notifications.service"
 
 import { toSavedSearch } from "./saved-searches.mapper"
 import * as q from "./saved-searches.queries"
 
 const ID_PREFIX = "ss"
+const MATCH_TITLE = {
+  ar: "إعلان جديد يطابق بحثك",
+  en: "A new listing matches your search",
+}
 
 /** `GET /saved-searches`: the user's searches, oldest first. */
 export async function listSavedSearches(user: SessionUser) {
@@ -64,15 +69,20 @@ export async function deleteSavedSearch(user: SessionUser, id: string) {
  * but the owner, that the listing matches gets one more new match. Every
  * path that approves a listing calls this in its transaction (create with
  * auto-approve, submit, patch, and the admin approve and restore of 8.3).
- * The in-app notification comes with 6.5.
+ * Each of those people is told in the bell too (unless they switched it off).
  */
 // ponytail: one match query per alerting search; group equal params or match in SQL when searches reach the thousands.
 export async function onListingApproved(
   tx: Transaction,
-  listing: { id: string; ownerUserId: string | null }
+  listing: {
+    id: string
+    slug: string
+    title: string
+    ownerUserId: string | null
+  }
 ) {
   const alerting = await q.listAlertingExcept(tx, listing.ownerUserId)
-  const matched: string[] = []
+  const matched: typeof alerting = []
   for (const search of alerting)
     if (
       await listingMatchesSearch(tx, {
@@ -80,6 +90,17 @@ export async function onListingApproved(
         params: search.params,
       })
     )
-      matched.push(search.id)
-  await q.bumpNewCount(tx, matched)
+      matched.push(search)
+  await q.bumpNewCount(
+    tx,
+    matched.map((search) => search.id)
+  )
+  for (const search of matched)
+    await notify(tx, {
+      userId: search.userId,
+      type: "saved_search_match",
+      title: MATCH_TITLE,
+      body: { ar: listing.title, en: listing.title },
+      href: `/listing/${listing.slug}`,
+    })
 }

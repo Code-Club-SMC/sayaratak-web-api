@@ -1,11 +1,12 @@
 import { beforeEach, describe, expect, test } from "bun:test"
 import { listingSchema } from "@sayaratak/shared/schemas/listing"
 import { searchParamsSchema } from "@sayaratak/shared/search/schemas"
-import { eq } from "drizzle-orm"
+import { and, eq } from "drizzle-orm"
 
 import { db } from "~/shared/db/client"
 import { settings } from "~/modules/content/content.tables"
 import { listings } from "~/modules/listings/listings.tables"
+import { notifications } from "~/modules/notifications/notifications.tables"
 
 import { expectSchema, resetDb, signIn } from "../../../tests/helpers"
 import { carBody, send, uploadPhotos } from "../../../tests/listings"
@@ -43,6 +44,24 @@ beforeEach(async () => {
     .where(eq(savedSearches.id, "owner"))
 })
 
+const noticesOf = (id: string) =>
+  db
+    .select()
+    .from(notifications)
+    .where(
+      and(
+        eq(notifications.userId, id),
+        eq(notifications.type, "saved_search_match")
+      )
+    )
+// The seed already holds some of these notices; a test counts only the new ones.
+let seededNotices = new Set<string>()
+let dealerNotices = 0
+beforeEach(async () => {
+  seededNotices = new Set((await noticesOf("u-omar")).map((n) => n.id))
+  dealerNotices = (await noticesOf("u-dealer")).length
+})
+
 const post = async (as: Awaited<ReturnType<typeof signIn>>) =>
   expectSchema(
     await send(as, "/listings", {
@@ -61,6 +80,16 @@ describe("a listing that becomes public feeds the saved searches", () => {
     expect(await newCountOf("quiet")).toBe(0)
     expect(await newCountOf("other-make")).toBe(0)
     expect(await newCountOf("owner")).toBe(0)
+    // One notice per person, not per search: u-omar's searches "hit" only; the owner hears nothing.
+    const [fresh] = (await noticesOf("u-omar")).filter(
+      (n) => !seededNotices.has(n.id)
+    )
+    expect(fresh).toMatchObject({
+      href: `/listing/${listing.slug}`,
+      body: { ar: listing.title, en: listing.title },
+    })
+    expect(await noticesOf("u-omar")).toHaveLength(seededNotices.size + 1)
+    expect(await noticesOf("u-dealer")).toHaveLength(dealerNotices)
   })
 
   test("a listing that waits for review feeds nothing until an admin approves it", async () => {

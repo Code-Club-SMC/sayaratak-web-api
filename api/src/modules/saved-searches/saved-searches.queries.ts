@@ -53,7 +53,11 @@ export function remove(ex: Executor, id: string) {
 /** Searches with alerts on, of everyone but the listing's owner (`null`: no owner to leave out). */
 export function listAlertingExcept(ex: Executor, ownerUserId: string | null) {
   return ex
-    .select({ id: savedSearches.id, params: savedSearches.params })
+    .select({
+      id: savedSearches.id,
+      userId: savedSearches.userId,
+      params: savedSearches.params,
+    })
     .from(savedSearches)
     .where(
       and(

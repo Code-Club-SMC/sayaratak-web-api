@@ -43,3 +43,22 @@ export function postUpload(
 function bytesOf(text: string) {
   return [...new TextEncoder().encode(text)]
 }
+
+/** `POST /me/verification` as a signed-in browser: one `label` and `file` per document, then the `note`. */
+export function postVerification(
+  as: SignedIn,
+  documents: { label: string; file: File }[],
+  note?: string
+) {
+  const form = new FormData()
+  for (const { label, file } of documents) {
+    form.append("label", label)
+    form.append("file", file)
+  }
+  if (note !== undefined) form.set("note", note)
+  return req("/me/verification", {
+    method: "POST",
+    headers: { cookie: as.cookie, origin: as.origin },
+    body: form,
+  })
+}

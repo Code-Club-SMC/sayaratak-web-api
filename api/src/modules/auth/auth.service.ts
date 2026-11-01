@@ -66,6 +66,19 @@ export function listUsers(ex: Executor, ids: string[]) {
   return accounts.listUsers(ex, ids)
 }
 
+/** The name and picture address of each account with these ids, keyed by id. Unknown ids are left out. */
+export async function listPeople(ex: Executor, ids: string[]) {
+  const rows = await accounts.listUsers(ex, ids)
+  const people = await Promise.all(
+    rows.map(async (row) => ({
+      id: row.id,
+      name: row.name,
+      avatarUrl: (await uploads.uploadUrl(ex, row.avatarUploadId)) ?? null,
+    }))
+  )
+  return new Map(people.map((person) => [person.id, person]))
+}
+
 /** Banned now: a permanent ban, or a timed one that has not ended (A6). */
 export function isBannedNow(user: SessionUser) {
   return user.banned && !isBanOver(user)

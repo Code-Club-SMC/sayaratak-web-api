@@ -1,46 +1,93 @@
-import type { Counts } from "@sayaratak/shared/schemas/api"
+import type { NotificationPrefs } from "@sayaratak/shared/schemas/api"
+import type { Bilingual } from "@sayaratak/shared/schemas/fields"
+import type { Notification } from "@sayaratak/shared/schemas/messaging"
 
 import { db } from "~/shared/db/client"
+import type { Executor } from "~/shared/db/tx"
+import { newId } from "~/shared/text/ids"
+import { clock } from "~/shared/time/clock"
 import type { SessionUser } from "~/modules/auth/auth.types"
-import * as listings from "~/modules/listings/listings.service"
-import * as messaging from "~/modules/messaging/messaging.service"
-import * as payments from "~/modules/payments/payments.service"
-import * as reports from "~/modules/reports/reports.service"
-import * as reviews from "~/modules/reviews/reviews.service"
-import * as verification from "~/modules/verification/verification.service"
+import * as auth from "~/modules/auth/auth.service"
 
+import { toNotification, toNotificationHref } from "./notifications.mapper"
 import * as q from "./notifications.queries"
 
+const ID_PREFIX = "n"
+
+// The switch of the recipient's settings that silences each type (mock `prefOf`).
+const PREF_OF: Record<Notification["type"], keyof NotificationPrefs> = {
+  message: "messages",
+  listing_approved: "updates",
+  listing_rejected: "updates",
+  verification_result: "updates",
+  business_status: "updates",
+  saved_search_match: "savedSearchMatches",
+  review_new: "reviews",
+  payment_approved: "billing",
+  payment_rejected: "billing",
+  subscription_expiring: "billing",
+  broadcast: "announcements",
+}
+
+type Message = {
+  userId: string
+  type: Notification["type"]
+  title: Bilingual
+  body: Bilingual
+  /** A path with no language; the recipient's dashboard base is added. */
+  href?: string
+}
+
 /**
- * The badges in the header and the dashboard menu: unread messages and
- * notifications for everyone, plus the queue sizes for an admin.
+ * Tells one person something in the bell. Nothing is written when the person
+ * is gone or switched that kind off. Both languages are stored, so the
+ * reader sees the right one after switching. Every domain event that
+ * notifies calls this inside its own transaction. The push to devices comes with 6.8.
  */
-export async function getCounts(user: SessionUser): Promise<Counts> {
-  const [unreadMessages, unreadNotifications] = await Promise.all([
-    messaging.countUnreadMessages(db, user.id),
-    q.countUnread(db, user.id),
-  ])
-  const base = { unreadMessages, unreadNotifications }
-  if (user.role !== "admin") return base
-  const [
-    pendingListings,
-    pendingPayments,
-    pendingVerifications,
-    openReports,
-    flaggedReviews,
-  ] = await Promise.all([
-    listings.countPendingListings(db),
-    payments.countPendingPayments(db),
-    verification.countPendingVerifications(db),
-    reports.countOpenReports(db),
-    reviews.countFlaggedReviews(db),
-  ])
-  return {
-    ...base,
-    pendingListings,
-    pendingPayments,
-    pendingVerifications,
-    openReports,
-    flaggedReviews,
+export async function notify(ex: Executor, message: Message) {
+  const [recipient] = await auth.listUsers(ex, [message.userId])
+  if (!recipient?.prefs[PREF_OF[message.type]]) return
+  await q.insert(ex, {
+    id: newId(ID_PREFIX),
+    userId: recipient.id,
+    type: message.type,
+    title: message.title,
+    body: message.body,
+    href: message.href && toNotificationHref(recipient.role, message.href),
+    createdAt: clock.now(),
+  })
+}
+
+/**
+ * `GET /notifications`: the user's notifications, newest first. `before` (a
+ * notification id) lists the ones older than it, for an app that scrolls; an
+ * id the user does not have lists nothing.
+ */
+export async function listNotifications(
+  user: SessionUser,
+  find: {
+    unreadOnly: boolean
+    before?: string
+    page: { page: number; pageSize: number }
   }
+) {
+  const cursor = find.before
+    ? await q.getCursor(db, { id: find.before, userId: user.id })
+    : undefined
+  const { page, pageSize } = find.page
+  const { rows, total } =
+    find.before && !cursor
+      ? { rows: [], total: 0 }
+      : await q.listOf(db, {
+          userId: user.id,
+          unreadOnly: find.unreadOnly,
+          before: cursor,
+          page: { offset: (page - 1) * pageSize, size: pageSize },
+        })
+  return { items: rows.map(toNotification), total, page, pageSize }
+}
+
+/** `POST /notifications/read`: marks the ones named read, or all when no ids are sent. */
+export async function markNotificationsRead(user: SessionUser, ids?: string[]) {
+  await q.updateRead(db, { userId: user.id, ids, at: clock.now() })
 }

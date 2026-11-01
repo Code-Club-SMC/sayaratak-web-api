@@ -8,6 +8,7 @@ import { clock } from "~/shared/time/clock"
 import type { DayRange } from "~/shared/time/khartoum"
 import type { SessionUser } from "~/modules/auth/auth.types"
 import * as businesses from "~/modules/businesses/businesses.update.service"
+import { notify } from "~/modules/notifications/notifications.service"
 
 import { toReview } from "./reviews.mapper"
 import * as q from "./reviews.queries"
@@ -128,6 +129,16 @@ export async function createReview(
       createdAt: clock.now(),
     })
     if (!saved) fail.conflict("already_reviewed")
+    await notify(tx, {
+      userId: target.ownerUserId,
+      type: "review_new",
+      title: { ar: "تقييم جديد", en: "New review" },
+      body: {
+        ar: `حصلت على ${input.rating} نجوم.`,
+        en: `You received ${input.rating} stars.`,
+      },
+      href: "/reviews",
+    })
     return toReview(saved)
   })
 }

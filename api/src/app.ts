@@ -20,11 +20,14 @@ import { directoryRoutes } from "~/modules/directory/directory.routes"
 import { favoritesRoutes } from "~/modules/favorites/favorites.routes"
 import { listingsRoutes } from "~/modules/listings/listings.routes"
 import { mapRoutes } from "~/modules/map/map.routes"
+import { messagingRoutes } from "~/modules/messaging/messaging.routes"
 import { notificationsRoutes } from "~/modules/notifications/notifications.routes"
 import { mechanicPortfolioRoutes } from "~/modules/mechanic-portfolio/mechanic-portfolio.routes"
 import { myBusinessRoutes } from "~/modules/my-business/my-business.routes"
+import { verificationRoutes } from "~/modules/verification/verification.routes"
 import { workshopServicesRoutes } from "~/modules/workshop-services/workshop-services.routes"
 import { onboardingRoutes } from "~/modules/onboarding/onboarding.routes"
+import { reportsRoutes } from "~/modules/reports/reports.routes"
 import { reviewsRoutes } from "~/modules/reviews/reviews.routes"
 import { savedSearchesRoutes } from "~/modules/saved-searches/saved-searches.routes"
 import { taxonomyRoutes } from "~/modules/taxonomy/taxonomy.routes"
@@ -67,6 +70,9 @@ const v1 = new Hono()
   .route("/", reviewsRoutes)
   .route("/", favoritesRoutes)
   .route("/", savedSearchesRoutes)
+  .route("/", messagingRoutes)
+  .route("/", reportsRoutes)
+  .route("/", verificationRoutes)
 
 // Middleware in A3 order. The per-request log line comes with 10.4; the 500
 // log line is in onError.

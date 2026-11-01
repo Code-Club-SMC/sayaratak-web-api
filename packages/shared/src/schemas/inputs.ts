@@ -26,7 +26,7 @@ import {
   transmissionSchema,
   vehicleTypeSchema,
 } from "./listing"
-import { bannerCopySchema } from "./admin"
+import { bannerCopySchema, verificationLabels } from "./admin"
 import { adPageIdSchema, creativeSchema } from "./ads"
 import { extraFields } from "./listing-fields"
 import { targetTypeSchema } from "./review"
@@ -393,3 +393,22 @@ export const uploadFormSchema = z.object({
   height: z.string().optional(),
   placeholderColor: z.string().optional(),
 })
+
+// `POST /me/verification` (multipart): `label` and `file` once per document in the same order, 1 to 5
+// of them, and an optional `note`. A bad label or count reads as `documents`, as the mock reports it.
+export const verificationFormSchema = z
+  .object({
+    label: z.array(z.string()).default([]),
+    file: z.array(fileSchema).default([]),
+    note: z.string().trim().max(300, "validation.too_long").optional(),
+  })
+  .refine(
+    (form) =>
+      form.label.length >= 1 &&
+      form.label.length <= 5 &&
+      form.label.length === form.file.length &&
+      form.label.every((label) =>
+        (verificationLabels as readonly string[]).includes(label)
+      ),
+    { path: ["documents"], message: "validation.select_min" }
+  )

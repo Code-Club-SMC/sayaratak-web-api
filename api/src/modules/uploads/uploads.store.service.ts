@@ -63,7 +63,11 @@ export async function storeMedia(user: SessionUser, form: UploadForm) {
   )
 }
 
-/** Stores a payment receipt or verification document as a private file (A8). JPEG, PNG or WebP up to 5 MB. */
+/**
+ * Stores a payment receipt or verification document as a private file (A8).
+ * JPEG, PNG or WebP up to 5 MB. It is attached from the start: the payment or
+ * request row is written in the same transaction, so no cleanup is due.
+ */
 export async function storePrivateFile(
   ex: Executor,
   upload: { user: SessionUser; file: File; kind: PrivateKind }
@@ -80,6 +84,7 @@ export async function storePrivateFile(
     ...rowOf({ user: upload.user, file, stored }),
     kind: upload.kind,
     delivery: "private",
+    attachedAt: clock.now(),
   })
   return toUpload({ row, url: toUrl(row), name: upload.file.name })
 }

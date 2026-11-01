@@ -1,4 +1,4 @@
-import { asc, desc, eq, sql } from "drizzle-orm"
+import { asc, count, desc, eq, inArray, sql } from "drizzle-orm"
 
 import type { Executor } from "~/shared/db/tx"
 
@@ -38,4 +38,13 @@ export function listNewest(ex: Executor, limit: number) {
       asc(reports.id)
     )
     .limit(limit)
+}
+
+/** How many reports each of these listings has, whatever their state. */
+export function countPerListing(ex: Executor, listingIds: string[]) {
+  return ex
+    .select({ listingId: reports.listingId, count: count() })
+    .from(reports)
+    .where(inArray(reports.listingId, listingIds))
+    .groupBy(reports.listingId)
 }

@@ -98,7 +98,7 @@ function attributeWhere(p: SearchParams, on: (key: string) => boolean) {
 }
 
 // A person's listing is verified by their phone, a dealership's by the business.
-function verifiedWhere(verified: SearchScope["verified"]) {
+export function verifiedWhere(verified: SearchScope["verified"]) {
   return or(
     and(
       eq(listings.ownerType, "user"),

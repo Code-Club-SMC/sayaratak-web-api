@@ -91,14 +91,14 @@ function tabWhere(tab: string, now: Date) {
   return tabs[tab] ?? ne(listings.moderation, "removed")
 }
 
-function typeWhere(type: string | undefined) {
+export function typeWhere(type: string | undefined) {
   if (!type) return undefined
   if (type === "part") return eq(listings.kind, "part")
   return textIs(listings.vehicleType, type)
 }
 
 // Compared as text: a value outside the enum matches nothing instead of failing the cast.
-function textIs(column: Column, value: string | undefined) {
+export function textIs(column: Column, value: string | undefined) {
   return value ? sql`${column}::text = ${value}` : undefined
 }
 

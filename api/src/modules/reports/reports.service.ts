@@ -57,3 +57,16 @@ export async function listNewestReports(ex: Executor, limit: number) {
     createdAt: row.createdAt,
   }))
 }
+
+/** Reports on each of these listings, as a listing id to count map (a listing with none is missing). */
+export async function countReportsPerListing(
+  ex: Executor,
+  listingIds: string[]
+) {
+  const rows = await q.countPerListing(ex, listingIds)
+  return new Map(
+    rows.flatMap((row) =>
+      row.listingId ? [[row.listingId, row.count] as const] : []
+    )
+  )
+}

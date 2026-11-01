@@ -1,14 +1,13 @@
 import { db } from "~/shared/db/client"
+import { pageParams } from "~/shared/http/page"
 import { clock } from "~/shared/time/clock"
 import type { SessionUser } from "~/modules/auth/auth.types"
 
 import * as q from "./listings.mine.queries"
 import { toListings } from "./listings.view.service"
 
-// 20 a page; up to 500 for the CSV export (A11). `limit` asks 1 to 24, as everywhere.
-const DEFAULT_SIZE = 20
-const MAX_SIZE = 500
-const LIMIT_MAX = 24
+// 20 a page; up to 500 for the CSV export (A11).
+const PAGE_SIZE = { default: 20, max: 500 }
 
 /** Raw query values of `GET /me/listings`, read as the mock reads them. */
 export type MineQuery = Partial<
@@ -35,8 +34,7 @@ export type MineQuery = Partial<
  * Example: `tab=active&sort=expires&dir=asc&pageSize=500` for the CSV.
  */
 export async function listMyListings(user: SessionUser, query: MineQuery) {
-  const page = Math.max(1, Math.floor(Number(query.page)) || 1)
-  const size = pageSizeOf(query)
+  const { page, pageSize: size } = pageParams(query, PAGE_SIZE)
   const found = await q.listMine(db, {
     ownerUserId: user.id,
     now: clock.now(),
@@ -57,12 +55,4 @@ export async function listMyListings(user: SessionUser, query: MineQuery) {
     page,
     pageSize: size,
   }
-}
-
-// Mock `pageParams(query, 20, 500)`.
-function pageSizeOf(query: MineQuery) {
-  const limit = Math.floor(Number(query.limit))
-  if (limit) return Math.min(LIMIT_MAX, Math.max(1, limit))
-  const asked = Math.floor(Number(query.pageSize)) || DEFAULT_SIZE
-  return Math.min(MAX_SIZE, Math.max(1, asked))
 }

@@ -43,3 +43,19 @@ export function countWrittenIn(
     )
   )
 }
+
+/** How many shown reviews each target has at each star count. */
+export function listStarCountsOf(ex: Executor, targetIds: string[]) {
+  if (targetIds.length === 0) return Promise.resolve([])
+  return ex
+    .select({
+      targetId: reviews.targetId,
+      stars: reviews.rating,
+      count: count(),
+    })
+    .from(reviews)
+    .where(
+      and(inArray(reviews.targetId, targetIds), ne(reviews.status, "hidden"))
+    )
+    .groupBy(reviews.targetId, reviews.rating)
+}

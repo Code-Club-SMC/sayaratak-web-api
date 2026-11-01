@@ -1,5 +1,13 @@
 import type { Geo, WeeklyHours } from "@sayaratak/shared/schemas/fields"
 
+import type {
+  dealerships,
+  mechanics,
+  portfolioItems,
+  workshops,
+  workshopServices,
+} from "./businesses.tables"
+
 export type BusinessKind = "dealership" | "workshop" | "mechanic"
 
 type Basics = {
@@ -45,3 +53,9 @@ export type NewBusiness =
   | ({ kind: "dealership" } & NewDealership)
   | ({ kind: "workshop" } & NewWorkshop)
   | ({ kind: "mechanic" } & NewMechanic)
+
+export type DealershipRow = typeof dealerships.$inferSelect
+export type WorkshopRow = typeof workshops.$inferSelect
+export type MechanicRow = typeof mechanics.$inferSelect
+export type ServiceRow = typeof workshopServices.$inferSelect
+export type PortfolioRow = typeof portfolioItems.$inferSelect

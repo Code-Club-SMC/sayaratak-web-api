@@ -74,12 +74,12 @@ export function listVerifiedDealershipOwnerIds(ex: Executor) {
 
 // The mock's array order: seeded ids (`d-1` to `d-12`) by number, then newer
 // ones (`d-` and 8 characters). Example: d-2 before d-10 before d-k3x9q2ab.
-const byIdNumber = (
+export const byIdNumber = (
   table: typeof dealerships | typeof workshops | typeof mechanics
 ) => [asc(sql`length(${table.id})`), asc(table.id)]
 
 // Active, and the owner not in `hiddenOwnerIds` (mock `listed`).
-function listedWhere(
+export function listedWhere(
   table: typeof dealerships | typeof workshops | typeof mechanics,
   hiddenOwnerIds: string[]
 ) {

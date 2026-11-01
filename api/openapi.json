@@ -1860,6 +1860,1703 @@
         }
       }
     },
+    "/api/v1/dealerships": {
+      "get": {
+        "operationId": "getDealerships",
+        "summary": "Dealerships: `q`, `city`, `verified`, `sort` (rating, listings, newest), `page`, `pageSize` or `limit`",
+        "security": [],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "slug": {
+                            "type": "string"
+                          },
+                          "ownerId": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "name": {
+                            "type": "object",
+                            "properties": {
+                              "ar": {
+                                "type": "string"
+                              },
+                              "en": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "ar",
+                              "en"
+                            ]
+                          },
+                          "logoUrl": {
+                            "type": "string"
+                          },
+                          "coverUrl": {
+                            "type": "string"
+                          },
+                          "description": {
+                            "type": "object",
+                            "properties": {
+                              "ar": {
+                                "type": "string"
+                              },
+                              "en": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "ar",
+                              "en"
+                            ]
+                          },
+                          "cityId": {
+                            "type": "string"
+                          },
+                          "districtId": {
+                            "type": "string"
+                          },
+                          "address": {
+                            "type": "string"
+                          },
+                          "location": {
+                            "anyOf": [
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "lat": {
+                                    "type": "number",
+                                    "minimum": -90,
+                                    "maximum": 90
+                                  },
+                                  "lng": {
+                                    "type": "number",
+                                    "minimum": -180,
+                                    "maximum": 180
+                                  }
+                                },
+                                "required": [
+                                  "lat",
+                                  "lng"
+                                ]
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "phones": {
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "pattern": "^\\+[1-9]\\d{7,14}$"
+                            }
+                          },
+                          "whatsapp": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "pattern": "^\\+[1-9]\\d{7,14}$"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "hours": {
+                            "minItems": 7,
+                            "maxItems": 7,
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "day": {
+                                  "type": "integer",
+                                  "minimum": 0,
+                                  "maximum": 6
+                                },
+                                "closed": {
+                                  "type": "boolean"
+                                },
+                                "open": {
+                                  "type": "string",
+                                  "pattern": "^\\d{2}:\\d{2}$"
+                                },
+                                "close": {
+                                  "type": "string",
+                                  "pattern": "^\\d{2}:\\d{2}$"
+                                }
+                              },
+                              "required": [
+                                "day",
+                                "closed",
+                                "open",
+                                "close"
+                              ]
+                            }
+                          },
+                          "rating": {
+                            "type": "object",
+                            "properties": {
+                              "avg": {
+                                "type": "number"
+                              },
+                              "count": {
+                                "type": "integer",
+                                "minimum": -9007199254740991,
+                                "maximum": 9007199254740991
+                              },
+                              "distribution": {
+                                "minItems": 5,
+                                "maxItems": 5,
+                                "type": "array",
+                                "items": {
+                                  "type": "integer",
+                                  "minimum": -9007199254740991,
+                                  "maximum": 9007199254740991
+                                }
+                              }
+                            },
+                            "required": [
+                              "avg",
+                              "count",
+                              "distribution"
+                            ]
+                          },
+                          "verified": {
+                            "type": "boolean"
+                          },
+                          "inventoryCount": {
+                            "type": "integer",
+                            "minimum": -9007199254740991,
+                            "maximum": 9007199254740991
+                          },
+                          "status": {
+                            "type": "string",
+                            "enum": [
+                              "active",
+                              "suspended"
+                            ]
+                          },
+                          "suspendedReason": {
+                            "type": "string"
+                          },
+                          "unavailable": {
+                            "type": "boolean",
+                            "const": true
+                          },
+                          "createdAt": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "slug",
+                          "ownerId",
+                          "name",
+                          "logoUrl",
+                          "coverUrl",
+                          "description",
+                          "cityId",
+                          "districtId",
+                          "address",
+                          "location",
+                          "phones",
+                          "whatsapp",
+                          "hours",
+                          "rating",
+                          "verified",
+                          "inventoryCount",
+                          "status",
+                          "createdAt"
+                        ]
+                      }
+                    },
+                    "total": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    },
+                    "page": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    },
+                    "pageSize": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "items",
+                    "total",
+                    "page",
+                    "pageSize"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/dealerships/{slug}": {
+      "get": {
+        "operationId": "getDealershipsBySlug",
+        "summary": "One dealership by slug; `unavailable` while its owner is banned, 404 when suspended",
+        "security": [],
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "slug": {
+                      "type": "string"
+                    },
+                    "ownerId": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "name": {
+                      "type": "object",
+                      "properties": {
+                        "ar": {
+                          "type": "string"
+                        },
+                        "en": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "ar",
+                        "en"
+                      ]
+                    },
+                    "logoUrl": {
+                      "type": "string"
+                    },
+                    "coverUrl": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": "object",
+                      "properties": {
+                        "ar": {
+                          "type": "string"
+                        },
+                        "en": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "ar",
+                        "en"
+                      ]
+                    },
+                    "cityId": {
+                      "type": "string"
+                    },
+                    "districtId": {
+                      "type": "string"
+                    },
+                    "address": {
+                      "type": "string"
+                    },
+                    "location": {
+                      "anyOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "lat": {
+                              "type": "number",
+                              "minimum": -90,
+                              "maximum": 90
+                            },
+                            "lng": {
+                              "type": "number",
+                              "minimum": -180,
+                              "maximum": 180
+                            }
+                          },
+                          "required": [
+                            "lat",
+                            "lng"
+                          ]
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "phones": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "pattern": "^\\+[1-9]\\d{7,14}$"
+                      }
+                    },
+                    "whatsapp": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "pattern": "^\\+[1-9]\\d{7,14}$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "hours": {
+                      "minItems": 7,
+                      "maxItems": 7,
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "day": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 6
+                          },
+                          "closed": {
+                            "type": "boolean"
+                          },
+                          "open": {
+                            "type": "string",
+                            "pattern": "^\\d{2}:\\d{2}$"
+                          },
+                          "close": {
+                            "type": "string",
+                            "pattern": "^\\d{2}:\\d{2}$"
+                          }
+                        },
+                        "required": [
+                          "day",
+                          "closed",
+                          "open",
+                          "close"
+                        ]
+                      }
+                    },
+                    "rating": {
+                      "type": "object",
+                      "properties": {
+                        "avg": {
+                          "type": "number"
+                        },
+                        "count": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991
+                        },
+                        "distribution": {
+                          "minItems": 5,
+                          "maxItems": 5,
+                          "type": "array",
+                          "items": {
+                            "type": "integer",
+                            "minimum": -9007199254740991,
+                            "maximum": 9007199254740991
+                          }
+                        }
+                      },
+                      "required": [
+                        "avg",
+                        "count",
+                        "distribution"
+                      ]
+                    },
+                    "verified": {
+                      "type": "boolean"
+                    },
+                    "inventoryCount": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "active",
+                        "suspended"
+                      ]
+                    },
+                    "suspendedReason": {
+                      "type": "string"
+                    },
+                    "unavailable": {
+                      "type": "boolean",
+                      "const": true
+                    },
+                    "createdAt": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "slug",
+                    "ownerId",
+                    "name",
+                    "logoUrl",
+                    "coverUrl",
+                    "description",
+                    "cityId",
+                    "districtId",
+                    "address",
+                    "location",
+                    "phones",
+                    "whatsapp",
+                    "hours",
+                    "rating",
+                    "verified",
+                    "inventoryCount",
+                    "status",
+                    "createdAt"
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "not_found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "const": "not_found"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "fields": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    "retryAfter": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/workshops": {
+      "get": {
+        "operationId": "getWorkshops",
+        "summary": "Workshops: `q`, `city`, `service` (template id), `verified`, `openNow`, `lat` and `lng` with `sort=nearest`, `sort` (rating, newest, nearest), `page`, `pageSize` or `limit`",
+        "security": [],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "slug": {
+                            "type": "string"
+                          },
+                          "ownerId": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "name": {
+                            "type": "object",
+                            "properties": {
+                              "ar": {
+                                "type": "string"
+                              },
+                              "en": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "ar",
+                              "en"
+                            ]
+                          },
+                          "logoUrl": {
+                            "type": "string"
+                          },
+                          "coverUrl": {
+                            "type": "string"
+                          },
+                          "description": {
+                            "type": "object",
+                            "properties": {
+                              "ar": {
+                                "type": "string"
+                              },
+                              "en": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "ar",
+                              "en"
+                            ]
+                          },
+                          "cityId": {
+                            "type": "string"
+                          },
+                          "districtId": {
+                            "type": "string"
+                          },
+                          "address": {
+                            "type": "string"
+                          },
+                          "location": {
+                            "anyOf": [
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "lat": {
+                                    "type": "number",
+                                    "minimum": -90,
+                                    "maximum": 90
+                                  },
+                                  "lng": {
+                                    "type": "number",
+                                    "minimum": -180,
+                                    "maximum": 180
+                                  }
+                                },
+                                "required": [
+                                  "lat",
+                                  "lng"
+                                ]
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "phone": {
+                            "type": "string",
+                            "pattern": "^\\+[1-9]\\d{7,14}$"
+                          },
+                          "whatsapp": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "pattern": "^\\+[1-9]\\d{7,14}$"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "hours": {
+                            "minItems": 7,
+                            "maxItems": 7,
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "day": {
+                                  "type": "integer",
+                                  "minimum": 0,
+                                  "maximum": 6
+                                },
+                                "closed": {
+                                  "type": "boolean"
+                                },
+                                "open": {
+                                  "type": "string",
+                                  "pattern": "^\\d{2}:\\d{2}$"
+                                },
+                                "close": {
+                                  "type": "string",
+                                  "pattern": "^\\d{2}:\\d{2}$"
+                                }
+                              },
+                              "required": [
+                                "day",
+                                "closed",
+                                "open",
+                                "close"
+                              ]
+                            }
+                          },
+                          "images": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "string",
+                                  "minLength": 1
+                                },
+                                "type": {
+                                  "type": "string",
+                                  "enum": [
+                                    "image",
+                                    "video"
+                                  ]
+                                },
+                                "url": {
+                                  "type": "string"
+                                },
+                                "width": {
+                                  "type": "number"
+                                },
+                                "height": {
+                                  "type": "number"
+                                },
+                                "placeholderColor": {
+                                  "type": "string"
+                                },
+                                "posterUrl": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                }
+                              },
+                              "required": [
+                                "id",
+                                "type",
+                                "url",
+                                "width",
+                                "height",
+                                "placeholderColor",
+                                "posterUrl"
+                              ]
+                            }
+                          },
+                          "services": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "string",
+                                  "minLength": 1
+                                },
+                                "name": {
+                                  "type": "string"
+                                },
+                                "description": {
+                                  "type": "string"
+                                },
+                                "priceFrom": {
+                                  "type": "integer",
+                                  "minimum": -9007199254740991,
+                                  "maximum": 9007199254740991
+                                },
+                                "templateId": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                }
+                              },
+                              "required": [
+                                "id",
+                                "name",
+                                "description",
+                                "templateId"
+                              ]
+                            }
+                          },
+                          "rating": {
+                            "type": "object",
+                            "properties": {
+                              "avg": {
+                                "type": "number"
+                              },
+                              "count": {
+                                "type": "integer",
+                                "minimum": -9007199254740991,
+                                "maximum": 9007199254740991
+                              },
+                              "distribution": {
+                                "minItems": 5,
+                                "maxItems": 5,
+                                "type": "array",
+                                "items": {
+                                  "type": "integer",
+                                  "minimum": -9007199254740991,
+                                  "maximum": 9007199254740991
+                                }
+                              }
+                            },
+                            "required": [
+                              "avg",
+                              "count",
+                              "distribution"
+                            ]
+                          },
+                          "verified": {
+                            "type": "boolean"
+                          },
+                          "status": {
+                            "type": "string",
+                            "enum": [
+                              "active",
+                              "suspended"
+                            ]
+                          },
+                          "suspendedReason": {
+                            "type": "string"
+                          },
+                          "unavailable": {
+                            "type": "boolean",
+                            "const": true
+                          },
+                          "createdAt": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "slug",
+                          "ownerId",
+                          "name",
+                          "logoUrl",
+                          "description",
+                          "cityId",
+                          "districtId",
+                          "address",
+                          "location",
+                          "phone",
+                          "whatsapp",
+                          "hours",
+                          "images",
+                          "services",
+                          "rating",
+                          "verified",
+                          "status",
+                          "createdAt"
+                        ]
+                      }
+                    },
+                    "total": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    },
+                    "page": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    },
+                    "pageSize": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "items",
+                    "total",
+                    "page",
+                    "pageSize"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/workshops/{slug}": {
+      "get": {
+        "operationId": "getWorkshopsBySlug",
+        "summary": "One workshop by slug; `unavailable` while its owner is banned, 404 when suspended",
+        "security": [],
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "slug": {
+                      "type": "string"
+                    },
+                    "ownerId": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "name": {
+                      "type": "object",
+                      "properties": {
+                        "ar": {
+                          "type": "string"
+                        },
+                        "en": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "ar",
+                        "en"
+                      ]
+                    },
+                    "logoUrl": {
+                      "type": "string"
+                    },
+                    "coverUrl": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": "object",
+                      "properties": {
+                        "ar": {
+                          "type": "string"
+                        },
+                        "en": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "ar",
+                        "en"
+                      ]
+                    },
+                    "cityId": {
+                      "type": "string"
+                    },
+                    "districtId": {
+                      "type": "string"
+                    },
+                    "address": {
+                      "type": "string"
+                    },
+                    "location": {
+                      "anyOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "lat": {
+                              "type": "number",
+                              "minimum": -90,
+                              "maximum": 90
+                            },
+                            "lng": {
+                              "type": "number",
+                              "minimum": -180,
+                              "maximum": 180
+                            }
+                          },
+                          "required": [
+                            "lat",
+                            "lng"
+                          ]
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "phone": {
+                      "type": "string",
+                      "pattern": "^\\+[1-9]\\d{7,14}$"
+                    },
+                    "whatsapp": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "pattern": "^\\+[1-9]\\d{7,14}$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "hours": {
+                      "minItems": 7,
+                      "maxItems": 7,
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "day": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 6
+                          },
+                          "closed": {
+                            "type": "boolean"
+                          },
+                          "open": {
+                            "type": "string",
+                            "pattern": "^\\d{2}:\\d{2}$"
+                          },
+                          "close": {
+                            "type": "string",
+                            "pattern": "^\\d{2}:\\d{2}$"
+                          }
+                        },
+                        "required": [
+                          "day",
+                          "closed",
+                          "open",
+                          "close"
+                        ]
+                      }
+                    },
+                    "images": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "type": {
+                            "type": "string",
+                            "enum": [
+                              "image",
+                              "video"
+                            ]
+                          },
+                          "url": {
+                            "type": "string"
+                          },
+                          "width": {
+                            "type": "number"
+                          },
+                          "height": {
+                            "type": "number"
+                          },
+                          "placeholderColor": {
+                            "type": "string"
+                          },
+                          "posterUrl": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "type",
+                          "url",
+                          "width",
+                          "height",
+                          "placeholderColor",
+                          "posterUrl"
+                        ]
+                      }
+                    },
+                    "services": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "description": {
+                            "type": "string"
+                          },
+                          "priceFrom": {
+                            "type": "integer",
+                            "minimum": -9007199254740991,
+                            "maximum": 9007199254740991
+                          },
+                          "templateId": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "name",
+                          "description",
+                          "templateId"
+                        ]
+                      }
+                    },
+                    "rating": {
+                      "type": "object",
+                      "properties": {
+                        "avg": {
+                          "type": "number"
+                        },
+                        "count": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991
+                        },
+                        "distribution": {
+                          "minItems": 5,
+                          "maxItems": 5,
+                          "type": "array",
+                          "items": {
+                            "type": "integer",
+                            "minimum": -9007199254740991,
+                            "maximum": 9007199254740991
+                          }
+                        }
+                      },
+                      "required": [
+                        "avg",
+                        "count",
+                        "distribution"
+                      ]
+                    },
+                    "verified": {
+                      "type": "boolean"
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "active",
+                        "suspended"
+                      ]
+                    },
+                    "suspendedReason": {
+                      "type": "string"
+                    },
+                    "unavailable": {
+                      "type": "boolean",
+                      "const": true
+                    },
+                    "createdAt": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "slug",
+                    "ownerId",
+                    "name",
+                    "logoUrl",
+                    "description",
+                    "cityId",
+                    "districtId",
+                    "address",
+                    "location",
+                    "phone",
+                    "whatsapp",
+                    "hours",
+                    "images",
+                    "services",
+                    "rating",
+                    "verified",
+                    "status",
+                    "createdAt"
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "not_found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "const": "not_found"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "fields": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    "retryAfter": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/mechanics": {
+      "get": {
+        "operationId": "getMechanics",
+        "summary": "Mechanics, paid plans first: `q`, `city` (served), `specialization`, `minYears`, `verified`, `available`, `sort` (rating, experience, newest), `page`, `pageSize` or `limit`",
+        "security": [],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "slug": {
+                            "type": "string"
+                          },
+                          "ownerId": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "name": {
+                            "type": "object",
+                            "properties": {
+                              "ar": {
+                                "type": "string"
+                              },
+                              "en": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "ar",
+                              "en"
+                            ]
+                          },
+                          "photoUrl": {
+                            "type": "string"
+                          },
+                          "bio": {
+                            "type": "object",
+                            "properties": {
+                              "ar": {
+                                "type": "string"
+                              },
+                              "en": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "ar",
+                              "en"
+                            ]
+                          },
+                          "cityId": {
+                            "type": "string"
+                          },
+                          "servedCityIds": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "yearsOfExperience": {
+                            "type": "integer",
+                            "minimum": -9007199254740991,
+                            "maximum": 9007199254740991
+                          },
+                          "specializationIds": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "phone": {
+                            "type": "string",
+                            "pattern": "^\\+[1-9]\\d{7,14}$"
+                          },
+                          "whatsapp": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "pattern": "^\\+[1-9]\\d{7,14}$"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "portfolio": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "string",
+                                  "minLength": 1
+                                },
+                                "url": {
+                                  "type": "string"
+                                },
+                                "caption": {
+                                  "type": "string"
+                                },
+                                "width": {
+                                  "type": "number"
+                                },
+                                "height": {
+                                  "type": "number"
+                                },
+                                "placeholderColor": {
+                                  "type": "string"
+                                }
+                              },
+                              "required": [
+                                "id",
+                                "url",
+                                "caption",
+                                "width",
+                                "height",
+                                "placeholderColor"
+                              ]
+                            }
+                          },
+                          "available": {
+                            "type": "boolean"
+                          },
+                          "rating": {
+                            "type": "object",
+                            "properties": {
+                              "avg": {
+                                "type": "number"
+                              },
+                              "count": {
+                                "type": "integer",
+                                "minimum": -9007199254740991,
+                                "maximum": 9007199254740991
+                              },
+                              "distribution": {
+                                "minItems": 5,
+                                "maxItems": 5,
+                                "type": "array",
+                                "items": {
+                                  "type": "integer",
+                                  "minimum": -9007199254740991,
+                                  "maximum": 9007199254740991
+                                }
+                              }
+                            },
+                            "required": [
+                              "avg",
+                              "count",
+                              "distribution"
+                            ]
+                          },
+                          "verified": {
+                            "type": "boolean"
+                          },
+                          "status": {
+                            "type": "string",
+                            "enum": [
+                              "active",
+                              "suspended"
+                            ]
+                          },
+                          "suspendedReason": {
+                            "type": "string"
+                          },
+                          "unavailable": {
+                            "type": "boolean",
+                            "const": true
+                          },
+                          "createdAt": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "slug",
+                          "ownerId",
+                          "name",
+                          "photoUrl",
+                          "bio",
+                          "cityId",
+                          "servedCityIds",
+                          "yearsOfExperience",
+                          "specializationIds",
+                          "phone",
+                          "whatsapp",
+                          "portfolio",
+                          "available",
+                          "rating",
+                          "verified",
+                          "status",
+                          "createdAt"
+                        ]
+                      }
+                    },
+                    "total": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    },
+                    "page": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    },
+                    "pageSize": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "items",
+                    "total",
+                    "page",
+                    "pageSize"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/mechanics/{slug}": {
+      "get": {
+        "operationId": "getMechanicsBySlug",
+        "summary": "One mechanic by slug; `unavailable` while its owner is banned, 404 when suspended",
+        "security": [],
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "slug": {
+                      "type": "string"
+                    },
+                    "ownerId": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "name": {
+                      "type": "object",
+                      "properties": {
+                        "ar": {
+                          "type": "string"
+                        },
+                        "en": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "ar",
+                        "en"
+                      ]
+                    },
+                    "photoUrl": {
+                      "type": "string"
+                    },
+                    "bio": {
+                      "type": "object",
+                      "properties": {
+                        "ar": {
+                          "type": "string"
+                        },
+                        "en": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "ar",
+                        "en"
+                      ]
+                    },
+                    "cityId": {
+                      "type": "string"
+                    },
+                    "servedCityIds": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "yearsOfExperience": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    },
+                    "specializationIds": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "phone": {
+                      "type": "string",
+                      "pattern": "^\\+[1-9]\\d{7,14}$"
+                    },
+                    "whatsapp": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "pattern": "^\\+[1-9]\\d{7,14}$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "portfolio": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "url": {
+                            "type": "string"
+                          },
+                          "caption": {
+                            "type": "string"
+                          },
+                          "width": {
+                            "type": "number"
+                          },
+                          "height": {
+                            "type": "number"
+                          },
+                          "placeholderColor": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "url",
+                          "caption",
+                          "width",
+                          "height",
+                          "placeholderColor"
+                        ]
+                      }
+                    },
+                    "available": {
+                      "type": "boolean"
+                    },
+                    "rating": {
+                      "type": "object",
+                      "properties": {
+                        "avg": {
+                          "type": "number"
+                        },
+                        "count": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991
+                        },
+                        "distribution": {
+                          "minItems": 5,
+                          "maxItems": 5,
+                          "type": "array",
+                          "items": {
+                            "type": "integer",
+                            "minimum": -9007199254740991,
+                            "maximum": 9007199254740991
+                          }
+                        }
+                      },
+                      "required": [
+                        "avg",
+                        "count",
+                        "distribution"
+                      ]
+                    },
+                    "verified": {
+                      "type": "boolean"
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "active",
+                        "suspended"
+                      ]
+                    },
+                    "suspendedReason": {
+                      "type": "string"
+                    },
+                    "unavailable": {
+                      "type": "boolean",
+                      "const": true
+                    },
+                    "createdAt": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "slug",
+                    "ownerId",
+                    "name",
+                    "photoUrl",
+                    "bio",
+                    "cityId",
+                    "servedCityIds",
+                    "yearsOfExperience",
+                    "specializationIds",
+                    "phone",
+                    "whatsapp",
+                    "portfolio",
+                    "available",
+                    "rating",
+                    "verified",
+                    "status",
+                    "createdAt"
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "not_found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "const": "not_found"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "fields": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    "retryAfter": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/me/counts": {
       "get": {
         "operationId": "getMeCounts",

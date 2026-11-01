@@ -20,6 +20,7 @@ import { directoryRoutes } from "~/modules/directory/directory.routes"
 import { listingsRoutes } from "~/modules/listings/listings.routes"
 import { mapRoutes } from "~/modules/map/map.routes"
 import { notificationsRoutes } from "~/modules/notifications/notifications.routes"
+import { myBusinessRoutes } from "~/modules/my-business/my-business.routes"
 import { onboardingRoutes } from "~/modules/onboarding/onboarding.routes"
 import { taxonomyRoutes } from "~/modules/taxonomy/taxonomy.routes"
 import { uploadsRoutes } from "~/modules/uploads/uploads.routes"
@@ -48,6 +49,7 @@ const v1 = new Hono()
   .route("/", contentRoutes)
   .route("/", accountRoutes)
   .route("/", onboardingRoutes)
+  .route("/", myBusinessRoutes)
   .route("/", directoryRoutes)
   .route("/", notificationsRoutes)
   .route("/", taxonomyRoutes)

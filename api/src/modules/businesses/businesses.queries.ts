@@ -4,20 +4,54 @@ import type { Executor } from "~/shared/db/tx"
 import type { Box } from "~/shared/geo/box"
 
 import { dealerships, mechanics, workshops } from "./businesses.tables"
+import type { BusinessKind } from "./businesses.types"
 
-/** The id of the one business profile the user owns, of any kind. */
-export async function getIdOfOwner(ex: Executor, ownerUserId: string) {
+/** The kind and id of the one business profile the user owns, of any kind. */
+export async function getRefOfOwner(ex: Executor, ownerUserId: string) {
+  const tables = [
+    ["dealership", dealerships],
+    ["workshop", workshops],
+    ["mechanic", mechanics],
+  ] as const
   // One account has one business, so at most one of the three answers.
   const found = await Promise.all(
-    [dealerships, workshops, mechanics].map((table) =>
+    tables.map(([kind, table]) =>
       ex
         .select({ id: table.id })
         .from(table)
         .where(eq(table.ownerUserId, ownerUserId))
-        .then(([row]) => row?.id)
+        .then(([row]) => (row ? { kind, id: row.id } : undefined))
     )
   )
   return found.find(Boolean)
+}
+
+/** The id of the one business profile the user owns, of any kind. */
+export async function getIdOfOwner(ex: Executor, ownerUserId: string) {
+  return (await getRefOfOwner(ex, ownerUserId))?.id
+}
+
+/**
+ * The upload ids a business shows as pictures, keyed by the profile's address
+ * field: `logoUrl` and `coverUrl`, or a mechanic's `photoUrl`. Empty is null.
+ */
+export async function getPictureIds(
+  ex: Executor,
+  ref: { kind: BusinessKind; id: string }
+): Promise<Record<string, string | null>> {
+  if (ref.kind === "mechanic") {
+    const [row] = await ex
+      .select({ photoUrl: mechanics.photoUploadId })
+      .from(mechanics)
+      .where(eq(mechanics.id, ref.id))
+    return { photoUrl: row?.photoUrl ?? null }
+  }
+  const table = ref.kind === "dealership" ? dealerships : workshops
+  const [row] = await ex
+    .select({ logoUrl: table.logoUploadId, coverUrl: table.coverUploadId })
+    .from(table)
+    .where(eq(table.id, ref.id))
+  return { logoUrl: row?.logoUrl ?? null, coverUrl: row?.coverUrl ?? null }
 }
 
 /** Whether a dealership, workshop or mechanic profile has this id. */

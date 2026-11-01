@@ -7,6 +7,7 @@ import {
   mechanicCities,
   mechanics,
   mechanicSpecializations,
+  workshopImages,
   workshopServices,
   workshops,
 } from "./businesses.tables"
@@ -69,4 +70,93 @@ export function insertMechanicSpecializations(
 ) {
   if (rows.length === 0) return Promise.resolve([])
   return ex.insert(mechanicSpecializations).values(rows)
+}
+
+export type BusinessRef = { kind: keyof typeof SLUG_TABLES; id: string }
+
+/** Takes the business row's lock until the transaction ends, so parallel edits of one business queue up. */
+export function lockBusiness(ex: Executor, ref: BusinessRef) {
+  const table = SLUG_TABLES[ref.kind]
+  return ex
+    .select({ id: table.id })
+    .from(table)
+    .where(eq(table.id, ref.id))
+    .for("update")
+}
+
+export function updateDealership(
+  ex: Executor,
+  id: string,
+  set: Partial<NewDealershipRow>
+) {
+  return ex.update(dealerships).set(set).where(eq(dealerships.id, id))
+}
+
+export function updateWorkshop(
+  ex: Executor,
+  id: string,
+  set: Partial<NewWorkshopRow>
+) {
+  return ex.update(workshops).set(set).where(eq(workshops.id, id))
+}
+
+export function updateMechanic(
+  ex: Executor,
+  id: string,
+  set: Partial<NewMechanicRow>
+) {
+  return ex.update(mechanics).set(set).where(eq(mechanics.id, id))
+}
+
+/** A workshop's photos in the owner's order, replaced as a whole. */
+export async function replaceWorkshopImages(
+  ex: Executor,
+  workshopId: string,
+  uploadIds: string[]
+) {
+  await ex
+    .delete(workshopImages)
+    .where(eq(workshopImages.workshopId, workshopId))
+  if (uploadIds.length === 0) return
+  await ex.insert(workshopImages).values(
+    uploadIds.map((uploadId, position) => ({
+      workshopId,
+      position,
+      uploadId,
+    }))
+  )
+}
+
+/** A mechanic's served cities in the owner's order, replaced as a whole. */
+export async function replaceMechanicCities(
+  ex: Executor,
+  mechanicId: string,
+  cityIds: string[]
+) {
+  await ex
+    .delete(mechanicCities)
+    .where(eq(mechanicCities.mechanicId, mechanicId))
+  await insertMechanicCities(
+    ex,
+    cityIds.map((cityId, position) => ({ mechanicId, cityId, position }))
+  )
+}
+
+/** A mechanic's skills in the owner's order, replaced as a whole. */
+export async function replaceMechanicSpecializations(
+  ex: Executor,
+  mechanicId: string,
+  specializationIds: string[]
+) {
+  await ex
+    .delete(mechanicSpecializations)
+    .where(eq(mechanicSpecializations.mechanicId, mechanicId))
+  await insertMechanicSpecializations(
+    ex,
+    specializationIds.map((specializationId, position) => ({
+      mechanicId,
+      specializationId,
+      position,
+    }))
+  )
 }

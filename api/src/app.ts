@@ -20,6 +20,7 @@ import { directoryRoutes } from "~/modules/directory/directory.routes"
 import { listingsRoutes } from "~/modules/listings/listings.routes"
 import { mapRoutes } from "~/modules/map/map.routes"
 import { notificationsRoutes } from "~/modules/notifications/notifications.routes"
+import { mechanicPortfolioRoutes } from "~/modules/mechanic-portfolio/mechanic-portfolio.routes"
 import { myBusinessRoutes } from "~/modules/my-business/my-business.routes"
 import { workshopServicesRoutes } from "~/modules/workshop-services/workshop-services.routes"
 import { onboardingRoutes } from "~/modules/onboarding/onboarding.routes"
@@ -51,6 +52,7 @@ const v1 = new Hono()
   .route("/", accountRoutes)
   .route("/", onboardingRoutes)
   .route("/", myBusinessRoutes)
+  .route("/", mechanicPortfolioRoutes)
   .route("/", workshopServicesRoutes)
   .route("/", directoryRoutes)
   .route("/", notificationsRoutes)

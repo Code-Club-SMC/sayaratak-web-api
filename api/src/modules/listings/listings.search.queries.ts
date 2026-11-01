@@ -7,6 +7,7 @@ import {
   inArray,
   isNotNull,
   ne,
+  not,
   type SQL,
   sql,
 } from "drizzle-orm"
@@ -45,11 +46,8 @@ export async function listSearchPage(
     page: { offset: number; size: number }
   }
 ) {
-  const { params, scope } = search
-  const where = and(
-    searchWhere(params, scope),
-    search.exclude ? ne(listings.id, search.exclude) : undefined
-  )
+  const { params } = search
+  const where = whereOf(search)
   const rows = await ex
     .select({
       listing: listings,
@@ -57,11 +55,54 @@ export async function listSearchPage(
     })
     .from(listings)
     .where(where)
-    .orderBy(...orderOf(params, scope), asc(listings.id))
+    .orderBy(...orderOf(params), asc(listings.id))
     .offset(search.page.offset)
     .limit(search.page.size)
   const total = rows[0]?.total ?? (await ex.$count(listings, where))
   return { rows: rows.map((row) => row.listing), total }
+}
+
+/**
+ * Relevance (A11): every matching Featured id, and organic ids in ranking
+ * order up to `organicLimit` (the page's last slot can need no more).
+ * Featured keep ranking order too, so equal turns break ties as the mock.
+ */
+export async function listRelevanceIds(
+  ex: Executor,
+  search: {
+    params: SearchParams
+    scope: SearchScope
+    exclude?: string
+    organicLimit: number
+  }
+) {
+  const where = whereOf(search)
+  const featured = inArray(listings.id, [...search.scope.featuredIds, ""])
+  const ids = (filter: SQL | undefined, limit?: number) => {
+    const query = ex
+      .select({ id: listings.id })
+      .from(listings)
+      .where(and(where, filter))
+      .orderBy(desc(hasMedia()), desc(posted), asc(listings.id))
+      .$dynamic()
+    return (limit === undefined ? query : query.limit(limit)).then((rows) =>
+      rows.map((row) => row.id)
+    )
+  }
+  const [paid, organic, total] = await Promise.all([
+    ids(featured),
+    ids(not(featured), search.organicLimit),
+    ex.$count(listings, where),
+  ])
+  return { featured: paid, organic, total }
+}
+
+/** Listings by id, in the order of `ids`. */
+export async function listByIds(ex: Executor, ids: string[]) {
+  if (ids.length === 0) return []
+  const rows = await ex.select().from(listings).where(inArray(listings.id, ids))
+  const byId = new Map(rows.map((row) => [row.id, row]))
+  return ids.flatMap((id) => byId.get(id) ?? [])
 }
 
 /** Counts per value of one facet, with that facet's own filter left out (disjunctive). */
@@ -93,26 +134,42 @@ async function countFits(ex: Executor, where: SQL | undefined) {
   return [...counts].map(([value, total]) => ({ value, count: total }))
 }
 
-// Mock `sortListings`. Relevance: Featured now, then with photos, then newest
-// (4.6 adds the Featured interleave). Nearest without a point is relevance.
-function orderOf(params: SearchParams, scope: SearchScope): SQL[] {
-  const origin =
-    params.lat !== undefined && params.lng !== undefined
-      ? { lat: params.lat, lng: params.lng }
-      : null
-  const relevance = [
-    desc(inArray(listings.id, [...scope.featuredIds, ""])),
-    desc(hasMedia()),
-    desc(posted),
-  ]
-  const orders: Record<SearchParams["sort"], SQL[]> = {
-    relevance,
+function whereOf(search: {
+  params: SearchParams
+  scope: SearchScope
+  exclude?: string
+}) {
+  return and(
+    searchWhere(search.params, search.scope),
+    search.exclude ? ne(listings.id, search.exclude) : undefined
+  )
+}
+
+// Mock `sortListings` for the explicit sorts; relevance goes through
+// `listRelevanceIds` and `capPaid` instead.
+function orderOf(params: SearchParams): SQL[] {
+  const origin = originOf(params)
+  const orders: Record<Exclude<SearchParams["sort"], "relevance">, SQL[]> = {
     newest: [desc(posted)],
     price_asc: [asc(listings.price)],
     price_desc: [desc(listings.price)],
     year_desc: [sql`coalesce(${listings.year}, 0) desc`],
     mileage_asc: [sql`coalesce(${listings.mileageKm}, 0) asc`],
-    nearest: origin ? [sql`${distanceKm(origin)} asc nulls last`] : relevance,
+    nearest: origin ? [sql`${distanceKm(origin)} asc nulls last`] : [],
   }
-  return orders[params.sort]
+  return params.sort === "relevance" ? [] : orders[params.sort]
+}
+
+function originOf(params: SearchParams) {
+  return params.lat !== undefined && params.lng !== undefined
+    ? { lat: params.lat, lng: params.lng }
+    : null
+}
+
+/** Relevance, or nearest without a point (the mock ranks both the same). */
+export function isRelevance(params: SearchParams) {
+  return (
+    params.sort === "relevance" ||
+    (params.sort === "nearest" && originOf(params) === null)
+  )
 }

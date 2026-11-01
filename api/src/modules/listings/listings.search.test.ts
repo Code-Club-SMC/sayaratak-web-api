@@ -6,6 +6,7 @@ import { db } from "~/shared/db/client"
 import { user } from "~/modules/auth/auth.tables"
 
 import { expectSchema, req, resetDb } from "../../../tests/helpers"
+import { capPaid } from "./listings.ranking.service"
 import { listings } from "./listings.tables"
 
 beforeEach(resetDb)
@@ -83,14 +84,36 @@ describe("GET /listings", () => {
     expect(counts).toEqual([...counts].sort((a, b) => b - a))
   })
 
-  test("relevance puts listings Featured now first (4.6 adds the interleave)", async () => {
+  test("relevance opens each page with up to 4 Featured, then one leads each row of 4", async () => {
     const featured = new Set<string>()
     for (const n of [1, 2, 3])
       for (const l of (await page(`featured=true&sort=newest&page=${n}`)).items)
         featured.add(l.id)
     expect(featured.size).toBeGreaterThan(0)
-    const ranked = await page("sort=relevance")
-    const lead = ranked.items.slice(0, Math.min(featured.size, 24))
-    expect(lead.every((l) => featured.has(l.id))).toBe(true)
+    const first = await page("sort=relevance")
+    const slots = first.items.flatMap((l, i) => (featured.has(l.id) ? [i] : []))
+    const paidSlots = [0, 1, 2, 3, 4, 8, 12, 16, 20]
+    expect(slots).toEqual(paidSlots.slice(0, featured.size))
+    // Same order while a buyer pages through, and no listing twice.
+    expect((await page("sort=relevance")).items).toEqual(first.items)
+    const ids = [first, await page("page=2"), await page("page=3")].flatMap(
+      (p) => p.items.map((l) => l.id)
+    )
+    expect(new Set(ids).size).toBe(ids.length)
+  })
+})
+
+describe("capPaid", () => {
+  test("keeps leftover Featured for the next page and turns them by the hour", () => {
+    const paid = Array.from({ length: 12 }, (_, i) => `f${i}`)
+    const organic = Array.from({ length: 40 }, (_, i) => `o${i}`)
+    const out = capPaid(paid, organic, 0)
+    expect(out).toHaveLength(52)
+    const isPaid = (id: string | undefined) => id?.startsWith("f")
+    expect(out.slice(0, 24).filter(isPaid)).toHaveLength(9)
+    expect(out.slice(24, 28).map(isPaid)).toEqual([true, true, true, false])
+    expect(out.filter((id) => id.startsWith("o"))).toEqual(organic)
+    const later = capPaid(paid, organic, 3_600_000)
+    expect(later.slice(0, 4)).not.toEqual(out.slice(0, 4))
   })
 })

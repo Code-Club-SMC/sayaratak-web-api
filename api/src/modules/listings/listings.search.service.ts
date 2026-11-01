@@ -9,6 +9,7 @@ import * as promotions from "~/modules/promotions/promotions.service"
 import * as uploads from "~/modules/uploads/uploads.media.service"
 
 import type { FacetKey, SearchScope } from "./listings.filters.queries"
+import { capPaid } from "./listings.ranking.service"
 import { listHiddenOwnerIds } from "./listings.read.service"
 import * as q from "./listings.search.queries"
 import { toListings } from "./listings.view.service"
@@ -34,14 +35,17 @@ export async function searchListings(search: Search) {
   const { params } = search
   const scope = await scopeOf(db, params)
   const size = pageSizeOf(search.limit)
+  const window = { offset: (params.page - 1) * size, size }
   // The page and the five facet counts are independent reads.
   const [page, facets] = await Promise.all([
-    q.listSearchPage(db, {
-      params,
-      scope,
-      exclude: search.exclude,
-      page: { offset: (params.page - 1) * size, size },
-    }),
+    q.isRelevance(params)
+      ? relevancePage(db, { ...search, scope, window })
+      : q.listSearchPage(db, {
+          params,
+          scope,
+          exclude: search.exclude,
+          page: window,
+        }),
     facetsOf(db, params, scope),
   ])
   return {
@@ -51,6 +55,26 @@ export async function searchListings(search: Search) {
     pageSize: size,
     facets,
   }
+}
+
+// A11: Featured and organic ids, interleaved by `capPaid`, then the page's rows by id.
+async function relevancePage(
+  ex: Executor,
+  search: Search & {
+    scope: SearchScope
+    window: { offset: number; size: number }
+  }
+) {
+  const { offset, size } = search.window
+  const ids = await q.listRelevanceIds(ex, {
+    params: search.params,
+    scope: search.scope,
+    exclude: search.exclude,
+    organicLimit: offset + size,
+  })
+  const order = capPaid(ids.featured, ids.organic)
+  const rows = await q.listByIds(ex, order.slice(offset, offset + size))
+  return { rows, total: ids.total }
 }
 
 // The id lists the filters need from other modules; each is read only when used.

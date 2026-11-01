@@ -28,7 +28,34 @@ async function firstPart() {
   return row
 }
 
-// Explicit sorts: relevance gets the Featured interleave in 4.6.
+// Relevance turns Featured by a hash of id and hour; both sides must read the
+// same hour, so a run in the last 15 seconds of an hour waits for the next.
+async function sameHour() {
+  const left = 3_600_000 - (Date.now() % 3_600_000)
+  if (left < 15_000) await Bun.sleep(left + 100)
+}
+
+describe("GET /listings relevance matches the mock", () => {
+  test("pages 1 to 3 of an unfiltered search", async () => {
+    await sameHour()
+    for (const page of [1, 2, 3]) await search(`page=${page}`)
+  })
+
+  test("a make filter with facets, Featured only, nearest without a point", async () => {
+    await sameHour()
+    await search("make=toyota")
+    await search("featured=true")
+    await search("featured=true&page=2")
+    await search("sort=nearest&type=car")
+  })
+
+  test("a rail", async () => {
+    await sameHour()
+    const part = await firstPart()
+    await search(`kind=part&limit=6&exclude=${part.id}`)
+  })
+})
+
 describe("GET /listings matches the mock", () => {
   test("newest, and each sort", async () => {
     for (const sort of [

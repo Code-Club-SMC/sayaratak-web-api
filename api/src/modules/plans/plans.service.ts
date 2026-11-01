@@ -3,6 +3,8 @@ import type { Plan } from "@sayaratak/shared/schemas/billing"
 import type { Executor } from "~/shared/db/tx"
 import { newId } from "~/shared/text/ids"
 import { clock } from "~/shared/time/clock"
+import { listIdsOf } from "~/modules/listings/listings.stats.service"
+import * as promotions from "~/modules/promotions/promotions.service"
 
 import * as q from "./plans.queries"
 
@@ -69,4 +71,33 @@ export async function getPickablePaidPlanId(
 /** One plan by id, or undefined. */
 export function getPlan(ex: Executor, id: string) {
   return q.getPlan(ex, id)
+}
+
+/**
+ * The Featured credits of an active subscription: its plan's count, less the
+ * credit promotions of the owner's listings started since the period began.
+ * Nothing without an active subscription or credits.
+ */
+export async function getCredits(
+  ex: Executor,
+  of: {
+    userId: string
+    sub?: { status: string; startsAt: Date }
+    total?: number
+  }
+) {
+  const { sub, total = 0 } = of
+  if (sub?.status !== "active" || total === 0) return { total: 0, left: 0 }
+  const used = await promotions.countCreditsUsed(ex, {
+    listingIds: await listIdsOf(ex, of.userId),
+    since: sub.startsAt,
+  })
+  return { total, left: Math.max(0, total - used) }
+}
+
+/** The account's Featured credits now (`GET /me/subscription` shows the same). */
+export async function getCreditsOf(ex: Executor, userId: string) {
+  const sub = await q.getActiveSubscription(ex, userId)
+  const plan = sub && (await q.getPlan(ex, sub.planId))
+  return getCredits(ex, { userId, sub, total: plan?.featuredCredits })
 }

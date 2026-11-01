@@ -1,8 +1,12 @@
-import { and, asc, eq, gt, gte, inArray, lte, ne } from "drizzle-orm"
+import { and, asc, eq, gt, gte, inArray, lte, ne, sql } from "drizzle-orm"
 
 import type { Executor } from "~/shared/db/tx"
 
-import { promotionPrices, promotions } from "./promotions.tables"
+import {
+  type NewPromotionRow,
+  promotionPrices,
+  promotions,
+} from "./promotions.tables"
 
 export function updateEndedFor(
   ex: Executor,
@@ -101,4 +105,76 @@ export function getPrice(
       )
     )
     .then(([row]) => row?.price)
+}
+
+/** Featured by length, then the bump: the order of the price list. */
+export function listPrices(ex: Executor) {
+  return ex
+    .select()
+    .from(promotionPrices)
+    .orderBy(asc(promotionPrices.type), asc(promotionPrices.durationDays))
+}
+
+export function getPriceRow(ex: Executor, id: string) {
+  return ex
+    .select()
+    .from(promotionPrices)
+    .where(eq(promotionPrices.id, id))
+    .then(([row]) => row)
+}
+
+/** Null when the unpaid-order index already holds one for that listing, type and length. */
+export function insertIfNone(ex: Executor, row: NewPromotionRow) {
+  return ex
+    .insert(promotions)
+    .values(row)
+    .onConflictDoNothing()
+    .returning()
+    .then(([saved]) => saved ?? null)
+}
+
+export function insert(ex: Executor, row: NewPromotionRow) {
+  return ex
+    .insert(promotions)
+    .values(row)
+    .returning()
+    .then(([inserted]) => {
+      // One row in, one row back; anything else is a driver fault.
+      if (!inserted) throw new Error("insert into promotions returned no row")
+      return inserted
+    })
+}
+
+export function getUnpaid(
+  ex: Executor,
+  of: { listingId: string; type: "featured" | "bump"; durationDays: number }
+) {
+  return ex
+    .select()
+    .from(promotions)
+    .where(
+      and(
+        eq(promotions.listingId, of.listingId),
+        eq(promotions.type, of.type),
+        eq(promotions.durationDays, of.durationDays),
+        eq(promotions.status, "pending_payment")
+      )
+    )
+    .then(([row]) => row)
+}
+
+/** The promotions of these listings with the price of their type and length (null when that row is gone): waiting ones first, then the newest start. */
+export function listOfListings(ex: Executor, listingIds: string[]) {
+  return ex
+    .select({ promotion: promotions, price: promotionPrices.price })
+    .from(promotions)
+    .leftJoin(
+      promotionPrices,
+      and(
+        eq(promotionPrices.type, promotions.type),
+        eq(promotionPrices.durationDays, promotions.durationDays)
+      )
+    )
+    .where(inArray(promotions.listingId, listingIds))
+    .orderBy(sql`${promotions.startsAt} desc nulls first`, asc(promotions.id))
 }

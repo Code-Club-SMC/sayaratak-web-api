@@ -6,12 +6,11 @@ import * as auth from "~/modules/auth/auth.service"
 import type { SessionUser } from "~/modules/auth/auth.types"
 import * as content from "~/modules/content/content.service"
 import { getListingUsage } from "~/modules/listings/listings.rules.service"
-import { listIdsOf } from "~/modules/listings/listings.stats.service"
 import * as payments from "~/modules/payments/payments.service"
-import * as promotions from "~/modules/promotions/promotions.service"
 
 import { toPlan, toSubscription } from "./plans.mapper"
 import * as q from "./plans.queries"
+import { getCredits } from "./plans.service"
 
 const AUDIENCES = planSchema.shape.audience.options
 
@@ -48,7 +47,11 @@ export async function getMySubscription(user: SessionUser) {
     subscription: sub ? toSubscription(sub, usage.used) : null,
     plan: plan ? toPlan(plan) : null,
     usage,
-    credits: await getCredits(db, { user, sub, total: plan?.featuredCredits }),
+    credits: await getCredits(db, {
+      userId: user.id,
+      sub,
+      total: plan?.featuredCredits,
+    }),
     reviewPlan,
   }
 }
@@ -58,25 +61,6 @@ async function getReviewPlan(ex: Executor, userId: string) {
   const planId = await payments.getPlanUnderReviewId(ex, userId)
   const row = planId ? await q.getPlan(ex, planId) : undefined
   return row ? toPlan(row) : null
-}
-
-// Credits come from the active plan; the ones used are the credit promotions
-// started since the period began.
-async function getCredits(
-  ex: Executor,
-  of: {
-    user: SessionUser
-    sub?: { status: string; startsAt: Date }
-    total?: number
-  }
-) {
-  const { sub, total = 0 } = of
-  if (sub?.status !== "active" || total === 0) return { total: 0, left: 0 }
-  const used = await promotions.countCreditsUsed(ex, {
-    listingIds: await listIdsOf(ex, of.user.id),
-    since: sub.startsAt,
-  })
-  return { total, left: Math.max(0, total - used) }
 }
 
 /** `DELETE /me/chosen-plan`: "keep the free plan"; the account as `GET /me` shows it. */

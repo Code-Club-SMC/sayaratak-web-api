@@ -30,6 +30,7 @@ import { workshopServicesRoutes } from "~/modules/workshop-services/workshop-ser
 import { onboardingRoutes } from "~/modules/onboarding/onboarding.routes"
 import { paymentsRoutes } from "~/modules/payments/payments.routes"
 import { plansRoutes } from "~/modules/plans/plans.routes"
+import { promotionsRoutes } from "~/modules/promotions/promotions.routes"
 import { reportsRoutes } from "~/modules/reports/reports.routes"
 import { reviewsRoutes } from "~/modules/reviews/reviews.routes"
 import { savedSearchesRoutes } from "~/modules/saved-searches/saved-searches.routes"
@@ -79,6 +80,7 @@ const v1 = new Hono()
   .route("/", verificationRoutes)
   .route("/", plansRoutes)
   .route("/", paymentsRoutes)
+  .route("/", promotionsRoutes)
 
 // Middleware in A3 order. The per-request log line comes with 10.4; the 500
 // log line is in onError.

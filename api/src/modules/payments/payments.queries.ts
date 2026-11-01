@@ -1,4 +1,4 @@
-import { and, desc, eq } from "drizzle-orm"
+import { and, desc, eq, inArray } from "drizzle-orm"
 
 import type { Executor } from "~/shared/db/tx"
 
@@ -92,4 +92,22 @@ export async function listOf(
     ex.$count(payments, where),
   ])
   return { rows, total }
+}
+
+/** The status of the newest receipt for each of these promotions; a promotion without one is left out. */
+export function listPromotionStatuses(ex: Executor, promotionIds: string[]) {
+  if (promotionIds.length === 0) return Promise.resolve([])
+  return ex
+    .selectDistinctOn([payments.itemId], {
+      itemId: payments.itemId,
+      status: payments.status,
+    })
+    .from(payments)
+    .where(
+      and(
+        eq(payments.itemType, "promotion"),
+        inArray(payments.itemId, promotionIds)
+      )
+    )
+    .orderBy(payments.itemId, desc(payments.createdAt))
 }

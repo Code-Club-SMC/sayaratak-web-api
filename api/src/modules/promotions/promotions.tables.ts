@@ -74,3 +74,6 @@ export const promotions = pgTable(
     ),
   ]
 )
+
+export type PromotionRow = typeof promotions.$inferSelect
+export type NewPromotionRow = typeof promotions.$inferInsert

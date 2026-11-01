@@ -49,3 +49,12 @@ export async function listMyPayments(
   )
   return { items, total, page: page.page, pageSize: page.pageSize }
 }
+
+/** The status of the newest receipt for each promotion (a promotion with none is not in the map). */
+export async function getPromotionPaymentStatuses(
+  ex: Executor,
+  promotionIds: string[]
+) {
+  const rows = await q.listPromotionStatuses(ex, promotionIds)
+  return new Map(rows.map((row) => [row.itemId, row.status]))
+}

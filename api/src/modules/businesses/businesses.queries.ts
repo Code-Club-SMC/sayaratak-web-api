@@ -1,6 +1,7 @@
-import { eq, inArray } from "drizzle-orm"
+import { and, asc, between, eq, inArray, notInArray, sql } from "drizzle-orm"
 
 import type { Executor } from "~/shared/db/tx"
+import type { Box } from "~/shared/geo/box"
 
 import { dealerships, mechanics, workshops } from "./businesses.tables"
 
@@ -54,4 +55,69 @@ export function listVerifiedDealershipOwnerIds(ex: Executor) {
     .from(dealerships)
     .where(eq(dealerships.verified, true))
     .then((rows) => rows.map((row) => row.id))
+}
+
+// The mock's array order: seeded ids (`d-1` to `d-12`) by number, then newer
+// ones (`d-` and 8 characters). Example: d-2 before d-10 before d-k3x9q2ab.
+const byIdNumber = (
+  table: typeof dealerships | typeof workshops | typeof mechanics
+) => [asc(sql`length(${table.id})`), asc(table.id)]
+
+// Active, and the owner not in `hiddenOwnerIds` (mock `listed`).
+function listedWhere(
+  table: typeof dealerships | typeof workshops | typeof mechanics,
+  hiddenOwnerIds: string[]
+) {
+  return and(
+    eq(table.status, "active"),
+    hiddenOwnerIds.length > 0
+      ? notInArray(table.ownerUserId, hiddenOwnerIds)
+      : undefined
+  )
+}
+
+/** Listed dealerships or workshops with a pin inside the box, in mock order. */
+export function listPinnedInBox(
+  ex: Executor,
+  find: {
+    kind: "dealership" | "workshop"
+    box: Box
+    hiddenOwnerIds: string[]
+  }
+) {
+  const { box } = find
+  const table = find.kind === "dealership" ? dealerships : workshops
+  return ex
+    .select({
+      id: table.id,
+      slug: table.slug,
+      name: table.name,
+      lat: table.lat,
+      lng: table.lng,
+      photoId: table.logoUploadId,
+    })
+    .from(table)
+    .where(
+      and(
+        listedWhere(table, find.hiddenOwnerIds),
+        between(table.lat, box.south, box.north),
+        between(table.lng, box.west, box.east)
+      )
+    )
+    .orderBy(...byIdNumber(table))
+}
+
+/** Listed mechanics, in mock order. */
+export function listListedMechanics(ex: Executor, hiddenOwnerIds: string[]) {
+  return ex
+    .select({
+      id: mechanics.id,
+      slug: mechanics.slug,
+      name: mechanics.name,
+      cityId: mechanics.cityId,
+      photoId: mechanics.photoUploadId,
+    })
+    .from(mechanics)
+    .where(listedWhere(mechanics, hiddenOwnerIds))
+    .orderBy(...byIdNumber(mechanics))
 }

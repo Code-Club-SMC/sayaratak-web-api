@@ -10,6 +10,12 @@ export function isCity(ex: Executor, id: string) {
   return q.hasCity(ex, id)
 }
 
+/** Each city's center point, keyed by city id. */
+export async function getCityCenters(ex: Executor) {
+  const rows = await q.listCityCenters(ex)
+  return new Map(rows.map((row) => [row.id, { lat: row.lat, lng: row.lng }]))
+}
+
 /** Every public list the site builds its menus and filters from. Cities of a turned-off country, and their districts, stay off. */
 export async function getTaxonomy() {
   // Eight small independent reads, run together.

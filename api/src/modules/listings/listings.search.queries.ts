@@ -2,6 +2,7 @@ import type { SearchParams } from "@sayaratak/shared/search/schemas"
 import {
   and,
   asc,
+  between,
   count,
   desc,
   inArray,
@@ -13,6 +14,7 @@ import {
 } from "drizzle-orm"
 
 import type { Executor } from "~/shared/db/tx"
+import type { Box } from "~/shared/geo/box"
 
 import {
   distanceKm,
@@ -95,6 +97,36 @@ export async function listRelevanceIds(
     ex.$count(listings, where),
   ])
   return { featured: paid, organic, total }
+}
+
+/**
+ * Map pins: matching listings with a pin inside the box, Featured first then
+ * id order (the mock's stable sort by tier), at most `limit`, with the total.
+ */
+export async function listInBox(
+  ex: Executor,
+  find: { params: SearchParams; scope: SearchScope; box: Box; limit: number }
+) {
+  const { box } = find
+  const rows = await ex
+    .select({
+      listing: listings,
+      total: sql<number>`count(*) over ()`.mapWith(Number),
+    })
+    .from(listings)
+    .where(
+      and(
+        searchWhere(find.params, find.scope),
+        between(listings.lat, box.south, box.north),
+        between(listings.lng, box.west, box.east)
+      )
+    )
+    .orderBy(
+      desc(inArray(listings.id, [...find.scope.featuredIds, ""])),
+      asc(listings.id)
+    )
+    .limit(find.limit)
+  return { rows: rows.map((row) => row.listing), total: rows[0]?.total ?? 0 }
 }
 
 /** Listings by id, in the order of `ids`. */

@@ -1,4 +1,5 @@
 import type { Listing } from "@sayaratak/shared/schemas/listing"
+import type { MapPoint } from "@sayaratak/shared/schemas/responses"
 
 import type { ListingRow } from "./listings.tables"
 
@@ -63,5 +64,23 @@ function specsOf(row: ListingRow) {
     engineCc: row.engineCc,
     payloadTons: row.payloadTons,
     partNumber: row.partNumber,
+  }
+}
+
+/** A listing as a vehicle map point; the cover of a video is its poster. */
+export function toMapPoint(
+  listing: Listing & { location: NonNullable<Listing["location"]> }
+): MapPoint {
+  const cover = listing.media[0]
+  return {
+    id: listing.id,
+    kind: "vehicle",
+    // Listing titles are one string; the mock sends it in both slots.
+    title: { ar: listing.title, en: listing.title },
+    slug: listing.slug,
+    location: listing.location,
+    price: listing.price,
+    rating: null,
+    photoUrl: (cover?.type === "video" ? cover.posterUrl : cover?.url) ?? null,
   }
 }

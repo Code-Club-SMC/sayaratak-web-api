@@ -16,6 +16,7 @@ import { accountRoutes } from "~/modules/account/account.routes"
 import { authRoutes } from "~/modules/auth/auth.routes"
 import { contentRoutes } from "~/modules/content/content.routes"
 import { listingsRoutes } from "~/modules/listings/listings.routes"
+import { mapRoutes } from "~/modules/map/map.routes"
 import { notificationsRoutes } from "~/modules/notifications/notifications.routes"
 import { taxonomyRoutes } from "~/modules/taxonomy/taxonomy.routes"
 import { uploadsRoutes } from "~/modules/uploads/uploads.routes"
@@ -47,6 +48,7 @@ const v1 = new Hono()
   .route("/", taxonomyRoutes)
   .route("/", uploadsRoutes)
   .route("/", listingsRoutes)
+  .route("/", mapRoutes)
 
 // Middleware in A3 order. The per-request log line comes with 10.4; the 500
 // log line is in onError.

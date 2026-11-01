@@ -23,6 +23,13 @@ export function hasCity(ex: Executor, id: string) {
     .then((rows) => rows.length > 0)
 }
 
+/** Every city's center, turned-off countries included (the map's mechanics sit there). */
+export function listCityCenters(ex: Executor) {
+  return ex
+    .select({ id: cities.id, lat: cities.lat, lng: cities.lng })
+    .from(cities)
+}
+
 /** Cities of enabled countries, in list order. */
 export function listShownCities(ex: Executor) {
   return ex

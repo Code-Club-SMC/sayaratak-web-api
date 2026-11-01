@@ -51,7 +51,7 @@ const profile = () => ({
   createdAt: createdAt(),
 })
 
-// Dealerships and workshops have a street address and an optional map pin; the district can be left empty.
+// Dealerships and workshops have a street address and an optional map pin (indexed for the map bbox); the district can be left empty.
 const place = () => ({
   districtId: text().references(() => districts.id),
   address: text().notNull(),
@@ -68,6 +68,7 @@ export const dealerships = pgTable(
   { ...profile(), ...place(), phones: text().array().notNull() },
   (table) => [
     index().on(table.cityId),
+    index().on(table.lat, table.lng),
     check("dealerships_name", bilingual(table.name)),
     check("dealerships_description", bilingual(table.description)),
     check("dealerships_geo", geo(table.lat, table.lng)),
@@ -80,6 +81,7 @@ export const workshops = pgTable(
   { ...profile(), ...place(), phone: text().notNull() },
   (table) => [
     index().on(table.cityId),
+    index().on(table.lat, table.lng),
     check("workshops_name", bilingual(table.name)),
     check("workshops_description", bilingual(table.description)),
     check("workshops_geo", geo(table.lat, table.lng)),
@@ -193,7 +195,3 @@ export const portfolioItems = pgTable(
   },
   (table) => [unique().on(table.mechanicId, table.position)]
 )
-
-export type DealershipRow = typeof dealerships.$inferSelect
-export type WorkshopRow = typeof workshops.$inferSelect
-export type MechanicRow = typeof mechanics.$inferSelect

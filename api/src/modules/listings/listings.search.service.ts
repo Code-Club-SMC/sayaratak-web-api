@@ -77,8 +77,8 @@ async function relevancePage(
   return { rows, total: ids.total }
 }
 
-// The id lists the filters need from other modules; each is read only when used.
-async function scopeOf(
+/** The id lists the filters need from other modules; each is read only when used. */
+export async function scopeOf(
   ex: Executor,
   params: SearchParams
 ): Promise<SearchScope> {

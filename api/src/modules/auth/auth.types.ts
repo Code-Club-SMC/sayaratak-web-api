@@ -1,7 +1,10 @@
-import type { UserRow } from "./auth.tables"
+import type { NewUserRow as UserInsert, UserRow } from "./auth.tables"
 
 /** The signed-in account, as the session middleware loads it. */
 export type SessionUser = UserRow
+
+/** Columns a service may set when it saves an account. */
+export type NewUserRow = UserInsert
 
 declare module "hono" {
   interface ContextVariableMap {

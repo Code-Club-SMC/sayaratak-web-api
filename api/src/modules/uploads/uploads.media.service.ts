@@ -13,6 +13,8 @@ import { toUrl, type UploadRow } from "./uploads.service"
 
 const ID_PREFIX = "up"
 const MEDIA_KINDS = new Set(["image", "video"])
+const IMAGE_KINDS = new Set(["image"])
+const DEFAULT_FIELD = "media"
 
 /** Each photo or video with these ids as a `Media`, keyed by id. Unknown ids are left out. */
 export async function getMediaOf(ex: Executor, ids: string[]) {
@@ -36,23 +38,32 @@ export async function getMediaOf(ex: Executor, ids: string[]) {
 /**
  * Marks photos and videos attached to something (A8). Each must be the
  * owner's own public photo or video, and either new or already one of
- * `kept` (the target's current media); anything else is 422 on `media`.
+ * `kept` (the target's current media); anything else is 422 on `field`
+ * (`media` unless the caller names the form field). `imagesOnly` refuses
+ * videos, for logos, avatars and portfolio pictures.
  */
 export async function attachMedia(
   tx: Transaction,
-  attach: { ownerUserId: string; ids: string[]; kept: string[] }
+  attach: {
+    ownerUserId: string
+    ids: string[]
+    kept: string[]
+    field?: string
+    imagesOnly?: boolean
+  }
 ) {
   const rows = await q.listUploads(tx, attach.ids)
+  const kinds = attach.imagesOnly ? IMAGE_KINDS : MEDIA_KINDS
   const usable = rows.filter(
     (row) =>
       row.ownerUserId === attach.ownerUserId &&
-      MEDIA_KINDS.has(row.kind) &&
+      kinds.has(row.kind) &&
       row.delivery === "public" &&
       (row.attachedAt === null || attach.kept.includes(row.id))
   )
   // The web's photo field shows "Required" next to the photos; no finer key exists.
   if (usable.length !== new Set(attach.ids).size)
-    fail.validation({ media: "validation.required" })
+    fail.validation({ [attach.field ?? DEFAULT_FIELD]: "validation.required" })
   const ids = [...attach.ids, ...posterIdsOf(rows)]
   await q.updateAttached(tx, { ids, at: clock.now() })
 }

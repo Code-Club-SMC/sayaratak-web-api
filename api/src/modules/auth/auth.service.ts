@@ -8,7 +8,7 @@ import { auth } from "./auth.config"
 import { toUser } from "./auth.mapper"
 import * as accounts from "./auth.accounts.queries"
 import * as q from "./auth.queries"
-import type { SessionUser } from "./auth.types"
+import type { NewUserRow, SessionUser } from "./auth.types"
 
 /**
  * The account behind a request's session cookie or bearer token, or null.
@@ -33,19 +33,32 @@ export async function loadViewer(requestHeaders: Headers) {
 /** `GET /me`: the signed-in account in `userSchema`, or null when signed out. */
 export async function getMe(viewer: SessionUser | null) {
   if (!viewer) return null
-  const [hasPassword, avatarUrl] = await Promise.all([
-    q.hasPassword(db, viewer.id),
-    uploads.uploadUrl(db, viewer.avatarUploadId),
-  ])
-  return toUser(viewer, { hasPassword, avatarUrl })
+  return getMeOf(db, viewer)
 }
 
 /**
  * Locks the account row until the transaction ends, so two parallel requests
  * that count something the account owns (plan limit) run one after the other.
+ * Answers the row as it is after the wait, which a session may not know yet.
  */
-export async function lockUser(ex: Executor, id: string) {
-  await accounts.lockUser(ex, id)
+export function lockUser(ex: Executor, id: string) {
+  return accounts.lockUser(ex, id)
+}
+
+/**
+ * Saves what finishing onboarding decides: the role, the home city, the
+ * chosen paid plan and, for an individual, the name, photo and interests.
+ * Answers the account as `GET /me` does.
+ */
+export async function finishOnboarding(
+  ex: Executor,
+  change: { id: string } & Partial<NewUserRow>
+) {
+  const { id, ...fields } = change
+  const row = await q.updateProfile(ex, id, { ...fields, onboardingDone: true })
+  // The row was locked a moment ago by the same transaction.
+  if (!row) throw new Error("onboarding finished for a missing account")
+  return getMeOf(ex, row)
 }
 
 /** The accounts with these ids, as the session middleware loads them. */
@@ -72,4 +85,12 @@ export function listBannedIds(ex: Executor) {
 /** Ids of accounts with a verified phone: a person's listings show them as verified. */
 export function listPhoneVerifiedIds(ex: Executor) {
   return accounts.listPhoneVerifiedIds(ex)
+}
+
+async function getMeOf(ex: Executor, row: SessionUser) {
+  const [hasPassword, avatarUrl] = await Promise.all([
+    q.hasPassword(ex, row.id),
+    uploads.uploadUrl(ex, row.avatarUploadId),
+  ])
+  return toUser(row, { hasPassword, avatarUrl })
 }

@@ -3,6 +3,7 @@ import { profileStatusSchema } from "@sayaratak/shared/schemas/profile"
 import { sql } from "drizzle-orm"
 import {
   type AnyPgColumn,
+  bigint,
   boolean,
   check,
   doublePrecision,
@@ -113,7 +114,8 @@ export const workshopServices = pgTable(
       .references(() => workshops.id, { onDelete: "cascade" }),
     name: text().notNull(),
     description: text().notNull(),
-    priceFrom: integer(),
+    // Money is bigint (A1 rule 18); the form allows up to 9,999,999,999.
+    priceFrom: bigint({ mode: "number" }),
     templateId: text().references(() => serviceTemplates.id, {
       onDelete: "set null",
     }),

@@ -143,3 +143,33 @@ export function listMakeAndModelNames(ex: Executor, ids: string[]) {
       .where(inArray(models.id, ids)),
   ]).then((lists) => lists.flat())
 }
+
+/** Which of these ids are cities. */
+export function listCityIdsIn(ex: Executor, ids: string[]) {
+  if (ids.length === 0) return Promise.resolve([])
+  return ex
+    .select({ id: cities.id })
+    .from(cities)
+    .where(inArray(cities.id, ids))
+    .then((rows) => rows.map((row) => row.id))
+}
+
+/** Which of these ids are mechanic specializations. */
+export function listSpecializationIdsIn(ex: Executor, ids: string[]) {
+  if (ids.length === 0) return Promise.resolve([])
+  return ex
+    .select({ id: specializations.id })
+    .from(specializations)
+    .where(inArray(specializations.id, ids))
+    .then((rows) => rows.map((row) => row.id))
+}
+
+/** Which of these ids are workshop service templates. */
+export function listServiceTemplateIdsIn(ex: Executor, ids: string[]) {
+  if (ids.length === 0) return Promise.resolve([])
+  return ex
+    .select({ id: serviceTemplates.id })
+    .from(serviceTemplates)
+    .where(inArray(serviceTemplates.id, ids))
+    .then((rows) => rows.map((row) => row.id))
+}

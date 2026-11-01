@@ -10,6 +10,25 @@ export function isCity(ex: Executor, id: string) {
   return q.hasCity(ex, id)
 }
 
+/**
+ * The ids that are cities, in the order given and without repeats. Unknown ids
+ * drop out, as the mock drops unknown specializations.
+ * Example: `["khartoum", "nowhere", "khartoum"]` gives `["khartoum"]`.
+ */
+export async function keepCities(ex: Executor, ids: string[]) {
+  return keepKnown(ids, await q.listCityIdsIn(ex, ids))
+}
+
+/** The ids that are mechanic specializations, in the order given, without repeats. */
+export async function keepSpecializations(ex: Executor, ids: string[]) {
+  return keepKnown(ids, await q.listSpecializationIdsIn(ex, ids))
+}
+
+/** The ids that are workshop service templates. A template an admin deleted reads as a custom service. */
+export async function getKnownServiceTemplateIds(ex: Executor, ids: string[]) {
+  return new Set(await q.listServiceTemplateIdsIn(ex, ids))
+}
+
 /** Each city's center point, keyed by city id. */
 export async function getCityCenters(ex: Executor) {
   const rows = await q.listCityCenters(ex)
@@ -96,4 +115,9 @@ export async function getNames(ex: Executor, ids: (string | null)[]) {
     ids.filter((id): id is string => Boolean(id))
   )
   return new Map(rows.map((row) => [row.id, `${row.name.ar} ${row.name.en}`]))
+}
+
+function keepKnown(ids: string[], known: string[]) {
+  const found = new Set(known)
+  return [...new Set(ids)].filter((id) => found.has(id))
 }

@@ -19,6 +19,7 @@ import { contentRoutes } from "~/modules/content/content.routes"
 import { listingsRoutes } from "~/modules/listings/listings.routes"
 import { mapRoutes } from "~/modules/map/map.routes"
 import { notificationsRoutes } from "~/modules/notifications/notifications.routes"
+import { onboardingRoutes } from "~/modules/onboarding/onboarding.routes"
 import { taxonomyRoutes } from "~/modules/taxonomy/taxonomy.routes"
 import { uploadsRoutes } from "~/modules/uploads/uploads.routes"
 
@@ -45,6 +46,7 @@ const v1 = new Hono()
   .route("/", authRoutes)
   .route("/", contentRoutes)
   .route("/", accountRoutes)
+  .route("/", onboardingRoutes)
   .route("/", notificationsRoutes)
   .route("/", taxonomyRoutes)
   .route("/", uploadsRoutes)

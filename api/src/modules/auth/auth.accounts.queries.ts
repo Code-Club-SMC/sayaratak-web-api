@@ -6,7 +6,7 @@ import { user } from "./auth.tables"
 
 export function lockUser(ex: Executor, id: string) {
   return ex
-    .select({ id: user.id })
+    .select()
     .from(user)
     .where(eq(user.id, id))
     .for("update")

@@ -110,3 +110,7 @@ export const banners = pgTable(
     check("banners_dates", sql`${table.endsAt} > ${table.startsAt}`),
   ]
 )
+
+export type AdPageRow = typeof adPages.$inferSelect
+export type CampaignRow = typeof campaigns.$inferSelect
+export type NewCampaignRow = typeof campaigns.$inferInsert

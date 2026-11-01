@@ -27,11 +27,12 @@ export async function submitReceipt(user: SessionUser, form: PaymentForm) {
   const payable = await getPayable(db, user, item)
   const key = { userId: user.id, itemType: item.type, itemId: item.id }
   if (await q.getPendingId(db, key)) fail.conflict("payment_pending")
-  // 7.5 adds the `page_full` recheck here, once a campaign holds its slots.
   return transaction(async (tx) => {
     // One payer's sends queue on the account row, so the file is stored only if the item is still free.
     await auth.lockUser(tx, user.id)
     if (await q.getPendingId(tx, key)) fail.conflict("payment_pending")
+    // The slots are taken only now, so check again that the pages still have room.
+    if (item.type === "campaign") await ads.assertCampaignRoom(tx, item.id)
     const receipt = await storePrivateFile(tx, {
       user,
       file: form.receipt,

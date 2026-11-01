@@ -1,4 +1,4 @@
-import { inArray } from "drizzle-orm"
+import { and, asc, eq, inArray } from "drizzle-orm"
 
 import type { Executor } from "~/shared/db/tx"
 
@@ -16,4 +16,22 @@ export function listSubjectRows(ex: Executor, ids: string[]) {
     })
     .from(listings)
     .where(inArray(listings.id, ids))
+}
+
+/** The slug and title of the owner's approved listings, in id order. */
+export function listApprovedLinks(
+  ex: Executor,
+  find: { ownerUserId: string; limit: number }
+) {
+  return ex
+    .select({ slug: listings.slug, title: listings.title })
+    .from(listings)
+    .where(
+      and(
+        eq(listings.ownerUserId, find.ownerUserId),
+        eq(listings.moderation, "approved")
+      )
+    )
+    .orderBy(asc(listings.id))
+    .limit(find.limit)
 }

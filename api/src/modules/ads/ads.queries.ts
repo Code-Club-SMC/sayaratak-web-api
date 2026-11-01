@@ -1,8 +1,9 @@
-import { eq, sql } from "drizzle-orm"
+import type { AdPageId } from "@sayaratak/shared/schemas/ads"
+import { asc, eq, inArray, sql } from "drizzle-orm"
 
-import type { Executor } from "~/shared/db/tx"
+import type { Executor, Transaction } from "~/shared/db/tx"
 
-import { banners, campaigns } from "./ads.tables"
+import { adPages, banners, campaigns } from "./ads.tables"
 
 type Counter = "impressions" | "clicks"
 
@@ -33,6 +34,9 @@ export function getCampaign(ex: Executor, id: string) {
       status: campaigns.status,
       amount: campaigns.amount,
       weeks: campaigns.weeks,
+      pages: campaigns.pages,
+      startsAt: campaigns.startsAt,
+      endsAt: campaigns.endsAt,
     })
     .from(campaigns)
     .where(eq(campaigns.id, id))
@@ -45,4 +49,22 @@ export function updateUnderReview(ex: Executor, id: string) {
     .update(campaigns)
     .set({ status: "under_review", rejectionReason: null })
     .where(eq(campaigns.id, id))
+}
+
+/** Every page that sells space, in list order. */
+export function listPages(ex: Executor) {
+  return ex.select().from(adPages).orderBy(asc(adPages.position))
+}
+
+/**
+ * These pages, held until the transaction ends. FOR UPDATE: two campaigns
+ * taking the last slot of a page queue here, so only one of them gets it.
+ */
+export function lockPages(tx: Transaction, ids: AdPageId[]) {
+  return tx
+    .select()
+    .from(adPages)
+    .where(inArray(adPages.id, ids))
+    .orderBy(asc(adPages.id))
+    .for("update")
 }

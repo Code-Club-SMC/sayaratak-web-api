@@ -9,6 +9,7 @@ import * as businesses from "~/modules/businesses/businesses.service"
 
 import * as q from "./listings.queries"
 import { listByIds } from "./listings.search.queries"
+import * as subjects from "./listings.subject.queries"
 import {
   type ListingRow,
   toListings,
@@ -44,6 +45,18 @@ export async function listSimilar(viewer: SessionUser | null, id: string) {
     limit: SIMILAR_COUNT,
   })
   return toListings(db, rows, viewer)
+}
+
+/**
+ * The slug and title of the owner's public listings (approved, owner not
+ * hidden), in id order, at most `limit`: what a banner may link to.
+ */
+export async function listPublicLinksOf(
+  ex: Executor,
+  find: { ownerUserId: string; limit: number }
+) {
+  if ((await listHiddenOwnerIds(ex)).includes(find.ownerUserId)) return []
+  return subjects.listApprovedLinks(ex, find)
 }
 
 /** Listings by id, in any state, in the order of `ids`; unknown ids are left out. */

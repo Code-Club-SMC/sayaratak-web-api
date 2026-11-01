@@ -78,6 +78,8 @@ function userRow(row: Seed["users"][number]): typeof user.$inferInsert {
     createdAt,
     updatedAt: createdAt,
     role: row.role,
+    // Every admin signs in with an emailed code as well (A6, owner 3.7).
+    twoFactorEnabled: row.role === "admin",
     banned: row.banned,
     banReason: row.bannedReason,
     banExpires: row.bannedUntil ? new Date(row.bannedUntil) : null,

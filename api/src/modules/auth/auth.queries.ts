@@ -3,7 +3,13 @@ import { and, eq, gt, isNotNull, ne, type SQL } from "drizzle-orm"
 
 import type { Executor } from "~/shared/db/tx"
 
-import { account, loginFailures, type NewUserRow, user } from "./auth.tables"
+import {
+  account,
+  loginFailures,
+  type NewUserRow,
+  session,
+  user,
+} from "./auth.tables"
 
 export function getUserLocale(ex: Executor, email: string) {
   return ex
@@ -125,4 +131,28 @@ export function listProviders(ex: Executor, userId: string) {
     .from(account)
     .where(eq(account.userId, userId))
     .then((rows) => rows.map((row) => row.providerId))
+}
+
+/** Marks a session as having passed the admin's emailed code (3.7). */
+export function updateSecondStep(ex: Executor, sessionId: string) {
+  return ex
+    .update(session)
+    .set({ secondStep: true })
+    .where(eq(session.id, sessionId))
+}
+
+export function hasSecondStep(ex: Executor, sessionId: string) {
+  return ex
+    .select({ secondStep: session.secondStep })
+    .from(session)
+    .where(eq(session.id, sessionId))
+    .then(([row]) => row?.secondStep === true)
+}
+
+export function getUserEmail(ex: Executor, id: string) {
+  return ex
+    .select({ email: user.email })
+    .from(user)
+    .where(eq(user.id, id))
+    .then(([row]) => row?.email)
 }

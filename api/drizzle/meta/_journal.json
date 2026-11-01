@@ -78,6 +78,13 @@
       "when": 1793467853366,
       "tag": "0010_login_failures_ip",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1793507635772,
+      "tag": "0011_session_second_step",
+      "breakpoints": true
     }
   ]
 }

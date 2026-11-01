@@ -23,7 +23,7 @@ function post(path: string, body: object, ip = "41.95.0.1") {
 const forgot = (email: string, ip?: string) =>
   post("/auth/email-otp/request-password-reset", { email }, ip)
 
-async function timed(send: () => Promise<Response>) {
+async function timed(send: () => Response | Promise<Response>) {
   const start = performance.now()
   const res = await send()
   return { res, ms: performance.now() - start }

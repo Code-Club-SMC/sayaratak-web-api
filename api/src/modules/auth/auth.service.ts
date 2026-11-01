@@ -20,11 +20,12 @@ export async function loadViewer(requestHeaders: Headers) {
     returnHeaders: true,
   })
   const id = response?.user.id
+  const sessionId = response?.session.id
   const row = id ? await q.getUser(db, id) : undefined
-  if (!row) return { viewer: null, headers }
-  if (!isBanOver(row)) return { viewer: row, headers }
+  if (!row) return { viewer: null, headers, sessionId }
+  if (!isBanOver(row)) return { viewer: row, headers, sessionId }
   const lifted = await q.updateBanLifted(db, row.id)
-  return { viewer: lifted ?? row, headers }
+  return { viewer: lifted ?? row, headers, sessionId }
 }
 
 /** `GET /me`: the signed-in account in `userSchema`, or null when signed out. */

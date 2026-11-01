@@ -136,7 +136,8 @@ export function passwordProblem(password: unknown) {
   return parsed.success ? null : (parsed.error.issues[0]?.message ?? null)
 }
 
-async function refuseWhileThrottled(attempt: Attempt) {
+/** 429 `too_many_attempts` while `signInWait` says this email and IP must wait. */
+export async function refuseWhileThrottled(attempt: Attempt) {
   const retryAfter = await signInWait(attempt)
   if (retryAfter === null) return
   log.warn("rate_limited", { route: "sign-in", ...attempt, retryAfter })

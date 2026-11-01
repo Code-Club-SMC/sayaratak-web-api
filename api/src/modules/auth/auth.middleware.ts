@@ -3,20 +3,32 @@ import type { MiddlewareHandler } from "hono"
 
 import { fail } from "~/shared/http/errors"
 
+import { refusesAdminRoute } from "./auth.admin.service"
 import { isBannedNow, loadViewer } from "./auth.service"
 import "./auth.types"
 
 const AUTH_PATH = "/api/v1/auth/"
+const ADMIN_PATH = "/api/v1/admin/"
 
 /**
  * Puts the signed-in account (cookie or bearer, A18) on `viewer`, or null.
  * Runs on every v1 request after csrfOrigin (A3). Passes on Better-Auth's
- * refreshed session cookie when it extended the session.
+ * refreshed session cookie when it extended the session. `/admin/*` is 403
+ * `forbidden` for a bearer token and for an admin who skipped the code (3.7).
  */
 export const session: MiddlewareHandler = async (c, next) => {
   // Better-Auth reads its own session on its routes.
   if (c.req.path.startsWith(AUTH_PATH)) return next()
-  const { viewer, headers } = await loadViewer(c.req.raw.headers)
+  const { viewer, headers, sessionId } = await loadViewer(c.req.raw.headers)
+  if (
+    c.req.path.startsWith(ADMIN_PATH) &&
+    (await refusesAdminRoute({
+      headers: c.req.raw.headers,
+      role: viewer?.role,
+      sessionId,
+    }))
+  )
+    fail.forbidden()
   c.set("viewer", viewer)
   await next()
   for (const cookie of headers.getSetCookie()) {

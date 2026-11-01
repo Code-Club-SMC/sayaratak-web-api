@@ -2,7 +2,6 @@ import { betterAuth } from "better-auth"
 import { drizzleAdapter } from "better-auth/adapters/drizzle"
 import { admin, bearer, emailOTP, twoFactor } from "better-auth/plugins"
 import { createAuthMiddleware } from "better-auth/api"
-import type { FacebookProfile } from "better-auth/social-providers"
 
 import { env } from "~/env"
 import { db } from "~/shared/db/client"
@@ -10,9 +9,14 @@ import { ALL_PREFS } from "~/shared/db/defaults"
 import * as schema from "~/shared/db/schema"
 import { send } from "~/shared/mail/send"
 
+import {
+  ADMIN_CODE_PATH,
+  adminCodeAfter,
+  adminCodeBefore,
+} from "./auth.admin.service"
 import { authAfter, authBefore, CLIENT_IP_HEADER } from "./auth.guard.service"
 import { mailCode } from "./auth.mail.service"
-import { placeholderEmail } from "./auth.mapper"
+import { hasApple, socialProviders } from "./auth.social.service"
 
 // 600 s and 5 tries: the web code step says "10 minutes" and "5 tries";
 // Better-Auth's defaults are 300 and 3.
@@ -32,30 +36,12 @@ const SESSION_REFRESH_SECONDS = 24 * 3600
 
 const isProduction = env.APP_ENV === "production"
 
-// A provider is on once the owner has filled both values in .env (T2).
-const google = {
-  enabled: Boolean(env.GOOGLE_CLIENT_ID && env.GOOGLE_CLIENT_SECRET),
-  clientId: env.GOOGLE_CLIENT_ID ?? "",
-  clientSecret: env.GOOGLE_CLIENT_SECRET ?? "",
-  prompt: "select_account" as const,
-}
-const facebook = {
-  enabled: Boolean(env.FACEBOOK_CLIENT_ID && env.FACEBOOK_CLIENT_SECRET),
-  clientId: env.FACEBOOK_CLIENT_ID ?? "",
-  clientSecret: env.FACEBOOK_CLIENT_SECRET ?? "",
-  // Facebook accounts made with a phone give no email: the account gets a
-  // placeholder that is never mailed and /me leaves out (owner, 3.4).
-  mapProfileToUser: (profile: FacebookProfile) =>
-    profile.email
-      ? {}
-      : {
-          email: placeholderEmail("sub" in profile ? profile.sub : profile.id),
-        },
-}
+// Apple answers the web redirect with a form POST from its own origin.
+const APPLE_ORIGIN = "https://appleid.apple.com"
 
 /**
  * The one Better-Auth instance (A6), served under /api/v1/auth/* by
- * auth.routes.ts. The admin step comes with 3.7.
+ * auth.routes.ts.
  *
  * Regenerate the tables after changing fields or plugins:
  * `bunx --bun auth@1.7.10 generate --config src/modules/auth/auth.config.ts --output src/modules/auth/auth.tables.ts`,
@@ -66,7 +52,10 @@ export const auth = betterAuth({
   secret: env.BETTER_AUTH_SECRET,
   baseURL: env.BETTER_AUTH_URL,
   database: drizzleAdapter(db, { provider: "pg", schema }),
-  trustedOrigins: [new URL(env.WEB_ORIGIN).origin],
+  trustedOrigins: [
+    new URL(env.WEB_ORIGIN).origin,
+    ...(hasApple ? [APPLE_ORIGIN] : []),
+  ],
   // Admin plugin HTTP routes we never expose; our admin routes call auth.api.* (A6).
   disabledPaths: [
     "/admin/impersonate-user",
@@ -76,6 +65,15 @@ export const auth = betterAuth({
     "/admin/remove-user",
     "/admin/set-user-password",
     "/admin/update-user",
+    // Two-factor is the admin email code only (3.7): no authenticator app or
+    // backup codes, and nobody switches it on or off over HTTP (create-admin
+    // and the seed do), so an admin cannot drop the code step.
+    "/two-factor/enable",
+    "/two-factor/disable",
+    "/two-factor/get-totp-uri",
+    "/two-factor/verify-totp",
+    "/two-factor/generate-backup-codes",
+    "/two-factor/verify-backup-code",
   ],
   emailAndPassword: {
     enabled: true,
@@ -88,7 +86,9 @@ export const auth = betterAuth({
   // Better-Auth links a provider to an existing account only when the
   // provider says the email is verified and ours is verified too (A6); new
   // accounts get role `user` and onboarding not done from the field defaults.
-  socialProviders: { google, facebook },
+  // Apps post the platform SDK's token to /sign-in/social as `idToken` (A18):
+  // Google and Apple ID tokens, Facebook's Limited Login token or access token.
+  socialProviders,
   session: {
     expiresIn: SESSION_SECONDS,
     updateAge: SESSION_REFRESH_SECONDS,
@@ -131,12 +131,18 @@ export const auth = betterAuth({
       "/email-otp/check-verification-otp": CODE_CHECK_PER_IP,
       "/email-otp/reset-password": CODE_CHECK_PER_IP,
       "/email-otp/change-email": CODE_CHECK_PER_IP,
+      "/two-factor/send-otp": CODE_SEND_PER_IP,
+      "/two-factor/verify-otp": CODE_CHECK_PER_IP,
     },
   },
   hooks: {
-    before: createAuthMiddleware(authBefore),
+    before: createAuthMiddleware((ctx) =>
+      ctx.path === ADMIN_CODE_PATH ? adminCodeBefore(ctx) : authBefore(ctx)
+    ),
     after: createAuthMiddleware((ctx) =>
-      authAfter({ ...ctx, returned: ctx.context.returned })
+      ctx.path === ADMIN_CODE_PATH
+        ? adminCodeAfter(ctx)
+        : authAfter({ ...ctx, returned: ctx.context.returned })
     ),
   },
   plugins: [
@@ -159,6 +165,7 @@ export const auth = betterAuth({
       },
     }),
     twoFactor({
+      totpOptions: { disable: true },
       otpOptions: {
         sendOTP: async ({ user, otp }) => {
           send.adminCode(user, otp)

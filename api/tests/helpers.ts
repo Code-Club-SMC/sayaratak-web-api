@@ -4,6 +4,7 @@ import type { z } from "zod"
 import { app } from "~/app"
 import { rateLimit } from "~/modules/auth/auth.tables"
 import { db } from "~/shared/db/client"
+import { flushMail, testInbox } from "~/shared/mail/send"
 
 import { seed } from "../scripts/seed"
 
@@ -56,27 +57,58 @@ export type SignedIn = { cookie: string; origin: string; token: string }
 /**
  * Signs in a seeded demo account through Better-Auth (A13) and returns the
  * headers a browser would send next: the session cookie and the web origin.
- * `token` is the same session as a bearer token (A18).
+ * `token` is the same session as a bearer token (A18). The admin also passes
+ * the emailed code step (3.7), as the web does.
  */
 export async function signIn(as: DemoAccount) {
   const email = DEMO_EMAILS[as]
   // Tests sign in far more often than a person, all from 127.0.0.1; the
   // limits themselves are tested where they are set (3.6).
   await db.delete(rateLimit)
-  const res = await req("/auth/sign-in/email", {
-    method: "POST",
-    headers: { "content-type": "application/json", origin: WEB_ORIGIN },
-    body: JSON.stringify({ email, password: DEMO_PASSWORD }),
+  const res = await authPost("/sign-in/email", {
+    email,
+    password: DEMO_PASSWORD,
   })
-  const cookie = res.headers
-    .getSetCookie()
-    .map((line) => line.split(";")[0] ?? "")
-    .find((pair) => pair.includes("session_token="))
-  const token = res.headers.get("set-auth-token")
-  if (res.status !== 200 || !cookie || !token) {
-    throw new Error(`sign-in as ${as} failed: ${res.status}`)
+  const done = as === "admin" ? await passAdminCode(res, email) : res
+  const cookie = cookieOf(done, "session_token=")
+  const token = done.headers.get("set-auth-token")
+  if (done.status !== 200 || !cookie || !token) {
+    throw new Error(`sign-in as ${as} failed: ${done.status}`)
   }
   return { cookie, origin: WEB_ORIGIN, token }
+}
+
+/** A JSON POST to Better-Auth from the web origin, with an optional cookie. */
+export function authPost(path: string, body: object, cookie = "") {
+  return req(`/auth${path}`, {
+    method: "POST",
+    headers: { "content-type": "application/json", origin: WEB_ORIGIN, cookie },
+    body: JSON.stringify(body),
+  })
+}
+
+/** The `name=value` pair of the cookie a response sets whose name contains `name`. */
+export function cookieOf(res: Response, name: string) {
+  return res.headers
+    .getSetCookie()
+    .map((line) => line.split(";")[0] ?? "")
+    .find((pair) => pair.includes(name))
+}
+
+/** The last admin code mailed to `email` (test inbox, A13). */
+export async function lastAdminCode(email: string) {
+  await flushMail()
+  return testInbox.findLast(
+    (mail) => mail.to === email && mail.template === "admin-code"
+  )?.code
+}
+
+// After the admin's password: ask for the code, then enter it (3.7).
+async function passAdminCode(signedIn: Response, email: string) {
+  const challenge = cookieOf(signedIn, "two_factor=") ?? ""
+  await authPost("/two-factor/send-otp", {}, challenge)
+  const code = await lastAdminCode(email)
+  return authPost("/two-factor/verify-otp", { code }, challenge)
 }
 
 /** A JSON request as the signed-in web app sends it: cookie, Origin, body. */

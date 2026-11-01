@@ -36,3 +36,8 @@ export async function getRunningOf(ex: Executor, listingIds: string[]) {
   }
   return running
 }
+
+/** Listings Featured right now (started, not yet ended): they rank first and fill the home rail. */
+export function listFeaturedIds(ex: Executor) {
+  return q.listFeaturedIds(ex, clock.now())
+}

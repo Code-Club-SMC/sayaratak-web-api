@@ -92,3 +92,11 @@ export function hasCloudinaryId(ex: Executor, cloudinaryId: string) {
     .limit(1)
     .then((rows) => rows.length > 0)
 }
+
+export function listVideoIds(ex: Executor) {
+  return ex
+    .select({ id: uploads.id })
+    .from(uploads)
+    .where(eq(uploads.kind, "video"))
+    .then((rows) => rows.map((row) => row.id))
+}

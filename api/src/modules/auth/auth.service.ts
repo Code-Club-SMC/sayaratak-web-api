@@ -6,6 +6,7 @@ import * as uploads from "~/modules/uploads/uploads.service"
 
 import { auth } from "./auth.config"
 import { toUser } from "./auth.mapper"
+import * as accounts from "./auth.accounts.queries"
 import * as q from "./auth.queries"
 import type { SessionUser } from "./auth.types"
 
@@ -44,12 +45,12 @@ export async function getMe(viewer: SessionUser | null) {
  * that count something the account owns (plan limit) run one after the other.
  */
 export async function lockUser(ex: Executor, id: string) {
-  await q.lockUser(ex, id)
+  await accounts.lockUser(ex, id)
 }
 
 /** The accounts with these ids, as the session middleware loads them. */
 export function listUsers(ex: Executor, ids: string[]) {
-  return q.listUsers(ex, ids)
+  return accounts.listUsers(ex, ids)
 }
 
 /** Banned now: a permanent ban, or a timed one that has not ended (A6). */
@@ -65,5 +66,10 @@ function isBanOver(user: SessionUser) {
 
 /** Ids of the accounts banned now; their listings and profiles leave the public site. */
 export function listBannedIds(ex: Executor) {
-  return q.listBannedIds(ex, clock.now())
+  return accounts.listBannedIds(ex, clock.now())
+}
+
+/** Ids of accounts with a verified phone: a person's listings show them as verified. */
+export function listPhoneVerifiedIds(ex: Executor) {
+  return accounts.listPhoneVerifiedIds(ex)
 }

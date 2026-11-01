@@ -47,3 +47,11 @@ export async function listSuspendedOwnerIds(ex: Executor) {
   )
   return lists.flat().map((row) => row.id)
 }
+
+export function listVerifiedDealershipOwnerIds(ex: Executor) {
+  return ex
+    .select({ id: dealerships.ownerUserId })
+    .from(dealerships)
+    .where(eq(dealerships.verified, true))
+    .then((rows) => rows.map((row) => row.id))
+}

@@ -121,6 +121,8 @@ export const listings = pgTable(
       sql`coalesce(${table.bumpedAt}, ${table.createdAt}) desc`
     ),
     index().on(table.expiresAt),
+    // Radius search and the map: a bounding box on the pin (A11).
+    index().on(table.lat, table.lng),
     index().using("gin", table.compatibleTypes),
     index("listings_details").using(
       "gin",

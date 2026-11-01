@@ -122,3 +122,8 @@ export async function deleteMediaFiles(tx: Transaction, ids: string[]) {
 function posterIdsOf(rows: UploadRow[]) {
   return rows.flatMap((row) => (row.posterId ? [row.posterId] : []))
 }
+
+/** Ids of every video upload, for the "has video" search filter. */
+export function listVideoIds(ex: Executor) {
+  return q.listVideoIds(ex)
+}

@@ -4,7 +4,11 @@ import {
   listingPatchSchema,
   listingStatusInputSchema,
 } from "@sayaratak/shared/schemas/inputs"
-import { listingSchema } from "@sayaratak/shared/schemas/listing"
+import {
+  listingPageSchema,
+  listingSchema,
+} from "@sayaratak/shared/schemas/listing"
+import { arrayKeys, searchParamsSchema } from "@sayaratak/shared/search/schemas"
 import { Hono } from "hono"
 import { z } from "zod"
 
@@ -19,6 +23,7 @@ import {
   setListingStatus,
 } from "./listings.actions.service"
 import { getListingBySlug, listSimilar } from "./listings.read.service"
+import { searchListings } from "./listings.search.service"
 import { createListing, patchListing } from "./listings.write.service"
 
 const OWNER_ERRORS = [
@@ -29,6 +34,26 @@ const OWNER_ERRORS = [
 ] as const
 
 export const listingsRoutes = new Hono()
+
+listingsRoutes.get(
+  "/listings",
+  spec({
+    summary:
+      "Search public listings: filters, sort, 24 a page, facet counts; `limit` (1 to 24) and `exclude` serve the rails",
+    access: "public",
+    responses: { 200: listingPageSchema },
+  }),
+  validate.query(searchParamsSchema, arrayKeys),
+  async (c) => {
+    const page = await searchListings({
+      viewer: c.get("viewer"),
+      params: c.req.valid("query"),
+      limit: c.req.query("limit"),
+      exclude: c.req.query("exclude"),
+    })
+    return c.json(page)
+  }
+)
 
 listingsRoutes.get(
   "/listings/:slug",

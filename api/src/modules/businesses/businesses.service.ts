@@ -22,3 +22,8 @@ export async function getDealershipsOf(ex: Executor, ownerUserIds: string[]) {
 export function listSuspendedOwnerIds(ex: Executor) {
   return q.listSuspendedOwnerIds(ex)
 }
+
+/** Owners of a verified dealership: its listings show it as verified. */
+export function listVerifiedDealershipOwnerIds(ex: Executor) {
+  return q.listVerifiedDealershipOwnerIds(ex)
+}

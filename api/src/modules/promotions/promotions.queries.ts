@@ -1,4 +1,4 @@
-import { and, asc, eq, gt, inArray, ne } from "drizzle-orm"
+import { and, asc, eq, gt, gte, inArray, lte, ne } from "drizzle-orm"
 
 import type { Executor } from "~/shared/db/tx"
 
@@ -40,4 +40,19 @@ export function listRunning(
       )
     )
     .orderBy(asc(promotions.startsAt))
+}
+
+export function listFeaturedIds(ex: Executor, now: Date) {
+  return ex
+    .selectDistinct({ id: promotions.listingId })
+    .from(promotions)
+    .where(
+      and(
+        eq(promotions.type, "featured"),
+        eq(promotions.status, "active"),
+        lte(promotions.startsAt, now),
+        gte(promotions.endsAt, now)
+      )
+    )
+    .then((rows) => rows.map((row) => row.id))
 }

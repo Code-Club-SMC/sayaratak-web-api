@@ -39,9 +39,9 @@ const inventory = (ownerId: string, dealerId: string) =>
 
 const withInventory = (d: (typeof db.dealerships)[number]) =>
   dealershipSchema.parse({ ...d, inventoryCount: inventory(d.ownerId, d.id) })
-// The profile of a banned owner still opens, flagged so the page shows a notice instead of contact buttons.
-const flag = (ownerId: string) =>
-  ownerBanned(ownerId) ? { unavailable: true } : {}
+// The profile of a banned owner still opens, flagged so the page shows a notice instead of contact buttons. Its numbers are left out of the answer: `noContact` is the empty contact of that kind.
+const flag = (ownerId: string, noContact: object) =>
+  ownerBanned(ownerId) ? { unavailable: true, ...noContact } : {}
 
 type Sorted<T> = (a: T, b: T) => number
 const rating = (
@@ -75,7 +75,10 @@ route("GET", "/dealerships/:slug", (c) => {
     (d) => d.slug === c.params.slug && d.status === "active"
   )
   if (!row) throw fail(404, "not_found")
-  return { ...withInventory(row), ...flag(row.ownerId) }
+  return {
+    ...withInventory(row),
+    ...flag(row.ownerId, { phones: [], whatsapp: null }),
+  }
 })
 
 route("GET", "/workshops", (c) => {
@@ -108,7 +111,10 @@ route("GET", "/workshops/:slug", (c) => {
     (w) => w.slug === c.params.slug && w.status === "active"
   )
   if (!row) throw fail(404, "not_found")
-  return workshopSchema.parse({ ...row, ...flag(row.ownerId) })
+  return workshopSchema.parse({
+    ...row,
+    ...flag(row.ownerId, { phone: "", whatsapp: null }),
+  })
 })
 
 const isPaid = (userId: string) => (activePlan(userId)?.price ?? 0) > 0
@@ -146,7 +152,10 @@ route("GET", "/mechanics/:slug", (c) => {
     (m) => m.slug === c.params.slug && m.status === "active"
   )
   if (!row) throw fail(404, "not_found")
-  return mechanicSchema.parse({ ...row, ...flag(row.ownerId) })
+  return mechanicSchema.parse({
+    ...row,
+    ...flag(row.ownerId, { phone: "", whatsapp: null }),
+  })
 })
 
 // Business self-service. The role decides which table the caller edits.

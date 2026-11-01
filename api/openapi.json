@@ -2493,8 +2493,16 @@
                             ]
                           },
                           "phone": {
-                            "type": "string",
-                            "pattern": "^\\+[1-9]\\d{7,14}$"
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "pattern": "^\\+[1-9]\\d{7,14}$"
+                              },
+                              {
+                                "type": "string",
+                                "const": ""
+                              }
+                            ]
                           },
                           "whatsapp": {
                             "anyOf": [
@@ -2827,8 +2835,16 @@
                       ]
                     },
                     "phone": {
-                      "type": "string",
-                      "pattern": "^\\+[1-9]\\d{7,14}$"
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "pattern": "^\\+[1-9]\\d{7,14}$"
+                        },
+                        {
+                          "type": "string",
+                          "const": ""
+                        }
+                      ]
                     },
                     "whatsapp": {
                       "anyOf": [
@@ -3152,8 +3168,16 @@
                             }
                           },
                           "phone": {
-                            "type": "string",
-                            "pattern": "^\\+[1-9]\\d{7,14}$"
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "pattern": "^\\+[1-9]\\d{7,14}$"
+                              },
+                              {
+                                "type": "string",
+                                "const": ""
+                              }
+                            ]
                           },
                           "whatsapp": {
                             "anyOf": [
@@ -3392,8 +3416,16 @@
                       }
                     },
                     "phone": {
-                      "type": "string",
-                      "pattern": "^\\+[1-9]\\d{7,14}$"
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "pattern": "^\\+[1-9]\\d{7,14}$"
+                        },
+                        {
+                          "type": "string",
+                          "const": ""
+                        }
+                      ]
                     },
                     "whatsapp": {
                       "anyOf": [

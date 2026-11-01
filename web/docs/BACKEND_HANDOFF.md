@@ -187,7 +187,7 @@ The auth rows are the mock's contract. The backend plan replaces them with Bette
 - A listing is public when it is approved, its owner is not banned and the owner's business is not suspended. The owner and admins also see draft, pending, rejected and removed ones. Anyone else gets 404.
 - Sold and rented listings leave search unless `includeSold` is set.
 - Everyone except the owner and admins gets a listing's `location` rounded to 2 decimals (about 1 km), in `GET /listings/:slug`, `GET /listings`, `GET /favorites` and `GET /map`.
-- A banned owner's business page still opens, with `unavailable` set and no contact details, but leaves directories, the map and the sitemap. A suspended business leaves the same places and its owner sees a banner on every dashboard page.
+- A banned owner's business page still opens, with `unavailable` set and no contact details (dealership `phones` empty, workshop and mechanic `phone` empty text, `whatsapp` null), but leaves directories, the map and the sitemap. A suspended business leaves the same places and its owner sees a banner on every dashboard page.
 - Cities of a disabled country, and their districts, are left out of the public `/taxonomy`.
 - Favorites keep listings that are no longer public, flagged `unavailable`, so the person can remove them.
 

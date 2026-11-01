@@ -4,7 +4,11 @@ import { eq } from "drizzle-orm"
 import { db } from "~/shared/db/client"
 import { clock } from "~/shared/time/clock"
 import { user } from "~/modules/auth/auth.tables"
-import { dealerships, workshops } from "~/modules/businesses/businesses.tables"
+import {
+  dealerships,
+  mechanics,
+  workshops,
+} from "~/modules/businesses/businesses.tables"
 
 import { resetDb } from "../../../tests/helpers"
 import { expectParity } from "../../../tests/parity"
@@ -19,7 +23,7 @@ afterAll(async () => {
 
 const dealers = (query = "") => expectParity(`/api/v1/dealerships${query}`)
 const shops = (query = "") => expectParity(`/api/v1/workshops${query}`)
-const mechanics = (query = "") => expectParity(`/api/v1/mechanics${query}`)
+const people = (query = "") => expectParity(`/api/v1/mechanics${query}`)
 
 describe("GET /dealerships matches the mock", () => {
   test("every sort, an unknown sort and the pages", async () => {
@@ -85,19 +89,19 @@ describe("GET /workshops matches the mock", () => {
 
 describe("GET /mechanics matches the mock", () => {
   test("every sort, with paid plans first, and the pages", async () => {
-    await mechanics()
+    await people()
     for (const sort of ["rating", "experience", "newest", "bogus"])
-      await mechanics(`?sort=${sort}`)
-    await mechanics("?page=2&pageSize=4&sort=experience")
+      await people(`?sort=${sort}`)
+    await people("?page=2&pageSize=4&sort=experience")
   })
 
   test("filters", async () => {
-    await mechanics("?city=omdurman")
-    await mechanics("?specialization=engine")
-    await mechanics("?minYears=8&sort=experience")
-    await mechanics("?minYears=abc")
-    await mechanics("?available=true&verified=true")
-    await mechanics("?q=hassan")
+    await people("?city=omdurman")
+    await people("?specialization=engine")
+    await people("?minYears=8&sort=experience")
+    await people("?minYears=abc")
+    await people("?available=true&verified=true")
+    await people("?q=hassan")
   })
 })
 
@@ -116,27 +120,38 @@ describe("the detail pages match the mock", () => {
   })
 
   test("mechanics, an unknown slug and a slug of the wrong kind", async () => {
-    const { mechanics: table } = await import(
-      "~/modules/businesses/businesses.tables"
-    )
-    for (const row of await db.select({ slug: table.slug }).from(table))
+    for (const row of await db.select({ slug: mechanics.slug }).from(mechanics))
       await expectParity(`/api/v1/mechanics/${row.slug}`)
     await expectParity("/api/v1/dealerships/nope")
     await expectParity("/api/v1/workshops/nope")
     await expectParity("/api/v1/mechanics/nope")
   })
 
-  test("a banned owner leaves the lists, and the page opens flagged", async () => {
-    const [dealer] = await db
-      .select({ slug: dealerships.slug, ownerUserId: dealerships.ownerUserId })
-      .from(dealerships)
-      .where(eq(dealerships.status, "active"))
-      .limit(1)
-    await banOnBothSides(dealer?.ownerUserId ?? "")
+  test("a banned owner leaves the lists, and the page opens flagged with no contact", async () => {
+    const dealer = await firstActive(dealerships)
+    const shop = await firstActive(workshops)
+    const person = await firstActive(mechanics)
+    for (const row of [dealer, shop, person])
+      await banOnBothSides(row?.ownerUserId ?? "")
     await dealers()
+    await shops()
+    await people()
     await expectParity(`/api/v1/dealerships/${dealer?.slug}`)
+    await expectParity(`/api/v1/workshops/${shop?.slug}`)
+    await expectParity(`/api/v1/mechanics/${person?.slug}`)
   })
 })
+
+function firstActive(
+  table: typeof dealerships | typeof workshops | typeof mechanics
+) {
+  return db
+    .select({ slug: table.slug, ownerUserId: table.ownerUserId })
+    .from(table)
+    .where(eq(table.status, "active"))
+    .limit(1)
+    .then(([row]) => row)
+}
 
 // The same account is banned in the api DB and in the mock's in-memory DB.
 async function banOnBothSides(ownerUserId: string) {

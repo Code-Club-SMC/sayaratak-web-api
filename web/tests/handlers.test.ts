@@ -563,6 +563,19 @@ describe("directory", () => {
       ).status
     ).toBe(422)
   })
+  it("sends no phone or WhatsApp number of a banned owner's business page", async () => {
+    const kinds = [
+      ["dealerships", db.dealerships[0]!, { phones: [], whatsapp: null }],
+      ["workshops", db.workshops[0]!, { phone: "", whatsapp: null }],
+      ["mechanics", db.mechanics[0]!, { phone: "", whatsapp: null }],
+    ] as const
+    for (const [path, row, empty] of kinds) {
+      db.users.find((u) => u.id === row.ownerId)!.banned = true
+      const { status, body } = await call("GET", `/${path}/${row.slug}`)
+      expect(status).toBe(200)
+      expect(body).toMatchObject({ unavailable: true, ...empty })
+    }
+  })
 })
 
 describe("reviews", () => {

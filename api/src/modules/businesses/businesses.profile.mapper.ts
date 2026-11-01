@@ -25,6 +25,12 @@ type Shown = {
 const pinOf = (row: { lat: number | null; lng: number | null }) =>
   row.lat === null || row.lng === null ? null : { lat: row.lat, lng: row.lng }
 
+// A banned owner's page shows no contact (handoff "Visibility"): the numbers never leave the server.
+const WITHHELD_PHONE = ""
+const contactOf = (row: { whatsapp: string | null }, shown: Shown) => ({
+  whatsapp: shown.unavailable ? null : row.whatsapp,
+})
+
 // The optional wire keys: left out, not null, when there is nothing to show.
 const flags = (row: { suspendedReason: string | null }, shown: Shown) => ({
   ...(row.suspendedReason !== null && { suspendedReason: row.suspendedReason }),
@@ -48,8 +54,8 @@ export function toDealership(
     districtId: row.districtId ?? "",
     address: row.address,
     location: pinOf(row),
-    phones: row.phones,
-    whatsapp: row.whatsapp,
+    phones: shown.unavailable ? [] : row.phones,
+    ...contactOf(row, shown),
     hours: row.hours,
     rating: shown.rating,
     verified: row.verified,
@@ -82,8 +88,8 @@ export function toWorkshop(
     districtId: row.districtId ?? "",
     address: row.address,
     location: pinOf(row),
-    phone: row.phone,
-    whatsapp: row.whatsapp,
+    phone: shown.unavailable ? WITHHELD_PHONE : row.phone,
+    ...contactOf(row, shown),
     hours: row.hours,
     images: shown.images,
     services: shown.services.map(toService),
@@ -127,8 +133,8 @@ export function toMechanic(
     servedCityIds: shown.servedCityIds,
     yearsOfExperience: row.yearsOfExperience,
     specializationIds: shown.specializationIds,
-    phone: row.phone,
-    whatsapp: row.whatsapp,
+    phone: shown.unavailable ? WITHHELD_PHONE : row.phone,
+    ...contactOf(row, shown),
     portfolio: shown.portfolio,
     available: row.available,
     rating: shown.rating,

@@ -10,6 +10,9 @@ import {
 import { mediaSchema } from "./listing"
 import { ratingSchema } from "./review"
 
+// A banned owner's public page carries no contact: phones empty, `phone` empty text, `whatsapp` null.
+const hideablePhoneSchema = phoneSchema.or(z.literal(""))
+
 export const profileStatusSchema = z.enum(["active", "suspended"])
 export type ProfileStatus = z.infer<typeof profileStatusSchema>
 
@@ -54,7 +57,7 @@ export const workshopSchema = z.object({
   districtId: z.string(),
   address: z.string(),
   location: geoSchema.nullable(),
-  phone: phoneSchema,
+  phone: hideablePhoneSchema,
   whatsapp: phoneSchema.nullable(),
   hours: weeklyHoursSchema,
   images: z.array(mediaSchema),
@@ -90,7 +93,7 @@ export const mechanicSchema = z.object({
   servedCityIds: z.array(z.string()),
   yearsOfExperience: z.number().int(),
   specializationIds: z.array(z.string()),
-  phone: phoneSchema,
+  phone: hideablePhoneSchema,
   whatsapp: phoneSchema.nullable(),
   portfolio: z.array(
     z.object({

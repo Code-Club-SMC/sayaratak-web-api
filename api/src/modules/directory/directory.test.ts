@@ -99,6 +99,41 @@ describe("who is listed", () => {
       workshopSchema
     )
     expect(page.unavailable).toBe(true)
+    // No contact leaves the server for a banned owner.
+    expect(page).toMatchObject({ phone: "", whatsapp: null })
+    expect(JSON.stringify(page)).not.toContain(shop?.phone ?? "")
+  })
+
+  test("sends no phone or WhatsApp number of a banned dealership or mechanic", async () => {
+    const [dealer] = await db.select().from(dealerships).limit(1)
+    const [person] = await db.select().from(mechanics).limit(1)
+    for (const owner of [dealer?.ownerUserId, person?.ownerUserId])
+      await db
+        .update(user)
+        .set({ banned: true })
+        .where(eq(user.id, owner ?? ""))
+    const d = await expectSchema(
+      await get(`/dealerships/${dealer?.slug}`),
+      dealershipSchema
+    )
+    expect(d).toMatchObject({ unavailable: true, phones: [], whatsapp: null })
+    const m = await expectSchema(
+      await get(`/mechanics/${person?.slug}`),
+      mechanicSchema
+    )
+    expect(m).toMatchObject({ unavailable: true, phone: "", whatsapp: null })
+    for (const number of [...(dealer?.phones ?? []), person?.phone ?? ""])
+      expect(JSON.stringify([d, m])).not.toContain(number)
+  })
+
+  test("keeps the contact of an owner who is not banned", async () => {
+    const [shop] = await db.select().from(workshops).limit(1)
+    const page = await expectSchema(
+      await get(`/workshops/${shop?.slug}`),
+      workshopSchema
+    )
+    expect(page.phone).toBe(shop?.phone ?? "")
+    expect(page.unavailable).toBeUndefined()
   })
 
   test("lists the business again once a timed ban has ended", async () => {

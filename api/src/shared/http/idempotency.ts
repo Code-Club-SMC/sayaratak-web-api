@@ -53,9 +53,9 @@ export const idempotency: MiddlewareHandler = async (c, next) => {
   await settle(c, row)
 }
 
-// Upload token only until the session middleware (3.3) sets the
-// user; then `user:<id>` comes first.
-// The signed-in account first; an anonymous upload token only without one.
+// The signed-in account first. The upload token predates the owner's choice
+// that uploads need a session (2026-11-01); no route takes one any more, and
+// 10.3 removes it with its tests.
 function ownerOf(c: Context) {
   const userId = c.get("viewer")?.id
   if (userId) return `user:${userId}`

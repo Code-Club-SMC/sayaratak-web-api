@@ -1,8 +1,9 @@
 import { uploadSchema } from "@sayaratak/shared/schemas/api"
+import { uploadFormSchema } from "@sayaratak/shared/schemas/inputs"
 import { mediaSchema } from "@sayaratak/shared/schemas/listing"
 
 import { db, newId } from "../db"
-import { fail, route } from "../http"
+import { fail, needUser, route, zodFields } from "../http"
 
 const MB = 1024 * 1024
 const VIDEO_BYTES = 30 * MB
@@ -40,11 +41,13 @@ export const template = (id: string) => `/api/uploads/${id}?w={w}`
 
 // Returns a Media. A real backend reads width, height and the dominant color from the file;
 // the mock takes them from the client, which already decoded the image, and serves the original for every `{w}`.
+// Signed in only (owner, 2026-11-01): the post wizard asks for sign in at the photos step.
 route("POST", "/uploads", async (c) => {
+  needUser(c)
   const form = await c.form()
-  const file = form.get("file")
-  if (!(file instanceof File))
-    throw fail(422, "validation", { file: "validation.required" })
+  const parsed = uploadFormSchema.safeParse(Object.fromEntries(form))
+  if (!parsed.success) throw fail(422, "validation", zodFields(parsed.error))
+  const file = parsed.data.file
   const video = file.type.startsWith("video/")
   if (
     !video &&
@@ -54,11 +57,9 @@ route("POST", "/uploads", async (c) => {
   const stored = video
     ? await storeUpload(file, VIDEO_BYTES, "validation.video_size")
     : await storeUpload(file)
-  const poster = form.get("poster")
+  const poster = parsed.data.poster
   const posterRow =
-    video && poster instanceof File
-      ? await storeUpload(poster, POSTER_BYTES)
-      : null
+    video && poster ? await storeUpload(poster, POSTER_BYTES) : null
   const media = mediaSchema.parse({
     id: stored.id,
     type: video ? "video" : "image",

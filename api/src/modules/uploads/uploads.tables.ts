@@ -8,6 +8,7 @@ import {
   pgTable,
   text,
   timestamp,
+  uniqueIndex,
 } from "drizzle-orm/pg-core"
 
 import { user } from "~/modules/auth/auth.tables"
@@ -28,7 +29,7 @@ export const uploads = pgTable(
   "uploads",
   {
     id: text().primaryKey(),
-    // Null for an upload made before sign-in (A18 `sy_upload` token) and after the owner is deleted.
+    // Uploads need a session (owner, 2026-11-01); null only after the owner is deleted.
     ownerUserId: text().references(() => user.id, { onDelete: "set null" }),
     kind: uploadKind().notNull(),
     cloudinaryId: text(),
@@ -49,6 +50,7 @@ export const uploads = pgTable(
   },
   (table) => [
     index().on(table.ownerUserId),
+    uniqueIndex().on(table.cloudinaryId),
     index().on(table.createdAt).where(sql`${table.attachedAt} is null`),
     check(
       "uploads_one_source",
@@ -62,3 +64,4 @@ export const uploads = pgTable(
 )
 
 export type UploadRow = typeof uploads.$inferSelect
+export type NewUploadRow = typeof uploads.$inferInsert

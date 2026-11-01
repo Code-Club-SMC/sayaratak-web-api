@@ -1405,13 +1405,25 @@ describe("trust, content, map, uploads, analytics", () => {
       lng: round(mine?.location?.lng ?? 0),
     })
   })
+  it("uploads need a signed-in account and a file (uploadFormSchema)", async () => {
+    const form = new FormData()
+    form.set("file", file("a.png", 20))
+    const out = await call("POST", "/uploads", { form })
+    expect(out.status).toBe(401)
+    expect(out.body.code).toBe("unauthenticated")
+    const empty = await call("POST", "/uploads", {
+      as: "u-omar",
+      form: new FormData(),
+    })
+    expect(empty.body.fields.file).toBe("validation.required")
+  })
   it("uploads return a Media, serve the file and refuse files over the limits", async () => {
     const form = new FormData()
     form.set("file", file("a.png", 20))
     form.set("width", "100")
     form.set("height", "80")
     form.set("placeholderColor", "#112233")
-    const up = await call("POST", "/uploads", { form })
+    const up = await call("POST", "/uploads", { as: "u-omar", form })
     expect(up.status).toBe(201)
     expect(up.body).toMatchObject({
       type: "image",
@@ -1429,24 +1441,27 @@ describe("trust, content, map, uploads, analytics", () => {
     const big = new FormData()
     big.set("file", file("b.png", 5 * 1024 * 1024 + 1))
     expect(
-      (await call("POST", "/uploads", { form: big })).body.fields.file
+      (await call("POST", "/uploads", { as: "u-omar", form: big })).body.fields
+        .file
     ).toBe("validation.file_size_5mb")
     const pdf = new FormData()
     pdf.set("file", file("c.pdf", 10, "application/pdf"))
     expect(
-      (await call("POST", "/uploads", { form: pdf })).body.fields.file
+      (await call("POST", "/uploads", { as: "u-omar", form: pdf })).body.fields
+        .file
     ).toBe("validation.image_type")
     const svg = new FormData()
     svg.set("file", file("d.svg", 10, "image/svg+xml"))
     expect(
-      (await call("POST", "/uploads", { form: svg })).body.fields.file
+      (await call("POST", "/uploads", { as: "u-omar", form: svg })).body.fields
+        .file
     ).toBe("validation.image_type")
   })
   it("a video upload stores its poster and allows 30 MB", async () => {
     const form = new FormData()
     form.set("file", file("v.mp4", 6 * 1024 * 1024, "video/mp4"))
     form.set("poster", file("p.webp", 10, "image/webp"))
-    const up = await call("POST", "/uploads", { form })
+    const up = await call("POST", "/uploads", { as: "u-omar", form })
     expect(up.body.type).toBe("video")
     expect(up.body.posterUrl).toContain("{w}")
     const poster = await call(
@@ -1457,7 +1472,8 @@ describe("trust, content, map, uploads, analytics", () => {
     const big = new FormData()
     big.set("file", file("w.mp4", 30 * 1024 * 1024 + 1, "video/mp4"))
     expect(
-      (await call("POST", "/uploads", { form: big })).body.fields.file
+      (await call("POST", "/uploads", { as: "u-omar", form: big })).body.fields
+        .file
     ).toBe("validation.video_size")
   })
   it("events raise listing stats and the daily series", async () => {

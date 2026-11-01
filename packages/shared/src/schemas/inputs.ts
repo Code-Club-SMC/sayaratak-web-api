@@ -380,3 +380,16 @@ export const adPagePatchSchema = z.object({
   slots: z.number().int().min(1).max(10).optional(),
   enabled: z.boolean().optional(),
 })
+
+// `POST /uploads` (multipart). `poster` is a video's first frame. The server reads width,
+// height and color from the stored file; the client's values are accepted and ignored.
+const fileSchema = z
+  .instanceof(File, { message: "validation.required" })
+  .meta({ type: "string", format: "binary" })
+export const uploadFormSchema = z.object({
+  file: fileSchema,
+  poster: fileSchema.optional(),
+  width: z.string().optional(),
+  height: z.string().optional(),
+  placeholderColor: z.string().optional(),
+})

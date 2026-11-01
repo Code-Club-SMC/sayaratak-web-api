@@ -1,6 +1,6 @@
 import { expect, khartoum, pick, signUp, test, visit } from "./fixtures"
 
-test("J4 post signed out, sign up at Publish, admin approves, saved search alert @en", async ({
+test("J4 post signed out, sign up at the photos step, admin approves, saved search alert @en", async ({
   page,
   t,
   at,
@@ -54,6 +54,18 @@ test("J4 post signed out, sign up at Publish, admin approves, saved search alert
   await next.click()
 
   await expect(page).toHaveURL(/step=photos/)
+  // Uploads need an account (owner, 2026-11-01): the photos step asks for one first, and keeps what was typed.
+  await page.getByRole("button", { name: t("common.sign_in") }).click()
+  const dialog = page.getByRole("dialog")
+  await expect(dialog.getByText(t("auth.reason_photos"))).toBeVisible()
+  await dialog.getByRole("button", { name: t("auth.create_account") }).click()
+  await signUp(dialog, t, {
+    name: "Journey Seller",
+    email: "seller@journey.sy",
+  })
+  await dialog.getByRole("button", { name: t("common.continue") }).click()
+  await expect(dialog).toBeHidden()
+
   await page
     .locator("input[type=file][accept*=image]")
     .first()
@@ -74,17 +86,6 @@ test("J4 post signed out, sign up at Publish, admin approves, saved search alert
   await expect(page).toHaveURL(/step=review/)
   await expect(page.getByRole("heading", { name: shown })).toBeVisible()
   const publish = page.getByRole("button", { name: t("post.publish") })
-  await publish.click()
-
-  // Publish asks for an account; the person creates one in the dialog.
-  const dialog = page.getByRole("dialog")
-  await dialog.getByRole("button", { name: t("auth.create_account") }).click()
-  await signUp(dialog, t, {
-    name: "Journey Seller",
-    email: "seller@journey.sy",
-  })
-  await dialog.getByRole("button", { name: t("common.continue") }).click()
-  await expect(dialog).toBeHidden()
 
   // A new account gives its name and city on the review screen, then publishes.
   await page.getByLabel(t("auth.full_name_label")).fill("Journey Seller")

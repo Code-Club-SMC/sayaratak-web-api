@@ -3,6 +3,7 @@ import { useRouterState } from "@tanstack/react-router"
 import { beforeEach, describe, expect, it, vi } from "vitest"
 
 import { photosStepSchema } from "@sayaratak/shared/listings/schemas"
+import { AuthDialog } from "@/features/auth/components/auth-dialog"
 import { ListingWizard } from "@/features/listings/wizard/listing-wizard"
 import { wizardDefaults } from "@/features/listings/wizard/wizard-defaults"
 import { wizardSteps } from "@/features/listings/wizard/wizard-steps"
@@ -67,7 +68,7 @@ const valid = {
   phone: "+249912345678",
   whatsapp: "+249912345678",
 }
-const open = async (draft: object = {}) => {
+const saveDraft = (draft: object) =>
   sessionStorage.setItem(
     "sy:draft:listing:new",
     JSON.stringify({
@@ -75,7 +76,13 @@ const open = async (draft: object = {}) => {
       values: { ...wizardDefaults, ...valid, ...draft },
     })
   )
-  await renderShell(<Harness />, { path: "/en/post?step=photos" })
+// Uploads need an account (owner, 2026-11-01), so the step opens signed in.
+const open = async (draft: object = {}) => {
+  saveDraft(draft)
+  await renderShell(<Harness />, {
+    path: "/en/post?step=photos",
+    role: "user",
+  })
   await screen.findByRole("heading", { name: "Add photos" })
   await waitFor(() => expect(input("image/*")).toBeTruthy())
 }
@@ -133,6 +140,27 @@ describe("photosStepSchema", () => {
 })
 
 describe("PhotosStep", () => {
+  it("signed out, asks for sign in instead of offering uploads", async () => {
+    saveDraft({})
+    await renderShell(
+      <>
+        <Harness />
+        <AuthDialog />
+      </>,
+      { path: "/en/post?step=photos" }
+    )
+    await screen.findByText(
+      "Sign in to add photos. What you have entered so far stays."
+    )
+    expect(input("image/*")).toBeNull()
+    next()
+    expect(await screen.findByText("Add at least 3 photos")).toBeTruthy()
+    fireEvent.click(screen.getByRole("button", { name: "Sign in" }))
+    const dialog = await screen.findByRole("dialog")
+    expect(dialog.textContent).toContain("Sign in to add photos")
+    expect(uploadMedia).not.toHaveBeenCalled()
+  })
+
   it("Next with fewer than three photos shows the error and stays", async () => {
     await open({ media: [media("a"), media("b")] })
     next()

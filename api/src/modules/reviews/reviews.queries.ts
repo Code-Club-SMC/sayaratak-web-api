@@ -1,6 +1,7 @@
 import { and, count, eq, inArray, ne, sum } from "drizzle-orm"
 
 import type { Executor } from "~/shared/db/tx"
+import { type DayRange, withinDays } from "~/shared/time/khartoum"
 
 import { reviews } from "./reviews.tables"
 
@@ -26,4 +27,19 @@ export function listStarsOf(ex: Executor, targetIds: string[]) {
       and(inArray(reviews.targetId, targetIds), ne(reviews.status, "hidden"))
     )
     .groupBy(reviews.targetId)
+}
+
+/** Reviews written inside the days, of these targets; `null` means every target. */
+export function countWrittenIn(
+  ex: Executor,
+  targetIds: string[] | null,
+  days: DayRange
+) {
+  return ex.$count(
+    reviews,
+    and(
+      withinDays(reviews.createdAt, days),
+      targetIds ? inArray(reviews.targetId, targetIds) : undefined
+    )
+  )
 }

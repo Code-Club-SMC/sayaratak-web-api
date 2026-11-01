@@ -17,6 +17,11 @@ export function getBusinessIdOf(ex: Executor, ownerUserId: string) {
   return q.getIdOfOwner(ex, ownerUserId)
 }
 
+/** Whether the id names a dealership, workshop or mechanic profile. */
+export function hasBusiness(ex: Executor, id: string) {
+  return q.hasBusiness(ex, id)
+}
+
 /** The dealership the user owns, if any. */
 export function getDealershipOf(ex: Executor, ownerUserId: string) {
   return q.getDealershipOf(ex, ownerUserId)

@@ -20,6 +20,21 @@ export async function getIdOfOwner(ex: Executor, ownerUserId: string) {
   return found.find(Boolean)
 }
 
+/** Whether a dealership, workshop or mechanic profile has this id. */
+export async function hasBusiness(ex: Executor, id: string) {
+  const found = await Promise.all(
+    [dealerships, workshops, mechanics].map((table) =>
+      ex
+        .select({ id: table.id })
+        .from(table)
+        .where(eq(table.id, id))
+        .limit(1)
+        .then((rows) => rows.length > 0)
+    )
+  )
+  return found.some(Boolean)
+}
+
 export function getDealershipOf(ex: Executor, ownerUserId: string) {
   return ex
     .select()

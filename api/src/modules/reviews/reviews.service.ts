@@ -1,4 +1,5 @@
 import type { Executor, Transaction } from "~/shared/db/tx"
+import type { DayRange } from "~/shared/time/khartoum"
 
 import * as q from "./reviews.queries"
 
@@ -24,4 +25,14 @@ export async function getRatingsOf(ex: Executor, targetIds: string[]) {
       Math.round((row.stars / row.count) * 10) / 10,
     ])
   )
+}
+
+/** Reviews written about these businesses inside the days (`null`: every business), hidden ones too. */
+export function countNewReviews(
+  ex: Executor,
+  targetIds: string[] | null,
+  days: DayRange
+) {
+  if (targetIds?.length === 0) return Promise.resolve(0)
+  return q.countWrittenIn(ex, targetIds, days)
 }

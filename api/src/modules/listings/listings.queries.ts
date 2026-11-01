@@ -113,6 +113,30 @@ export function listStats(ex: Executor, ids: string[]) {
     .where(inArray(listingStats.listingId, ids))
 }
 
+/** Adds one to a listing counter; false when there is no such listing. */
+export async function bumpStat(
+  ex: Executor,
+  id: string,
+  counter: "views" | "phoneClicks" | "whatsappClicks"
+) {
+  const rows = await ex
+    .update(listingStats)
+    .set({ [counter]: sql`${listingStats[counter]} + 1` })
+    .where(eq(listingStats.listingId, id))
+    .returning({ id: listingStats.listingId })
+  return rows.length > 0
+}
+
+/** Ids of every listing the user owns, whatever its state, in id order. */
+export function listIdsOf(ex: Executor, ownerUserId: string) {
+  return ex
+    .select({ id: listings.id })
+    .from(listings)
+    .where(eq(listings.ownerUserId, ownerUserId))
+    .orderBy(asc(listings.id))
+    .then((rows) => rows.map((row) => row.id))
+}
+
 export function listMediaIds(ex: Executor, ids: string[]) {
   if (ids.length === 0) return Promise.resolve([])
   return ex

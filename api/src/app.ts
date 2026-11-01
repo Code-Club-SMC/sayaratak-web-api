@@ -13,6 +13,7 @@ import { buildOpenApi } from "~/shared/openapi/build"
 import { spec } from "~/shared/openapi/registry"
 import { session } from "~/modules/auth/auth.middleware"
 import { accountRoutes } from "~/modules/account/account.routes"
+import { analyticsRoutes } from "~/modules/analytics/analytics.routes"
 import { authRoutes } from "~/modules/auth/auth.routes"
 import { contentRoutes } from "~/modules/content/content.routes"
 import { listingsRoutes } from "~/modules/listings/listings.routes"
@@ -49,6 +50,7 @@ const v1 = new Hono()
   .route("/", uploadsRoutes)
   .route("/", listingsRoutes)
   .route("/", mapRoutes)
+  .route("/", analyticsRoutes)
 
 // Middleware in A3 order. The per-request log line comes with 10.4; the 500
 // log line is in onError.

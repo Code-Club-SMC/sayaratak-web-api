@@ -18,7 +18,12 @@ const ISO_TIME =
  */
 export async function expectParity(
   path: string,
-  options: { init?: RequestInit; mock?: MockHandler } = {}
+  options: {
+    init?: RequestInit
+    mock?: MockHandler
+    /** Applied to both bodies, to leave out what is meant to differ (a documented deviation). */
+    ignore?: (body: unknown) => unknown
+  } = {}
 ) {
   const mock = options.mock ?? (await loadMock())
   const mockUrl = `http://localhost${path.replace(/^\/api\/v1\//, "/api/")}`
@@ -30,8 +35,11 @@ export async function expectParity(
     app.request(path, options.init),
   ])
   expect(fromApi.status).toBe(fromMock.status)
-  const expected: unknown = await fromMock.json()
-  expect(normalizeTimes(await fromApi.json(), expected)).toEqual(expected)
+  const ignore = options.ignore ?? ((body: unknown) => body)
+  const expected = ignore(await fromMock.json())
+  expect(normalizeTimes(ignore(await fromApi.json()), expected)).toEqual(
+    expected
+  )
 }
 
 /**

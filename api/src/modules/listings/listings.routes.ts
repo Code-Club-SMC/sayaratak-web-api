@@ -6,6 +6,7 @@ import {
 } from "@sayaratak/shared/schemas/inputs"
 import { listingSchema } from "@sayaratak/shared/schemas/listing"
 import { Hono } from "hono"
+import { z } from "zod"
 
 import { validate } from "~/shared/http/validate"
 import { spec } from "~/shared/openapi/registry"
@@ -17,6 +18,7 @@ import {
   renewListing,
   setListingStatus,
 } from "./listings.actions.service"
+import { getListingBySlug, listSimilar } from "./listings.read.service"
 import { createListing, patchListing } from "./listings.write.service"
 
 const OWNER_ERRORS = [
@@ -27,6 +29,35 @@ const OWNER_ERRORS = [
 ] as const
 
 export const listingsRoutes = new Hono()
+
+listingsRoutes.get(
+  "/listings/:slug",
+  spec({
+    summary:
+      "One listing by slug (its trailing id counts); drafts and hidden ones only for the owner and admins",
+    access: "public",
+    responses: { 200: listingSchema },
+    errors: ["not_found"],
+  }),
+  async (c) => {
+    const listing = await getListingBySlug(c.get("viewer"), c.req.param("slug"))
+    return c.json(listing)
+  }
+)
+
+listingsRoutes.get(
+  "/listings/:id/similar",
+  spec({
+    summary: "Up to 8 public listings like this one, nearest in price first",
+    access: "public",
+    responses: { 200: z.array(listingSchema) },
+    errors: ["not_found"],
+  }),
+  async (c) => {
+    const listings = await listSimilar(c.get("viewer"), c.req.param("id"))
+    return c.json(listings)
+  }
+)
 
 listingsRoutes.post(
   "/listings",

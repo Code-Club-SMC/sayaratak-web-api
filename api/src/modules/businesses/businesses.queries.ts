@@ -34,3 +34,16 @@ export function listDealershipsOf(ex: Executor, ownerUserIds: string[]) {
     .from(dealerships)
     .where(inArray(dealerships.ownerUserId, ownerUserIds))
 }
+
+/** Owners of a suspended dealership, workshop or mechanic profile. */
+export async function listSuspendedOwnerIds(ex: Executor) {
+  const lists = await Promise.all(
+    [dealerships, workshops, mechanics].map((table) =>
+      ex
+        .select({ id: table.ownerUserId })
+        .from(table)
+        .where(eq(table.status, "suspended"))
+    )
+  )
+  return lists.flat().map((row) => row.id)
+}

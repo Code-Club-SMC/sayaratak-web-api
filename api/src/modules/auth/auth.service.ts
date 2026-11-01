@@ -62,3 +62,8 @@ function isBanOver(user: SessionUser) {
     user.banned && user.banExpires !== null && user.banExpires <= clock.now()
   )
 }
+
+/** Ids of the accounts banned now; their listings and profiles leave the public site. */
+export function listBannedIds(ex: Executor) {
+  return q.listBannedIds(ex, clock.now())
+}

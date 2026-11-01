@@ -17,3 +17,8 @@ export async function getDealershipsOf(ex: Executor, ownerUserIds: string[]) {
   const rows = await q.listDealershipsOf(ex, ownerUserIds)
   return new Map(rows.map((row) => [row.ownerUserId, row]))
 }
+
+/** Owners whose business is suspended; their listings leave the public site. */
+export function listSuspendedOwnerIds(ex: Executor) {
+  return q.listSuspendedOwnerIds(ex)
+}

@@ -1,5 +1,15 @@
 import type { NotificationPrefs } from "@sayaratak/shared/schemas/api"
-import { and, eq, gt, inArray, isNotNull, ne, type SQL } from "drizzle-orm"
+import {
+  and,
+  eq,
+  gt,
+  inArray,
+  isNotNull,
+  isNull,
+  ne,
+  or,
+  type SQL,
+} from "drizzle-orm"
 
 import type { Executor } from "~/shared/db/tx"
 
@@ -169,4 +179,18 @@ export function lockUser(ex: Executor, id: string) {
 export function listUsers(ex: Executor, ids: string[]) {
   if (ids.length === 0) return Promise.resolve([])
   return ex.select().from(user).where(inArray(user.id, ids))
+}
+
+/** Ids of accounts banned at `now`: a permanent ban, or a timed one not yet over. */
+export function listBannedIds(ex: Executor, now: Date) {
+  return ex
+    .select({ id: user.id })
+    .from(user)
+    .where(
+      and(
+        eq(user.banned, true),
+        or(isNull(user.banExpires), gt(user.banExpires, now))
+      )
+    )
+    .then((rows) => rows.map((row) => row.id))
 }

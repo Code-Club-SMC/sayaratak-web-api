@@ -1,8 +1,19 @@
-import { and, asc, eq, gt, inArray } from "drizzle-orm"
+import {
+  and,
+  asc,
+  eq,
+  gt,
+  inArray,
+  isNull,
+  ne,
+  notInArray,
+  sql,
+} from "drizzle-orm"
 
 import type { Executor } from "~/shared/db/tx"
 
 import {
+  type ListingRow,
   listingMedia,
   listings,
   listingStats,
@@ -125,5 +136,39 @@ export async function replaceMedia(
       position,
       uploadId,
     }))
+  )
+}
+
+export function listSimilar(
+  ex: Executor,
+  like: {
+    row: Pick<ListingRow, "id" | "kind" | "intent" | "vehicleType" | "price">
+    hiddenOwnerIds: string[]
+    limit: number
+  }
+) {
+  const { row } = like
+  return (
+    ex
+      .select()
+      .from(listings)
+      .where(
+        and(
+          ne(listings.id, row.id),
+          eq(listings.moderation, "approved"),
+          eq(listings.status, "available"),
+          eq(listings.kind, row.kind),
+          eq(listings.intent, row.intent),
+          row.vehicleType === null
+            ? isNull(listings.vehicleType)
+            : eq(listings.vehicleType, row.vehicleType),
+          like.hiddenOwnerIds.length > 0
+            ? notInArray(listings.ownerUserId, like.hiddenOwnerIds)
+            : undefined
+        )
+      )
+      // Raw SQL: Drizzle has no abs(); nearest price first, ties by id (the mock's array order).
+      .orderBy(sql`abs(${listings.price} - ${row.price})`, asc(listings.id))
+      .limit(like.limit)
   )
 }

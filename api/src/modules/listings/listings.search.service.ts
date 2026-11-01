@@ -8,7 +8,11 @@ import * as businesses from "~/modules/businesses/businesses.service"
 import * as promotions from "~/modules/promotions/promotions.service"
 import * as uploads from "~/modules/uploads/uploads.media.service"
 
-import type { FacetKey, SearchScope } from "./listings.filters.queries"
+import {
+  type FacetKey,
+  matchesSearch,
+  type SearchScope,
+} from "./listings.filters.queries"
 import { capPaid } from "./listings.ranking.service"
 import { listHiddenOwnerIds } from "./listings.read.service"
 import * as q from "./listings.search.queries"
@@ -75,6 +79,15 @@ async function relevancePage(
   const order = capPaid(ids.featured, ids.organic)
   const rows = await q.listByIds(ex, order.slice(offset, offset + size))
   return { rows, total: ids.total }
+}
+
+/** Whether the listing would show in the public search for these filters (A11), as the mock's `matches`. */
+export async function listingMatchesSearch(
+  ex: Executor,
+  find: { id: string; params: SearchParams }
+) {
+  const scope = await scopeOf(ex, find.params)
+  return matchesSearch(ex, { ...find, scope })
 }
 
 /** The id lists the filters need from other modules; each is read only when used. */

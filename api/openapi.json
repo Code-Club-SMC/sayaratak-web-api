@@ -29374,6 +29374,1642 @@
           }
         }
       }
+    },
+    "/api/v1/saved-searches": {
+      "get": {
+        "operationId": "getSavedSearches",
+        "summary": "The signed-in account's saved searches, oldest first",
+        "security": [
+          {
+            "session": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "params": {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "default": "vehicle",
+                            "type": "string",
+                            "enum": [
+                              "vehicle",
+                              "part"
+                            ]
+                          },
+                          "intent": {
+                            "type": "string",
+                            "enum": [
+                              "sale",
+                              "rent"
+                            ]
+                          },
+                          "type": {
+                            "type": "string",
+                            "enum": [
+                              "car",
+                              "truck",
+                              "motorcycle",
+                              "tuk_tuk",
+                              "rickshaw"
+                            ]
+                          },
+                          "q": {
+                            "type": "string",
+                            "maxLength": 80
+                          },
+                          "city": {
+                            "type": "string"
+                          },
+                          "district": {
+                            "type": "string"
+                          },
+                          "make": {
+                            "type": "string"
+                          },
+                          "model": {
+                            "type": "string"
+                          },
+                          "minPrice": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 9007199254740991
+                          },
+                          "maxPrice": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 9007199254740991
+                          },
+                          "minYear": {
+                            "type": "integer",
+                            "minimum": 1970,
+                            "maximum": 9007199254740991
+                          },
+                          "maxYear": {
+                            "type": "integer",
+                            "minimum": -9007199254740991,
+                            "maximum": 9007199254740991
+                          },
+                          "maxMileage": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 9007199254740991
+                          },
+                          "fuel": {
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "enum": [
+                                "petrol",
+                                "diesel",
+                                "hybrid",
+                                "electric",
+                                "lpg"
+                              ]
+                            }
+                          },
+                          "transmission": {
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "enum": [
+                                "automatic",
+                                "manual"
+                              ]
+                            }
+                          },
+                          "condition": {
+                            "type": "string",
+                            "enum": [
+                              "new",
+                              "used"
+                            ]
+                          },
+                          "partCategory": {
+                            "type": "string"
+                          },
+                          "radius": {
+                            "type": "number"
+                          },
+                          "lat": {
+                            "type": "number"
+                          },
+                          "lng": {
+                            "type": "number"
+                          },
+                          "body": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "drive": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "madeIn": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "driver": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "partType": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "features": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "seatsMin": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 9007199254740991
+                          },
+                          "fitsYear": {
+                            "type": "integer",
+                            "minimum": 1970,
+                            "maximum": 9007199254740991
+                          },
+                          "customs": {
+                            "type": "boolean"
+                          },
+                          "accidentFree": {
+                            "type": "boolean"
+                          },
+                          "registered": {
+                            "type": "boolean"
+                          },
+                          "firstOwner": {
+                            "type": "boolean"
+                          },
+                          "fullService": {
+                            "type": "boolean"
+                          },
+                          "warranty": {
+                            "type": "boolean"
+                          },
+                          "exchange": {
+                            "type": "boolean"
+                          },
+                          "financing": {
+                            "type": "boolean"
+                          },
+                          "insuranceIncluded": {
+                            "type": "boolean"
+                          },
+                          "delivery": {
+                            "type": "boolean"
+                          },
+                          "installation": {
+                            "type": "boolean"
+                          },
+                          "verifiedOnly": {
+                            "type": "boolean"
+                          },
+                          "hasVideo": {
+                            "type": "boolean"
+                          },
+                          "featured": {
+                            "type": "boolean"
+                          },
+                          "includeSold": {
+                            "default": false,
+                            "type": "boolean"
+                          },
+                          "seller": {
+                            "type": "string"
+                          },
+                          "sort": {
+                            "default": "relevance",
+                            "type": "string",
+                            "enum": [
+                              "relevance",
+                              "newest",
+                              "price_asc",
+                              "price_desc",
+                              "year_desc",
+                              "mileage_asc",
+                              "nearest"
+                            ]
+                          },
+                          "page": {
+                            "default": 1,
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 9007199254740991
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "includeSold",
+                          "sort",
+                          "page"
+                        ]
+                      },
+                      "alerts": {
+                        "type": "boolean"
+                      },
+                      "newCount": {
+                        "type": "integer",
+                        "minimum": -9007199254740991,
+                        "maximum": 9007199254740991
+                      },
+                      "createdAt": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "name",
+                      "params",
+                      "alerts",
+                      "newCount",
+                      "createdAt"
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "unauthenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "const": "unauthenticated"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "fields": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    "retryAfter": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "banned",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "const": "banned"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "fields": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    "retryAfter": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "postSavedSearches",
+        "summary": "Save a search with its filters; alerts default on",
+        "security": [
+          {
+            "session": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 60
+                  },
+                  "params": {
+                    "type": "object",
+                    "properties": {
+                      "kind": {
+                        "default": "vehicle",
+                        "type": "string",
+                        "enum": [
+                          "vehicle",
+                          "part"
+                        ]
+                      },
+                      "intent": {
+                        "type": "string",
+                        "enum": [
+                          "sale",
+                          "rent"
+                        ]
+                      },
+                      "type": {
+                        "type": "string",
+                        "enum": [
+                          "car",
+                          "truck",
+                          "motorcycle",
+                          "tuk_tuk",
+                          "rickshaw"
+                        ]
+                      },
+                      "q": {
+                        "type": "string",
+                        "maxLength": 80
+                      },
+                      "city": {
+                        "type": "string"
+                      },
+                      "district": {
+                        "type": "string"
+                      },
+                      "make": {
+                        "type": "string"
+                      },
+                      "model": {
+                        "type": "string"
+                      },
+                      "minPrice": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 9007199254740991
+                      },
+                      "maxPrice": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 9007199254740991
+                      },
+                      "minYear": {
+                        "type": "integer",
+                        "minimum": 1970,
+                        "maximum": 9007199254740991
+                      },
+                      "maxYear": {
+                        "type": "integer",
+                        "minimum": -9007199254740991,
+                        "maximum": 9007199254740991
+                      },
+                      "maxMileage": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 9007199254740991
+                      },
+                      "fuel": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "enum": [
+                            "petrol",
+                            "diesel",
+                            "hybrid",
+                            "electric",
+                            "lpg"
+                          ]
+                        }
+                      },
+                      "transmission": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "enum": [
+                            "automatic",
+                            "manual"
+                          ]
+                        }
+                      },
+                      "condition": {
+                        "type": "string",
+                        "enum": [
+                          "new",
+                          "used"
+                        ]
+                      },
+                      "partCategory": {
+                        "type": "string"
+                      },
+                      "radius": {
+                        "type": "number"
+                      },
+                      "lat": {
+                        "type": "number"
+                      },
+                      "lng": {
+                        "type": "number"
+                      },
+                      "body": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "drive": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "madeIn": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "driver": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "partType": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "features": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "seatsMin": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 9007199254740991
+                      },
+                      "fitsYear": {
+                        "type": "integer",
+                        "minimum": 1970,
+                        "maximum": 9007199254740991
+                      },
+                      "customs": {
+                        "type": "boolean"
+                      },
+                      "accidentFree": {
+                        "type": "boolean"
+                      },
+                      "registered": {
+                        "type": "boolean"
+                      },
+                      "firstOwner": {
+                        "type": "boolean"
+                      },
+                      "fullService": {
+                        "type": "boolean"
+                      },
+                      "warranty": {
+                        "type": "boolean"
+                      },
+                      "exchange": {
+                        "type": "boolean"
+                      },
+                      "financing": {
+                        "type": "boolean"
+                      },
+                      "insuranceIncluded": {
+                        "type": "boolean"
+                      },
+                      "delivery": {
+                        "type": "boolean"
+                      },
+                      "installation": {
+                        "type": "boolean"
+                      },
+                      "verifiedOnly": {
+                        "type": "boolean"
+                      },
+                      "hasVideo": {
+                        "type": "boolean"
+                      },
+                      "featured": {
+                        "type": "boolean"
+                      },
+                      "includeSold": {
+                        "default": false,
+                        "type": "boolean"
+                      },
+                      "seller": {
+                        "type": "string"
+                      },
+                      "sort": {
+                        "default": "relevance",
+                        "type": "string",
+                        "enum": [
+                          "relevance",
+                          "newest",
+                          "price_asc",
+                          "price_desc",
+                          "year_desc",
+                          "mileage_asc",
+                          "nearest"
+                        ]
+                      },
+                      "page": {
+                        "default": 1,
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 9007199254740991
+                      }
+                    }
+                  },
+                  "alerts": {
+                    "default": true,
+                    "type": "boolean"
+                  }
+                },
+                "required": [
+                  "name",
+                  "params"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "params": {
+                      "type": "object",
+                      "properties": {
+                        "kind": {
+                          "default": "vehicle",
+                          "type": "string",
+                          "enum": [
+                            "vehicle",
+                            "part"
+                          ]
+                        },
+                        "intent": {
+                          "type": "string",
+                          "enum": [
+                            "sale",
+                            "rent"
+                          ]
+                        },
+                        "type": {
+                          "type": "string",
+                          "enum": [
+                            "car",
+                            "truck",
+                            "motorcycle",
+                            "tuk_tuk",
+                            "rickshaw"
+                          ]
+                        },
+                        "q": {
+                          "type": "string",
+                          "maxLength": 80
+                        },
+                        "city": {
+                          "type": "string"
+                        },
+                        "district": {
+                          "type": "string"
+                        },
+                        "make": {
+                          "type": "string"
+                        },
+                        "model": {
+                          "type": "string"
+                        },
+                        "minPrice": {
+                          "type": "integer",
+                          "minimum": 0,
+                          "maximum": 9007199254740991
+                        },
+                        "maxPrice": {
+                          "type": "integer",
+                          "minimum": 0,
+                          "maximum": 9007199254740991
+                        },
+                        "minYear": {
+                          "type": "integer",
+                          "minimum": 1970,
+                          "maximum": 9007199254740991
+                        },
+                        "maxYear": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991
+                        },
+                        "maxMileage": {
+                          "type": "integer",
+                          "minimum": 0,
+                          "maximum": 9007199254740991
+                        },
+                        "fuel": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "enum": [
+                              "petrol",
+                              "diesel",
+                              "hybrid",
+                              "electric",
+                              "lpg"
+                            ]
+                          }
+                        },
+                        "transmission": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "enum": [
+                              "automatic",
+                              "manual"
+                            ]
+                          }
+                        },
+                        "condition": {
+                          "type": "string",
+                          "enum": [
+                            "new",
+                            "used"
+                          ]
+                        },
+                        "partCategory": {
+                          "type": "string"
+                        },
+                        "radius": {
+                          "type": "number"
+                        },
+                        "lat": {
+                          "type": "number"
+                        },
+                        "lng": {
+                          "type": "number"
+                        },
+                        "body": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "drive": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "madeIn": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "driver": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "partType": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "features": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "seatsMin": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 9007199254740991
+                        },
+                        "fitsYear": {
+                          "type": "integer",
+                          "minimum": 1970,
+                          "maximum": 9007199254740991
+                        },
+                        "customs": {
+                          "type": "boolean"
+                        },
+                        "accidentFree": {
+                          "type": "boolean"
+                        },
+                        "registered": {
+                          "type": "boolean"
+                        },
+                        "firstOwner": {
+                          "type": "boolean"
+                        },
+                        "fullService": {
+                          "type": "boolean"
+                        },
+                        "warranty": {
+                          "type": "boolean"
+                        },
+                        "exchange": {
+                          "type": "boolean"
+                        },
+                        "financing": {
+                          "type": "boolean"
+                        },
+                        "insuranceIncluded": {
+                          "type": "boolean"
+                        },
+                        "delivery": {
+                          "type": "boolean"
+                        },
+                        "installation": {
+                          "type": "boolean"
+                        },
+                        "verifiedOnly": {
+                          "type": "boolean"
+                        },
+                        "hasVideo": {
+                          "type": "boolean"
+                        },
+                        "featured": {
+                          "type": "boolean"
+                        },
+                        "includeSold": {
+                          "default": false,
+                          "type": "boolean"
+                        },
+                        "seller": {
+                          "type": "string"
+                        },
+                        "sort": {
+                          "default": "relevance",
+                          "type": "string",
+                          "enum": [
+                            "relevance",
+                            "newest",
+                            "price_asc",
+                            "price_desc",
+                            "year_desc",
+                            "mileage_asc",
+                            "nearest"
+                          ]
+                        },
+                        "page": {
+                          "default": 1,
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 9007199254740991
+                        }
+                      },
+                      "required": [
+                        "kind",
+                        "includeSold",
+                        "sort",
+                        "page"
+                      ]
+                    },
+                    "alerts": {
+                      "type": "boolean"
+                    },
+                    "newCount": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    },
+                    "createdAt": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "name",
+                    "params",
+                    "alerts",
+                    "newCount",
+                    "createdAt"
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "unauthenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "const": "unauthenticated"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "fields": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    "retryAfter": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "banned",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "const": "banned"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "fields": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    "retryAfter": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ]
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "validation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "const": "validation"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "fields": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    "retryAfter": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/saved-searches/{id}": {
+      "patch": {
+        "operationId": "patchSavedSearchesById",
+        "summary": "Rename, switch alerts, or `markSeen` to zero the new-match count; 404 for another account's search",
+        "security": [
+          {
+            "session": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 60
+                  },
+                  "alerts": {
+                    "type": "boolean"
+                  },
+                  "markSeen": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "params": {
+                      "type": "object",
+                      "properties": {
+                        "kind": {
+                          "default": "vehicle",
+                          "type": "string",
+                          "enum": [
+                            "vehicle",
+                            "part"
+                          ]
+                        },
+                        "intent": {
+                          "type": "string",
+                          "enum": [
+                            "sale",
+                            "rent"
+                          ]
+                        },
+                        "type": {
+                          "type": "string",
+                          "enum": [
+                            "car",
+                            "truck",
+                            "motorcycle",
+                            "tuk_tuk",
+                            "rickshaw"
+                          ]
+                        },
+                        "q": {
+                          "type": "string",
+                          "maxLength": 80
+                        },
+                        "city": {
+                          "type": "string"
+                        },
+                        "district": {
+                          "type": "string"
+                        },
+                        "make": {
+                          "type": "string"
+                        },
+                        "model": {
+                          "type": "string"
+                        },
+                        "minPrice": {
+                          "type": "integer",
+                          "minimum": 0,
+                          "maximum": 9007199254740991
+                        },
+                        "maxPrice": {
+                          "type": "integer",
+                          "minimum": 0,
+                          "maximum": 9007199254740991
+                        },
+                        "minYear": {
+                          "type": "integer",
+                          "minimum": 1970,
+                          "maximum": 9007199254740991
+                        },
+                        "maxYear": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991
+                        },
+                        "maxMileage": {
+                          "type": "integer",
+                          "minimum": 0,
+                          "maximum": 9007199254740991
+                        },
+                        "fuel": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "enum": [
+                              "petrol",
+                              "diesel",
+                              "hybrid",
+                              "electric",
+                              "lpg"
+                            ]
+                          }
+                        },
+                        "transmission": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "enum": [
+                              "automatic",
+                              "manual"
+                            ]
+                          }
+                        },
+                        "condition": {
+                          "type": "string",
+                          "enum": [
+                            "new",
+                            "used"
+                          ]
+                        },
+                        "partCategory": {
+                          "type": "string"
+                        },
+                        "radius": {
+                          "type": "number"
+                        },
+                        "lat": {
+                          "type": "number"
+                        },
+                        "lng": {
+                          "type": "number"
+                        },
+                        "body": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "drive": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "madeIn": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "driver": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "partType": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "features": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "seatsMin": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 9007199254740991
+                        },
+                        "fitsYear": {
+                          "type": "integer",
+                          "minimum": 1970,
+                          "maximum": 9007199254740991
+                        },
+                        "customs": {
+                          "type": "boolean"
+                        },
+                        "accidentFree": {
+                          "type": "boolean"
+                        },
+                        "registered": {
+                          "type": "boolean"
+                        },
+                        "firstOwner": {
+                          "type": "boolean"
+                        },
+                        "fullService": {
+                          "type": "boolean"
+                        },
+                        "warranty": {
+                          "type": "boolean"
+                        },
+                        "exchange": {
+                          "type": "boolean"
+                        },
+                        "financing": {
+                          "type": "boolean"
+                        },
+                        "insuranceIncluded": {
+                          "type": "boolean"
+                        },
+                        "delivery": {
+                          "type": "boolean"
+                        },
+                        "installation": {
+                          "type": "boolean"
+                        },
+                        "verifiedOnly": {
+                          "type": "boolean"
+                        },
+                        "hasVideo": {
+                          "type": "boolean"
+                        },
+                        "featured": {
+                          "type": "boolean"
+                        },
+                        "includeSold": {
+                          "default": false,
+                          "type": "boolean"
+                        },
+                        "seller": {
+                          "type": "string"
+                        },
+                        "sort": {
+                          "default": "relevance",
+                          "type": "string",
+                          "enum": [
+                            "relevance",
+                            "newest",
+                            "price_asc",
+                            "price_desc",
+                            "year_desc",
+                            "mileage_asc",
+                            "nearest"
+                          ]
+                        },
+                        "page": {
+                          "default": 1,
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 9007199254740991
+                        }
+                      },
+                      "required": [
+                        "kind",
+                        "includeSold",
+                        "sort",
+                        "page"
+                      ]
+                    },
+                    "alerts": {
+                      "type": "boolean"
+                    },
+                    "newCount": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    },
+                    "createdAt": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "name",
+                    "params",
+                    "alerts",
+                    "newCount",
+                    "createdAt"
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "unauthenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "const": "unauthenticated"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "fields": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    "retryAfter": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "banned",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "const": "banned"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "fields": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    "retryAfter": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "not_found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "const": "not_found"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "fields": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    "retryAfter": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ]
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "validation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "const": "validation"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "fields": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    "retryAfter": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "deleteSavedSearchesById",
+        "summary": "Delete a saved search; 404 for another account's",
+        "security": [
+          {
+            "session": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "const": true
+                    }
+                  },
+                  "required": [
+                    "ok"
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "unauthenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "const": "unauthenticated"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "fields": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    "retryAfter": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "banned",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "const": "banned"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "fields": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    "retryAfter": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "not_found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "const": "not_found"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "fields": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    "retryAfter": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {

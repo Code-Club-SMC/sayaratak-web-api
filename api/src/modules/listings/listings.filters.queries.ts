@@ -12,6 +12,8 @@ import {
   sql,
 } from "drizzle-orm"
 
+import type { Executor } from "~/shared/db/tx"
+
 import { detailsWhere } from "./listings.details.queries"
 import { listingMedia, listings } from "./listings.tables"
 
@@ -182,4 +184,16 @@ function radiusWhere(p: SearchParams) {
     sql`${listings.lng} between ${p.lng - lngSpan} and ${p.lng + lngSpan}`,
     sql`${distanceKm({ lat: p.lat, lng: p.lng })} <= ${p.radius}`
   )
+}
+
+/** Whether the listing is one of the public search results for these filters (the saved-search match). */
+export async function matchesSearch(
+  ex: Executor,
+  find: { id: string; params: SearchParams; scope: SearchScope }
+) {
+  const where = and(
+    eq(listings.id, find.id),
+    searchWhere(find.params, find.scope)
+  )
+  return (await ex.$count(listings, where)) > 0
 }

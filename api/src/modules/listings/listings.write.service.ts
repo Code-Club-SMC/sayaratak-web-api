@@ -13,6 +13,7 @@ import { clock } from "~/shared/time/clock"
 import type { SessionUser } from "~/modules/auth/auth.types"
 import * as businesses from "~/modules/businesses/businesses.service"
 import * as content from "~/modules/content/content.service"
+import * as savedSearches from "~/modules/saved-searches/saved-searches.service"
 import * as taxonomy from "~/modules/taxonomy/taxonomy.service"
 import * as uploads from "~/modules/uploads/uploads.media.service"
 
@@ -24,7 +25,7 @@ import {
   newFreeListingId,
   publishState,
 } from "./listings.rules.service"
-import { toOneListing } from "./listings.view.service"
+import { type ListingRow, toOneListing } from "./listings.view.service"
 import { saveChanges } from "./listings.patch.service"
 
 type CreateBody = z.output<typeof listingCreateSchema>
@@ -62,8 +63,15 @@ export function createListing(user: SessionUser, body: CreateBody) {
       await newRow(tx, { user, body, submit })
     )
     await q.replaceMedia(tx, { listingId: row.id, uploadIds: mediaIds })
+    await feedSavedSearches(tx, row)
     return toOneListing(tx, row, user)
   })
+}
+
+// A listing published at once (auto-approved) counts as a new match for saved searches.
+async function feedSavedSearches(tx: Transaction, row: ListingRow) {
+  if (row.moderation === "approved")
+    await savedSearches.onListingApproved(tx, row)
 }
 
 /**

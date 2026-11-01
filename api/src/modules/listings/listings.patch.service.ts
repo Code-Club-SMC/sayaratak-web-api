@@ -8,6 +8,7 @@ import { both } from "~/shared/text/bilingual"
 import { clock } from "~/shared/time/clock"
 import * as auth from "~/modules/auth/auth.service"
 import type { SessionUser } from "~/modules/auth/auth.types"
+import * as savedSearches from "~/modules/saved-searches/saved-searches.service"
 import * as taxonomy from "~/modules/taxonomy/taxonomy.service"
 import * as uploads from "~/modules/uploads/uploads.media.service"
 
@@ -51,7 +52,10 @@ export async function saveChanges(tx: Transaction, change: Change) {
     next.moderation = await publishState(tx, user, true)
     next.rejectionReason = null
   }
-  return q.updateListing(tx, { id: row.id, set: next })
+  const saved = await q.updateListing(tx, { id: row.id, set: next })
+  if (saved.moderation === "approved" && row.moderation !== "approved")
+    await savedSearches.onListingApproved(tx, saved)
+  return saved
 }
 
 async function nextColumns(

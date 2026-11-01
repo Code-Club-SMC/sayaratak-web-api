@@ -240,6 +240,11 @@ const cases: Case[] = [
   ],
   ["siteSchema", responseSchemas.siteSchema, () => get("/site")],
   [
+    "sitemapEntrySchema",
+    responseSchemas.sitemapEntrySchema,
+    () => get("/sitemap").then(first),
+  ],
+  [
     "meSubscriptionSchema",
     responseSchemas.meSubscriptionSchema,
     () => get("/me/subscription", "u-dealer"),

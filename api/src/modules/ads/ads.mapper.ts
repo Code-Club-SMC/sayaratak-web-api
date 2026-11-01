@@ -1,7 +1,7 @@
 import type { Banner } from "@sayaratak/shared/schemas/admin"
 import type { AdPage, AdPageId, Campaign } from "@sayaratak/shared/schemas/ads"
 
-import type { AdPageRow, CampaignRow } from "./ads.tables"
+import type { AdPageRow, BannerRow, CampaignRow } from "./ads.tables"
 
 type Names = { ar: string; en: string }
 
@@ -36,6 +36,29 @@ export function toCampaign(
     impressions: row.impressions,
     clicks: row.clicks,
     createdAt: row.createdAt.toISOString(),
+  }
+}
+
+/** A house banner: one picture per language, real text on top when `copy` is set. */
+export function toBanner(
+  row: BannerRow,
+  imageUrl: { ar: string; en: string }
+): Banner {
+  return {
+    id: row.id,
+    title: row.title,
+    imageUrl,
+    copy: row.copy ?? undefined,
+    sponsored: row.sponsored,
+    focus: row.focus,
+    href: row.href,
+    placement: row.placement,
+    startsAt: row.startsAt.toISOString(),
+    endsAt: row.endsAt.toISOString(),
+    active: row.active,
+    sortOrder: row.sortOrder,
+    impressions: row.impressions,
+    clicks: row.clicks,
   }
 }
 

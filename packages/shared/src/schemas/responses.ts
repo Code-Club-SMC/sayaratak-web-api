@@ -107,6 +107,13 @@ export const siteSchema = z.object({
 })
 export type Site = z.infer<typeof siteSchema>
 
+// One public page for the sitemap: `path` has no locale prefix ("" is the home page).
+export const sitemapEntrySchema = z.object({
+  path: z.string(),
+  lastmod: z.string().optional(),
+})
+export type SitemapEntry = z.infer<typeof sitemapEntrySchema>
+
 export const meSubscriptionSchema = z.object({
   subscription: subscriptionSchema.nullable(), // the active one, else the pending one, else null
   plan: planSchema.nullable(), // the plan of `subscription`

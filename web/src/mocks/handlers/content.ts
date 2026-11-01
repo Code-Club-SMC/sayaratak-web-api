@@ -1,12 +1,16 @@
 import { okSchema } from "@sayaratak/shared/schemas/api"
 import { bannerSchema, sitePageSchema } from "@sayaratak/shared/schemas/admin"
 import { contactInputSchema } from "@sayaratak/shared/schemas/inputs"
-import { siteSchema } from "@sayaratak/shared/schemas/responses"
+import {
+  siteSchema,
+  sitemapEntrySchema,
+} from "@sayaratak/shared/schemas/responses"
 import { z } from "zod"
 
 import { db, insert, newId, resetDb } from "../db"
 import { fail, route, withSession } from "../http"
 import { nowIso } from "../lib"
+import { sitemapEntries } from "../sitemap"
 
 // Public: contact details and locales only, never banking or moderation settings.
 route("GET", "/site", () =>
@@ -36,6 +40,11 @@ route("GET", "/banners", (c) => {
     .sort((a, b) => a.sortOrder - b.sortOrder)
   return z.array(bannerSchema).parse(rows)
 })
+
+// The sitemap entries the web's sitemap.xml builds; the real API serves the same list.
+route("GET", "/sitemap", () =>
+  z.array(sitemapEntrySchema).parse(sitemapEntries())
+)
 
 route("POST", "/contact", async (c) => {
   const input = await c.body(contactInputSchema)

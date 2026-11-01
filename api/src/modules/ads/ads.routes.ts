@@ -15,6 +15,7 @@ import { requireRole, requireUser } from "~/modules/auth/auth.middleware"
 
 import { createCampaign, listMyCampaigns } from "./ads.campaigns.service"
 import { listAdPages } from "./ads.pages.service"
+import { listLiveBanners } from "./ads.banners.service"
 import { serveAds } from "./ads.serve.service"
 import { listAdTargets } from "./ads.targets.service"
 
@@ -94,4 +95,15 @@ adsRoutes.get(
     responses: { 200: z.array(bannerSchema) },
   }),
   async (c) => c.json(await serveAds(c.req.query("page")))
+)
+
+adsRoutes.get(
+  "/banners",
+  spec({
+    summary:
+      "The house banners live now, in sort order; `placement` narrows them to one place (an unknown one gives none)",
+    access: "public",
+    responses: { 200: z.array(bannerSchema) },
+  }),
+  async (c) => c.json(await listLiveBanners(c.req.query("placement")))
 )

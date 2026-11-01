@@ -86,3 +86,6 @@ export const contacts = pgTable(
   },
   (table) => [index().on(table.createdAt)]
 )
+
+export type SitePageRow = typeof sitePages.$inferSelect
+export type NewContactRow = typeof contacts.$inferInsert

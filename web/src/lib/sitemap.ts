@@ -1,4 +1,5 @@
 import { localeSchema } from "@sayaratak/shared/schemas/locale"
+import type { SitemapEntry } from "@sayaratak/shared/schemas/responses"
 
 const locales = localeSchema.options
 const defaultLocale = "ar"
@@ -15,7 +16,7 @@ const closed = [
   "post",
 ]
 
-export type SitemapEntry = { path: string; lastmod?: string }
+export type { SitemapEntry }
 
 const esc = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;")
 

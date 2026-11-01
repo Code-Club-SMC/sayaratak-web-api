@@ -1,8 +1,12 @@
-import { and, eq } from "drizzle-orm"
+import { and, desc, eq } from "drizzle-orm"
 
 import type { Executor } from "~/shared/db/tx"
 
-import { payments } from "./payments.tables"
+import {
+  type NewPaymentRow,
+  type PaymentRow,
+  payments,
+} from "./payments.tables"
 
 export function updateRejectedOf(
   ex: Executor,
@@ -25,4 +29,67 @@ export function updateRejectedOf(
 
 export function countPending(ex: Executor) {
   return ex.$count(payments, eq(payments.status, "pending_review"))
+}
+
+export function getPendingId(
+  ex: Executor,
+  item: { userId: string; itemType: PaymentRow["itemType"]; itemId: string }
+) {
+  return ex
+    .select({ id: payments.id })
+    .from(payments)
+    .where(
+      and(
+        eq(payments.userId, item.userId),
+        eq(payments.itemType, item.itemType),
+        eq(payments.itemId, item.itemId),
+        eq(payments.status, "pending_review")
+      )
+    )
+    .then(([row]) => row?.id)
+}
+
+/** The plan the account sent a receipt for and the admin has not decided on, newest first. */
+export function getPlanUnderReviewId(ex: Executor, userId: string) {
+  return ex
+    .select({ itemId: payments.itemId })
+    .from(payments)
+    .where(
+      and(
+        eq(payments.userId, userId),
+        eq(payments.itemType, "plan"),
+        eq(payments.status, "pending_review")
+      )
+    )
+    .orderBy(desc(payments.createdAt))
+    .limit(1)
+    .then(([row]) => row?.itemId)
+}
+
+/** Null when the one-receipt-per-item index already holds one (two sends at once). */
+export function insertIfNone(ex: Executor, row: NewPaymentRow) {
+  return ex
+    .insert(payments)
+    .values(row)
+    .onConflictDoNothing()
+    .returning()
+    .then(([saved]) => saved ?? null)
+}
+
+export async function listOf(
+  ex: Executor,
+  scope: { userId: string; offset: number; size: number }
+) {
+  const where = eq(payments.userId, scope.userId)
+  const [rows, total] = await Promise.all([
+    ex
+      .select()
+      .from(payments)
+      .where(where)
+      .orderBy(desc(payments.createdAt), desc(payments.id))
+      .limit(scope.size)
+      .offset(scope.offset),
+    ex.$count(payments, where),
+  ])
+  return { rows, total }
 }

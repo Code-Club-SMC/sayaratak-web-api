@@ -63,3 +63,6 @@ export const payments = pgTable(
     check("payments_reference", sql`${table.reference} ~ '^SY-[0-9]{6}$'`),
   ]
 )
+
+export type PaymentRow = typeof payments.$inferSelect
+export type NewPaymentRow = typeof payments.$inferInsert

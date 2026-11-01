@@ -25,3 +25,24 @@ export async function bumpCampaign(ex: Executor, id: string, counter: Counter) {
     .returning({ id: campaigns.id })
   return rows.length > 0
 }
+
+export function getCampaign(ex: Executor, id: string) {
+  return ex
+    .select({
+      ownerId: campaigns.ownerId,
+      status: campaigns.status,
+      amount: campaigns.amount,
+      weeks: campaigns.weeks,
+    })
+    .from(campaigns)
+    .where(eq(campaigns.id, id))
+    .then(([row]) => row)
+}
+
+/** Back to review after a new receipt: the old rejection reason no longer applies. */
+export function updateUnderReview(ex: Executor, id: string) {
+  return ex
+    .update(campaigns)
+    .set({ status: "under_review", rejectionReason: null })
+    .where(eq(campaigns.id, id))
+}

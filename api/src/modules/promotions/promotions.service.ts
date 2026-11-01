@@ -41,3 +41,21 @@ export async function getRunningOf(ex: Executor, listingIds: string[]) {
 export function listFeaturedIds(ex: Executor) {
   return q.listFeaturedIds(ex, clock.now())
 }
+
+/** Credit promotions of these listings started since the subscription period began. */
+export function countCreditsUsed(
+  ex: Executor,
+  scope: { listingIds: string[]; since: Date }
+) {
+  return q.countCreditsSince(ex, scope)
+}
+
+/**
+ * An order the payer may pay for: the promotion and the price of its type and
+ * length (0 when the price row is gone, as the mock). Undefined without such a promotion.
+ */
+export async function getPromotionToPay(ex: Executor, id: string) {
+  const row = await q.getPromotion(ex, id)
+  if (!row) return undefined
+  return { ...row, price: (await q.getPrice(ex, row)) ?? 0 }
+}

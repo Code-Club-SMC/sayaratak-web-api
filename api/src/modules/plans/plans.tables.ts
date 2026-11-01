@@ -99,4 +99,5 @@ export const subscriptions = pgTable(
 )
 
 export type PlanRow = typeof plans.$inferSelect
+export type SubscriptionRow = typeof subscriptions.$inferSelect
 export type NewSubscriptionRow = typeof subscriptions.$inferInsert

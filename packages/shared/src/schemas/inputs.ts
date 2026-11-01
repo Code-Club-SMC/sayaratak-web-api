@@ -401,6 +401,23 @@ export const uploadFormSchema = z.object({
   placeholderColor: z.string().optional(),
 })
 
+// `POST /payments` (multipart): a Bankak receipt for a plan, promotion or campaign. A missing text field
+// reads as empty, so the length message shows, as the mock reports it; `itemId` is checked against the item.
+export const paymentFormSchema = z.object({
+  itemType: z.enum(["plan", "promotion", "campaign"], "validation.required"),
+  itemId: z.string().prefault(""),
+  payerName: z
+    .string()
+    .prefault("")
+    .pipe(z.string().trim().min(2, "validation.name_min")),
+  transactionRef: z
+    .string()
+    .prefault("")
+    .pipe(z.string().trim().min(4, "validation.txn_min")),
+  receipt: fileSchema,
+})
+export type PaymentForm = z.infer<typeof paymentFormSchema>
+
 // `POST /me/verification` (multipart): `label` and `file` once per document in the same order, 1 to 5
 // of them, and an optional `note`. A bad label or count reads as `documents`, as the mock reports it.
 export const verificationFormSchema = z

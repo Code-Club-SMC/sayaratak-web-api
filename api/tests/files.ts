@@ -62,3 +62,19 @@ export function postVerification(
     body: form,
   })
 }
+
+/** `POST /payments` as a signed-in browser: the text fields, and the receipt unless it is left out. */
+export function postPayment(
+  as: SignedIn,
+  fields: Record<string, string>,
+  receipt: File | null = fileOf("jpeg")
+) {
+  const form = new FormData()
+  for (const [key, value] of Object.entries(fields)) form.set(key, value)
+  if (receipt) form.set("receipt", receipt)
+  return req("/payments", {
+    method: "POST",
+    headers: { cookie: as.cookie, origin: as.origin },
+    body: form,
+  })
+}

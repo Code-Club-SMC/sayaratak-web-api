@@ -2,7 +2,7 @@ import { and, asc, eq, gt, gte, inArray, lte, ne } from "drizzle-orm"
 
 import type { Executor } from "~/shared/db/tx"
 
-import { promotions } from "./promotions.tables"
+import { promotionPrices, promotions } from "./promotions.tables"
 
 export function updateEndedFor(
   ex: Executor,
@@ -55,4 +55,50 @@ export function listFeaturedIds(ex: Executor, now: Date) {
       )
     )
     .then((rows) => rows.map((row) => row.id))
+}
+
+/** Credit promotions of these listings that started at or after `since`. */
+export function countCreditsSince(
+  ex: Executor,
+  scope: { listingIds: string[]; since: Date }
+) {
+  if (scope.listingIds.length === 0) return Promise.resolve(0)
+  return ex.$count(
+    promotions,
+    and(
+      inArray(promotions.listingId, scope.listingIds),
+      eq(promotions.source, "credit"),
+      gte(promotions.startsAt, scope.since)
+    )
+  )
+}
+
+export function getPromotion(ex: Executor, id: string) {
+  return ex
+    .select({
+      id: promotions.id,
+      listingId: promotions.listingId,
+      type: promotions.type,
+      status: promotions.status,
+      durationDays: promotions.durationDays,
+    })
+    .from(promotions)
+    .where(eq(promotions.id, id))
+    .then(([row]) => row)
+}
+
+export function getPrice(
+  ex: Executor,
+  of: { type: "featured" | "bump"; durationDays: number }
+) {
+  return ex
+    .select({ price: promotionPrices.price })
+    .from(promotionPrices)
+    .where(
+      and(
+        eq(promotionPrices.type, of.type),
+        eq(promotionPrices.durationDays, of.durationDays)
+      )
+    )
+    .then(([row]) => row?.price)
 }

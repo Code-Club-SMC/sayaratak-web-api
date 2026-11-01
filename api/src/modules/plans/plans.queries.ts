@@ -1,5 +1,5 @@
 import type { Plan } from "@sayaratak/shared/schemas/billing"
-import { and, asc, eq, gt } from "drizzle-orm"
+import { and, asc, desc, eq, gt, inArray, ne } from "drizzle-orm"
 
 import type { Executor } from "~/shared/db/tx"
 
@@ -67,4 +67,36 @@ export function updateActiveCanceled(ex: Executor, userId: string) {
 
 export function insertSubscription(ex: Executor, row: NewSubscriptionRow) {
   return ex.insert(subscriptions).values(row)
+}
+
+/** Enabled plans in list order; `withUser` false leaves out the individuals' plans. */
+export function listEnabled(
+  ex: Executor,
+  filter: { audience?: Plan["audience"]; withUser: boolean }
+) {
+  return ex
+    .select()
+    .from(plans)
+    .where(
+      and(
+        eq(plans.enabled, true),
+        filter.audience ? eq(plans.audience, filter.audience) : undefined,
+        filter.withUser ? undefined : ne(plans.audience, "user")
+      )
+    )
+    .orderBy(asc(plans.sortOrder), asc(plans.id))
+}
+
+/** The account's active and pending subscriptions, newest start first. */
+export function listCurrent(ex: Executor, userId: string) {
+  return ex
+    .select()
+    .from(subscriptions)
+    .where(
+      and(
+        eq(subscriptions.userId, userId),
+        inArray(subscriptions.status, ["active", "pending"])
+      )
+    )
+    .orderBy(desc(subscriptions.startsAt))
 }

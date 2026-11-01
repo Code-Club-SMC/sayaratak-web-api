@@ -24,3 +24,10 @@ export async function getListingSettings(ex: Executor) {
     freeListingLimit: row.freeListingLimit,
   }
 }
+
+/** The Bankak account the customer sends money to, shown on the checkout. */
+export async function getBankak(ex: Executor) {
+  const row = await q.getSettings(ex)
+  if (!row) fail.notFound()
+  return { name: row.bankakName, number: row.bankakNumber }
+}

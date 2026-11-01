@@ -93,6 +93,15 @@ export function checkSubmitted(body: ListingBody) {
   if (Object.keys(fields).length > 0) fail.validation(fields)
 }
 
+/** Live listings of the account and its limit (null: no cap), for the billing page. */
+export async function getListingUsage(ex: Executor, owner: Owner) {
+  const [limit, used] = await Promise.all([
+    listingLimitOf(ex, owner),
+    q.countLiveOf(ex, { ownerUserId: owner.id, now: clock.now() }),
+  ])
+  return { used, limit }
+}
+
 // Mock `listingLimit`: workshops and mechanics post no listings; a dealership
 // has its subscription's limit (none without one); a person has no limit
 // while individual subscriptions are off, else their subscription's, else the

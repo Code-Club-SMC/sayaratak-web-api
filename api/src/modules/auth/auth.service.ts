@@ -61,6 +61,14 @@ export async function finishOnboarding(
   return getMeOf(ex, row)
 }
 
+/** Forgets the paid plan picked in onboarding ("keep the free plan"). Answers the account as `GET /me` does. */
+export async function clearChosenPlan(ex: Executor, id: string) {
+  const row = await q.updateProfile(ex, id, { chosenPlanId: null })
+  // The session just proved the account exists.
+  if (!row) throw new Error("chosen plan cleared for a missing account")
+  return getMeOf(ex, row)
+}
+
 /** The accounts with these ids, as the session middleware loads them. */
 export function listUsers(ex: Executor, ids: string[]) {
   return accounts.listUsers(ex, ids)

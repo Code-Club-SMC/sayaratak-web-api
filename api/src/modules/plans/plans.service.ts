@@ -65,3 +65,8 @@ export async function getPickablePaidPlanId(
   const ok = plan?.enabled && plan.price > 0 && plan.audience === pick.audience
   return ok ? plan.id : undefined
 }
+
+/** One plan by id, or undefined. */
+export function getPlan(ex: Executor, id: string) {
+  return q.getPlan(ex, id)
+}

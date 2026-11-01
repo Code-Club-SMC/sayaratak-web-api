@@ -29,3 +29,9 @@ export async function countInventoryOf(ex: Executor, ownerUserIds: string[]) {
     if (row.ownerUserId) counts.set(row.ownerUserId, row.count)
   return counts
 }
+
+/** The owner and title of a listing, or undefined: what a promotion order names. */
+export async function getListingHead(ex: Executor, id: string) {
+  const row = await q.getListing(ex, id)
+  return row && { ownerUserId: row.ownerUserId, title: row.title }
+}

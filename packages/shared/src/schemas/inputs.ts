@@ -192,6 +192,13 @@ export const messageInputSchema = z.object({
     .max(2000, "validation.too_long"),
 })
 export const readInputSchema = z.object({ ids: z.array(z.string()).optional() })
+// An installed app registers its push address (A18). Loose on `appVersion`: apps we cannot update may send any build string.
+export const deviceInputSchema = z.object({
+  platform: z.enum(["ios", "android"]),
+  fcmToken: z.string().min(1).max(4096),
+  appVersion: z.string().min(1).max(32),
+  locale: z.enum(["ar", "en"]),
+})
 
 // `priceId` picks a row of the price list. A credit needs none: it is always a 7-day Featured, free and started at once.
 export const promotionInputSchema = z

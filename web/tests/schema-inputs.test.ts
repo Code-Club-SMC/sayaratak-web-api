@@ -3,6 +3,7 @@ import { expect, it } from "vitest"
 import {
   codeInputSchema,
   contactInputSchema,
+  deviceInputSchema,
   draftInputSchema,
   emailInputSchema,
   eventInputSchema,
@@ -301,6 +302,27 @@ runCases([
     schema: readInputSchema,
     valid: [{}, { ids: ["n1"] }],
     bad: [["not a list", { ids: "n1" }]],
+  },
+  {
+    name: "deviceInputSchema",
+    schema: deviceInputSchema,
+    valid: [
+      { platform: "ios", fcmToken: "t:1", appVersion: "1.4.0", locale: "ar" },
+    ],
+    bad: [
+      [
+        "unknown platform",
+        { platform: "web", fcmToken: "t", appVersion: "1", locale: "ar" },
+      ],
+      [
+        "empty token",
+        { platform: "ios", fcmToken: "", appVersion: "1", locale: "en" },
+      ],
+      [
+        "unknown locale",
+        { platform: "ios", fcmToken: "t", appVersion: "1", locale: "fr" },
+      ],
+    ],
   },
   {
     name: "promotionInputSchema",

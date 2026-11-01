@@ -6,6 +6,7 @@ import { log } from "~/shared/log/logger"
 import { newId } from "~/shared/text/ids"
 import { clock } from "~/shared/time/clock"
 
+import { retryAt } from "./backoff"
 import * as q from "./outbox.queries"
 import type { OutboxRow } from "./outbox.tables"
 import { renderCode } from "./templates"
@@ -42,10 +43,6 @@ export type SentMail = CodeMail & {
 // route answers the same, so the cap tells nothing about which emails exist.
 const CODES_PER_HOUR = 5
 const HOUR_MS = 3_600_000
-
-// A9 backoff for the outbox job: 1, 2, 4, 8 minutes, then it gives up.
-const RETRY_MINUTES = [1, 2, 4, 8]
-const MINUTE_MS = 60_000
 
 /**
  * Mail sent while NODE_ENV is test, newest last. Tests read codes from here
@@ -94,8 +91,7 @@ export async function deliver(row: OutboxRow) {
     await transmit({ ...mail, ...renderCode(mail) })
     await q.updateOutboxSent(db, row.id, clock.now())
   } catch (error) {
-    const minutes = RETRY_MINUTES[row.attempts] ?? 0
-    const sendAfter = new Date(clock.now().getTime() + minutes * MINUTE_MS)
+    const sendAfter = retryAt(row.attempts, clock.now())
     log.error("mail_failed", { id: row.id, attempt: row.attempts + 1, error })
     await q.updateOutboxFailed(db, row.id, { error: String(error), sendAfter })
   }

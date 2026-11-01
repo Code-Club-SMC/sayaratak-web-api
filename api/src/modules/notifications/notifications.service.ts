@@ -8,6 +8,7 @@ import { newId } from "~/shared/text/ids"
 import { clock } from "~/shared/time/clock"
 import type { SessionUser } from "~/modules/auth/auth.types"
 import * as auth from "~/modules/auth/auth.service"
+import { queuePush } from "~/modules/devices/devices.push.service"
 
 import { toNotification, toNotificationHref } from "./notifications.mapper"
 import * as q from "./notifications.queries"
@@ -42,19 +43,30 @@ type Message = {
  * Tells one person something in the bell. Nothing is written when the person
  * is gone or switched that kind off. Both languages are stored, so the
  * reader sees the right one after switching. Every domain event that
- * notifies calls this inside its own transaction. The push to devices comes with 6.8.
+ * notifies calls this inside its own transaction. The same switch decides the
+ * push to the person's devices (A18).
  */
 export async function notify(ex: Executor, message: Message) {
   const [recipient] = await auth.listUsers(ex, [message.userId])
   if (!recipient?.prefs[PREF_OF[message.type]]) return
+  const id = newId(ID_PREFIX)
+  const href = message.href && toNotificationHref(recipient.role, message.href)
   await q.insert(ex, {
-    id: newId(ID_PREFIX),
+    id,
     userId: recipient.id,
     type: message.type,
     title: message.title,
     body: message.body,
-    href: message.href && toNotificationHref(recipient.role, message.href),
+    href,
     createdAt: clock.now(),
+  })
+  await queuePush(ex, {
+    userId: recipient.id,
+    type: message.type,
+    notificationId: id,
+    href,
+    title: message.title,
+    body: message.body,
   })
 }
 

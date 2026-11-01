@@ -120,6 +120,13 @@
       "when": 1793520661607,
       "tag": "0016_workshop_service_price_bigint",
       "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "7",
+      "when": 1793541072955,
+      "tag": "0017_devices",
+      "breakpoints": true
     }
   ]
 }

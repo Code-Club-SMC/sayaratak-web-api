@@ -13,7 +13,14 @@ import { jsonb } from "~/shared/db/jsonb"
 
 export const outboxChannel = pgEnum("outbox_channel", ["email", "push"])
 
-export type OutboxPayload = { code?: string }
+// A push row holds what the phone shows until it is sent; `userId` lets the sender drop it if the phone moved to another account since.
+export type PushPayload = {
+  userId: string
+  title: string
+  body: string
+  data: Record<string, string>
+}
+export type OutboxPayload = { code?: string; push?: PushPayload }
 
 // A9: every email (and later push, A18) is a row first, so the HTTP answer
 // never waits on SMTP. `payload` holds the code until it is sent or expires,

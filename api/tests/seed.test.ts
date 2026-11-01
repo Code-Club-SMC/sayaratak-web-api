@@ -84,6 +84,7 @@ const runtimeOnly = new Set([
   schema.auditLog,
   schema.idempotencyKeys,
   schema.outbox,
+  schema.devices,
 ])
 
 beforeAll(resetDb)

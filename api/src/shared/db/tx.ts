@@ -35,6 +35,13 @@ export function afterCommit(tx: Transaction, callback: Callback) {
   callbacks.push(callback)
 }
 
+/** `afterCommit` for code that may run on `db` itself, where there is nothing to wait for. */
+export async function afterCommitOrNow(ex: Executor, callback: Callback) {
+  // Only a transaction has `rollback`; `db` is already committed, so run at once.
+  if ("rollback" in ex) afterCommit(ex, callback)
+  else await callback()
+}
+
 // The data is already committed, so a failing callback must not turn the
 // answer into a 500. It is logged, and the rest still run.
 async function runAll(callbacks: Callback[]) {

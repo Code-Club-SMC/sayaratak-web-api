@@ -4,6 +4,8 @@ import type { Executor } from "~/shared/db/tx"
 
 import { type NewOutboxRow, outbox } from "./outbox.tables"
 
+export type { OutboxRow } from "./outbox.tables"
+
 export function insertOutbox(ex: Executor, row: NewOutboxRow) {
   return ex
     .insert(outbox)

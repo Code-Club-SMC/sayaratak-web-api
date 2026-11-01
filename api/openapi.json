@@ -27464,6 +27464,1916 @@
           }
         }
       }
+    },
+    "/api/v1/me/favorite-ids": {
+      "get": {
+        "operationId": "getMeFavoriteIds",
+        "summary": "The ids of the saved listings, so every card can draw its heart; empty when signed out",
+        "security": [],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ids": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "required": [
+                    "ids"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/favorites": {
+      "get": {
+        "operationId": "getFavorites",
+        "summary": "The saved listings (`sort` recent, price_asc, price_desc; `type` a vehicle type or part; `page`, `pageSize`). One nobody can open any more comes back with `unavailable`",
+        "security": [
+          {
+            "session": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "type",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "enum": [
+                    "car",
+                    "truck",
+                    "motorcycle",
+                    "tuk_tuk",
+                    "rickshaw"
+                  ]
+                },
+                {
+                  "type": "string",
+                  "const": "part"
+                }
+              ]
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "default": "recent",
+              "type": "string",
+              "enum": [
+                "recent",
+                "price_asc",
+                "price_desc"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "slug": {
+                            "type": "string"
+                          },
+                          "kind": {
+                            "type": "string",
+                            "enum": [
+                              "vehicle",
+                              "part"
+                            ]
+                          },
+                          "intent": {
+                            "type": "string",
+                            "enum": [
+                              "sale",
+                              "rent"
+                            ]
+                          },
+                          "vehicleType": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "enum": [
+                                  "car",
+                                  "truck",
+                                  "motorcycle",
+                                  "tuk_tuk",
+                                  "rickshaw"
+                                ]
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "title": {
+                            "type": "string"
+                          },
+                          "description": {
+                            "type": "object",
+                            "properties": {
+                              "ar": {
+                                "type": "string"
+                              },
+                              "en": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "ar",
+                              "en"
+                            ]
+                          },
+                          "price": {
+                            "type": "integer",
+                            "minimum": -9007199254740991,
+                            "maximum": 9007199254740991
+                          },
+                          "negotiable": {
+                            "type": "boolean"
+                          },
+                          "rentPeriod": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "enum": [
+                                  "day",
+                                  "week",
+                                  "month"
+                                ]
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "condition": {
+                            "type": "string",
+                            "enum": [
+                              "new",
+                              "used"
+                            ]
+                          },
+                          "makeId": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "modelId": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "makeOther": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "modelOther": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "year": {
+                            "type": [
+                              "number",
+                              "null"
+                            ]
+                          },
+                          "mileageKm": {
+                            "type": [
+                              "number",
+                              "null"
+                            ]
+                          },
+                          "fuel": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "enum": [
+                                  "petrol",
+                                  "diesel",
+                                  "hybrid",
+                                  "electric",
+                                  "lpg"
+                                ]
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "transmission": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "enum": [
+                                  "automatic",
+                                  "manual"
+                                ]
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "color": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "engineCc": {
+                            "type": [
+                              "number",
+                              "null"
+                            ]
+                          },
+                          "payloadTons": {
+                            "type": [
+                              "number",
+                              "null"
+                            ]
+                          },
+                          "partNumber": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "trim": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "maxLength": 40
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "bodyType": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "enum": [
+                                  "sedan",
+                                  "hatchback",
+                                  "suv",
+                                  "crossover",
+                                  "coupe",
+                                  "convertible",
+                                  "wagon",
+                                  "pickup",
+                                  "van",
+                                  "minivan",
+                                  "flatbed",
+                                  "tipper",
+                                  "box",
+                                  "tanker",
+                                  "refrigerated",
+                                  "tow",
+                                  "container",
+                                  "other",
+                                  "scooter",
+                                  "standard",
+                                  "sport",
+                                  "cruiser",
+                                  "off_road",
+                                  "touring",
+                                  "passenger",
+                                  "cargo"
+                                ]
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "colorInterior": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "origin": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "enum": [
+                                  "gcc",
+                                  "japan",
+                                  "usa",
+                                  "europe",
+                                  "korea",
+                                  "china",
+                                  "local",
+                                  "other"
+                                ]
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "cylinders": {
+                            "anyOf": [
+                              {
+                                "type": "integer",
+                                "minimum": 1,
+                                "maximum": 16
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "horsepower": {
+                            "anyOf": [
+                              {
+                                "type": "integer",
+                                "minimum": 1,
+                                "maximum": 2000
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "driveType": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "enum": [
+                                  "fwd",
+                                  "rwd",
+                                  "awd",
+                                  "four_wd"
+                                ]
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "strokes": {
+                            "anyOf": [
+                              {
+                                "anyOf": [
+                                  {
+                                    "type": "number",
+                                    "const": 2
+                                  },
+                                  {
+                                    "type": "number",
+                                    "const": 4
+                                  }
+                                ]
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "starter": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "enum": [
+                                  "electric",
+                                  "kick",
+                                  "both"
+                                ]
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "doors": {
+                            "anyOf": [
+                              {
+                                "type": "integer",
+                                "minimum": 2,
+                                "maximum": 6
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "seats": {
+                            "anyOf": [
+                              {
+                                "type": "integer",
+                                "minimum": 1,
+                                "maximum": 60
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "axles": {
+                            "anyOf": [
+                              {
+                                "type": "integer",
+                                "minimum": 2,
+                                "maximum": 10
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "grossWeightTons": {
+                            "anyOf": [
+                              {
+                                "type": "number",
+                                "minimum": 0,
+                                "maximum": 100
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "cabType": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "enum": [
+                                  "single",
+                                  "double",
+                                  "crew",
+                                  "sleeper"
+                                ]
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "previousOwners": {
+                            "anyOf": [
+                              {
+                                "type": "integer",
+                                "minimum": 0,
+                                "maximum": 9
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "accidentFree": {
+                            "type": [
+                              "boolean",
+                              "null"
+                            ]
+                          },
+                          "paint": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "enum": [
+                                  "original",
+                                  "partial",
+                                  "full"
+                                ]
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "serviceHistory": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "enum": [
+                                  "full",
+                                  "partial",
+                                  "none"
+                                ]
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "warranty": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "enum": [
+                                  "none",
+                                  "dealer",
+                                  "manufacturer"
+                                ]
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "warrantyMonths": {
+                            "anyOf": [
+                              {
+                                "type": "integer",
+                                "minimum": 1,
+                                "maximum": 120
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "customsCleared": {
+                            "type": [
+                              "boolean",
+                              "null"
+                            ]
+                          },
+                          "registered": {
+                            "type": [
+                              "boolean",
+                              "null"
+                            ]
+                          },
+                          "plateType": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "enum": [
+                                  "private",
+                                  "commercial",
+                                  "taxi",
+                                  "government"
+                                ]
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "plateCityId": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "licenseValidUntil": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "format": "date",
+                                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "insurance": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "enum": [
+                                  "none",
+                                  "third_party",
+                                  "comprehensive"
+                                ]
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "chassisNumber": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "pattern": "^[A-Za-z0-9-]{5,25}$"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "exchange": {
+                            "type": [
+                              "boolean",
+                              "null"
+                            ]
+                          },
+                          "financing": {
+                            "type": [
+                              "boolean",
+                              "null"
+                            ]
+                          },
+                          "testDrive": {
+                            "type": [
+                              "boolean",
+                              "null"
+                            ]
+                          },
+                          "inspectionReport": {
+                            "type": [
+                              "boolean",
+                              "null"
+                            ]
+                          },
+                          "driver": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "enum": [
+                                  "included",
+                                  "optional",
+                                  "not_available"
+                                ]
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "minRent": {
+                            "anyOf": [
+                              {
+                                "type": "integer",
+                                "minimum": 1,
+                                "maximum": 365
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "deposit": {
+                            "anyOf": [
+                              {
+                                "type": "integer",
+                                "minimum": 0,
+                                "maximum": 9999999999
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "kmLimitPerDay": {
+                            "anyOf": [
+                              {
+                                "type": "integer",
+                                "minimum": 10,
+                                "maximum": 2000
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "insuranceIncluded": {
+                            "type": [
+                              "boolean",
+                              "null"
+                            ]
+                          },
+                          "fuelPolicy": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "enum": [
+                                  "full_to_full",
+                                  "included",
+                                  "renter_pays"
+                                ]
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "delivery": {
+                            "type": [
+                              "boolean",
+                              "null"
+                            ]
+                          },
+                          "minDriverAge": {
+                            "anyOf": [
+                              {
+                                "type": "integer",
+                                "minimum": 18,
+                                "maximum": 70
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "licenseYears": {
+                            "anyOf": [
+                              {
+                                "type": "integer",
+                                "minimum": 0,
+                                "maximum": 30
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "features": {
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "enum": [
+                                "abs",
+                                "airbags_front",
+                                "airbags_side",
+                                "airbags_curtain",
+                                "esc",
+                                "traction_control",
+                                "parking_sensors",
+                                "rear_camera",
+                                "camera_360",
+                                "blind_spot",
+                                "lane_assist",
+                                "cruise_control",
+                                "adaptive_cruise",
+                                "immobilizer",
+                                "alarm",
+                                "tracker",
+                                "air_conditioning",
+                                "climate_control",
+                                "rear_ac",
+                                "power_windows",
+                                "power_mirrors",
+                                "power_steering",
+                                "power_seats",
+                                "heated_seats",
+                                "cooled_seats",
+                                "leather_seats",
+                                "memory_seats",
+                                "sunroof",
+                                "panoramic_roof",
+                                "keyless_entry",
+                                "push_start",
+                                "remote_start",
+                                "electric_tailgate",
+                                "third_row",
+                                "auto_headlights",
+                                "rain_sensor",
+                                "touchscreen",
+                                "bluetooth",
+                                "usb",
+                                "navigation",
+                                "carplay",
+                                "android_auto",
+                                "premium_audio",
+                                "rear_entertainment",
+                                "wireless_charging",
+                                "head_up_display",
+                                "digital_cluster",
+                                "alloy_wheels",
+                                "fog_lights",
+                                "led_headlights",
+                                "xenon_headlights",
+                                "roof_rails",
+                                "tow_hitch",
+                                "tinted_windows",
+                                "spoiler",
+                                "running_boards",
+                                "bull_bar",
+                                "spare_wheel",
+                                "winch",
+                                "pto",
+                                "tipping_gear",
+                                "crane",
+                                "cooling_unit",
+                                "tail_lift",
+                                "sleeper_cab",
+                                "fleet_tracking",
+                                "electric_start",
+                                "disc_brakes",
+                                "luggage_box",
+                                "windshield",
+                                "led_lights"
+                              ]
+                            }
+                          },
+                          "partBrand": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "maxLength": 40
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "partType": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "enum": [
+                                  "genuine",
+                                  "aftermarket"
+                                ]
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "partPosition": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "enum": [
+                                  "front",
+                                  "rear",
+                                  "left",
+                                  "right",
+                                  "universal"
+                                ]
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "quantity": {
+                            "anyOf": [
+                              {
+                                "type": "integer",
+                                "minimum": 1,
+                                "maximum": 9999
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "compatibleMakeIds": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "fitsYearFrom": {
+                            "anyOf": [
+                              {
+                                "type": "integer",
+                                "minimum": 1970,
+                                "maximum": 2027
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "fitsYearTo": {
+                            "anyOf": [
+                              {
+                                "type": "integer",
+                                "minimum": 1970,
+                                "maximum": 2027
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "dimensions": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "maxLength": 80
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "weightKg": {
+                            "anyOf": [
+                              {
+                                "type": "number",
+                                "minimum": 0,
+                                "maximum": 5000
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "installation": {
+                            "type": [
+                              "boolean",
+                              "null"
+                            ]
+                          },
+                          "returns": {
+                            "type": [
+                              "boolean",
+                              "null"
+                            ]
+                          },
+                          "partCategoryId": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "compatibleTypes": {
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "enum": [
+                                "car",
+                                "truck",
+                                "motorcycle",
+                                "tuk_tuk",
+                                "rickshaw"
+                              ]
+                            }
+                          },
+                          "media": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "string",
+                                  "minLength": 1
+                                },
+                                "type": {
+                                  "type": "string",
+                                  "enum": [
+                                    "image",
+                                    "video"
+                                  ]
+                                },
+                                "url": {
+                                  "type": "string"
+                                },
+                                "width": {
+                                  "type": "number"
+                                },
+                                "height": {
+                                  "type": "number"
+                                },
+                                "placeholderColor": {
+                                  "type": "string"
+                                },
+                                "posterUrl": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                }
+                              },
+                              "required": [
+                                "id",
+                                "type",
+                                "url",
+                                "width",
+                                "height",
+                                "placeholderColor",
+                                "posterUrl"
+                              ]
+                            }
+                          },
+                          "cityId": {
+                            "type": "string"
+                          },
+                          "districtId": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "location": {
+                            "anyOf": [
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "lat": {
+                                    "type": "number",
+                                    "minimum": -90,
+                                    "maximum": 90
+                                  },
+                                  "lng": {
+                                    "type": "number",
+                                    "minimum": -180,
+                                    "maximum": 180
+                                  }
+                                },
+                                "required": [
+                                  "lat",
+                                  "lng"
+                                ]
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "status": {
+                            "type": "string",
+                            "enum": [
+                              "available",
+                              "reserved",
+                              "sold",
+                              "rented"
+                            ]
+                          },
+                          "moderation": {
+                            "type": "string",
+                            "enum": [
+                              "draft",
+                              "pending",
+                              "approved",
+                              "rejected",
+                              "removed"
+                            ]
+                          },
+                          "rejectionReason": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "promotions": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "type": {
+                                  "type": "string",
+                                  "enum": [
+                                    "featured",
+                                    "bump"
+                                  ]
+                                },
+                                "startsAt": {
+                                  "type": "string"
+                                },
+                                "endsAt": {
+                                  "type": "string"
+                                }
+                              },
+                              "required": [
+                                "type",
+                                "startsAt",
+                                "endsAt"
+                              ]
+                            }
+                          },
+                          "owner": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string",
+                                "minLength": 1
+                              },
+                              "type": {
+                                "type": "string",
+                                "enum": [
+                                  "user",
+                                  "dealership"
+                                ]
+                              },
+                              "name": {
+                                "type": "object",
+                                "properties": {
+                                  "ar": {
+                                    "type": "string"
+                                  },
+                                  "en": {
+                                    "type": "string"
+                                  }
+                                },
+                                "required": [
+                                  "ar",
+                                  "en"
+                                ]
+                              },
+                              "avatarUrl": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
+                              },
+                              "verified": {
+                                "type": "boolean"
+                              },
+                              "memberSince": {
+                                "type": "string"
+                              },
+                              "profileSlug": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
+                              }
+                            },
+                            "required": [
+                              "id",
+                              "type",
+                              "name",
+                              "avatarUrl",
+                              "verified",
+                              "memberSince",
+                              "profileSlug"
+                            ]
+                          },
+                          "contact": {
+                            "type": "object",
+                            "properties": {
+                              "phone": {
+                                "type": "string",
+                                "pattern": "^\\+[1-9]\\d{7,14}$"
+                              },
+                              "whatsapp": {
+                                "anyOf": [
+                                  {
+                                    "type": "string",
+                                    "pattern": "^\\+[1-9]\\d{7,14}$"
+                                  },
+                                  {
+                                    "type": "null"
+                                  }
+                                ]
+                              },
+                              "showPhone": {
+                                "type": "boolean"
+                              },
+                              "methods": {
+                                "minItems": 1,
+                                "type": "array",
+                                "items": {
+                                  "type": "string",
+                                  "enum": [
+                                    "call",
+                                    "whatsapp",
+                                    "chat"
+                                  ]
+                                }
+                              }
+                            },
+                            "required": [
+                              "phone",
+                              "whatsapp",
+                              "showPhone",
+                              "methods"
+                            ]
+                          },
+                          "stats": {
+                            "type": "object",
+                            "properties": {
+                              "views": {
+                                "type": "number"
+                              },
+                              "favorites": {
+                                "type": "number"
+                              },
+                              "phoneClicks": {
+                                "type": "number"
+                              },
+                              "whatsappClicks": {
+                                "type": "number"
+                              }
+                            },
+                            "required": [
+                              "views",
+                              "favorites",
+                              "phoneClicks",
+                              "whatsappClicks"
+                            ]
+                          },
+                          "createdAt": {
+                            "type": "string"
+                          },
+                          "updatedAt": {
+                            "type": "string"
+                          },
+                          "expiresAt": {
+                            "type": "string"
+                          },
+                          "savedAt": {
+                            "type": "string"
+                          },
+                          "unavailable": {
+                            "type": "boolean"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "slug",
+                          "kind",
+                          "intent",
+                          "vehicleType",
+                          "title",
+                          "description",
+                          "price",
+                          "negotiable",
+                          "rentPeriod",
+                          "condition",
+                          "makeId",
+                          "modelId",
+                          "makeOther",
+                          "modelOther",
+                          "year",
+                          "mileageKm",
+                          "fuel",
+                          "transmission",
+                          "color",
+                          "engineCc",
+                          "payloadTons",
+                          "partNumber",
+                          "trim",
+                          "bodyType",
+                          "colorInterior",
+                          "origin",
+                          "cylinders",
+                          "horsepower",
+                          "driveType",
+                          "strokes",
+                          "starter",
+                          "doors",
+                          "seats",
+                          "axles",
+                          "grossWeightTons",
+                          "cabType",
+                          "previousOwners",
+                          "accidentFree",
+                          "paint",
+                          "serviceHistory",
+                          "warranty",
+                          "warrantyMonths",
+                          "customsCleared",
+                          "registered",
+                          "plateType",
+                          "plateCityId",
+                          "licenseValidUntil",
+                          "insurance",
+                          "chassisNumber",
+                          "exchange",
+                          "financing",
+                          "testDrive",
+                          "inspectionReport",
+                          "driver",
+                          "minRent",
+                          "deposit",
+                          "kmLimitPerDay",
+                          "insuranceIncluded",
+                          "fuelPolicy",
+                          "delivery",
+                          "minDriverAge",
+                          "licenseYears",
+                          "features",
+                          "partBrand",
+                          "partType",
+                          "partPosition",
+                          "quantity",
+                          "compatibleMakeIds",
+                          "fitsYearFrom",
+                          "fitsYearTo",
+                          "dimensions",
+                          "weightKg",
+                          "installation",
+                          "returns",
+                          "partCategoryId",
+                          "compatibleTypes",
+                          "media",
+                          "cityId",
+                          "districtId",
+                          "location",
+                          "status",
+                          "moderation",
+                          "rejectionReason",
+                          "promotions",
+                          "owner",
+                          "contact",
+                          "stats",
+                          "createdAt",
+                          "updatedAt",
+                          "expiresAt",
+                          "savedAt",
+                          "unavailable"
+                        ]
+                      }
+                    },
+                    "total": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    },
+                    "page": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    },
+                    "pageSize": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "items",
+                    "total",
+                    "page",
+                    "pageSize"
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "unauthenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "const": "unauthenticated"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "fields": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    "retryAfter": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "banned",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "const": "banned"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "fields": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    "retryAfter": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ]
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "validation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "const": "validation"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "fields": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    "retryAfter": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "postFavorites",
+        "summary": "Save a listing; saving twice changes nothing, an unknown id is 404",
+        "security": [
+          {
+            "session": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "listingId": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "required": [
+                  "listingId"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "const": true
+                    }
+                  },
+                  "required": [
+                    "ok"
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "unauthenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "const": "unauthenticated"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "fields": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    "retryAfter": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "banned",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "const": "banned"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "fields": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    "retryAfter": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "not_found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "const": "not_found"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "fields": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    "retryAfter": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ]
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "validation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "const": "validation"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "fields": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    "retryAfter": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "deleteFavorites",
+        "summary": "Un-save every listing of the signed-in account",
+        "security": [
+          {
+            "session": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "const": true
+                    }
+                  },
+                  "required": [
+                    "ok"
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "unauthenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "const": "unauthenticated"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "fields": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    "retryAfter": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "banned",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "const": "banned"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "fields": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    "retryAfter": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/favorites/{listingId}": {
+      "delete": {
+        "operationId": "deleteFavoritesByListingId",
+        "summary": "Un-save one listing; one that was not saved changes nothing",
+        "security": [
+          {
+            "session": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "listingId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "const": true
+                    }
+                  },
+                  "required": [
+                    "ok"
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "unauthenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "const": "unauthenticated"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "fields": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    "retryAfter": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "banned",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "const": "banned"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "fields": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    "retryAfter": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {

@@ -5,6 +5,7 @@ import type { Executor } from "~/shared/db/tx"
 import type { SessionUser } from "~/modules/auth/auth.types"
 
 import * as q from "./listings.queries"
+import * as statsQ from "./listings.stats.queries"
 import { checkCanEdit } from "./listings.rules.service"
 import { listByIds } from "./listings.search.queries"
 import { toListings } from "./listings.view.service"
@@ -26,6 +27,16 @@ export async function countListingEvent(
   const counter = COUNTERS[event.type as keyof typeof COUNTERS]
   if (counter) return q.bumpStat(ex, event.id, counter)
   return q.hasListing(ex, event.id)
+}
+
+/** Whether a listing with this id exists, in any state. */
+export function hasListing(ex: Executor, id: string) {
+  return q.hasListing(ex, id)
+}
+
+/** A listing was saved (`1`) or unsaved (`-1`) by this many people more: the saved-by counter follows. */
+export function moveFavorites(ex: Executor, ids: string[], delta: 1 | -1) {
+  return statsQ.bumpFavorites(ex, ids, delta)
 }
 
 /** Ids of every listing the user owns, in id order, whatever their state. */

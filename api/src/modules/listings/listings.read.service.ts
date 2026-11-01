@@ -8,6 +8,7 @@ import type { SessionUser } from "~/modules/auth/auth.types"
 import * as businesses from "~/modules/businesses/businesses.service"
 
 import * as q from "./listings.queries"
+import { listByIds } from "./listings.search.queries"
 import {
   type ListingRow,
   toListings,
@@ -43,6 +44,11 @@ export async function listSimilar(viewer: SessionUser | null, id: string) {
     limit: SIMILAR_COUNT,
   })
   return toListings(db, rows, viewer)
+}
+
+/** Listings by id, in any state, in the order of `ids`; unknown ids are left out. */
+export function getRowsByIds(ex: Executor, ids: string[]) {
+  return listByIds(ex, ids)
 }
 
 /**

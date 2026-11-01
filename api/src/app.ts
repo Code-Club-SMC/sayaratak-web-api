@@ -24,6 +24,7 @@ import { mechanicPortfolioRoutes } from "~/modules/mechanic-portfolio/mechanic-p
 import { myBusinessRoutes } from "~/modules/my-business/my-business.routes"
 import { workshopServicesRoutes } from "~/modules/workshop-services/workshop-services.routes"
 import { onboardingRoutes } from "~/modules/onboarding/onboarding.routes"
+import { reviewsRoutes } from "~/modules/reviews/reviews.routes"
 import { taxonomyRoutes } from "~/modules/taxonomy/taxonomy.routes"
 import { uploadsRoutes } from "~/modules/uploads/uploads.routes"
 
@@ -61,6 +62,7 @@ const v1 = new Hono()
   .route("/", listingsRoutes)
   .route("/", mapRoutes)
   .route("/", analyticsRoutes)
+  .route("/", reviewsRoutes)
 
 // Middleware in A3 order. The per-request log line comes with 10.4; the 500
 // log line is in onError.

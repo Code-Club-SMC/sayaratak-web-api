@@ -54,6 +54,28 @@ export async function getPictureIds(
   return { logoUrl: row?.logoUrl ?? null, coverUrl: row?.coverUrl ?? null }
 }
 
+/** The kind and owner account of the profile with this id; ids are unique across the three kinds. */
+export async function getOwnerOf(ex: Executor, id: string) {
+  const tables = [
+    ["dealership", dealerships],
+    ["workshop", workshops],
+    ["mechanic", mechanics],
+  ] as const
+  const found = await Promise.all(
+    tables.map(([kind, table]) =>
+      ex
+        .select({ ownerUserId: table.ownerUserId })
+        .from(table)
+        .where(eq(table.id, id))
+        .limit(1)
+        .then(([row]) =>
+          row ? { kind, ownerUserId: row.ownerUserId } : undefined
+        )
+    )
+  )
+  return found.find(Boolean)
+}
+
 /** Whether a dealership, workshop or mechanic profile has this id. */
 export async function hasBusiness(ex: Executor, id: string) {
   const found = await Promise.all(

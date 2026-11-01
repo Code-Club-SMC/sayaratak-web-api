@@ -33,6 +33,11 @@ export function getBusinessRefOf(ex: Executor, ownerUserId: string) {
   return q.getRefOfOwner(ex, ownerUserId)
 }
 
+/** The kind and owner account of the profile with this id; `undefined` for an unknown id. */
+export function getBusinessOwnerOf(ex: Executor, id: string) {
+  return q.getOwnerOf(ex, id)
+}
+
 /** Takes the business row's lock until the transaction ends, so edits of one business queue up. */
 export async function lockBusiness(tx: Transaction, ref: BusinessRef) {
   await w.lockBusiness(tx, ref)

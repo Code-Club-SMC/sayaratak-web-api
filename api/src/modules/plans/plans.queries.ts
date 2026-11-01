@@ -100,3 +100,7 @@ export function listCurrent(ex: Executor, userId: string) {
     )
     .orderBy(desc(subscriptions.startsAt))
 }
+
+export function countActive(ex: Executor) {
+  return ex.$count(subscriptions, eq(subscriptions.status, "active"))
+}

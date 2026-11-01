@@ -138,6 +138,7 @@ export const activityItemSchema = z.object({
   href: z.string(), // admin path of the matching screen with the item selected
   createdAt: z.string(),
 })
+export type ActivityItem = z.infer<typeof activityItemSchema>
 export const activitySchema = z.object({ items: z.array(activityItemSchema) }) // newest first, at most 10
 
 const searchHit = z.object({
@@ -152,6 +153,7 @@ export const adminSearchSchema = z.object({
   businesses: z.array(searchHit),
   payments: z.array(searchHit),
 }) // at most 5 each
+export type AdminSearch = z.infer<typeof adminSearchSchema>
 export const estimateSchema = z.object({ count: z.number().int() }) // broadcast recipients
 
 export const myPromotionSchema = promotionSchema.extend({

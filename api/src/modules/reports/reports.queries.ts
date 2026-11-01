@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm"
+import { asc, desc, eq, sql } from "drizzle-orm"
 
 import type { Executor } from "~/shared/db/tx"
 
@@ -20,4 +20,22 @@ export function insert(ex: Executor, row: NewReportRow) {
       if (!inserted) throw new Error("insert into reports returned no row")
       return inserted
     })
+}
+
+/** The newest reports, ties in the mock's id order (`rp-2` before `rp-10`). */
+export function listNewest(ex: Executor, limit: number) {
+  return ex
+    .select({
+      id: reports.id,
+      listingId: reports.listingId,
+      reason: reports.reason,
+      createdAt: reports.createdAt,
+    })
+    .from(reports)
+    .orderBy(
+      desc(reports.createdAt),
+      asc(sql`length(${reports.id})`),
+      asc(reports.id)
+    )
+    .limit(limit)
 }

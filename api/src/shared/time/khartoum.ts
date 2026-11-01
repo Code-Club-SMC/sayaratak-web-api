@@ -26,13 +26,13 @@ export function daysUpTo(last: string, length: number) {
   return Array.from({ length }, (_, i) => daysBefore(last, length - 1 - i))
 }
 
-/** The Khartoum day of a timestamp column, as text (`"2026-11-02"`). */
-export function dayColumn(column: PgColumn) {
+/** The Khartoum day of a timestamp column or expression, as text (`"2026-11-02"`). */
+export function dayColumn(column: PgColumn | SQL) {
   return sql<string>`to_char(${column} at time zone ${SQL_ZONE}, 'YYYY-MM-DD')`
 }
 
 /** Matches timestamps inside the Khartoum days `first` to `last`, both included. */
-export function withinDays(column: PgColumn, days: DayRange): SQL {
+export function withinDays(column: PgColumn | SQL, days: DayRange): SQL {
   return sql`${column} >= (${days.first}::date::timestamp at time zone ${SQL_ZONE}) and ${column} < ((${days.last}::date + 1)::timestamp at time zone ${SQL_ZONE})`
 }
 

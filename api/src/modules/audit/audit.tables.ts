@@ -26,3 +26,5 @@ export const auditLog = pgTable(
     index().on(table.targetType, table.targetId),
   ]
 )
+
+export type NewAuditRow = typeof auditLog.$inferInsert

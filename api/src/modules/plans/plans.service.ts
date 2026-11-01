@@ -101,3 +101,8 @@ export async function getCreditsOf(ex: Executor, userId: string) {
   const plan = sub && (await q.getPlan(ex, sub.planId))
   return getCredits(ex, { userId, sub, total: plan?.featuredCredits })
 }
+
+/** Accounts on an active plan, the free one included. */
+export function countActiveSubscriptions(ex: Executor) {
+  return q.countActive(ex)
+}

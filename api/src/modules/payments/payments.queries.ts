@@ -1,6 +1,7 @@
-import { and, desc, eq, inArray } from "drizzle-orm"
+import { and, asc, desc, eq, ilike, inArray, or, sql } from "drizzle-orm"
 
 import type { Executor } from "~/shared/db/tx"
+import { type DayRange, dayColumn, withinDays } from "~/shared/time/khartoum"
 
 import {
   type NewPaymentRow,
@@ -110,4 +111,54 @@ export function listPromotionStatuses(ex: Executor, promotionIds: string[]) {
       )
     )
     .orderBy(payments.itemId, desc(payments.createdAt))
+}
+
+/** Money of approved payments per Khartoum day inside `days`, counted on the day the admin decided (the send day if none). */
+export function listApprovedPerDay(ex: Executor, days: DayRange) {
+  const decidedAt = sql`coalesce(${payments.reviewedAt}, ${payments.createdAt})`
+  const day = dayColumn(decidedAt)
+  return ex
+    .select({
+      day,
+      amount: sql`coalesce(sum(${payments.amount}), 0)`.mapWith(Number),
+    })
+    .from(payments)
+    .where(and(eq(payments.status, "approved"), withinDays(decidedAt, days)))
+    .groupBy(day)
+}
+
+/** The newest payments, ties in the mock's id order (`pay-2` before `pay-10`). */
+export function listNewest(ex: Executor, limit: number) {
+  return ex
+    .select({
+      id: payments.id,
+      reference: payments.reference,
+      createdAt: payments.createdAt,
+    })
+    .from(payments)
+    .orderBy(
+      desc(payments.createdAt),
+      asc(sql`length(${payments.id})`),
+      asc(payments.id)
+    )
+    .limit(limit)
+}
+
+/** Payments whose reference or payer name holds the pattern. */
+export function search(ex: Executor, find: { pattern: string; limit: number }) {
+  return ex
+    .select({
+      id: payments.id,
+      reference: payments.reference,
+      payerName: payments.payerName,
+    })
+    .from(payments)
+    .where(
+      or(
+        ilike(payments.reference, find.pattern),
+        ilike(payments.payerName, find.pattern)
+      )
+    )
+    .orderBy(asc(sql`length(${payments.id})`), asc(payments.id))
+    .limit(find.limit)
 }

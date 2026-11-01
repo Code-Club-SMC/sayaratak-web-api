@@ -7,6 +7,7 @@ import { fail } from "~/shared/http/errors"
 import { newId } from "~/shared/text/ids"
 import { clock } from "~/shared/time/clock"
 import type { SessionUser } from "~/modules/auth/auth.types"
+import { getRowsByIds } from "~/modules/listings/listings.read.service"
 import * as listings from "~/modules/listings/listings.stats.service"
 
 import { toReport } from "./reports.mapper"
@@ -40,4 +41,19 @@ export async function createReport(
     createdAt: clock.now(),
   })
   return toReport(saved)
+}
+
+/** The newest reports, newest first, each named by its listing's title (its reason once the listing is gone). */
+export async function listNewestReports(ex: Executor, limit: number) {
+  const rows = await q.listNewest(ex, limit)
+  const found = await getRowsByIds(
+    ex,
+    rows.flatMap((row) => (row.listingId ? [row.listingId] : []))
+  )
+  const titles = new Map(found.map((listing) => [listing.id, listing.title]))
+  return rows.map((row) => ({
+    id: row.id,
+    label: titles.get(row.listingId ?? "") ?? row.reason,
+    createdAt: row.createdAt,
+  }))
 }

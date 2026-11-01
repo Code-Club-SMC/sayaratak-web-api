@@ -11,3 +11,11 @@ export function newId(prefix: string) {
   )
   return `${prefix}-${suffix}`
 }
+
+const LISTING_ID_LENGTH = 5
+
+/** A listing id: `l` and five base36 characters, the end of every listing slug (A5). */
+export function newListingId() {
+  const bytes = crypto.getRandomValues(new Uint8Array(LISTING_ID_LENGTH))
+  return `l${Array.from(bytes, (b) => ALPHABET[b % ALPHABET.length]).join("")}`
+}

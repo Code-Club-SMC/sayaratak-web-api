@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm"
+import { eq, inArray } from "drizzle-orm"
 
 import type { Executor } from "~/shared/db/tx"
 
@@ -17,4 +17,20 @@ export async function getIdOfOwner(ex: Executor, ownerUserId: string) {
     )
   )
   return found.find(Boolean)
+}
+
+export function getDealershipOf(ex: Executor, ownerUserId: string) {
+  return ex
+    .select()
+    .from(dealerships)
+    .where(eq(dealerships.ownerUserId, ownerUserId))
+    .then(([row]) => row)
+}
+
+export function listDealershipsOf(ex: Executor, ownerUserIds: string[]) {
+  if (ownerUserIds.length === 0) return Promise.resolve([])
+  return ex
+    .select()
+    .from(dealerships)
+    .where(inArray(dealerships.ownerUserId, ownerUserIds))
 }

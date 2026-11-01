@@ -8,7 +8,6 @@ import {
   pgTable,
   text,
   timestamp,
-  uniqueIndex,
 } from "drizzle-orm/pg-core"
 
 import { user } from "~/modules/auth/auth.tables"
@@ -50,7 +49,8 @@ export const uploads = pgTable(
   },
   (table) => [
     index().on(table.ownerUserId),
-    uniqueIndex().on(table.cloudinaryId),
+    // Not unique: a duplicated listing shares its photos with the original.
+    index().on(table.cloudinaryId),
     index().on(table.createdAt).where(sql`${table.attachedAt} is null`),
     check(
       "uploads_one_source",

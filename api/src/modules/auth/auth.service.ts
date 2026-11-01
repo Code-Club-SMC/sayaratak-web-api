@@ -1,4 +1,5 @@
 import { db } from "~/shared/db/client"
+import type { Executor } from "~/shared/db/tx"
 
 import { clock } from "~/shared/time/clock"
 import * as uploads from "~/modules/uploads/uploads.service"
@@ -36,6 +37,19 @@ export async function getMe(viewer: SessionUser | null) {
     uploads.uploadUrl(db, viewer.avatarUploadId),
   ])
   return toUser(viewer, { hasPassword, avatarUrl })
+}
+
+/**
+ * Locks the account row until the transaction ends, so two parallel requests
+ * that count something the account owns (plan limit) run one after the other.
+ */
+export async function lockUser(ex: Executor, id: string) {
+  await q.lockUser(ex, id)
+}
+
+/** The accounts with these ids, as the session middleware loads them. */
+export function listUsers(ex: Executor, ids: string[]) {
+  return q.listUsers(ex, ids)
 }
 
 /** Banned now: a permanent ban, or a timed one that has not ended (A6). */

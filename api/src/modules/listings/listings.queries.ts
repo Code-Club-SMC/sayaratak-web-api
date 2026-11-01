@@ -1,8 +1,18 @@
-import { eq } from "drizzle-orm"
+import { and, asc, eq, gt, inArray } from "drizzle-orm"
 
 import type { Executor } from "~/shared/db/tx"
 
-import { listings } from "./listings.tables"
+import {
+  listingMedia,
+  listings,
+  listingStats,
+  type NewListingRow,
+} from "./listings.tables"
+
+// A listing counts against the plan limit while pending or approved,
+// available or reserved, and not expired (mock `listingUsage`).
+const LIVE_MODERATION = ["pending", "approved"] as const
+const LIVE_STATUS = ["available", "reserved"] as const
 
 /** Marks every listing of the owner removed and returns their ids. */
 export function updateRemovedOf(ex: Executor, ownerUserId: string) {
@@ -16,4 +26,104 @@ export function updateRemovedOf(ex: Executor, ownerUserId: string) {
 
 export function countPending(ex: Executor) {
   return ex.$count(listings, eq(listings.moderation, "pending"))
+}
+
+export function getListing(ex: Executor, id: string) {
+  return ex
+    .select()
+    .from(listings)
+    .where(eq(listings.id, id))
+    .then(([row]) => row)
+}
+
+export function lockListing(ex: Executor, id: string) {
+  return ex
+    .select()
+    .from(listings)
+    .where(eq(listings.id, id))
+    .for("update")
+    .then(([row]) => row)
+}
+
+export function hasListing(ex: Executor, id: string) {
+  return ex
+    .select({ id: listings.id })
+    .from(listings)
+    .where(eq(listings.id, id))
+    .limit(1)
+    .then((rows) => rows.length > 0)
+}
+
+export function countLiveOf(
+  ex: Executor,
+  owner: { ownerUserId: string; now: Date }
+) {
+  return ex.$count(
+    listings,
+    and(
+      eq(listings.ownerUserId, owner.ownerUserId),
+      inArray(listings.moderation, LIVE_MODERATION),
+      inArray(listings.status, LIVE_STATUS),
+      gt(listings.expiresAt, owner.now)
+    )
+  )
+}
+
+export async function insertListing(ex: Executor, row: NewListingRow) {
+  const [inserted] = await ex.insert(listings).values(row).returning()
+  // One row in, one row back; anything else is a driver fault.
+  if (!inserted) throw new Error("insert into listings returned no row")
+  await ex.insert(listingStats).values({ listingId: inserted.id })
+  return inserted
+}
+
+export async function updateListing(
+  ex: Executor,
+  change: { id: string; set: Partial<NewListingRow> }
+) {
+  const [row] = await ex
+    .update(listings)
+    .set(change.set)
+    .where(eq(listings.id, change.id))
+    .returning()
+  if (!row) throw new Error("update of listings returned no row")
+  return row
+}
+
+export function deleteListing(ex: Executor, id: string) {
+  return ex.delete(listings).where(eq(listings.id, id))
+}
+
+export function listStats(ex: Executor, ids: string[]) {
+  if (ids.length === 0) return Promise.resolve([])
+  return ex
+    .select()
+    .from(listingStats)
+    .where(inArray(listingStats.listingId, ids))
+}
+
+export function listMediaIds(ex: Executor, ids: string[]) {
+  if (ids.length === 0) return Promise.resolve([])
+  return ex
+    .select()
+    .from(listingMedia)
+    .where(inArray(listingMedia.listingId, ids))
+    .orderBy(asc(listingMedia.listingId), asc(listingMedia.position))
+}
+
+export async function replaceMedia(
+  ex: Executor,
+  media: { listingId: string; uploadIds: string[] }
+) {
+  await ex
+    .delete(listingMedia)
+    .where(eq(listingMedia.listingId, media.listingId))
+  if (media.uploadIds.length === 0) return
+  await ex.insert(listingMedia).values(
+    media.uploadIds.map((uploadId, position) => ({
+      listingId: media.listingId,
+      position,
+      uploadId,
+    }))
+  )
 }

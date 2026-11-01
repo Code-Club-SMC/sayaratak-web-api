@@ -83,7 +83,7 @@ function toBoolean(value: string) {
 // Zod issues to `fields`, first issue per path. The shared schemas write i18n
 // keys as messages; any other message (a Zod default) reads as "required",
 // as the mock's `zodFields` does. An issue on the whole body uses the key "_".
-function toFields(error: z.ZodError): ErrorFields {
+export function toFields(error: z.ZodError): ErrorFields {
   const fields: ErrorFields = {}
   for (const issue of error.issues) {
     const name = issue.path.join(".") || "_"

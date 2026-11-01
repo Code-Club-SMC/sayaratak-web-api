@@ -163,3 +163,4 @@ export const listingMedia = pgTable(
 )
 
 export type ListingRow = typeof listings.$inferSelect
+export type NewListingRow = typeof listings.$inferInsert

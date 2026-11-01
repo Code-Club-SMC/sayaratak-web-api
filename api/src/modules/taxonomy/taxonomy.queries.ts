@@ -1,4 +1,4 @@
-import { asc, eq } from "drizzle-orm"
+import { and, asc, eq, inArray } from "drizzle-orm"
 
 import type { Executor } from "~/shared/db/tx"
 
@@ -74,4 +74,65 @@ export function listServiceTemplates(ex: Executor) {
     .select()
     .from(serviceTemplates)
     .orderBy(asc(serviceTemplates.position))
+}
+
+export function hasDistrictIn(
+  ex: Executor,
+  place: { cityId: string; districtId: string }
+) {
+  return ex
+    .select({ id: districts.id })
+    .from(districts)
+    .where(
+      and(
+        eq(districts.id, place.districtId),
+        eq(districts.cityId, place.cityId)
+      )
+    )
+    .limit(1)
+    .then((rows) => rows.length > 0)
+}
+
+export function hasModelOf(
+  ex: Executor,
+  pick: { makeId: string; modelId: string }
+) {
+  return ex
+    .select({ id: models.id })
+    .from(models)
+    .where(and(eq(models.id, pick.modelId), eq(models.makeId, pick.makeId)))
+    .limit(1)
+    .then((rows) => rows.length > 0)
+}
+
+export function hasMake(ex: Executor, id: string) {
+  return ex
+    .select({ id: makes.id })
+    .from(makes)
+    .where(eq(makes.id, id))
+    .limit(1)
+    .then((rows) => rows.length > 0)
+}
+
+export function hasPartCategory(ex: Executor, id: string) {
+  return ex
+    .select({ id: partCategories.id })
+    .from(partCategories)
+    .where(eq(partCategories.id, id))
+    .limit(1)
+    .then((rows) => rows.length > 0)
+}
+
+export function listMakeAndModelNames(ex: Executor, ids: string[]) {
+  if (ids.length === 0) return Promise.resolve([])
+  return Promise.all([
+    ex
+      .select({ id: makes.id, name: makes.name })
+      .from(makes)
+      .where(inArray(makes.id, ids)),
+    ex
+      .select({ id: models.id, name: models.name })
+      .from(models)
+      .where(inArray(models.id, ids)),
+  ]).then((lists) => lists.flat())
 }

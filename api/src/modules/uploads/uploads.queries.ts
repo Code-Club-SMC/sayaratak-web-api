@@ -1,4 +1,4 @@
-import { and, eq } from "drizzle-orm"
+import { and, eq, inArray, isNull } from "drizzle-orm"
 
 import type { Executor } from "~/shared/db/tx"
 
@@ -57,4 +57,38 @@ export function getImageIdByCloudinaryId(
       )
     )
     .then(([row]) => row?.id)
+}
+
+export function listUploads(ex: Executor, ids: string[]) {
+  if (ids.length === 0) return Promise.resolve([])
+  return ex.select().from(uploads).where(inArray(uploads.id, ids))
+}
+
+export function updateAttached(
+  ex: Executor,
+  change: { ids: string[]; at: Date }
+) {
+  return ex
+    .update(uploads)
+    .set({ attachedAt: change.at })
+    .where(and(inArray(uploads.id, change.ids), isNull(uploads.attachedAt)))
+}
+
+export function insertUploads(ex: Executor, rows: NewUploadRow[]) {
+  if (rows.length === 0) return Promise.resolve([])
+  return ex.insert(uploads).values(rows).returning()
+}
+
+export function deleteUploads(ex: Executor, ids: string[]) {
+  if (ids.length === 0) return Promise.resolve([])
+  return ex.delete(uploads).where(inArray(uploads.id, ids)).returning()
+}
+
+export function hasCloudinaryId(ex: Executor, cloudinaryId: string) {
+  return ex
+    .select({ id: uploads.id })
+    .from(uploads)
+    .where(eq(uploads.cloudinaryId, cloudinaryId))
+    .limit(1)
+    .then((rows) => rows.length > 0)
 }

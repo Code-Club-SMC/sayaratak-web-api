@@ -6,3 +6,14 @@ import * as q from "./businesses.queries"
 export function getBusinessIdOf(ex: Executor, ownerUserId: string) {
   return q.getIdOfOwner(ex, ownerUserId)
 }
+
+/** The dealership the user owns, if any. */
+export function getDealershipOf(ex: Executor, ownerUserId: string) {
+  return q.getDealershipOf(ex, ownerUserId)
+}
+
+/** The dealerships of these owners, keyed by owner id. */
+export async function getDealershipsOf(ex: Executor, ownerUserIds: string[]) {
+  const rows = await q.listDealershipsOf(ex, ownerUserIds)
+  return new Map(rows.map((row) => [row.ownerUserId, row]))
+}

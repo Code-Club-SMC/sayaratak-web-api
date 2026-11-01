@@ -16,6 +16,7 @@ import { accountRoutes } from "~/modules/account/account.routes"
 import { authRoutes } from "~/modules/auth/auth.routes"
 import { contentRoutes } from "~/modules/content/content.routes"
 import { notificationsRoutes } from "~/modules/notifications/notifications.routes"
+import { taxonomyRoutes } from "~/modules/taxonomy/taxonomy.routes"
 
 // The Origin header never has a trailing slash; WEB_ORIGIN may.
 const webOrigin = new URL(env.WEB_ORIGIN).origin
@@ -41,6 +42,7 @@ const v1 = new Hono()
   .route("/", contentRoutes)
   .route("/", accountRoutes)
   .route("/", notificationsRoutes)
+  .route("/", taxonomyRoutes)
 
 // Middleware in A3 order. The per-request log line comes with 10.4; the 500
 // log line is in onError.
@@ -62,7 +64,8 @@ export const app = new Hono()
   .use(async (c, next) => {
     await next()
     // A12: no-store unless a public reference read sets its own Cache-Control.
-    if (!c.res.headers.has("Cache-Control"))
+    // An answer carrying a cookie (a refreshed session) is never cacheable.
+    if (!c.res.headers.has("Cache-Control") || c.res.headers.has("Set-Cookie"))
       c.header("Cache-Control", "no-store")
   })
   .use(

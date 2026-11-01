@@ -1,6 +1,7 @@
 import { siteSchema } from "@sayaratak/shared/schemas/responses"
 import { Hono } from "hono"
 
+import { publicCache } from "~/shared/http/cache"
 import { spec } from "~/shared/openapi/registry"
 
 import { getSite } from "./content.service"
@@ -15,6 +16,7 @@ contentRoutes.get(
     responses: { 200: siteSchema },
     errors: ["not_found"],
   }),
+  publicCache,
   async (c) => {
     const site = await getSite()
     return c.json(site)

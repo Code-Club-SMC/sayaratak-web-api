@@ -19,6 +19,7 @@ describe("GET /site", () => {
     expect(res.status).toBe(200)
     const site = await expectSchema(res, siteSchema)
     expect(site).toEqual({ contact: seeded.contact, locales: seeded.locales })
+    expect(res.headers.get("cache-control")).toBe("public, max-age=60")
   })
 
   test("never shows banking or moderation settings", async () => {
@@ -34,6 +35,7 @@ describe("GET /site", () => {
     const res = await req("/site")
     expect(res.status).toBe(404)
     expect(await res.json()).toMatchObject({ code: "not_found" })
+    expect(res.headers.get("cache-control")).toBe("no-store")
   })
 })
 

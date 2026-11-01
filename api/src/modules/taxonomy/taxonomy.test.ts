@@ -1,9 +1,17 @@
 import { beforeEach, describe, expect, test } from "bun:test"
+import { taxonomySchema } from "@sayaratak/shared/schemas/taxonomy"
 import { asc, eq, sql } from "drizzle-orm"
 
+import { session } from "~/modules/auth/auth.tables"
 import { db } from "~/shared/db/client"
 
-import { buildSeed, resetDb } from "../../../tests/helpers"
+import {
+  buildSeed,
+  expectSchema,
+  req,
+  resetDb,
+  signIn,
+} from "../../../tests/helpers"
 import { cities, countries, makes, models } from "./taxonomy.tables"
 
 const seeded = buildSeed()
@@ -53,5 +61,67 @@ describe("taxonomy tables", () => {
       )
       .catch((error) => error)
     expect(oneSlot.cause.constraint).toBe("makes_name")
+  })
+})
+
+describe("GET /taxonomy", () => {
+  test("answers every list in the mock's order, checked by the shared schema", async () => {
+    const res = await req("/taxonomy")
+    expect(res.status).toBe(200)
+    const taxonomy = await expectSchema(res, taxonomySchema)
+    expect(taxonomy.makes.map((make) => make.id)).toEqual(
+      seeded.taxonomy.makes.map((make) => make.id)
+    )
+    expect(taxonomy.cities[0]?.center).toEqual(
+      seeded.taxonomy.cities[0]?.center
+    )
+    expect(taxonomy.specializations).toEqual(seeded.taxonomy.specializations)
+  })
+
+  test("leaves out cities and districts of a turned-off country", async () => {
+    const countryId = seeded.taxonomy.cities[0]?.countryId ?? ""
+    await db
+      .update(countries)
+      .set({ enabled: false })
+      .where(eq(countries.id, countryId))
+    const taxonomy = await expectSchema(await req("/taxonomy"), taxonomySchema)
+    const hidden = new Set(
+      seeded.taxonomy.cities
+        .filter((city) => city.countryId === countryId)
+        .map((city) => city.id)
+    )
+    expect(hidden.size).toBeGreaterThan(0)
+    expect(taxonomy.cities.some((city) => hidden.has(city.id))).toBe(false)
+    expect(taxonomy.districts.some((d) => hidden.has(d.cityId))).toBe(false)
+    expect(taxonomy.makes).toHaveLength(seeded.taxonomy.makes.length)
+  })
+
+  test("shows a make's uploaded logo and leaves the key out without one", async () => {
+    const [first, second] = seeded.taxonomy.makes
+    await db
+      .update(makes)
+      .set({ logoUrl: "https://cdn.example/logo.webp" })
+      .where(eq(makes.id, first?.id ?? ""))
+    const text = await (await req("/taxonomy")).text()
+    const taxonomy = taxonomySchema.parse(JSON.parse(text))
+    expect(taxonomy.makes[0]?.logoUrl).toBe("https://cdn.example/logo.webp")
+    expect(taxonomy.makes[1]?.id).toBe(second?.id ?? "")
+    // Only the one make with a logo carries the key; no `"logoUrl": null`.
+    expect(text.split('"logoUrl"')).toHaveLength(2)
+  })
+
+  test("may be cached publicly for a minute (A12)", async () => {
+    const res = await req("/taxonomy")
+    expect(res.headers.get("cache-control")).toBe("public, max-age=60")
+  })
+
+  test("stays no-store when the answer refreshes the session cookie", async () => {
+    const { cookie } = await signIn("user")
+    // A session close to its end is extended on the next request, which
+    // sets a new cookie.
+    await db.update(session).set({ expiresAt: new Date(Date.now() + 60_000) })
+    const res = await req("/taxonomy", { headers: { cookie } })
+    expect(res.headers.get("set-cookie")).not.toBeNull()
+    expect(res.headers.get("cache-control")).toBe("no-store")
   })
 })

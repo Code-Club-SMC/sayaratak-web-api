@@ -1,4 +1,5 @@
 import { okSchema } from "@sayaratak/shared/schemas/api"
+import { pageOf } from "@sayaratak/shared/schemas/fields"
 import {
   listingCreateSchema,
   listingPatchSchema,
@@ -14,7 +15,7 @@ import { z } from "zod"
 
 import { validate } from "~/shared/http/validate"
 import { spec } from "~/shared/openapi/registry"
-import { requireUser } from "~/modules/auth/auth.middleware"
+import { requireRole, requireUser } from "~/modules/auth/auth.middleware"
 
 import {
   deleteListing,
@@ -22,6 +23,7 @@ import {
   renewListing,
   setListingStatus,
 } from "./listings.actions.service"
+import { listMyListings } from "./listings.mine.service"
 import { getListingBySlug, listSimilar } from "./listings.read.service"
 import { searchListings } from "./listings.search.service"
 import { createListing, patchListing } from "./listings.write.service"
@@ -32,6 +34,16 @@ const OWNER_ERRORS = [
   "forbidden",
   "not_found",
 ] as const
+
+// The owner actions that answer the changed listing.
+const ownerAction = (summary: string, idempotent = false) =>
+  spec({
+    summary,
+    access: "user",
+    responses: { 200: listingSchema },
+    errors: [...OWNER_ERRORS],
+    idempotent,
+  })
 
 export const listingsRoutes = new Hono()
 
@@ -139,12 +151,7 @@ listingsRoutes.delete(
 
 listingsRoutes.post(
   "/listings/:id/status",
-  spec({
-    summary: "Mark a listing available, reserved, sold or rented",
-    access: "user",
-    responses: { 200: listingSchema },
-    errors: [...OWNER_ERRORS],
-  }),
+  ownerAction("Mark a listing available, reserved, sold or rented"),
   requireUser,
   validate.json(listingStatusInputSchema),
   async (c) => {
@@ -158,12 +165,7 @@ listingsRoutes.post(
 
 listingsRoutes.post(
   "/listings/:id/renew",
-  spec({
-    summary: "Extend a listing by the expiry setting's days",
-    access: "user",
-    responses: { 200: listingSchema },
-    errors: [...OWNER_ERRORS],
-  }),
+  ownerAction("Extend a listing by the expiry setting's days"),
   requireUser,
   async (c) => {
     const listing = await renewListing(c.get("user"), c.req.param("id"))
@@ -173,16 +175,26 @@ listingsRoutes.post(
 
 listingsRoutes.post(
   "/listings/:id/duplicate",
-  spec({
-    summary: "Copy a listing, photos included, as a new draft",
-    access: "user",
-    responses: { 200: listingSchema },
-    errors: [...OWNER_ERRORS],
-    idempotent: true,
-  }),
+  ownerAction("Copy a listing, photos included, as a new draft", true),
   requireUser,
   async (c) => {
     const listing = await duplicateListing(c.get("user"), c.req.param("id"))
     return c.json(listing)
+  }
+)
+
+listingsRoutes.get(
+  "/me/listings",
+  spec({
+    summary:
+      "The owner's listings by `tab`, filters `q`, `type`, `intent`, `moderation`, `status`, `needsAttention`, `sort` (price, views, expires) and `dir`; `pageSize` up to 500 for the CSV",
+    access: "user",
+    responses: { 200: pageOf(listingSchema) },
+    errors: ["unauthenticated", "banned", "forbidden"],
+  }),
+  requireRole("user", "dealership"),
+  async (c) => {
+    const page = await listMyListings(c.get("user"), c.req.query())
+    return c.json(page)
   }
 )

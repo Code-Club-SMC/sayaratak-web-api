@@ -18,6 +18,7 @@
     "create-admin": "bun scripts/create-admin.ts",
     "db:backup": "bun scripts/db-backup.ts",
     "db:restore": "bun scripts/db-restore.ts",
+    "job": "bun scripts/job.ts",
     "openapi": "bun scripts/openapi.ts",
     "parity": "bun test parity"
   },

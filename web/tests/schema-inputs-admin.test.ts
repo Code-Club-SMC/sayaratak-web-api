@@ -11,6 +11,7 @@ import {
   assignPlanInputSchema,
   banInputSchema,
   bannerInputSchema,
+  broadcastEstimateQuerySchema,
   broadcastInputSchema,
   bulkInputSchema,
   businessAdminPatchSchema,
@@ -255,6 +256,18 @@ runCases([
     bad: [["list", []]],
   },
   {
+    name: "broadcastEstimateQuerySchema",
+    schema: broadcastEstimateQuerySchema,
+    valid: [
+      { roles: ["user"] },
+      { roles: ["dealership", "mechanic"], cityId: "", verifiedOnly: true },
+    ],
+    bad: [
+      ["no role", { roles: [] }, "validation.select_min"],
+      ["an admin audience", { roles: ["admin"] }],
+    ],
+  },
+  {
     name: "bannerInputSchema",
     schema: bannerInputSchema,
     valid: [
@@ -277,8 +290,13 @@ runCases([
   {
     name: "settingsPatchSchema",
     schema: settingsPatchSchema,
-    valid: [{ listingExpiryDays: 30 }],
-    bad: [["not an object", 1]],
+    valid: [{}, { listingExpiryDays: 30 }, { freeListingLimit: 0 }],
+    bad: [
+      ["not an object", 1],
+      ["no expiry days", { listingExpiryDays: 0 }, "validation.number"],
+      ["negative limit", { freeListingLimit: -1 }, "validation.number"],
+      ["bank account without a number", { bankakAccount: { name: "x" } }],
+    ],
   },
   {
     name: "campaignInputSchema",

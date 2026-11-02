@@ -97,3 +97,20 @@ export async function hasBusinessInDistrict(ex: Executor, districtId: string) {
   ])
   return found.some((rows) => rows.length > 0)
 }
+
+/** Every profile's owner with its city and whether it carries the verified badge, for announcements. */
+export async function listOwnerProfiles(ex: Executor) {
+  // Three independent reads, one per kind.
+  const kinds = await Promise.all(
+    [dealerships, workshops, mechanics].map((table) =>
+      ex
+        .select({
+          ownerUserId: table.ownerUserId,
+          cityId: table.cityId,
+          verified: table.verified,
+        })
+        .from(table)
+    )
+  )
+  return kinds.flat()
+}

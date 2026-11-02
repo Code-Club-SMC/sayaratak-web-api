@@ -1,6 +1,9 @@
 import { z } from "zod"
 
-import { adPageSchema, campaignSchema } from "@sayaratak/shared/schemas/ads"
+import {
+  adminCampaignSchema,
+  adPageSchema,
+} from "@sayaratak/shared/schemas/ads"
 import {
   adPagePatchSchema,
   rejectInputSchema,
@@ -30,21 +33,19 @@ const paymentOf = (campaignId: string) =>
 route("GET", "/admin/campaigns", (c) => {
   admin(c)
   const rank = (x: CampaignRow) => (x.status === "under_review" ? 0 : 1)
-  return z
-    .array(campaignSchema.extend({ receiptUrl: z.string().nullable() }))
-    .parse(
-      [...db.campaigns]
-        .sort(
-          (a, b) => rank(a) - rank(b) || b.createdAt.localeCompare(a.createdAt)
-        )
-        .map((x) => ({
-          ...campaignView(x),
-          receiptUrl:
-            db.payments.find(
-              (p) => p.itemType === "campaign" && p.itemId === x.id
-            )?.receiptUrl ?? null,
-        }))
-    )
+  return z.array(adminCampaignSchema).parse(
+    [...db.campaigns]
+      .sort(
+        (a, b) => rank(a) - rank(b) || b.createdAt.localeCompare(a.createdAt)
+      )
+      .map((x) => ({
+        ...campaignView(x),
+        receiptUrl:
+          db.payments.find(
+            (p) => p.itemType === "campaign" && p.itemId === x.id
+          )?.receiptUrl ?? null,
+      }))
+  )
 })
 
 // Approval checks the banner and the receipt together: the payment is approved with it.

@@ -26,7 +26,7 @@ import {
   transmissionSchema,
   vehicleTypeSchema,
 } from "./listing"
-import { bannerCopySchema, verificationLabels } from "./admin"
+import { bannerCopySchema, settingsSchema, verificationLabels } from "./admin"
 import { adPageIdSchema, creativeSchema } from "./ads"
 import { extraFields } from "./listing-fields"
 import { targetTypeSchema } from "./review"
@@ -339,6 +339,10 @@ export const broadcastInputSchema = broadcastAudienceSchema.extend({
   body: z.object({ ar: requiredText(300), en: requiredText(300) }),
   href: pathSchema.optional(),
 })
+// `GET /admin/broadcasts/estimate`: the audience in the query string (`roles` repeated); Verified only is off when left out.
+export const broadcastEstimateQuerySchema = broadcastAudienceSchema.extend({
+  verifiedOnly: z.boolean().default(false),
+})
 export const adminListingPatchSchema = listingFields
   .pick({ title: true, description: true, price: true })
   .partial()
@@ -372,7 +376,13 @@ export const pagePatchSchema = z
     body: z.object({ ar: z.string(), en: z.string() }),
   })
   .partial()
-export const settingsPatchSchema = z.record(z.string(), z.unknown())
+// `PATCH /admin/settings`: any of the settings. The expiry stays at one day or more and the free limit at zero or more, as the database keeps them; the admin form is stricter.
+export const settingsPatchSchema = settingsSchema
+  .extend({
+    listingExpiryDays: z.number().int().min(1, "validation.number"),
+    freeListingLimit: z.number().int().min(0, "validation.number"),
+  })
+  .partial()
 
 // A self-serve banner campaign: the banner, its link, the pages, and 1 to 4 weeks from a start day (YYYY-MM-DD).
 export const campaignInputSchema = z.object({

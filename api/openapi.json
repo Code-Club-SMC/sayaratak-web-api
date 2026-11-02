@@ -64169,6 +64169,4379 @@
         }
       }
     },
+    "/api/v1/admin/pages/{slug}": {
+      "get": {
+        "operationId": "getAdminPagesBySlug",
+        "summary": "One of the four site pages (about, contact, privacy, terms)",
+        "security": [
+          {
+            "session": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "slug": {
+                      "type": "string",
+                      "enum": [
+                        "about",
+                        "contact",
+                        "privacy",
+                        "terms"
+                      ]
+                    },
+                    "title": {
+                      "type": "object",
+                      "properties": {
+                        "ar": {
+                          "type": "string"
+                        },
+                        "en": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "ar",
+                        "en"
+                      ]
+                    },
+                    "body": {
+                      "type": "object",
+                      "properties": {
+                        "ar": {
+                          "type": "string"
+                        },
+                        "en": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "ar",
+                        "en"
+                      ]
+                    },
+                    "updatedAt": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "slug",
+                    "title",
+                    "body",
+                    "updatedAt"
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "unauthenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "const": "unauthenticated"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "fields": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    "retryAfter": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "banned, forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "banned",
+                        "forbidden"
+                      ]
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "fields": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    "retryAfter": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "not_found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "const": "not_found"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "fields": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    "retryAfter": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "operationId": "patchAdminPagesBySlug",
+        "summary": "Change the title or body of a site page, in both languages; the page is stamped with the time even when nothing was sent",
+        "security": [
+          {
+            "session": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "object",
+                    "properties": {
+                      "ar": {
+                        "type": "string"
+                      },
+                      "en": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "ar",
+                      "en"
+                    ]
+                  },
+                  "body": {
+                    "type": "object",
+                    "properties": {
+                      "ar": {
+                        "type": "string"
+                      },
+                      "en": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "ar",
+                      "en"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "slug": {
+                      "type": "string",
+                      "enum": [
+                        "about",
+                        "contact",
+                        "privacy",
+                        "terms"
+                      ]
+                    },
+                    "title": {
+                      "type": "object",
+                      "properties": {
+                        "ar": {
+                          "type": "string"
+                        },
+                        "en": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "ar",
+                        "en"
+                      ]
+                    },
+                    "body": {
+                      "type": "object",
+                      "properties": {
+                        "ar": {
+                          "type": "string"
+                        },
+                        "en": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "ar",
+                        "en"
+                      ]
+                    },
+                    "updatedAt": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "slug",
+                    "title",
+                    "body",
+                    "updatedAt"
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "unauthenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "const": "unauthenticated"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "fields": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    "retryAfter": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "banned, forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "banned",
+                        "forbidden"
+                      ]
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "fields": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    "retryAfter": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "not_found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "const": "not_found"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "fields": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    "retryAfter": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ]
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "validation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "const": "validation"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "fields": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    "retryAfter": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/settings": {
+      "get": {
+        "operationId": "getAdminSettings",
+        "summary": "Every site setting: listing rules, free limit, Bankak account, contact details, languages and backup schedule",
+        "security": [
+          {
+            "session": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "autoApproveVerifiedDealers": {
+                      "type": "boolean"
+                    },
+                    "listingExpiryDays": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    },
+                    "individualSubscriptionsEnabled": {
+                      "type": "boolean"
+                    },
+                    "freeListingLimit": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    },
+                    "bankakAccount": {
+                      "type": "object",
+                      "properties": {
+                        "name": {
+                          "type": "string"
+                        },
+                        "number": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "name",
+                        "number"
+                      ]
+                    },
+                    "contact": {
+                      "type": "object",
+                      "properties": {
+                        "phone": {
+                          "type": "string"
+                        },
+                        "whatsapp": {
+                          "type": "string"
+                        },
+                        "email": {
+                          "type": "string"
+                        },
+                        "address": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "phone",
+                        "whatsapp",
+                        "email",
+                        "address"
+                      ]
+                    },
+                    "locales": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "enum": [
+                          "ar",
+                          "en"
+                        ]
+                      }
+                    },
+                    "backupSchedule": {
+                      "type": "string",
+                      "enum": [
+                        "daily",
+                        "weekly",
+                        "off"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "autoApproveVerifiedDealers",
+                    "listingExpiryDays",
+                    "individualSubscriptionsEnabled",
+                    "freeListingLimit",
+                    "bankakAccount",
+                    "contact",
+                    "locales",
+                    "backupSchedule"
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "unauthenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "const": "unauthenticated"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "fields": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    "retryAfter": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "banned, forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "banned",
+                        "forbidden"
+                      ]
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "fields": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    "retryAfter": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "operationId": "patchAdminSettings",
+        "summary": "Change the settings sent; the bank account and the contact details are replaced as a whole. The free plan then shows the free listing limit",
+        "security": [
+          {
+            "session": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "autoApproveVerifiedDealers": {
+                    "type": "boolean"
+                  },
+                  "listingExpiryDays": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9007199254740991
+                  },
+                  "individualSubscriptionsEnabled": {
+                    "type": "boolean"
+                  },
+                  "freeListingLimit": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 9007199254740991
+                  },
+                  "bankakAccount": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string"
+                      },
+                      "number": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "name",
+                      "number"
+                    ]
+                  },
+                  "contact": {
+                    "type": "object",
+                    "properties": {
+                      "phone": {
+                        "type": "string"
+                      },
+                      "whatsapp": {
+                        "type": "string"
+                      },
+                      "email": {
+                        "type": "string"
+                      },
+                      "address": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "phone",
+                      "whatsapp",
+                      "email",
+                      "address"
+                    ]
+                  },
+                  "locales": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "enum": [
+                        "ar",
+                        "en"
+                      ]
+                    }
+                  },
+                  "backupSchedule": {
+                    "type": "string",
+                    "enum": [
+                      "daily",
+                      "weekly",
+                      "off"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "autoApproveVerifiedDealers": {
+                      "type": "boolean"
+                    },
+                    "listingExpiryDays": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    },
+                    "individualSubscriptionsEnabled": {
+                      "type": "boolean"
+                    },
+                    "freeListingLimit": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    },
+                    "bankakAccount": {
+                      "type": "object",
+                      "properties": {
+                        "name": {
+                          "type": "string"
+                        },
+                        "number": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "name",
+                        "number"
+                      ]
+                    },
+                    "contact": {
+                      "type": "object",
+                      "properties": {
+                        "phone": {
+                          "type": "string"
+                        },
+                        "whatsapp": {
+                          "type": "string"
+                        },
+                        "email": {
+                          "type": "string"
+                        },
+                        "address": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "phone",
+                        "whatsapp",
+                        "email",
+                        "address"
+                      ]
+                    },
+                    "locales": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "enum": [
+                          "ar",
+                          "en"
+                        ]
+                      }
+                    },
+                    "backupSchedule": {
+                      "type": "string",
+                      "enum": [
+                        "daily",
+                        "weekly",
+                        "off"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "autoApproveVerifiedDealers",
+                    "listingExpiryDays",
+                    "individualSubscriptionsEnabled",
+                    "freeListingLimit",
+                    "bankakAccount",
+                    "contact",
+                    "locales",
+                    "backupSchedule"
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "unauthenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "const": "unauthenticated"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "fields": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    "retryAfter": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "banned, forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "banned",
+                        "forbidden"
+                      ]
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "fields": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    "retryAfter": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ]
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "validation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "const": "validation"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "fields": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    "retryAfter": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/campaigns": {
+      "get": {
+        "operationId": "getAdminCampaigns",
+        "summary": "Every banner campaign with the receipt it was paid with; the ones waiting for review first, then newest first",
+        "security": [
+          {
+            "session": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "ownerId": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "ownerName": {
+                        "type": "string"
+                      },
+                      "creative": {
+                        "type": "object",
+                        "properties": {
+                          "imageUrl": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "copy": {
+                            "type": "object",
+                            "properties": {
+                              "ar": {
+                                "type": "object",
+                                "properties": {
+                                  "heading": {
+                                    "type": "string",
+                                    "minLength": 2,
+                                    "maxLength": 60
+                                  },
+                                  "body": {
+                                    "type": "string",
+                                    "maxLength": 90
+                                  },
+                                  "cta": {
+                                    "type": "string",
+                                    "minLength": 2,
+                                    "maxLength": 24
+                                  }
+                                },
+                                "required": [
+                                  "heading",
+                                  "body",
+                                  "cta"
+                                ]
+                              },
+                              "en": {
+                                "type": "object",
+                                "properties": {
+                                  "heading": {
+                                    "type": "string",
+                                    "minLength": 2,
+                                    "maxLength": 60
+                                  },
+                                  "body": {
+                                    "type": "string",
+                                    "maxLength": 90
+                                  },
+                                  "cta": {
+                                    "type": "string",
+                                    "minLength": 2,
+                                    "maxLength": 24
+                                  }
+                                },
+                                "required": [
+                                  "heading",
+                                  "body",
+                                  "cta"
+                                ]
+                              }
+                            },
+                            "required": [
+                              "ar",
+                              "en"
+                            ]
+                          }
+                        },
+                        "required": [
+                          "imageUrl",
+                          "copy"
+                        ]
+                      },
+                      "href": {
+                        "type": "string"
+                      },
+                      "pages": {
+                        "minItems": 1,
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "enum": [
+                            "home_top",
+                            "home_middle",
+                            "search_car",
+                            "search_truck",
+                            "search_motorcycle",
+                            "search_tuk_tuk",
+                            "search_parts",
+                            "listing_detail",
+                            "directory_dealerships",
+                            "directory_workshops",
+                            "directory_mechanics"
+                          ]
+                        }
+                      },
+                      "startsAt": {
+                        "type": "string"
+                      },
+                      "weeks": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 4
+                      },
+                      "endsAt": {
+                        "type": "string"
+                      },
+                      "amount": {
+                        "type": "integer",
+                        "minimum": -9007199254740991,
+                        "maximum": 9007199254740991
+                      },
+                      "status": {
+                        "type": "string",
+                        "enum": [
+                          "pending_payment",
+                          "under_review",
+                          "approved",
+                          "rejected"
+                        ]
+                      },
+                      "rejectionReason": {
+                        "type": "string"
+                      },
+                      "impressions": {
+                        "type": "integer",
+                        "minimum": -9007199254740991,
+                        "maximum": 9007199254740991
+                      },
+                      "clicks": {
+                        "type": "integer",
+                        "minimum": -9007199254740991,
+                        "maximum": 9007199254740991
+                      },
+                      "createdAt": {
+                        "type": "string"
+                      },
+                      "receiptUrl": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "ownerId",
+                      "ownerName",
+                      "creative",
+                      "href",
+                      "pages",
+                      "startsAt",
+                      "weeks",
+                      "endsAt",
+                      "amount",
+                      "status",
+                      "impressions",
+                      "clicks",
+                      "createdAt",
+                      "receiptUrl"
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "unauthenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "const": "unauthenticated"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "fields": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    "retryAfter": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "banned, forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "banned",
+                        "forbidden"
+                      ]
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "fields": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    "retryAfter": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/campaigns/{id}/approve": {
+      "post": {
+        "operationId": "postAdminCampaignsByIdApprove",
+        "summary": "Approve a campaign waiting for review together with the receipt sent for it, and tell the advertiser. Any other state answers 409 `exists`",
+        "security": [
+          {
+            "session": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "ownerId": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "ownerName": {
+                      "type": "string"
+                    },
+                    "creative": {
+                      "type": "object",
+                      "properties": {
+                        "imageUrl": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "copy": {
+                          "type": "object",
+                          "properties": {
+                            "ar": {
+                              "type": "object",
+                              "properties": {
+                                "heading": {
+                                  "type": "string",
+                                  "minLength": 2,
+                                  "maxLength": 60
+                                },
+                                "body": {
+                                  "type": "string",
+                                  "maxLength": 90
+                                },
+                                "cta": {
+                                  "type": "string",
+                                  "minLength": 2,
+                                  "maxLength": 24
+                                }
+                              },
+                              "required": [
+                                "heading",
+                                "body",
+                                "cta"
+                              ]
+                            },
+                            "en": {
+                              "type": "object",
+                              "properties": {
+                                "heading": {
+                                  "type": "string",
+                                  "minLength": 2,
+                                  "maxLength": 60
+                                },
+                                "body": {
+                                  "type": "string",
+                                  "maxLength": 90
+                                },
+                                "cta": {
+                                  "type": "string",
+                                  "minLength": 2,
+                                  "maxLength": 24
+                                }
+                              },
+                              "required": [
+                                "heading",
+                                "body",
+                                "cta"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "ar",
+                            "en"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "imageUrl",
+                        "copy"
+                      ]
+                    },
+                    "href": {
+                      "type": "string"
+                    },
+                    "pages": {
+                      "minItems": 1,
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "enum": [
+                          "home_top",
+                          "home_middle",
+                          "search_car",
+                          "search_truck",
+                          "search_motorcycle",
+                          "search_tuk_tuk",
+                          "search_parts",
+                          "listing_detail",
+                          "directory_dealerships",
+                          "directory_workshops",
+                          "directory_mechanics"
+                        ]
+                      }
+                    },
+                    "startsAt": {
+                      "type": "string"
+                    },
+                    "weeks": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 4
+                    },
+                    "endsAt": {
+                      "type": "string"
+                    },
+                    "amount": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "pending_payment",
+                        "under_review",
+                        "approved",
+                        "rejected"
+                      ]
+                    },
+                    "rejectionReason": {
+                      "type": "string"
+                    },
+                    "impressions": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    },
+                    "clicks": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    },
+                    "createdAt": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "ownerId",
+                    "ownerName",
+                    "creative",
+                    "href",
+                    "pages",
+                    "startsAt",
+                    "weeks",
+                    "endsAt",
+                    "amount",
+                    "status",
+                    "impressions",
+                    "clicks",
+                    "createdAt"
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "unauthenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "const": "unauthenticated"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "fields": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    "retryAfter": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "banned, forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "banned",
+                        "forbidden"
+                      ]
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "fields": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    "retryAfter": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "not_found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "const": "not_found"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "fields": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    "retryAfter": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ]
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "exists",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "const": "exists"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "fields": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    "retryAfter": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/campaigns/{id}/reject": {
+      "post": {
+        "operationId": "postAdminCampaignsByIdReject",
+        "summary": "Reject a campaign waiting for review and its receipt with a reason, and tell the advertiser. Any other state answers 409 `exists`",
+        "security": [
+          {
+            "session": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "reason": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 300
+                  }
+                },
+                "required": [
+                  "reason"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "ownerId": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "ownerName": {
+                      "type": "string"
+                    },
+                    "creative": {
+                      "type": "object",
+                      "properties": {
+                        "imageUrl": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "copy": {
+                          "type": "object",
+                          "properties": {
+                            "ar": {
+                              "type": "object",
+                              "properties": {
+                                "heading": {
+                                  "type": "string",
+                                  "minLength": 2,
+                                  "maxLength": 60
+                                },
+                                "body": {
+                                  "type": "string",
+                                  "maxLength": 90
+                                },
+                                "cta": {
+                                  "type": "string",
+                                  "minLength": 2,
+                                  "maxLength": 24
+                                }
+                              },
+                              "required": [
+                                "heading",
+                                "body",
+                                "cta"
+                              ]
+                            },
+                            "en": {
+                              "type": "object",
+                              "properties": {
+                                "heading": {
+                                  "type": "string",
+                                  "minLength": 2,
+                                  "maxLength": 60
+                                },
+                                "body": {
+                                  "type": "string",
+                                  "maxLength": 90
+                                },
+                                "cta": {
+                                  "type": "string",
+                                  "minLength": 2,
+                                  "maxLength": 24
+                                }
+                              },
+                              "required": [
+                                "heading",
+                                "body",
+                                "cta"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "ar",
+                            "en"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "imageUrl",
+                        "copy"
+                      ]
+                    },
+                    "href": {
+                      "type": "string"
+                    },
+                    "pages": {
+                      "minItems": 1,
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "enum": [
+                          "home_top",
+                          "home_middle",
+                          "search_car",
+                          "search_truck",
+                          "search_motorcycle",
+                          "search_tuk_tuk",
+                          "search_parts",
+                          "listing_detail",
+                          "directory_dealerships",
+                          "directory_workshops",
+                          "directory_mechanics"
+                        ]
+                      }
+                    },
+                    "startsAt": {
+                      "type": "string"
+                    },
+                    "weeks": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 4
+                    },
+                    "endsAt": {
+                      "type": "string"
+                    },
+                    "amount": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "pending_payment",
+                        "under_review",
+                        "approved",
+                        "rejected"
+                      ]
+                    },
+                    "rejectionReason": {
+                      "type": "string"
+                    },
+                    "impressions": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    },
+                    "clicks": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    },
+                    "createdAt": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "ownerId",
+                    "ownerName",
+                    "creative",
+                    "href",
+                    "pages",
+                    "startsAt",
+                    "weeks",
+                    "endsAt",
+                    "amount",
+                    "status",
+                    "impressions",
+                    "clicks",
+                    "createdAt"
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "unauthenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "const": "unauthenticated"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "fields": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    "retryAfter": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "banned, forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "banned",
+                        "forbidden"
+                      ]
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "fields": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    "retryAfter": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "not_found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "const": "not_found"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "fields": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    "retryAfter": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ]
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "exists",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "const": "exists"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "fields": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    "retryAfter": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ]
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "validation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "const": "validation"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "fields": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    "retryAfter": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/ad-pages": {
+      "get": {
+        "operationId": "getAdminAdPages",
+        "summary": "Every page that sells banner space, switched off ones too, with its weekly price and slots; `free` is every slot",
+        "security": [
+          {
+            "session": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "enum": [
+                          "home_top",
+                          "home_middle",
+                          "search_car",
+                          "search_truck",
+                          "search_motorcycle",
+                          "search_tuk_tuk",
+                          "search_parts",
+                          "listing_detail",
+                          "directory_dealerships",
+                          "directory_workshops",
+                          "directory_mechanics"
+                        ]
+                      },
+                      "weeklyPrice": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 9007199254740991
+                      },
+                      "slots": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 9007199254740991
+                      },
+                      "enabled": {
+                        "type": "boolean"
+                      },
+                      "free": {
+                        "type": "integer",
+                        "minimum": -9007199254740991,
+                        "maximum": 9007199254740991
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "weeklyPrice",
+                      "slots",
+                      "enabled",
+                      "free"
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "unauthenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "const": "unauthenticated"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "fields": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    "retryAfter": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "banned, forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "banned",
+                        "forbidden"
+                      ]
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "fields": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    "retryAfter": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/ad-pages/{id}": {
+      "patch": {
+        "operationId": "patchAdminAdPagesById",
+        "summary": "Change the weekly price, slots or sale switch of a page. Campaigns already booked keep their slot",
+        "security": [
+          {
+            "session": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "weeklyPrice": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 9007199254740991
+                  },
+                  "slots": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 10
+                  },
+                  "enabled": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "enum": [
+                        "home_top",
+                        "home_middle",
+                        "search_car",
+                        "search_truck",
+                        "search_motorcycle",
+                        "search_tuk_tuk",
+                        "search_parts",
+                        "listing_detail",
+                        "directory_dealerships",
+                        "directory_workshops",
+                        "directory_mechanics"
+                      ]
+                    },
+                    "weeklyPrice": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 9007199254740991
+                    },
+                    "slots": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 9007199254740991
+                    },
+                    "enabled": {
+                      "type": "boolean"
+                    },
+                    "free": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "weeklyPrice",
+                    "slots",
+                    "enabled",
+                    "free"
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "unauthenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "const": "unauthenticated"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "fields": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    "retryAfter": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "banned, forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "banned",
+                        "forbidden"
+                      ]
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "fields": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    "retryAfter": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "not_found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "const": "not_found"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "fields": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    "retryAfter": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ]
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "validation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "const": "validation"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "fields": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    "retryAfter": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/banners": {
+      "get": {
+        "operationId": "getAdminBanners",
+        "summary": "Every house banner by sort order, the ones that are off or have ended too, with views and clicks",
+        "security": [
+          {
+            "session": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "title": {
+                        "type": "string"
+                      },
+                      "imageUrl": {
+                        "type": "object",
+                        "properties": {
+                          "ar": {
+                            "type": "string"
+                          },
+                          "en": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "ar",
+                          "en"
+                        ]
+                      },
+                      "copy": {
+                        "type": "object",
+                        "properties": {
+                          "ar": {
+                            "type": "object",
+                            "properties": {
+                              "eyebrow": {
+                                "type": "string"
+                              },
+                              "heading": {
+                                "type": "string"
+                              },
+                              "body": {
+                                "type": "string"
+                              },
+                              "cta": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "eyebrow",
+                              "heading",
+                              "body",
+                              "cta"
+                            ]
+                          },
+                          "en": {
+                            "type": "object",
+                            "properties": {
+                              "eyebrow": {
+                                "type": "string"
+                              },
+                              "heading": {
+                                "type": "string"
+                              },
+                              "body": {
+                                "type": "string"
+                              },
+                              "cta": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "eyebrow",
+                              "heading",
+                              "body",
+                              "cta"
+                            ]
+                          }
+                        },
+                        "required": [
+                          "ar",
+                          "en"
+                        ]
+                      },
+                      "sponsored": {
+                        "default": false,
+                        "type": "boolean"
+                      },
+                      "focus": {
+                        "default": 50,
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 100
+                      },
+                      "href": {
+                        "type": "string"
+                      },
+                      "placement": {
+                        "type": "string",
+                        "enum": [
+                          "home_top",
+                          "home_middle",
+                          "search_top",
+                          "listing_aside",
+                          "directory_top"
+                        ]
+                      },
+                      "startsAt": {
+                        "type": "string"
+                      },
+                      "endsAt": {
+                        "type": "string"
+                      },
+                      "active": {
+                        "type": "boolean"
+                      },
+                      "sortOrder": {
+                        "type": "integer",
+                        "minimum": -9007199254740991,
+                        "maximum": 9007199254740991
+                      },
+                      "impressions": {
+                        "type": "integer",
+                        "minimum": -9007199254740991,
+                        "maximum": 9007199254740991
+                      },
+                      "clicks": {
+                        "type": "integer",
+                        "minimum": -9007199254740991,
+                        "maximum": 9007199254740991
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "title",
+                      "imageUrl",
+                      "sponsored",
+                      "focus",
+                      "href",
+                      "placement",
+                      "startsAt",
+                      "endsAt",
+                      "active",
+                      "sortOrder",
+                      "impressions",
+                      "clicks"
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "unauthenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "const": "unauthenticated"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "fields": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    "retryAfter": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "banned, forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "banned",
+                        "forbidden"
+                      ]
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "fields": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    "retryAfter": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "postAdminBanners",
+        "summary": "Add a banner. Each language's picture is an image the admin uploaded with `POST /uploads` (422 on `imageUrl.ar` or `imageUrl.en` otherwise); the end date must be after the start",
+        "security": [
+          {
+            "session": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 80
+                  },
+                  "imageUrl": {
+                    "type": "object",
+                    "properties": {
+                      "ar": {
+                        "type": "string"
+                      },
+                      "en": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "ar",
+                      "en"
+                    ]
+                  },
+                  "copy": {
+                    "type": "object",
+                    "properties": {
+                      "ar": {
+                        "type": "object",
+                        "properties": {
+                          "eyebrow": {
+                            "type": "string"
+                          },
+                          "heading": {
+                            "type": "string"
+                          },
+                          "body": {
+                            "type": "string"
+                          },
+                          "cta": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "eyebrow",
+                          "heading",
+                          "body",
+                          "cta"
+                        ]
+                      },
+                      "en": {
+                        "type": "object",
+                        "properties": {
+                          "eyebrow": {
+                            "type": "string"
+                          },
+                          "heading": {
+                            "type": "string"
+                          },
+                          "body": {
+                            "type": "string"
+                          },
+                          "cta": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "eyebrow",
+                          "heading",
+                          "body",
+                          "cta"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "ar",
+                      "en"
+                    ]
+                  },
+                  "sponsored": {
+                    "default": false,
+                    "type": "boolean"
+                  },
+                  "focus": {
+                    "default": 50,
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 100
+                  },
+                  "href": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "placement": {
+                    "type": "string",
+                    "enum": [
+                      "home_top",
+                      "home_middle",
+                      "search_top",
+                      "listing_aside",
+                      "directory_top"
+                    ]
+                  },
+                  "startsAt": {
+                    "type": "string"
+                  },
+                  "endsAt": {
+                    "type": "string"
+                  },
+                  "active": {
+                    "default": true,
+                    "type": "boolean"
+                  },
+                  "sortOrder": {
+                    "default": 0,
+                    "type": "integer",
+                    "minimum": -9007199254740991,
+                    "maximum": 9007199254740991
+                  }
+                },
+                "required": [
+                  "title",
+                  "imageUrl",
+                  "href",
+                  "placement",
+                  "startsAt",
+                  "endsAt"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "title": {
+                      "type": "string"
+                    },
+                    "imageUrl": {
+                      "type": "object",
+                      "properties": {
+                        "ar": {
+                          "type": "string"
+                        },
+                        "en": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "ar",
+                        "en"
+                      ]
+                    },
+                    "copy": {
+                      "type": "object",
+                      "properties": {
+                        "ar": {
+                          "type": "object",
+                          "properties": {
+                            "eyebrow": {
+                              "type": "string"
+                            },
+                            "heading": {
+                              "type": "string"
+                            },
+                            "body": {
+                              "type": "string"
+                            },
+                            "cta": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "eyebrow",
+                            "heading",
+                            "body",
+                            "cta"
+                          ]
+                        },
+                        "en": {
+                          "type": "object",
+                          "properties": {
+                            "eyebrow": {
+                              "type": "string"
+                            },
+                            "heading": {
+                              "type": "string"
+                            },
+                            "body": {
+                              "type": "string"
+                            },
+                            "cta": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "eyebrow",
+                            "heading",
+                            "body",
+                            "cta"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "ar",
+                        "en"
+                      ]
+                    },
+                    "sponsored": {
+                      "default": false,
+                      "type": "boolean"
+                    },
+                    "focus": {
+                      "default": 50,
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 100
+                    },
+                    "href": {
+                      "type": "string"
+                    },
+                    "placement": {
+                      "type": "string",
+                      "enum": [
+                        "home_top",
+                        "home_middle",
+                        "search_top",
+                        "listing_aside",
+                        "directory_top"
+                      ]
+                    },
+                    "startsAt": {
+                      "type": "string"
+                    },
+                    "endsAt": {
+                      "type": "string"
+                    },
+                    "active": {
+                      "type": "boolean"
+                    },
+                    "sortOrder": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    },
+                    "impressions": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    },
+                    "clicks": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "title",
+                    "imageUrl",
+                    "sponsored",
+                    "focus",
+                    "href",
+                    "placement",
+                    "startsAt",
+                    "endsAt",
+                    "active",
+                    "sortOrder",
+                    "impressions",
+                    "clicks"
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "unauthenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "const": "unauthenticated"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "fields": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    "retryAfter": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "banned, forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "banned",
+                        "forbidden"
+                      ]
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "fields": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    "retryAfter": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ]
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "validation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "const": "validation"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "fields": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    "retryAfter": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/banners/{id}": {
+      "patch": {
+        "operationId": "patchAdminBannersById",
+        "summary": "Change the fields sent of a banner. A picture sent with its current address stays; a new one must be an upload of the admin's, and the old one is deleted",
+        "security": [
+          {
+            "session": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 80
+                  },
+                  "imageUrl": {
+                    "type": "object",
+                    "properties": {
+                      "ar": {
+                        "type": "string"
+                      },
+                      "en": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "ar",
+                      "en"
+                    ]
+                  },
+                  "copy": {
+                    "type": "object",
+                    "properties": {
+                      "ar": {
+                        "type": "object",
+                        "properties": {
+                          "eyebrow": {
+                            "type": "string"
+                          },
+                          "heading": {
+                            "type": "string"
+                          },
+                          "body": {
+                            "type": "string"
+                          },
+                          "cta": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "eyebrow",
+                          "heading",
+                          "body",
+                          "cta"
+                        ]
+                      },
+                      "en": {
+                        "type": "object",
+                        "properties": {
+                          "eyebrow": {
+                            "type": "string"
+                          },
+                          "heading": {
+                            "type": "string"
+                          },
+                          "body": {
+                            "type": "string"
+                          },
+                          "cta": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "eyebrow",
+                          "heading",
+                          "body",
+                          "cta"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "ar",
+                      "en"
+                    ]
+                  },
+                  "sponsored": {
+                    "default": false,
+                    "type": "boolean"
+                  },
+                  "focus": {
+                    "default": 50,
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 100
+                  },
+                  "href": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "placement": {
+                    "type": "string",
+                    "enum": [
+                      "home_top",
+                      "home_middle",
+                      "search_top",
+                      "listing_aside",
+                      "directory_top"
+                    ]
+                  },
+                  "startsAt": {
+                    "type": "string"
+                  },
+                  "endsAt": {
+                    "type": "string"
+                  },
+                  "active": {
+                    "default": true,
+                    "type": "boolean"
+                  },
+                  "sortOrder": {
+                    "default": 0,
+                    "type": "integer",
+                    "minimum": -9007199254740991,
+                    "maximum": 9007199254740991
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "title": {
+                      "type": "string"
+                    },
+                    "imageUrl": {
+                      "type": "object",
+                      "properties": {
+                        "ar": {
+                          "type": "string"
+                        },
+                        "en": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "ar",
+                        "en"
+                      ]
+                    },
+                    "copy": {
+                      "type": "object",
+                      "properties": {
+                        "ar": {
+                          "type": "object",
+                          "properties": {
+                            "eyebrow": {
+                              "type": "string"
+                            },
+                            "heading": {
+                              "type": "string"
+                            },
+                            "body": {
+                              "type": "string"
+                            },
+                            "cta": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "eyebrow",
+                            "heading",
+                            "body",
+                            "cta"
+                          ]
+                        },
+                        "en": {
+                          "type": "object",
+                          "properties": {
+                            "eyebrow": {
+                              "type": "string"
+                            },
+                            "heading": {
+                              "type": "string"
+                            },
+                            "body": {
+                              "type": "string"
+                            },
+                            "cta": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "eyebrow",
+                            "heading",
+                            "body",
+                            "cta"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "ar",
+                        "en"
+                      ]
+                    },
+                    "sponsored": {
+                      "default": false,
+                      "type": "boolean"
+                    },
+                    "focus": {
+                      "default": 50,
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 100
+                    },
+                    "href": {
+                      "type": "string"
+                    },
+                    "placement": {
+                      "type": "string",
+                      "enum": [
+                        "home_top",
+                        "home_middle",
+                        "search_top",
+                        "listing_aside",
+                        "directory_top"
+                      ]
+                    },
+                    "startsAt": {
+                      "type": "string"
+                    },
+                    "endsAt": {
+                      "type": "string"
+                    },
+                    "active": {
+                      "type": "boolean"
+                    },
+                    "sortOrder": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    },
+                    "impressions": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    },
+                    "clicks": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "title",
+                    "imageUrl",
+                    "sponsored",
+                    "focus",
+                    "href",
+                    "placement",
+                    "startsAt",
+                    "endsAt",
+                    "active",
+                    "sortOrder",
+                    "impressions",
+                    "clicks"
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "unauthenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "const": "unauthenticated"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "fields": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    "retryAfter": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "banned, forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "banned",
+                        "forbidden"
+                      ]
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "fields": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    "retryAfter": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "not_found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "const": "not_found"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "fields": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    "retryAfter": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ]
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "validation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "const": "validation"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "fields": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    "retryAfter": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "deleteAdminBannersById",
+        "summary": "Delete a banner and its pictures",
+        "security": [
+          {
+            "session": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "const": true
+                    }
+                  },
+                  "required": [
+                    "ok"
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "unauthenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "const": "unauthenticated"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "fields": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    "retryAfter": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "banned, forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "banned",
+                        "forbidden"
+                      ]
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "fields": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    "retryAfter": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "not_found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "const": "not_found"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "fields": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    "retryAfter": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/broadcasts": {
+      "get": {
+        "operationId": "getAdminBroadcasts",
+        "summary": "The announcements sent so far, newest first, with how many accounts each reached; `q` keeps those whose title holds it in either language, paged",
+        "security": [
+          {
+            "session": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "roles": {
+                            "minItems": 1,
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "enum": [
+                                "user",
+                                "dealership",
+                                "workshop",
+                                "mechanic"
+                              ]
+                            }
+                          },
+                          "cityId": {
+                            "type": "string"
+                          },
+                          "verifiedOnly": {
+                            "type": "boolean"
+                          },
+                          "id": {
+                            "type": "string"
+                          },
+                          "title": {
+                            "type": "object",
+                            "properties": {
+                              "ar": {
+                                "type": "string"
+                              },
+                              "en": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "ar",
+                              "en"
+                            ]
+                          },
+                          "body": {
+                            "type": "object",
+                            "properties": {
+                              "ar": {
+                                "type": "string"
+                              },
+                              "en": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "ar",
+                              "en"
+                            ]
+                          },
+                          "href": {
+                            "type": "string"
+                          },
+                          "recipients": {
+                            "type": "integer",
+                            "minimum": -9007199254740991,
+                            "maximum": 9007199254740991
+                          },
+                          "createdAt": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "roles",
+                          "verifiedOnly",
+                          "id",
+                          "title",
+                          "body",
+                          "recipients",
+                          "createdAt"
+                        ]
+                      }
+                    },
+                    "total": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    },
+                    "page": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    },
+                    "pageSize": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "items",
+                    "total",
+                    "page",
+                    "pageSize"
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "unauthenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "const": "unauthenticated"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "fields": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    "retryAfter": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "banned, forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "banned",
+                        "forbidden"
+                      ]
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "fields": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    "retryAfter": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "postAdminBroadcasts",
+        "summary": "Send an announcement to every account in the audience that reads announcements, and keep it in the history. 422 on `cityId` for an unknown city",
+        "security": [
+          {
+            "session": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "roles": {
+                    "minItems": 1,
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "enum": [
+                        "user",
+                        "dealership",
+                        "workshop",
+                        "mechanic"
+                      ]
+                    }
+                  },
+                  "cityId": {
+                    "type": "string"
+                  },
+                  "verifiedOnly": {
+                    "type": "boolean"
+                  },
+                  "title": {
+                    "type": "object",
+                    "properties": {
+                      "ar": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 80
+                      },
+                      "en": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 80
+                      }
+                    },
+                    "required": [
+                      "ar",
+                      "en"
+                    ]
+                  },
+                  "body": {
+                    "type": "object",
+                    "properties": {
+                      "ar": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 300
+                      },
+                      "en": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 300
+                      }
+                    },
+                    "required": [
+                      "ar",
+                      "en"
+                    ]
+                  },
+                  "href": {
+                    "type": "string",
+                    "maxLength": 200,
+                    "pattern": "^\\/(?!\\/)"
+                  }
+                },
+                "required": [
+                  "roles",
+                  "verifiedOnly",
+                  "title",
+                  "body"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "roles": {
+                      "minItems": 1,
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "enum": [
+                          "user",
+                          "dealership",
+                          "workshop",
+                          "mechanic"
+                        ]
+                      }
+                    },
+                    "cityId": {
+                      "type": "string"
+                    },
+                    "verifiedOnly": {
+                      "type": "boolean"
+                    },
+                    "id": {
+                      "type": "string"
+                    },
+                    "title": {
+                      "type": "object",
+                      "properties": {
+                        "ar": {
+                          "type": "string"
+                        },
+                        "en": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "ar",
+                        "en"
+                      ]
+                    },
+                    "body": {
+                      "type": "object",
+                      "properties": {
+                        "ar": {
+                          "type": "string"
+                        },
+                        "en": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "ar",
+                        "en"
+                      ]
+                    },
+                    "href": {
+                      "type": "string"
+                    },
+                    "recipients": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    },
+                    "createdAt": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "roles",
+                    "verifiedOnly",
+                    "id",
+                    "title",
+                    "body",
+                    "recipients",
+                    "createdAt"
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "unauthenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "const": "unauthenticated"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "fields": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    "retryAfter": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "banned, forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "banned",
+                        "forbidden"
+                      ]
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "fields": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    "retryAfter": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ]
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "validation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "const": "validation"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "fields": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    "retryAfter": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/broadcasts/estimate": {
+      "get": {
+        "operationId": "getAdminBroadcastsEstimate",
+        "summary": "How many accounts an announcement would reach: `roles` (repeat the key), optional `cityId`, `verifiedOnly`. Only accounts that read announcements count",
+        "security": [
+          {
+            "session": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "roles",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "minItems": 1,
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "user",
+                  "dealership",
+                  "workshop",
+                  "mechanic"
+                ]
+              }
+            }
+          },
+          {
+            "name": "cityId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "verifiedOnly",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "default": false,
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "count": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "count"
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "unauthenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "const": "unauthenticated"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "fields": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    "retryAfter": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "banned, forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "banned",
+                        "forbidden"
+                      ]
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "fields": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    "retryAfter": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ]
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "validation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "const": "validation"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "fields": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    "retryAfter": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/platform/admin/code": {
       "post": {
         "operationId": "postPlatformAdminCode",

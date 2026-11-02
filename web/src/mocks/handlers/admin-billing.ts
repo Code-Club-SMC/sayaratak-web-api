@@ -1,6 +1,5 @@
 import {
   type BroadcastAudience,
-  broadcastAudienceSchema,
   broadcastSchema,
 } from "@sayaratak/shared/schemas/api"
 import {
@@ -15,13 +14,21 @@ import {
   myPromotionSchema,
 } from "@sayaratak/shared/schemas/responses"
 import {
+  broadcastEstimateQuerySchema,
   broadcastInputSchema,
   grantInputSchema,
   rejectInputSchema,
 } from "@sayaratak/shared/schemas/inputs"
 
 import { db, find, insert, newId } from "../db"
-import { fail, needRole, route, type Ctx } from "../http"
+import {
+  fail,
+  needRole,
+  queryObject,
+  route,
+  zodFields,
+  type Ctx,
+} from "../http"
 import {
   DAY_MS,
   activatePromotion,
@@ -264,22 +271,15 @@ route(
     )
   )
 )
-route(
-  "GET",
-  "/admin/broadcasts/estimate",
-  (c) => (
-    admin(c),
-    estimateSchema.parse({
-      count: audience(
-        broadcastAudienceSchema.parse({
-          roles: c.query.getAll("roles"),
-          cityId: c.query.get("cityId") || undefined,
-          verifiedOnly: c.query.get("verifiedOnly") === "true",
-        })
-      ).length,
-    })
+route("GET", "/admin/broadcasts/estimate", (c) => {
+  admin(c)
+  const audienceQuery = broadcastEstimateQuerySchema.safeParse(
+    queryObject(c.query, ["roles"])
   )
-)
+  if (!audienceQuery.success)
+    throw fail(422, "validation", zodFields(audienceQuery.error))
+  return estimateSchema.parse({ count: audience(audienceQuery.data).length })
+})
 route("POST", "/admin/broadcasts", async (c) => {
   admin(c)
   const input = await c.body(broadcastInputSchema)

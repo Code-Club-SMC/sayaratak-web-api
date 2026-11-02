@@ -53,3 +53,21 @@ export async function listAdminPayments(ex: Executor, query: PaymentsQuery) {
     },
   }
 }
+
+/**
+ * The receipt each campaign was paid with, keyed by campaign id: the newest one sent. A campaign
+ * with no receipt is missing. The mock shows the oldest; a campaign sent back and paid again
+ * should show the receipt under review.
+ */
+export async function listCampaignReceiptUrls(
+  ex: Executor,
+  campaignIds: string[]
+) {
+  const rows = await q.listCampaignReceipts(ex, campaignIds)
+  const urls = new Map<string, string>()
+  for (const row of rows) {
+    const url = await uploadUrl(ex, row.receiptUploadId)
+    if (url) urls.set(row.campaignId, url)
+  }
+  return urls
+}

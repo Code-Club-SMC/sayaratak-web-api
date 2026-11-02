@@ -1,4 +1,4 @@
-import { and, asc, desc, eq, sql } from "drizzle-orm"
+import { and, asc, desc, eq, inArray, sql } from "drizzle-orm"
 
 import type { Executor, Transaction } from "~/shared/db/tx"
 import { monthColumn } from "~/shared/time/khartoum"
@@ -54,6 +54,47 @@ export function lockPayment(tx: Transaction, id: string) {
     .where(eq(payments.id, id))
     .for("update")
     .then(([row]) => row)
+}
+
+/** The receipt of this item that waits for the admin, held until the transaction ends. */
+export function lockUndecidedOfItem(
+  tx: Transaction,
+  item: { itemType: PaymentRow["itemType"]; itemId: string }
+) {
+  return tx
+    .select()
+    .from(payments)
+    .where(
+      and(
+        eq(payments.itemType, item.itemType),
+        eq(payments.itemId, item.itemId),
+        eq(payments.status, "pending_review")
+      )
+    )
+    .for("update")
+    .then(([row]) => row)
+}
+
+/** The receipts sent for these campaigns, oldest first, so the newest of a campaign comes last. */
+export function listCampaignReceipts(ex: Executor, campaignIds: string[]) {
+  if (campaignIds.length === 0) return Promise.resolve([])
+  return ex
+    .select({
+      campaignId: payments.itemId,
+      receiptUploadId: payments.receiptUploadId,
+    })
+    .from(payments)
+    .where(
+      and(
+        eq(payments.itemType, "campaign"),
+        inArray(payments.itemId, campaignIds)
+      )
+    )
+    .orderBy(
+      asc(payments.createdAt),
+      asc(sql`length(${payments.id})`),
+      asc(payments.id)
+    )
 }
 
 export function updateDecision(

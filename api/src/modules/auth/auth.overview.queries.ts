@@ -1,4 +1,4 @@
-import { asc, count, eq, ilike, or, sql } from "drizzle-orm"
+import { and, asc, count, eq, ilike, inArray, or, sql } from "drizzle-orm"
 
 import type { Executor } from "~/shared/db/tx"
 import { type DayRange, dayColumn, withinDays } from "~/shared/time/khartoum"
@@ -48,4 +48,27 @@ export function hasUserInCity(ex: Executor, cityId: string) {
     .where(eq(user.cityId, cityId))
     .limit(1)
     .then((rows) => rows.length > 0)
+}
+
+/**
+ * Accounts that read announcements: not an admin, in one of the roles, not banned now (a timed
+ * ban that has ended counts as lifted) and with the announcements switch on, in id order.
+ */
+export function listAnnouncementTargets(
+  ex: Executor,
+  find: { roles: (typeof user.$inferSelect)["role"][]; now: Date }
+) {
+  return ex
+    .select({ id: user.id, role: user.role, cityId: user.cityId })
+    .from(user)
+    .where(
+      and(
+        inArray(user.role, find.roles),
+        sql`${user.role} <> 'admin'`,
+        sql`not (${user.banned} and (${user.banExpires} is null or ${user.banExpires} > ${find.now}))`,
+        // The switches are a JSON object; a missing key counts as off.
+        sql`(${user.prefs} ->> 'announcements') = 'true'`
+      )
+    )
+    .orderBy(asc(sql`length(${user.id})`), asc(user.id))
 }

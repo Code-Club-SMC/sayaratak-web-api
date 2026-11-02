@@ -72,6 +72,11 @@ export const campaignSchema = z.object({
   createdAt: z.string(),
 })
 export type Campaign = z.infer<typeof campaignSchema>
+// A row of `GET /admin/campaigns`: the campaign with the receipt it was paid with, for the admin to open (null when none was sent).
+export const adminCampaignSchema = campaignSchema.extend({
+  receiptUrl: z.string().nullable(),
+})
+export type AdminCampaign = z.infer<typeof adminCampaignSchema>
 
 // Where a self-serve banner may link: the advertiser's own profile and listings.
 export const adTargetSchema = z.object({

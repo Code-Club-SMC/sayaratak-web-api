@@ -14,6 +14,7 @@ import {
   noteInputSchema,
   pagePatchSchema,
   reportActionInputSchema,
+  settingsPatchSchema,
 } from "@sayaratak/shared/schemas/inputs"
 import { reviewSchema } from "@sayaratak/shared/schemas/review"
 import {
@@ -303,7 +304,7 @@ route(
 )
 route("PATCH", "/admin/settings", async (c) => {
   admin(c)
-  Object.assign(db.settings, await c.body(settingsSchema.partial()))
+  Object.assign(db.settings, await c.body(settingsPatchSchema))
   syncFreeLimit()
   return settingsSchema.parse(db.settings)
 })

@@ -71,3 +71,14 @@ export function hasBusinessInCity(ex: Executor, cityId: string) {
 export function hasBusinessInDistrict(ex: Executor, districtId: string) {
   return q.hasBusinessInDistrict(ex, districtId)
 }
+
+/** Each profile owner's city and verified badge, keyed by the owner's account id. */
+export async function getOwnerProfiles(ex: Executor) {
+  const rows = await q.listOwnerProfiles(ex)
+  return new Map(
+    rows.map((row) => [
+      row.ownerUserId,
+      { cityId: row.cityId, verified: row.verified },
+    ])
+  )
+}

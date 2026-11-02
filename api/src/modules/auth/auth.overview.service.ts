@@ -1,5 +1,6 @@
 import type { Executor } from "~/shared/db/tx"
 import { containing } from "~/shared/text/like"
+import { clock } from "~/shared/time/clock"
 import type { DayRange } from "~/shared/time/khartoum"
 
 import * as q from "./auth.overview.queries"
@@ -26,4 +27,15 @@ export function searchUsers(
 /** An account lists this city as its own: the check before an admin deletes it. */
 export function hasUserInCity(ex: Executor, cityId: string) {
   return q.hasUserInCity(ex, cityId)
+}
+
+/**
+ * The accounts an announcement may reach in these roles: the admin is never one, nor an account
+ * banned now, nor one that switched announcements off. Each with its own city.
+ */
+export function listAnnouncementTargets(
+  ex: Executor,
+  roles: Parameters<typeof q.listAnnouncementTargets>[1]["roles"]
+) {
+  return q.listAnnouncementTargets(ex, { roles, now: clock.now() })
 }

@@ -1,9 +1,11 @@
 import type { Role } from "@sayaratak/shared/schemas/fields"
+import type { Broadcast } from "@sayaratak/shared/schemas/api"
 import type { Notification } from "@sayaratak/shared/schemas/messaging"
 
-import type { notifications } from "./notifications.tables"
+import type { broadcasts, notifications } from "./notifications.tables"
 
 type NotificationRow = typeof notifications.$inferSelect
+type BroadcastRow = typeof broadcasts.$inferSelect
 
 export function toNotification(row: NotificationRow): Notification {
   return {
@@ -58,4 +60,19 @@ function destinationOf(role: Role, path: string) {
   if (path === "/listings")
     return role === "dealership" ? "/dealer/inventory" : "/account/listings"
   return UNDER_BASE.has(path) ? DASHBOARD[role] + path : path
+}
+
+export function toBroadcast(row: BroadcastRow): Broadcast {
+  return {
+    id: row.id,
+    title: row.title,
+    body: row.body,
+    href: row.href ?? undefined,
+    // Only the four public roles can be asked for; the database column is wider.
+    roles: row.roles.filter((role) => role !== "admin"),
+    cityId: row.cityId ?? undefined,
+    verifiedOnly: row.verifiedOnly,
+    recipients: row.recipients,
+    createdAt: row.createdAt.toISOString(),
+  }
 }

@@ -5,9 +5,11 @@ import { apiFetch } from "@/lib/api/client"
 import { useApiMutation } from "@/lib/api/mutation"
 import { keys } from "@/lib/api/query-keys"
 import {
+  adminCampaignSchema,
   adPageSchema,
   adTargetSchema,
   campaignSchema,
+  type AdminCampaign,
   type AdPage,
 } from "@sayaratak/shared/schemas/ads"
 import { bannerSchema } from "@sayaratak/shared/schemas/admin"
@@ -16,10 +18,7 @@ import type {
   campaignInputSchema,
 } from "@sayaratak/shared/schemas/inputs"
 
-export const adminCampaignSchema = campaignSchema.extend({
-  receiptUrl: z.string().nullable(),
-})
-export type AdminCampaign = z.infer<typeof adminCampaignSchema>
+export type { AdminCampaign }
 
 export const adsQueries = {
   // Free slots follow the dates; without dates every slot counts as free.

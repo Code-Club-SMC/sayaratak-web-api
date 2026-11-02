@@ -67,6 +67,33 @@ export async function rejectPayment(
   return saved
 }
 
+/**
+ * The admin decided a campaign on the ads page: the receipt sent for it closes the same way
+ * (approved, or rejected with the reason), so the payments page does not offer it again. A
+ * campaign with no receipt waiting is left alone.
+ */
+export async function decideCampaignReceipt(
+  tx: Transaction,
+  actor: Actor,
+  change: {
+    campaignId: string
+    status: "approved" | "rejected"
+    reason?: string
+  }
+) {
+  const row = await q.lockUndecidedOfItem(tx, {
+    itemType: "campaign",
+    itemId: change.campaignId,
+  })
+  if (!row) return
+  await decide(tx, {
+    actor,
+    row,
+    status: change.status,
+    reason: change.reason,
+  })
+}
+
 async function lockUndecided(tx: Transaction, id: string) {
   const row = await q.lockPayment(tx, id)
   if (!row) fail.notFound()

@@ -83,7 +83,7 @@ export function updateStatus(
   ex: Executor,
   change: {
     id: string
-    status: "approved" | "pending_payment"
+    status: "approved" | "rejected" | "pending_payment"
     rejectionReason: string | null
   }
 ) {

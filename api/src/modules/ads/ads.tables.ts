@@ -113,5 +113,6 @@ export const banners = pgTable(
 
 export type AdPageRow = typeof adPages.$inferSelect
 export type BannerRow = typeof banners.$inferSelect
+export type NewBannerRow = typeof banners.$inferInsert
 export type CampaignRow = typeof campaigns.$inferSelect
 export type NewCampaignRow = typeof campaigns.$inferInsert

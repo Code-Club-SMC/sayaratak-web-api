@@ -21,9 +21,19 @@ export const adminInputSchema = z.object({
 })
 type AdminInput = z.input<typeof adminInputSchema>
 
+// One platform admin; the unique index `user_one_admin` is the backstop for two runs at once.
+async function assertNoAdmin(ex: Executor) {
+  const [current] = await ex
+    .select({ id: user.id })
+    .from(user)
+    .where(eq(user.role, "admin"))
+  if (current) throw new Error(`an admin already exists (${current.id})`)
+}
+
 /**
  * Creates a verified admin with a password and two-factor on (the email code step, A6), and one
- * audit row. Throws when the input breaks the shared rules or the email is taken.
+ * audit row. Throws when the input breaks the shared rules, the email is taken or the platform
+ * already has its one admin.
  */
 export async function createAdmin(ex: Executor, input: AdminInput) {
   const { email, name, password } = adminInputSchema.parse(input)
@@ -32,6 +42,7 @@ export async function createAdmin(ex: Executor, input: AdminInput) {
     .from(user)
     .where(eq(user.email, email))
   if (taken) throw new Error(`an account with ${email} exists`)
+  await assertNoAdmin(ex)
   const now = clock.now()
   const id = newId("u")
   await ex.insert(user).values({

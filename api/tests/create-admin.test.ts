@@ -72,6 +72,36 @@ describe("create-admin", () => {
     ).rejects.toThrow("an account with owner@example.sd exists")
   })
 
+  test("refuses a second admin, with another email too", async () => {
+    const first = await createAdmin(db, input)
+    expect(
+      createAdmin(db, { ...input, email: "second@example.sd" })
+    ).rejects.toThrow(`an admin already exists (${first})`)
+    expect(await db.$count(user, eq(user.role, "admin"))).toBe(1)
+  })
+
+  test("the database refuses a second admin even without the command", async () => {
+    await createAdmin(db, input)
+    const promote = (async () =>
+      db.insert(user).values({
+        id: "u-raw-admin",
+        name: "Raw",
+        email: "raw@example.sd",
+        role: "admin",
+        createdAt: new Date(),
+        prefs: {
+          messages: true,
+          updates: true,
+          savedSearchMatches: true,
+          reviews: true,
+          billing: true,
+          announcements: true,
+        },
+      }))()
+    expect(promote).rejects.toThrow()
+    expect(await db.$count(user, eq(user.role, "admin"))).toBe(1)
+  })
+
   test("runs as a terminal command and reads the name and password", async () => {
     const run = Bun.spawn(
       ["bun", "scripts/create-admin.ts", "cli@example.sd"],

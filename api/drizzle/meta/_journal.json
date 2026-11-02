@@ -127,6 +127,13 @@
       "when": 1793541072955,
       "tag": "0017_devices",
       "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "7",
+      "when": 1793595798692,
+      "tag": "0018_one_admin",
+      "breakpoints": true
     }
   ]
 }

@@ -69,6 +69,10 @@ export const user = pgTable(
   },
   (table) => [
     uniqueIndex().on(table.phone).where(sql`${table.phone} is not null`),
+    // One platform admin (owner rule): a second `role = 'admin'` row is refused by the database.
+    uniqueIndex("user_one_admin")
+      .on(table.role)
+      .where(sql`${table.role} = 'admin'`),
     check("user_email_lower", sql`${table.email} = lower(${table.email})`),
     check("user_locale", sql`${table.locale} in ('ar', 'en')`),
   ]

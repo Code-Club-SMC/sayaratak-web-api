@@ -1,4 +1,4 @@
-import { and, asc, count, eq, ilike, inArray, or, sql } from "drizzle-orm"
+import { and, asc, count, eq, ilike, inArray, lte, or, sql } from "drizzle-orm"
 
 import type { Executor } from "~/shared/db/tx"
 import { type DayRange, dayColumn, withinDays } from "~/shared/time/khartoum"
@@ -53,12 +53,19 @@ export function hasUserInCity(ex: Executor, cityId: string) {
 /**
  * Accounts that read announcements: not an admin, in one of the roles, not banned now (a timed
  * ban that has ended counts as lifted) and with the announcements switch on, in id order.
+ * `page` takes the next `size` after `after` among accounts created by `createdBy`: the broadcast
+ * job walks the audience this way.
  */
 export function listAnnouncementTargets(
   ex: Executor,
-  find: { roles: (typeof user.$inferSelect)["role"][]; now: Date }
+  find: {
+    roles: (typeof user.$inferSelect)["role"][]
+    now: Date
+    page?: { after?: string; createdBy: Date; size: number }
+  }
 ) {
-  return ex
+  const { page } = find
+  const query = ex
     .select({ id: user.id, role: user.role, cityId: user.cityId })
     .from(user)
     .where(
@@ -67,8 +74,14 @@ export function listAnnouncementTargets(
         sql`${user.role} <> 'admin'`,
         sql`not (${user.banned} and (${user.banExpires} is null or ${user.banExpires} > ${find.now}))`,
         // The switches are a JSON object; a missing key counts as off.
-        sql`(${user.prefs} ->> 'announcements') = 'true'`
+        sql`(${user.prefs} ->> 'announcements') = 'true'`,
+        page && lte(user.createdAt, page.createdBy),
+        // Same order as below: shorter ids first (`u-9` before `u-10`), then by text.
+        page?.after
+          ? sql`(length(${user.id}), ${user.id}) > (length(${page.after}), ${page.after})`
+          : undefined
       )
     )
     .orderBy(asc(sql`length(${user.id})`), asc(user.id))
+  return page ? query.limit(page.size) : query
 }

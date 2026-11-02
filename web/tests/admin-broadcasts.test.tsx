@@ -57,7 +57,18 @@ describe("BroadcastsPage", () => {
     const dealers = db.users.filter((u) => u.role === "dealership")
     const verified = dealers.find((u) => businessOf(u)?.row?.verified)!
     const unverified = dealers.find((u) => !businessOf(u)?.row?.verified)!
-    await waitFor(() => expect(got(verified.id)).toHaveLength(1))
+    // Queued first; the bells ring a moment later and the list follows it to "Sent".
+    await screen.findAllByText("Queued")
+    await waitFor(() => expect(got(verified.id)).toHaveLength(1), {
+      timeout: 4000,
+    })
+    await waitFor(
+      () =>
+        expect(
+          within(screen.getByRole("table")).getByText("Sent", { exact: true })
+        ).toBeTruthy(),
+      { timeout: 6000 }
+    )
     expect(got(verified.id)[0]?.title).toEqual({
       ar: "تخفيض الزيت",
       en: "Oil sale",
@@ -96,7 +107,13 @@ describe("BroadcastsPage", () => {
       body: { ar: "ب", en: "b" },
       href: "/search",
     })
-    expect(sent.recipients).toBe(est.count)
+    expect(sent).toMatchObject({ status: "queued", recipients: 0 })
+    await new Promise((done) => setTimeout(done, 1800))
+    const history = await ask("/admin/broadcasts")
+    expect(history.items[0]).toMatchObject({
+      status: "sent",
+      recipients: est.count,
+    })
     const outside = db.users.find(
       (u) => u.role === "user" && u.cityId !== city
     )!

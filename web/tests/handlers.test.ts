@@ -1674,7 +1674,7 @@ describe("admin", () => {
       as: owner.id,
       body: { announcements: false },
     })
-    await call("POST", "/admin/broadcasts", {
+    const hi = await call("POST", "/admin/broadcasts", {
       as: "u-admin",
       body: {
         roles: [owner.role],
@@ -1683,6 +1683,14 @@ describe("admin", () => {
         body: { ar: "أهلا", en: "Welcome" },
       },
     })
+    // The bells ring a moment after Send, as the api's job does.
+    await vi.waitFor(
+      () =>
+        expect(db.broadcasts.find((b) => b.id === hi.body.id)?.status).toBe(
+          "sent"
+        ),
+      { timeout: 4000 }
+    )
     expect(
       db.notifications.filter(
         (n) => n.userId === owner.id && n.title.en === "Hi all"
@@ -1760,7 +1768,17 @@ describe("admin", () => {
       },
     })
     expect(sent.status).toBe(200)
-    expect(sent.body.recipients).toBe(est.body.count)
+    // Queued at once, nobody rung yet.
+    expect(sent.body).toMatchObject({ status: "queued", recipients: 0 })
+    expect(db.notifications.some((n) => n.title.en === "Hello")).toBe(false)
+    await vi.waitFor(
+      () =>
+        expect(db.broadcasts.find((b) => b.id === sent.body.id)).toMatchObject({
+          status: "sent",
+          recipients: est.body.count,
+        }),
+      { timeout: 4000 }
+    )
     expect(
       db.notifications.some(
         (n) => n.userId === "u-mechanic" && n.type === "broadcast"

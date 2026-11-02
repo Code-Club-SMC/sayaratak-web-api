@@ -1,4 +1,4 @@
-import { asc, desc, eq, ilike, or, sql } from "drizzle-orm"
+import { asc, desc, eq, ilike, inArray, or, sql } from "drizzle-orm"
 
 import type { Executor } from "~/shared/db/tx"
 
@@ -98,8 +98,8 @@ export async function hasBusinessInDistrict(ex: Executor, districtId: string) {
   return found.some((rows) => rows.length > 0)
 }
 
-/** Every profile's owner with its city and whether it carries the verified badge, for announcements. */
-export async function listOwnerProfiles(ex: Executor) {
+/** The profile of each owner (all of them, or just `ownerIds`) with its city and verified badge, for announcements. */
+export async function listOwnerProfiles(ex: Executor, ownerIds?: string[]) {
   // Three independent reads, one per kind.
   const kinds = await Promise.all(
     [dealerships, workshops, mechanics].map((table) =>
@@ -110,6 +110,7 @@ export async function listOwnerProfiles(ex: Executor) {
           verified: table.verified,
         })
         .from(table)
+        .where(ownerIds ? inArray(table.ownerUserId, ownerIds) : undefined)
     )
   )
   return kinds.flat()

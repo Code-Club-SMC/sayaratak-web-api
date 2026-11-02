@@ -50,10 +50,8 @@ export function BroadcastForm() {
   const onConfirm = () => {
     if (!confirm) return
     send.mutate(toBroadcastInput(confirm), {
-      onSuccess: (b) => {
-        toast.add({
-          title: t("admin.broadcast_sent", { count: b.recipients }),
-        })
+      onSuccess: () => {
+        toast.add({ title: t("admin.broadcast_queued") })
         form.reset(broadcastFormDefaults)
       },
       onError: (e) => toast.add({ title: errorText(t, e) }),

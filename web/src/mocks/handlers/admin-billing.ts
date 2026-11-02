@@ -1,3 +1,4 @@
+import type { z } from "zod"
 import {
   type BroadcastAudience,
   broadcastSchema,
@@ -280,18 +281,29 @@ route("GET", "/admin/broadcasts/estimate", (c) => {
     throw fail(422, "validation", zodFields(audienceQuery.error))
   return estimateSchema.parse({ count: audience(audienceQuery.data).length })
 })
-route("POST", "/admin/broadcasts", async (c) => {
-  admin(c)
-  const input = await c.body(broadcastInputSchema)
+// The real API queues the broadcast and a job rings the bells in chunks (api A10, `broadcast-fanout`).
+// The mock does it a moment after Send, so the screen goes from "queued" to "sent" as it would.
+const FANOUT_DELAY_MS = 1500
+function ringBells(id: string, input: z.output<typeof broadcastInputSchema>) {
+  const row = find(db.broadcasts, id)
+  // A reset in between replaced the whole database.
+  if (!row) return
   const users = audience(input)
   for (const u of users)
     notify(u.id, "broadcast", input.title, input.body, input.href)
-  return broadcastSchema.parse(
-    insert(db.broadcasts, {
-      id: newId("bc"),
-      ...input,
-      recipients: users.length,
-      createdAt: nowIso(),
-    })
-  )
+  row.recipients = users.length
+  row.status = "sent"
+}
+route("POST", "/admin/broadcasts", async (c) => {
+  admin(c)
+  const input = await c.body(broadcastInputSchema)
+  const row = insert(db.broadcasts, {
+    id: newId("bc"),
+    ...input,
+    status: "queued",
+    recipients: 0,
+    createdAt: nowIso(),
+  })
+  setTimeout(() => ringBells(row.id, input), FANOUT_DELAY_MS)
+  return broadcastSchema.parse(row)
 })

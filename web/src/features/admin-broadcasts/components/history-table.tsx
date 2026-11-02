@@ -10,6 +10,8 @@ import { EmptyState } from "@/components/app/empty-state"
 import { HistoryCard } from "./history-card"
 import { useHistoryColumns } from "./use-history-columns"
 
+const POLL_MS = 2000
+
 // Sent broadcasts, newest first. Search by title and page live in the URL; turning a page adds a history entry.
 export function HistoryTable({
   search,
@@ -20,7 +22,14 @@ export function HistoryTable({
 }) {
   const { t } = useT()
   const { q, page } = search
-  const list = useQuery(adminQueries.broadcasts({ q, page }))
+  const list = useQuery({
+    ...adminQueries.broadcasts({ q, page }),
+    // The server rings the bells in the background: follow the list until every row is sent.
+    refetchInterval: (query) =>
+      query.state.data?.items.some((b) => b.status !== "sent")
+        ? POLL_MS
+        : false,
+  })
   const columns = useHistoryColumns()
   const onNavigate = useCallback(
     (next: AdminTableSearch) => go(next, next.page !== search.page),

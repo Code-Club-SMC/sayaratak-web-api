@@ -17,7 +17,7 @@ export async function getEstimate(audience: BroadcastAudience) {
   return { count: await broadcasts.countAudience(db, audience) }
 }
 
-/** `POST /admin/broadcasts`: sends the announcement and answers the history row. */
+/** `POST /admin/broadcasts`: queues the announcement and answers its history row; the job rings the bells. */
 export function sendBroadcast(
   actor: Actor,
   input: z.output<typeof broadcastInputSchema>

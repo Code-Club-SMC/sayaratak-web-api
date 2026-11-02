@@ -2,9 +2,10 @@ import { formatDate, formatNumber, formatTime } from "@/lib/format"
 import { useT } from "@/lib/i18n/use-t"
 import type { DataColumn } from "@/lib/table"
 import type { Broadcast } from "@sayaratak/shared/schemas/api"
+import { BroadcastStatusBadge } from "./broadcast-status-badge"
 import { useAudienceSummary } from "./use-audience-summary"
 
-// Sent, title, audience and recipients, newest first from the server.
+// Sent, title, audience, status and recipients reached so far, newest first from the server.
 export function useHistoryColumns(): DataColumn<Broadcast>[] {
   const { t, locale } = useT()
   const summary = useAudienceSummary()
@@ -32,6 +33,11 @@ export function useHistoryColumns(): DataColumn<Broadcast>[] {
       id: "audience",
       header: t("admin.broadcast_col_audience"),
       cell: ({ row }) => summary(row.original),
+    },
+    {
+      id: "status",
+      header: t("admin.broadcast_col_status"),
+      cell: ({ row }) => <BroadcastStatusBadge status={row.original.status} />,
     },
     {
       id: "recipients",

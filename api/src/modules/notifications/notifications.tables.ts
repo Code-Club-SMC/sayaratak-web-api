@@ -1,3 +1,4 @@
+import { broadcastStatusSchema } from "@sayaratak/shared/schemas/api"
 import { notificationSchema } from "@sayaratak/shared/schemas/messaging"
 import { sql } from "drizzle-orm"
 import {
@@ -42,7 +43,15 @@ export const notifications = pgTable(
   ]
 )
 
-// An admin message sent once to every account matching the audience; `recipients` is the count it reached.
+export const broadcastStatus = pgEnum(
+  "broadcast_status",
+  broadcastStatusSchema.enum
+)
+
+// An admin message sent once to every account matching the audience. The job `broadcast-fanout`
+// (A10) rings the bells in chunks: `cursor` is the last account id it handled and `recipients` the
+// count reached so far, both moved in the same transaction as the bells they cover. The audience
+// is frozen at Send: only accounts created before `createdAt` are reached.
 export const broadcasts = pgTable(
   "broadcasts",
   {
@@ -53,12 +62,23 @@ export const broadcasts = pgTable(
     roles: role().array().notNull(),
     cityId: text().references(() => cities.id, { onDelete: "set null" }),
     verifiedOnly: boolean().notNull(),
+    status: broadcastStatus().default("sent").notNull(),
+    cursor: text(),
     recipients: integer().notNull(),
+    finishedAt: timestamp({ withTimezone: true }),
     sentBy: text().references(() => user.id, { onDelete: "set null" }),
     createdAt: createdAt(),
   },
   (table) => [
     index().on(table.createdAt),
+    // The job looks for the oldest broadcast still going.
+    index("broadcasts_unfinished")
+      .on(table.createdAt)
+      .where(sql`${table.status} <> 'sent'`),
+    check(
+      "broadcasts_finished",
+      sql`${table.status} <> 'sent' or ${table.finishedAt} is not null`
+    ),
     check("broadcasts_title", bilingual(table.title)),
     check("broadcasts_body", bilingual(table.body)),
     check("broadcasts_roles", sql`cardinality(${table.roles}) > 0`),

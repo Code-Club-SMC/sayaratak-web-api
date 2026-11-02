@@ -16,7 +16,6 @@ import { isCity } from "~/modules/taxonomy/taxonomy.service"
 
 import { toBroadcast } from "./notifications.mapper"
 import * as q from "./notifications.broadcast.queries"
-import { notify } from "./notifications.service"
 
 const ID_PREFIX = "bc"
 const PAGE_SIZE = { default: 20, max: 100 }
@@ -49,8 +48,11 @@ export async function countAudience(ex: Executor, audience: BroadcastAudience) {
 }
 
 /**
- * Sends an announcement to every account in the audience, in one transaction, and keeps it in the
- * history with the number reached. 422 on `cityId` for a city that does not exist.
+ * Queues an announcement: the history row is saved as `queued` with the audit row, and the answer
+ * comes at once. The job `broadcast-fanout` (A10) rings the bells in chunks afterwards (see
+ * `notifications.fanout.service`), because one transaction over every account is too slow and
+ * holds its locks too long once the audience is thousands. 422 on `cityId` for a city that does
+ * not exist.
  */
 export async function sendBroadcast(
   tx: Transaction,
@@ -59,15 +61,6 @@ export async function sendBroadcast(
 ) {
   if (input.cityId && !(await isCity(tx, input.cityId)))
     fail.validation({ cityId: "validation.required" })
-  const audience = await listAudience(tx, input)
-  for (const userId of audience)
-    await notify(tx, {
-      userId,
-      type: "broadcast",
-      title: input.title,
-      body: input.body,
-      href: input.href,
-    })
   const saved = await q.insertBroadcast(tx, {
     id: newId(ID_PREFIX),
     title: input.title,
@@ -76,25 +69,25 @@ export async function sendBroadcast(
     roles: input.roles,
     cityId: input.cityId || null,
     verifiedOnly: input.verifiedOnly,
-    recipients: audience.length,
+    status: "queued",
+    recipients: 0,
     sentBy: actor.admin.id,
     createdAt: clock.now(),
   })
   if (!saved) throw new Error("broadcast vanished after insert")
-  const sent = toBroadcast(saved)
+  const queued = toBroadcast(saved)
   await recordAudit(tx, actor, {
     action: "broadcast.send",
     targetType: "broadcast",
     targetId: saved.id,
-    after: sent,
+    after: queued,
   })
-  return sent
+  return queued
 }
 
 /**
  * The ids of the accounts an audience reaches: those in the roles who read announcements, then
- * narrowed by city and the verified badge. An individual has no business, so the city is their
- * own and "verified only" leaves individuals out; a business uses its profile's city.
+ * narrowed by city and the verified badge.
  */
 async function listAudience(ex: Executor, audience: BroadcastAudience) {
   // Two independent reads.
@@ -103,13 +96,22 @@ async function listAudience(ex: Executor, audience: BroadcastAudience) {
     getOwnerProfiles(ex),
   ])
   return people
-    .filter((person) => {
-      const profile = profiles.get(person.id)
-      if (audience.verifiedOnly && !profile?.verified) return false
-      return (
-        !audience.cityId ||
-        (profile?.cityId ?? person.cityId) === audience.cityId
-      )
-    })
+    .filter((person) => isInAudience(person, profiles.get(person.id), audience))
     .map((person) => person.id)
+}
+
+/**
+ * Whether one account is in the audience once city and the verified badge are applied. An
+ * individual has no business, so the city is their own and "verified only" leaves individuals
+ * out; a business uses its profile's city.
+ */
+export function isInAudience(
+  person: { cityId: string | null },
+  profile: { cityId: string; verified: boolean } | undefined,
+  audience: { cityId?: string | null; verifiedOnly: boolean }
+) {
+  if (audience.verifiedOnly && !profile?.verified) return false
+  return (
+    !audience.cityId || (profile?.cityId ?? person.cityId) === audience.cityId
+  )
 }

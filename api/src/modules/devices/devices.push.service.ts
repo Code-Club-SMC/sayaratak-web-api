@@ -32,35 +32,57 @@ export async function queuePush(ex: Executor, push: Push) {
   const list = await q.listOf(ex, push.userId)
   if (list.length === 0) return
   const now = clock.now()
+  const rows = await Promise.all(
+    list.map((device) => outbox.insertOutbox(ex, pushRow(device, push, now)))
+  )
+  await afterCommitOrNow(ex, () => {
+    for (const row of rows) if (row) startPush(() => deliverPush(row))
+  })
+}
+
+/**
+ * The same, for a chunk of people at once (a broadcast): one read of their devices and one insert.
+ * Nothing starts sending here; the outbox job (A10) takes the rows, which keeps a broadcast to
+ * thousands of phones from opening thousands of requests at the same moment.
+ */
+export async function queuePushMany(ex: Executor, pushes: Push[]) {
+  const devices = await q.listOfUsers(
+    ex,
+    pushes.map((push) => push.userId)
+  )
+  const byUser = new Map(pushes.map((push) => [push.userId, push]))
+  const now = clock.now()
+  const rows = devices.flatMap((device) => {
+    const push = byUser.get(device.userId)
+    return push ? [pushRow(device, push, now)] : []
+  })
+  await outbox.insertOutboxMany(ex, rows)
+}
+
+/** One outbox row for one device: the text in the device's own language and what the app needs to open the screen. */
+function pushRow(device: q.DeviceRow, push: Push, now: Date) {
   const data = {
     type: push.type,
     id: push.notificationId,
     ...(push.href && { href: push.href }),
   }
-  const rows = await Promise.all(
-    list.map((device) =>
-      outbox.insertOutbox(ex, {
-        id: newId(ID_PREFIX),
-        channel: "push",
-        to: device.id,
-        template: push.type,
-        locale: device.locale,
-        payload: {
-          push: {
-            userId: push.userId,
-            title: push.title[device.locale as keyof Bilingual],
-            body: push.body[device.locale as keyof Bilingual],
-            data,
-          },
-        },
-        sendAfter: now,
-        createdAt: now,
-      })
-    )
-  )
-  await afterCommitOrNow(ex, () => {
-    for (const row of rows) if (row) startPush(() => deliverPush(row))
-  })
+  return {
+    id: newId(ID_PREFIX),
+    channel: "push" as const,
+    to: device.id,
+    template: push.type,
+    locale: device.locale,
+    payload: {
+      push: {
+        userId: push.userId,
+        title: push.title[device.locale as keyof Bilingual],
+        body: push.body[device.locale as keyof Bilingual],
+        data,
+      },
+    },
+    sendAfter: now,
+    createdAt: now,
+  }
 }
 
 /**

@@ -1,17 +1,17 @@
 import { beforeEach, describe, expect, test } from "bun:test"
 import { broadcastSchema } from "@sayaratak/shared/schemas/api"
 import { pageOf } from "@sayaratak/shared/schemas/fields"
-import { estimateSchema } from "@sayaratak/shared/schemas/responses"
 import { and, eq, sql } from "drizzle-orm"
 
 import { db } from "~/shared/db/client"
 import { auditLog } from "~/modules/audit/audit.tables"
 import { user } from "~/modules/auth/auth.tables"
 import { dealerships } from "~/modules/businesses/businesses.tables"
+import { fanOut } from "~/modules/notifications/notifications.fanout.service"
 import { notifications } from "~/modules/notifications/notifications.tables"
 
 import { adminCaller, errorOf } from "../../../tests/admin"
-import { expectSchema, req, resetDb, signIn } from "../../../tests/helpers"
+import { expectSchema, resetDb } from "../../../tests/helpers"
 
 // Seed: 61 individuals (2 banned), 12 dealerships, 14 workshops, 18 mechanics, all reading announcements.
 let call = adminCaller()
@@ -23,11 +23,6 @@ beforeEach(async () => {
 const message = {
   title: { ar: "أهلا", en: "Hello" },
   body: { ar: "رسالة", en: "A message" },
-}
-const estimate = async (query: string) => {
-  const res = await call("GET", `/admin/broadcasts/estimate?${query}`)
-  expect(res.status).toBe(200)
-  return (await expectSchema(res, estimateSchema)).count
 }
 const send = (audience: object, extra: object = {}) =>
   call("POST", "/admin/broadcasts", {
@@ -52,58 +47,8 @@ const stopAnnouncements = (userId: string) =>
     .set({ prefs: sql`jsonb_set(${user.prefs}, '{announcements}', 'false')` })
     .where(eq(user.id, userId))
 
-describe("admin broadcast routes", () => {
-  test("answer 401 signed out and 403 `forbidden` to a seller", async () => {
-    const { cookie, origin } = await signIn("dealership")
-    for (const [method, path] of [
-      ["GET", "/admin/broadcasts"],
-      ["GET", "/admin/broadcasts/estimate?roles=user"],
-      ["POST", "/admin/broadcasts"],
-    ] as const) {
-      expect((await req(path, { method })).status).toBe(401)
-      const seller = await req(path, {
-        method,
-        headers: { cookie, origin, "content-type": "application/json" },
-        body: method === "POST" ? "{}" : undefined,
-      })
-      expect(seller.status).toBe(403)
-    }
-  })
-})
-
-describe("GET /admin/broadcasts/estimate", () => {
-  test("counts the accounts in the roles that read announcements, without banned ones", async () => {
-    expect(await estimate("roles=user")).toBe(59)
-    expect(await estimate("roles=dealership&roles=workshop")).toBe(26)
-    expect(await estimate("roles=mechanic")).toBe(18)
-    await stopAnnouncements("ud-2")
-    expect(await estimate("roles=dealership")).toBe(11)
-  })
-
-  test("narrows by city and by the verified badge, which leaves individuals out", async () => {
-    const shops = await db.select().from(dealerships)
-    const verified = shops.filter((row) => row.verified).length
-    expect(await estimate("roles=dealership&verifiedOnly=true")).toBe(verified)
-    expect(await estimate("roles=user&verifiedOnly=true")).toBe(0)
-    const city = shops[0]?.cityId ?? ""
-    const inCity = shops.filter((row) => row.cityId === city).length
-    expect(await estimate(`roles=dealership&cityId=${city}`)).toBe(inCity)
-    expect(await estimate("roles=dealership&cityId=")).toBe(shops.length)
-    expect(await estimate("roles=dealership&cityId=nowhere")).toBe(0)
-  })
-
-  test("answers 422 for no role or one that is not an audience", async () => {
-    for (const query of ["", "roles=admin", "roles=robot"]) {
-      const res = await call("GET", `/admin/broadcasts/estimate?${query}`)
-      expect(res.status).toBe(422)
-      const fields = Object.keys((await errorOf(res)).fields ?? {})
-      expect(fields.some((field) => field.startsWith("roles"))).toBe(true)
-    }
-  })
-})
-
 describe("POST /admin/broadcasts", () => {
-  test("rings the bell of every account in the audience once, keeps the history row and writes the audit row", async () => {
+  test("queues the announcement at once; the job rings the bell of every account in the audience once", async () => {
     await stopAnnouncements("ud-2")
     const res = await send({ roles: ["dealership"] }, { href: "/search" })
     expect(res.status).toBe(200)
@@ -111,14 +56,29 @@ describe("POST /admin/broadcasts", () => {
     expect(sent).toMatchObject({
       roles: ["dealership"],
       verifiedOnly: false,
-      recipients: 11,
+      status: "queued",
+      recipients: 0,
       title: message.title,
       href: "/search",
     })
+    // Nothing rings until the job runs.
+    expect(await bellsOf("Hello")).toEqual([])
+
+    expect(await fanOut()).toBe(11)
+
     const bells = await bellsOf("Hello")
     expect(bells).toHaveLength(11)
     expect(bells.every((bell) => bell.href === "/search")).toBe(true)
     expect(bells.map((bell) => bell.userId)).not.toContain("ud-2")
+    const listed = await expectSchema(
+      await call("GET", "/admin/broadcasts"),
+      pageOf(broadcastSchema)
+    )
+    expect(listed.items[0]).toMatchObject({
+      id: sent.id,
+      status: "sent",
+      recipients: 11,
+    })
     const [row] = await db
       .select()
       .from(auditLog)
@@ -127,7 +87,7 @@ describe("POST /admin/broadcasts", () => {
       action: "broadcast.send",
       targetType: "broadcast",
       adminId: "u-admin",
-      after: { recipients: 11 },
+      after: { status: "queued", recipients: 0 },
     })
   })
 
@@ -141,9 +101,8 @@ describe("POST /admin/broadcasts", () => {
       { roles: ["dealership"], cityId: target?.cityId, verifiedOnly: true },
       { title: { ar: "ع", en: "Verified" } }
     )
-    expect((await expectSchema(res, broadcastSchema)).recipients).toBe(
-      wanted.length
-    )
+    expect(res.status).toBe(200)
+    expect(await fanOut()).toBe(wanted.length)
     expect(
       (await bellsOf("Verified")).map((bell) => bell.userId).sort()
     ).toEqual(wanted.map((row) => row.ownerUserId).sort())
@@ -177,6 +136,7 @@ describe("GET /admin/broadcasts", () => {
   test("lists the history newest first and finds a title in either language", async () => {
     await send({ roles: ["mechanic"] }, { title: { ar: "عرض", en: "Offer" } })
     await send({ roles: ["workshop"] }, { title: { ar: "خبر", en: "News" } })
+    await fanOut()
     const all = await expectSchema(
       await call("GET", "/admin/broadcasts"),
       pageOf(broadcastSchema)

@@ -25,7 +25,7 @@ adminBroadcastsRoutes.get(
   "/admin/broadcasts",
   spec({
     summary:
-      "The announcements sent so far, newest first, with how many accounts each reached; `q` keeps those whose title holds it in either language, paged",
+      "The announcements sent so far, newest first, with their `status` and how many accounts each has reached; `q` keeps those whose title holds it in either language, paged",
     access: "user",
     responses: { 200: pageOf(broadcastSchema) },
     errors: [...ADMIN_ERRORS],
@@ -52,7 +52,7 @@ adminBroadcastsRoutes.post(
   "/admin/broadcasts",
   spec({
     summary:
-      "Send an announcement to every account in the audience that reads announcements, and keep it in the history. 422 on `cityId` for an unknown city",
+      "Queue an announcement for every account in the audience that reads announcements and keep it in the history. It answers at once with `status` queued and 0 recipients; a background job rings the bells in chunks (`sending`, then `sent`) and `recipients` counts those reached so far, so poll `GET /admin/broadcasts` for progress. Only accounts that existed when it was sent are reached. 422 on `cityId` for an unknown city",
     access: "user",
     responses: { 200: broadcastSchema },
     errors: [...ADMIN_ERRORS, "validation"],

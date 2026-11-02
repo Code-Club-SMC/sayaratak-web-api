@@ -245,7 +245,7 @@ The auth rows are the mock's contract. The backend plan replaces them with Bette
 
 ### Notifications
 
-Created on: new message, listing approved or rejected, verification result (approved, rejected, badge removed), business suspended or restored, saved-search match, new review, payment approved or rejected, subscription expiring, admin broadcast. Each stores title and body in both languages and a link for the recipient's dashboard. Nothing is written when the recipient turned that kind off in their notification settings (`mocks/lib.ts` `prefOf` maps type to setting). Subscription-expiring notices are only seeded in the mock; the backend needs a job that sends them.
+Created on: new message, listing approved or rejected, verification result (approved, rejected, badge removed), business suspended or restored, saved-search match, new review, payment approved or rejected, subscription expiring, listing expired (api job only, the mock does not age listings), admin broadcast. Each stores title and body in both languages and a link for the recipient's dashboard. Nothing is written when the recipient turned that kind off in their notification settings (`mocks/lib.ts` `prefOf` maps type to setting). Subscription-expiring notices are only seeded in the mock; the backend needs a job that sends them.
 
 ### Saved searches
 
@@ -267,7 +267,7 @@ One review per author per target (409 `already_reviewed`). The target's owner ma
 - Suspending a business needs a reason; the owner is notified on suspend and on restore.
 - Assign plan replaces the business's active subscription; empty custom fields take the plan's values.
 - Taxonomy: a row in use is 409 `in_use`. The last shown vehicle type and the last enabled country cannot be turned off (409 `last_shown`).
-- Broadcast audience: roles, optional city (individuals by profile city, businesses by business city), verified only (leaves individuals out). Only accounts with announcements on are counted and notified.
+- Broadcast audience: roles, optional city (individuals by profile city, businesses by business city), verified only (leaves individuals out). Only accounts with announcements on are counted and notified. The api queues the broadcast (`status` queued, 0 recipients) and a job rings the bells in chunks (`sending`, then `sent`; `recipients` counts those reached so far); the mock does the same 1.5 seconds after Send. Only accounts that existed when it was sent are reached.
 - Backups store a full snapshot; restore puts it back and keeps the backup list.
 
 ### Auth rules

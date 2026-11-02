@@ -25,6 +25,11 @@ export function insertOutbox(ex: Executor, row: NewOutboxRow) {
     .then(([inserted]) => inserted)
 }
 
+/** Several rows in one statement (a chunk of a broadcast). */
+export async function insertOutboxMany(ex: Executor, rows: NewOutboxRow[]) {
+  if (rows.length > 0) await ex.insert(outbox).values(rows)
+}
+
 /** Sent: the code is dropped from the row (A9). */
 export function updateOutboxSent(ex: Executor, id: string, at: Date) {
   return ex

@@ -91,11 +91,16 @@ export const broadcastAudienceSchema = z.object({
   verifiedOnly: z.boolean(),
 })
 export type BroadcastAudience = z.infer<typeof broadcastAudienceSchema>
+// A broadcast is queued when sent, `sending` while the background job rings the bells in chunks,
+// then `sent`. `recipients` counts the accounts reached so far.
+export const broadcastStatusSchema = z.enum(["queued", "sending", "sent"])
+export type BroadcastStatus = z.infer<typeof broadcastStatusSchema>
 export const broadcastSchema = broadcastAudienceSchema.extend({
   id: z.string(),
   title: bilingualSchema,
   body: bilingualSchema,
   href: z.string().optional(),
+  status: broadcastStatusSchema,
   recipients: z.number().int(),
   createdAt: z.string(),
 })

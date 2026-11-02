@@ -72,6 +72,7 @@ export function toBroadcast(row: BroadcastRow): Broadcast {
     roles: row.roles.filter((role) => role !== "admin"),
     cityId: row.cityId ?? undefined,
     verifiedOnly: row.verifiedOnly,
+    status: row.status,
     recipients: row.recipients,
     createdAt: row.createdAt.toISOString(),
   }

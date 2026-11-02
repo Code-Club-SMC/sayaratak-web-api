@@ -1,8 +1,10 @@
-import { and, eq } from "drizzle-orm"
+import { and, eq, inArray } from "drizzle-orm"
 
 import type { Executor } from "~/shared/db/tx"
 
 import { type NewDeviceRow, devices } from "./devices.tables"
+
+export type { DeviceRow } from "./devices.tables"
 
 /** Registers a device, or moves and refreshes the one that already has this token. */
 export function upsert(ex: Executor, row: NewDeviceRow) {
@@ -35,6 +37,12 @@ export function removeOf(
 
 export function listOf(ex: Executor, userId: string) {
   return ex.select().from(devices).where(eq(devices.userId, userId))
+}
+
+/** The devices of these people, one read for a whole chunk of a broadcast. */
+export function listOfUsers(ex: Executor, userIds: string[]) {
+  if (userIds.length === 0) return Promise.resolve([])
+  return ex.select().from(devices).where(inArray(devices.userId, userIds))
 }
 
 export function getById(ex: Executor, id: string) {

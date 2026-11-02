@@ -31,11 +31,13 @@ export function hasUserInCity(ex: Executor, cityId: string) {
 
 /**
  * The accounts an announcement may reach in these roles: the admin is never one, nor an account
- * banned now, nor one that switched announcements off. Each with its own city.
+ * banned now, nor one that switched announcements off. Each with its own city. `page` takes one
+ * chunk of them, in id order, among the accounts created by `createdBy`.
  */
 export function listAnnouncementTargets(
   ex: Executor,
-  roles: Parameters<typeof q.listAnnouncementTargets>[1]["roles"]
+  roles: Parameters<typeof q.listAnnouncementTargets>[1]["roles"],
+  page?: { after?: string; createdBy: Date; size: number }
 ) {
-  return q.listAnnouncementTargets(ex, { roles, now: clock.now() })
+  return q.listAnnouncementTargets(ex, { roles, now: clock.now(), page })
 }

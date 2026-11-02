@@ -37,20 +37,31 @@ describe("notification table", () => {
 })
 
 describe("broadcast table", () => {
-  test("refuses a broadcast with no role in its audience", async () => {
-    const error = await db
+  const row = {
+    id: "bc-1",
+    title: { ar: "x", en: "x" },
+    body: { ar: "x", en: "x" },
+    roles: ["user" as const],
+    verifiedOnly: false,
+    status: "queued" as const,
+    recipients: 0,
+    createdAt: new Date(),
+  }
+  const refusal = (values: Partial<typeof broadcasts.$inferInsert>) =>
+    db
       .insert(broadcasts)
-      .values({
-        id: "bc-1",
-        title: { ar: "x", en: "x" },
-        body: { ar: "x", en: "x" },
-        roles: [],
-        verifiedOnly: false,
-        recipients: 0,
-        createdAt: new Date(),
-      })
-      .catch((error) => error)
-    expect(error.cause.constraint).toBe("broadcasts_roles")
+      .values({ ...row, ...values })
+      .catch((error) => error.cause.constraint)
+
+  test("refuses a broadcast with no role in its audience", async () => {
+    expect(await refusal({ roles: [] })).toBe("broadcasts_roles")
+  })
+
+  test("refuses a sent broadcast that has no finish time", async () => {
+    expect(await refusal({ status: "sent" })).toBe("broadcasts_finished")
+    await db
+      .insert(broadcasts)
+      .values({ ...row, status: "sent", finishedAt: new Date() })
   })
 })
 

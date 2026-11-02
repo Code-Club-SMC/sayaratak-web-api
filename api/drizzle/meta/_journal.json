@@ -141,6 +141,13 @@
       "when": 1793609030706,
       "tag": "0019_listing_expired_notice",
       "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "7",
+      "when": 1793609881068,
+      "tag": "0020_broadcast_fanout",
+      "breakpoints": true
     }
   ]
 }

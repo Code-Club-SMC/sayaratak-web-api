@@ -46,6 +46,12 @@ test("J11 broadcast to dealerships in one city reaches only them, in their langu
     .getByRole("button", { name: t("admin.broadcast_send") })
     .click()
   expect((await sent).ok()).toBe(true)
+  // The bells ring in the background; the history follows the broadcast until it says Sent.
+  await expect(
+    admin
+      .getByRole("table")
+      .getByText(t("admin.broadcast_status_sent"), { exact: true })
+  ).toBeVisible({ timeout: 15_000 })
 
   // The Khartoum dealership reads it in the language it is using.
   const other = lang === "ar" ? "en" : "ar"

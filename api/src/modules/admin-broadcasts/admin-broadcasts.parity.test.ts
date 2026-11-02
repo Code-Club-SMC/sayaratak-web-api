@@ -1,5 +1,7 @@
 import { afterAll, beforeAll, describe, test } from "bun:test"
 
+import { fanOut } from "~/modules/notifications/notifications.fanout.service"
+
 import { bothSessions, resetDb } from "../../../tests/helpers"
 import { expectParity } from "../../../tests/parity"
 
@@ -28,8 +30,16 @@ afterAll(async () => {
 const sameIds = (body: unknown) =>
   JSON.parse(JSON.stringify(body).replace(/"bc-[A-Za-z0-9_-]{8}"/g, '"bc-new"'))
 
-const read = (path: string) =>
-  expectParity(path, { init: { headers }, ignore: sameIds })
+// While a broadcast is going, each side is at its own point (the api waits for its job, the mock for
+// a timer), so the progress is left out until both are done.
+const withoutProgress = (body: unknown) =>
+  JSON.parse(
+    JSON.stringify(sameIds(body), (key, value) =>
+      key === "status" || key === "recipients" ? "-" : value
+    )
+  )
+const read = (path: string, ignore = sameIds) =>
+  expectParity(path, { init: { headers }, ignore })
 const send = (body: unknown) =>
   expectParity("/api/v1/admin/broadcasts", {
     ignore: sameIds,
@@ -72,6 +82,11 @@ describe("the broadcast admin matches the mock", () => {
     await send({ ...message, roles: [], verifiedOnly: false })
     await send({ ...message, roles: ["user"] })
     await send({ ...message, roles: ["user"], verifiedOnly: false, href: "x" })
+    await read("/api/v1/admin/broadcasts", withoutProgress)
+
+    // The api's job runs, and the mock's timer (1.5 s) rings its bells.
+    await fanOut()
+    await Bun.sleep(2000)
     await read("/api/v1/admin/broadcasts")
     await read("/api/v1/admin/broadcasts?q=offer")
     await read("/api/v1/admin/broadcasts?pageSize=1&page=2")

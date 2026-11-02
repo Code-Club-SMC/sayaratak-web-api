@@ -4,12 +4,15 @@ import type { reports } from "./reports.tables"
 
 type ReportRow = typeof reports.$inferSelect
 
-/** A report as its reporter and the admin queue read it. Both ids are set while the listing and the reporter exist. */
+// A report outlives its deleted listing or reporter (the column goes null); the shared schema wants an id, so this one stands in (as for a review's deleted author). No listing or account has it.
+const DELETED = "deleted"
+
+/** A report as its reporter and the admin queue read it. */
 export function toReport(row: ReportRow): Report {
   return {
     id: row.id,
-    listingId: row.listingId ?? "",
-    reporterId: row.reporterId ?? "",
+    listingId: row.listingId ?? DELETED,
+    reporterId: row.reporterId ?? DELETED,
     reason: row.reason,
     details: row.details ?? undefined,
     status: row.status,

@@ -102,7 +102,10 @@ reviewsRoutes.delete(
   }),
   requireUser,
   async (c) => {
-    await deleteReview(c.get("user"), c.req.param("id"))
+    await deleteReview(c.get("user"), {
+      id: c.req.param("id"),
+      ip: c.get("clientIp"),
+    })
     return c.json({ ok: true })
   }
 )

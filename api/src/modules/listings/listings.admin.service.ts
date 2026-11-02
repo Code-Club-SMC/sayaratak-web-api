@@ -102,6 +102,11 @@ async function scopeOf(query: AdminQuery) {
   return { featuredIds, verified: { userIds, dealershipOwnerIds } }
 }
 
+/** Ids of the listings, in any state, whose title holds `term` (lower case). */
+export function listIdsTitled(ex: Executor, term: string) {
+  return q.listIdsTitled(ex, term)
+}
+
 /** One listing of any state for the admin, or 404. */
 export async function getForAdmin(ex: Executor, id: string) {
   const row = await getListing(ex, id)

@@ -10,6 +10,7 @@ import type { SessionUser } from "~/modules/auth/auth.types"
 import * as businesses from "~/modules/businesses/businesses.update.service"
 import { notify } from "~/modules/notifications/notifications.service"
 
+import { deleteReviewAsAdmin } from "./reviews.admin.service"
 import { toReview } from "./reviews.mapper"
 import * as q from "./reviews.queries"
 
@@ -157,12 +158,16 @@ export async function editReview(
   return toReview(saved ?? row)
 }
 
-/** `DELETE /reviews/:id`: its author or an admin. */
-export async function deleteReview(user: SessionUser, id: string) {
-  const row = await q.getById(db, id)
+/** `DELETE /reviews/:id`: its author or an admin; an admin deleting another person's review leaves an audit row. */
+export async function deleteReview(
+  user: SessionUser,
+  change: { id: string; ip: string }
+) {
+  const row = await q.getById(db, change.id)
   if (!row) fail.notFound()
-  if (row.authorId !== user.id && user.role !== "admin") fail.forbidden()
-  await q.remove(db, id)
+  if (row.authorId === user.id) return q.remove(db, change.id)
+  if (user.role !== "admin") fail.forbidden()
+  await deleteReviewAsAdmin({ admin: user, ip: change.ip }, row)
 }
 
 /** `POST /reviews/:id/flag`: the business's owner asks the admin to look; the review stays public, and a second flag changes nothing. */

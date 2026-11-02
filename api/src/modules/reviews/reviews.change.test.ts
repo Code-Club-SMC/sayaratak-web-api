@@ -4,6 +4,7 @@ import { reviewSchema } from "@sayaratak/shared/schemas/review"
 import { eq } from "drizzle-orm"
 
 import { db } from "~/shared/db/client"
+import { auditLog } from "~/modules/audit/audit.tables"
 
 import {
   call,
@@ -90,6 +91,26 @@ describe("PATCH and DELETE /reviews/:id", () => {
       (await call(admin, `/reviews/${id}`, { method: "DELETE" })).status
     ).toBe(200)
     expect(await db.$count(reviews, eq(reviews.id, id))).toBe(0)
+    // Only an admin deleting another person's review leaves an audit row (the author's own delete does not).
+    const [audit] = await db
+      .select()
+      .from(auditLog)
+      .where(eq(auditLog.targetId, id))
+    expect(audit).toMatchObject({
+      action: "review.delete",
+      targetType: "review",
+      adminId: "u-admin",
+      before: { status: "visible", rating: review.rating },
+    })
+  })
+
+  test("the author's own delete leaves no audit row", async () => {
+    const buyer = await signIn("user")
+    const id = await mine(buyer)
+    expect(
+      (await call(buyer, `/reviews/${id}`, { method: "DELETE" })).status
+    ).toBe(200)
+    expect(await db.$count(auditLog, eq(auditLog.targetId, id))).toBe(0)
   })
 })
 

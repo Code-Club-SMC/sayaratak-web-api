@@ -39,7 +39,7 @@ const REJECTED_TITLE = { ar: "تم رفض إعلانك", en: "Your listing was r
 
 /**
  * Approves, rejects, removes or restores one listing inside the caller's
- * transaction (the report action of 8.8 removes a listing the same way).
+ * transaction.
  * 404 for an unknown listing, 409 `conflict` when its state does not fit
  * the action, so a second click cannot notify the owner twice.
  */
@@ -53,6 +53,18 @@ export async function moderateOne(
   if (!row) fail.notFound()
   if (!FROM[change.action].includes(row.moderation)) fail.conflict()
   return move(tx, actor, { row, action: change.action, reason: change.reason })
+}
+
+/**
+ * The report action's removal: removes the listing when it is pending,
+ * approved or rejected, and answers the row as it is after. A listing that is
+ * gone, a draft or already removed is left alone and answers `undefined`, so
+ * closing a report never fails on the listing and nobody is told twice.
+ */
+export async function removeIfLive(tx: Transaction, actor: Actor, id: string) {
+  const row = await q.lockListing(tx, id)
+  if (!row || !FROM.remove.includes(row.moderation)) return undefined
+  return move(tx, actor, { row, action: "remove" })
 }
 
 /**

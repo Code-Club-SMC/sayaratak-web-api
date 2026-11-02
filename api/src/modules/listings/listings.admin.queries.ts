@@ -65,6 +65,15 @@ export async function listForAdmin(ex: Executor, find: AdminFilters) {
   return { rows: rows.map((row) => row.listing), total }
 }
 
+/** Ids of the listings, in any state, whose title holds `term` (lower case): the text search of the reports queue. */
+export function listIdsTitled(ex: Executor, term: string) {
+  return ex
+    .select({ id: listings.id })
+    .from(listings)
+    .where(sql`strpos(lower(${listings.title}), ${term}) > 0`)
+    .then((rows) => rows.map((row) => row.id))
+}
+
 // A promotion running now: a listing in the Featured list, or not in it.
 function promotedWhere(promoted: AdminFilters["promoted"]) {
   if (!promoted) return undefined

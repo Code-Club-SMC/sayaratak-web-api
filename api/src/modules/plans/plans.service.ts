@@ -6,28 +6,28 @@ import { clock } from "~/shared/time/clock"
 import { listIdsOf } from "~/modules/listings/listings.stats.service"
 import * as promotions from "~/modules/promotions/promotions.service"
 
+import { getStanding } from "./plans.entitlement.service"
 import * as q from "./plans.queries"
 
 const DAY_MS = 86_400_000
 const SUBSCRIPTION_ID_PREFIX = "sub"
 
 /**
- * The account's active subscription, if any. A10: an ended free plan stays
- * `active` until the subscription job renews it, so a dealership is never
- * left at 0 listings for the hour in between.
+ * The account's subscription as it stands now (see `getStanding`): a paid plan past its end reads
+ * as the audience's free plan at once, a free one stays until the job renews it.
  */
-export function getActiveSubscription(ex: Executor, userId: string) {
-  return q.getActiveSubscription(ex, userId)
+export async function getActiveSubscription(ex: Executor, userId: string) {
+  return (await getStanding(ex, userId))?.subscription
 }
 
-/** The plan of the account's active subscription: where its caps come from (photos, services, portfolio). */
-export function getActivePlan(ex: Executor, userId: string) {
-  return q.getActivePlan(ex, userId)
+/** The plan the account is on now: where its caps come from (photos, services, portfolio). */
+export async function getActivePlan(ex: Executor, userId: string) {
+  return (await getStanding(ex, userId))?.plan
 }
 
-/** Owners on a paid plan: Plus promises mechanics "Top of search". */
+/** Owners on a paid plan that has not ended: Plus promises mechanics "Top of search". */
 export async function listPaidOwnerIds(ex: Executor) {
-  return new Set(await q.listPaidOwnerIds(ex))
+  return new Set(await q.listPaidOwnerIds(ex, clock.now()))
 }
 
 /**
@@ -124,9 +124,12 @@ export async function getCredits(
 
 /** The account's Featured credits now (`GET /me/subscription` shows the same). */
 export async function getCreditsOf(ex: Executor, userId: string) {
-  const sub = await q.getActiveSubscription(ex, userId)
-  const plan = sub && (await q.getPlan(ex, sub.planId))
-  return getCredits(ex, { userId, sub, total: plan?.featuredCredits })
+  const standing = await getStanding(ex, userId)
+  return getCredits(ex, {
+    userId,
+    sub: standing?.subscription,
+    total: standing?.plan.featuredCredits,
+  })
 }
 
 /** Accounts on an active plan, the free one included. */

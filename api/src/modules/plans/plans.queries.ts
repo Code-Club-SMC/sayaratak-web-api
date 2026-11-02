@@ -1,5 +1,5 @@
 import type { Plan } from "@sayaratak/shared/schemas/billing"
-import { and, asc, desc, eq, gt, inArray, ne } from "drizzle-orm"
+import { and, asc, desc, eq, gt, gte, inArray, ne } from "drizzle-orm"
 
 import type { Executor } from "~/shared/db/tx"
 
@@ -13,18 +13,6 @@ export function getActiveSubscription(ex: Executor, userId: string) {
       and(eq(subscriptions.userId, userId), eq(subscriptions.status, "active"))
     )
     .then(([row]) => row)
-}
-
-/** The plan behind the account's active subscription, if any. */
-export function getActivePlan(ex: Executor, userId: string) {
-  return ex
-    .select({ plan: plans })
-    .from(subscriptions)
-    .innerJoin(plans, eq(plans.id, subscriptions.planId))
-    .where(
-      and(eq(subscriptions.userId, userId), eq(subscriptions.status, "active"))
-    )
-    .then(([row]) => row?.plan)
 }
 
 /** The audience's free plan: its first plan, by list order, priced 0. */
@@ -46,13 +34,19 @@ export function getPlan(ex: Executor, id: string) {
     .then(([row]) => row)
 }
 
-/** Owners whose active subscription is to a plan that costs money. */
-export function listPaidOwnerIds(ex: Executor) {
+/** Owners whose active subscription is to a plan that costs money and has not ended at `now`. */
+export function listPaidOwnerIds(ex: Executor, now: Date) {
   return ex
     .select({ userId: subscriptions.userId })
     .from(subscriptions)
     .innerJoin(plans, eq(plans.id, subscriptions.planId))
-    .where(and(eq(subscriptions.status, "active"), gt(plans.price, 0)))
+    .where(
+      and(
+        eq(subscriptions.status, "active"),
+        gt(plans.price, 0),
+        gte(subscriptions.endsAt, now)
+      )
+    )
     .then((rows) => rows.map((row) => row.userId))
 }
 

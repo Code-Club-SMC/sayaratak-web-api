@@ -8,6 +8,7 @@ import * as content from "~/modules/content/content.service"
 import { getListingUsage } from "~/modules/listings/listings.rules.service"
 import * as payments from "~/modules/payments/payments.service"
 
+import { getStanding } from "./plans.entitlement.service"
 import { toPlan, toSubscription } from "./plans.mapper"
 import * as q from "./plans.queries"
 import { getCredits } from "./plans.service"
@@ -36,11 +37,15 @@ export async function listPlans(audience?: string) {
  * period and the plan whose receipt waits for review.
  */
 export async function getMySubscription(user: SessionUser) {
-  const current = await q.listCurrent(db, user.id)
-  const sub = current.find((s) => s.status === "active") ?? current[0]
+  // The active one as it stands now (a paid plan past its end reads as the free plan), else the pending one.
+  const standing = await getStanding(db, user.id)
+  const pending = standing
+    ? undefined
+    : (await q.listCurrent(db, user.id)).find((s) => s.status === "pending")
+  const sub = standing?.subscription ?? pending
   const [usage, plan, reviewPlan] = await Promise.all([
     getListingUsage(db, user),
-    sub ? q.getPlan(db, sub.planId) : undefined,
+    standing?.plan ?? (sub ? q.getPlan(db, sub.planId) : undefined),
     getReviewPlan(db, user.id),
   ])
   return {

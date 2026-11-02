@@ -150,3 +150,14 @@ export type ModelRow = typeof models.$inferSelect
 export type PartCategoryRow = typeof partCategories.$inferSelect
 export type SpecializationRow = typeof specializations.$inferSelect
 export type ServiceTemplateRow = typeof serviceTemplates.$inferSelect
+
+/** The row of each admin-managed list. */
+export type RowOf = {
+  cities: CityRow
+  districts: DistrictRow
+  makes: MakeRow
+  models: ModelRow
+  "vehicle-types": VehicleTypeRow
+  "part-categories": PartCategoryRow
+  countries: CountryRow
+}

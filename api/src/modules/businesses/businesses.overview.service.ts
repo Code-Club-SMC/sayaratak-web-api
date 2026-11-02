@@ -61,3 +61,13 @@ export async function searchBusinesses(
   )
   return perKind.flat().slice(0, find.limit)
 }
+
+/** A profile is based in this city (a mechanic also counts the cities it serves): the check before an admin deletes it. */
+export function hasBusinessInCity(ex: Executor, cityId: string) {
+  return q.hasBusinessInCity(ex, cityId)
+}
+
+/** A dealership or workshop has this district: the check before an admin deletes it. */
+export function hasBusinessInDistrict(ex: Executor, districtId: string) {
+  return q.hasBusinessInDistrict(ex, districtId)
+}

@@ -113,3 +113,26 @@ export function listIdsTitled(ex: Executor, term: string) {
     .where(sql`strpos(lower(${listings.title}), ${term}) > 0`)
     .then((rows) => rows.map((row) => row.id))
 }
+
+const PICKS = {
+  cityId: listings.cityId,
+  districtId: listings.districtId,
+  makeId: listings.makeId,
+  modelId: listings.modelId,
+  partCategoryId: listings.partCategoryId,
+} as const
+
+export type ListingPick = keyof typeof PICKS
+
+/** Any listing, drafts too, holds the list entry. */
+export function hasListingWith(
+  ex: Executor,
+  find: { column: ListingPick; id: string }
+) {
+  return ex
+    .select({ id: listings.id })
+    .from(listings)
+    .where(eq(listings[find.column], find.id))
+    .limit(1)
+    .then((rows) => rows.length > 0)
+}

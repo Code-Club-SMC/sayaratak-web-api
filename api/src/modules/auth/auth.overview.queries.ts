@@ -1,4 +1,4 @@
-import { asc, count, ilike, or, sql } from "drizzle-orm"
+import { asc, count, eq, ilike, or, sql } from "drizzle-orm"
 
 import type { Executor } from "~/shared/db/tx"
 import { type DayRange, dayColumn, withinDays } from "~/shared/time/khartoum"
@@ -38,4 +38,14 @@ export function search(ex: Executor, find: { pattern: string; limit: number }) {
     )
     .orderBy(asc(sql`length(${user.id})`), asc(user.id))
     .limit(find.limit)
+}
+
+/** An account lists the city as its own. */
+export function hasUserInCity(ex: Executor, cityId: string) {
+  return ex
+    .select({ id: user.id })
+    .from(user)
+    .where(eq(user.cityId, cityId))
+    .limit(1)
+    .then((rows) => rows.length > 0)
 }

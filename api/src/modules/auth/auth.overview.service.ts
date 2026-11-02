@@ -22,3 +22,8 @@ export function searchUsers(
 ) {
   return q.search(ex, { pattern: containing(find.term), limit: find.limit })
 }
+
+/** An account lists this city as its own: the check before an admin deletes it. */
+export function hasUserInCity(ex: Executor, cityId: string) {
+  return q.hasUserInCity(ex, cityId)
+}

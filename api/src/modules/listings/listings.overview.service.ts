@@ -62,3 +62,14 @@ export async function listIdsPerOwner(ex: Executor, ownerIds: string[]) {
   }
   return ids
 }
+
+/**
+ * Any listing, in any state, holds this city, district, make, model or part category: the
+ * check before an admin deletes it. Example: `hasListingWith(db, { column: "makeId", id: "toyota" })`.
+ */
+export function hasListingWith(
+  ex: Executor,
+  find: { column: q.ListingPick; id: string }
+) {
+  return q.hasListingWith(ex, find)
+}

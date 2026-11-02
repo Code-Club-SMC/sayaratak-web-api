@@ -17,6 +17,7 @@ import { adminBusinessesRoutes } from "~/modules/admin-businesses/admin-business
 import { adminPaymentsRoutes } from "~/modules/admin-payments/admin-payments.routes"
 import { adminVerificationsRoutes } from "~/modules/admin-verifications/admin-verifications.routes"
 import { adminReportsRoutes } from "~/modules/admin-reports/admin-reports.routes"
+import { adminTaxonomyRoutes } from "~/modules/admin-taxonomy/admin-taxonomy.routes"
 import { adminReviewsRoutes } from "~/modules/admin-reviews/admin-reviews.routes"
 import { platformAdminRoutes } from "~/modules/platform-admin/platform-admin.routes"
 import { adminPlansRoutes } from "~/modules/admin-plans/admin-plans.routes"
@@ -104,6 +105,7 @@ const v1 = new Hono()
   .route("/", adminPromotionsRoutes)
   .route("/", adminReviewsRoutes)
   .route("/", adminReportsRoutes)
+  .route("/", adminTaxonomyRoutes)
   .route("/", platformAdminRoutes)
 
 // Middleware in A3 order. The per-request log line comes with 10.4; the 500

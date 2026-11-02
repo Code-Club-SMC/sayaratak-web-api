@@ -2,7 +2,12 @@ import { extraDefaults } from "@sayaratak/shared/schemas/listing-fields"
 import { expect, it } from "vitest"
 import type { z } from "zod"
 
+import { slugify } from "@sayaratak/shared/lib/slug"
 import { searchParamsSchema } from "@sayaratak/shared/search/schemas"
+import {
+  taxonomyCreateSchemas,
+  taxonomyPatchSchemas,
+} from "@sayaratak/shared/schemas/taxonomy-inputs"
 import {
   backupSchema,
   bannerSchema,
@@ -453,4 +458,40 @@ it("field schemas return i18n keys as messages", () => {
     ...hours.slice(1),
   ]
   expect(msg(weeklyHoursSchema, reversed)).toBe("validation.hours_order")
+})
+
+it("taxonomy input schemas: create fixes the code, patch leaves fields out", () => {
+  const name = { ar: "اسم", en: "Name" }
+  expect(
+    taxonomyCreateSchemas.countries.parse({
+      code: "EG",
+      name,
+      dialCode: "+20",
+      enabled: true,
+    }).code
+  ).toBe("eg")
+  expect(
+    taxonomyCreateSchemas.countries
+      .safeParse({
+        code: "egypt",
+        name,
+        dialCode: "20",
+        enabled: true,
+      })
+      .error?.issues.map((i) => i.message)
+  ).toEqual(["validation.country_code", "validation.dial_code"])
+  expect(
+    taxonomyCreateSchemas.makes.safeParse({ name, vehicleTypes: [] }).error
+      ?.issues[0]?.message
+  ).toBe("validation.select_min")
+  // A slug cannot be sent: it is made once from the English name.
+  expect(
+    taxonomyCreateSchemas["part-categories"].parse({ name, slug: "x" })
+  ).toEqual({ name })
+  expect(taxonomyPatchSchemas.cities.parse({})).toEqual({})
+  expect(
+    taxonomyPatchSchemas.countries.parse({ code: "eg", enabled: false })
+  ).toEqual({ enabled: false })
+  expect(slugify("Land Cruiser Prado")).toBe("land-cruiser-prado")
+  expect(slugify("تويوتا")).toBe("")
 })

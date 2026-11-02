@@ -1,9 +1,14 @@
-import { asc, desc, ilike, or, sql } from "drizzle-orm"
+import { asc, desc, eq, ilike, or, sql } from "drizzle-orm"
 
 import type { Executor } from "~/shared/db/tx"
 
 import { byIdNumber } from "./businesses.queries"
-import { dealerships, mechanics, workshops } from "./businesses.tables"
+import {
+  dealerships,
+  mechanicCities,
+  mechanics,
+  workshops,
+} from "./businesses.tables"
 
 const TABLES = {
   dealership: dealerships,
@@ -45,4 +50,50 @@ export function search(
     )
     .orderBy(...byIdNumber(table))
     .limit(find.limit)
+}
+
+/** A dealership, workshop or mechanic is based in the city, or a mechanic serves it. */
+export async function hasBusinessInCity(ex: Executor, cityId: string) {
+  // Four independent one-row reads.
+  const found = await Promise.all([
+    ex
+      .select({ id: dealerships.id })
+      .from(dealerships)
+      .where(eq(dealerships.cityId, cityId))
+      .limit(1),
+    ex
+      .select({ id: workshops.id })
+      .from(workshops)
+      .where(eq(workshops.cityId, cityId))
+      .limit(1),
+    ex
+      .select({ id: mechanics.id })
+      .from(mechanics)
+      .where(eq(mechanics.cityId, cityId))
+      .limit(1),
+    ex
+      .select({ id: mechanicCities.mechanicId })
+      .from(mechanicCities)
+      .where(eq(mechanicCities.cityId, cityId))
+      .limit(1),
+  ])
+  return found.some((rows) => rows.length > 0)
+}
+
+/** A dealership or workshop has the district. */
+export async function hasBusinessInDistrict(ex: Executor, districtId: string) {
+  // Two independent one-row reads.
+  const found = await Promise.all([
+    ex
+      .select({ id: dealerships.id })
+      .from(dealerships)
+      .where(eq(dealerships.districtId, districtId))
+      .limit(1),
+    ex
+      .select({ id: workshops.id })
+      .from(workshops)
+      .where(eq(workshops.districtId, districtId))
+      .limit(1),
+  ])
+  return found.some((rows) => rows.length > 0)
 }

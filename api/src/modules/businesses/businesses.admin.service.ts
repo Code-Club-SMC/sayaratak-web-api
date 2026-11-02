@@ -3,6 +3,7 @@ import { fail } from "~/shared/http/errors"
 import { pageParams } from "~/shared/http/page"
 
 import * as q from "./businesses.admin.queries"
+import * as owners from "./businesses.owners.queries"
 import * as profiles from "./businesses.profile.queries"
 import { getOwnerOf } from "./businesses.queries"
 import type { BusinessKind } from "./businesses.types"
@@ -106,6 +107,17 @@ export async function findAdminBusiness(ex: Executor, id: string) {
 /** Ids of the businesses, of every kind, whose name holds `term` (lower case): the text search of other admin tables. */
 export function listBusinessIdsNamed(ex: Executor, term: string) {
   return q.listIdsNamed(ex, term)
+}
+
+/** The business each of these accounts owns, keyed by account id, with its id and name. */
+export async function getBusinessesOfOwners(ex: Executor, ownerIds: string[]) {
+  const rows = await owners.listOfOwners(ex, ownerIds)
+  return new Map(rows.map((row) => [row.ownerUserId, row]))
+}
+
+/** Owners of the businesses whose name holds `term` (lower case): the holder search of the subscriptions table. */
+export function listOwnerIdsNamed(ex: Executor, term: string) {
+  return owners.listOwnerIdsNamed(ex, term)
 }
 
 /** The kind and owner of a business, locked until the transaction ends; 404 for an unknown id. */

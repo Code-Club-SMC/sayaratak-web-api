@@ -79,3 +79,8 @@ export function searchPayments(
 ) {
   return q.search(ex, { pattern: containing(find.term), limit: find.limit })
 }
+
+/** Ids of the plans some receipt names, in any state. */
+export function listPlanIdsPaidFor(ex: Executor) {
+  return q.listPlanIdsPaidFor(ex)
+}

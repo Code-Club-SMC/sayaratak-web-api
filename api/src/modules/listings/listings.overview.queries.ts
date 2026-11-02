@@ -104,3 +104,12 @@ export function countLivePerOwner(
     )
     .groupBy(listings.ownerUserId)
 }
+
+/** Ids of the listings whose title holds `term` (lower case). */
+export function listIdsTitled(ex: Executor, term: string) {
+  return ex
+    .select({ id: listings.id })
+    .from(listings)
+    .where(sql`strpos(lower(${listings.title}), ${term}) > 0`)
+    .then((rows) => rows.map((row) => row.id))
+}

@@ -30,6 +30,11 @@ export async function countLivePerOwner(ex: Executor, ownerUserIds: string[]) {
   return new Map(rows.map((row) => [row.ownerUserId ?? "", row.count]))
 }
 
+/** Ids of the listings whose title holds `term` (lower case): the search of the admin promotions table. */
+export function listIdsTitled(ex: Executor, term: string) {
+  return q.listIdsTitled(ex, term)
+}
+
 /** The newest listings that were sent in, newest first, for the admin activity feed. */
 export function listNewestSubmitted(ex: Executor, limit: number) {
   return q.listNewestSubmitted(ex, limit)

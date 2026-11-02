@@ -162,3 +162,12 @@ export function search(ex: Executor, find: { pattern: string; limit: number }) {
     .orderBy(asc(sql`length(${payments.id})`), asc(payments.id))
     .limit(find.limit)
 }
+
+/** Ids of the plans some receipt names, in any state: a plan with billing history cannot be deleted. */
+export function listPlanIdsPaidFor(ex: Executor) {
+  return ex
+    .selectDistinct({ itemId: payments.itemId })
+    .from(payments)
+    .where(eq(payments.itemType, "plan"))
+    .then((rows) => rows.map((row) => row.itemId))
+}

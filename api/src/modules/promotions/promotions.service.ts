@@ -79,17 +79,31 @@ export async function startPaidPromotion(
   if (!row) fail.notFound()
   if (row.status !== "pending_payment") return
   const now = clock.now()
-  const bump = row.type === "bump"
+  const run = runOf({ type: row.type, days: row.durationDays, now })
   await admin.updateStarted(tx, {
     id: row.id,
-    set: {
-      paymentId: paid.paymentId,
-      status: bump ? "ended" : "active",
-      startsAt: now,
-      endsAt: bump ? now : new Date(now.getTime() + row.durationDays * DAY_MS),
-    },
+    set: { paymentId: paid.paymentId, ...run },
   })
-  if (bump) await bumpListing(tx, { id: row.listingId, at: now })
+  if (row.type === "bump") await bumpListing(tx, { id: row.listingId, at: now })
+}
+
+/**
+ * When a promotion that starts at `now` runs: a Featured for its days, a bump
+ * not at all (it ends as it starts and only moves the listing up).
+ */
+export function runOf(start: {
+  type: "featured" | "bump"
+  days: number
+  now: Date
+}) {
+  const bump = start.type === "bump"
+  return {
+    status: bump ? ("ended" as const) : ("active" as const),
+    startsAt: start.now,
+    endsAt: bump
+      ? start.now
+      : new Date(start.now.getTime() + start.days * DAY_MS),
+  }
 }
 
 /** What approval of a promotion payment starts, keyed by promotion id: type, length and listing. */

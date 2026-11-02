@@ -120,7 +120,7 @@ function queue(mail: QueuedMail) {
   if (mail.to.endsWith(".invalid")) return
   const work = writeAndDeliver(mail)
   running.add(work)
-  // The one fire-and-forget in the API (A17.5): the caller's answer never
+  // A documented fire-and-forget (A17.5): the caller's answer never
   // waits on the database insert or on SMTP.
   void work.finally(() => running.delete(work))
 }

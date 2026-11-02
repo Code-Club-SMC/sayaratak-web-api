@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, describe, test } from "bun:test"
 
-import { fanOut } from "~/modules/notifications/notifications.fanout.service"
+import { flushFanOut } from "~/modules/notifications/notifications.fanout.service"
 
 import { bothSessions, resetDb } from "../../../tests/helpers"
 import { expectParity } from "../../../tests/parity"
@@ -84,8 +84,8 @@ describe("the broadcast admin matches the mock", () => {
     await send({ ...message, roles: ["user"], verifiedOnly: false, href: "x" })
     await read("/api/v1/admin/broadcasts", withoutProgress)
 
-    // The api's job runs, and the mock's timer (1.5 s) rings its bells.
-    await fanOut()
+    // The api's pass (started after each Send) ends, and the mock's timer (1.5 s) rings its bells.
+    await flushFanOut()
     await Bun.sleep(2000)
     await read("/api/v1/admin/broadcasts")
     await read("/api/v1/admin/broadcasts?q=offer")

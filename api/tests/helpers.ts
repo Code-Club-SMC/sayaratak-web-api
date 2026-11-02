@@ -4,6 +4,7 @@ import type { z } from "zod"
 import { app } from "~/app"
 import { rateLimit } from "~/modules/auth/auth.tables"
 import { db } from "~/shared/db/client"
+import { flushFanOut } from "~/modules/notifications/notifications.fanout.service"
 import { flushMail, testInbox } from "~/shared/mail/send"
 
 import { seed } from "../scripts/seed"
@@ -151,6 +152,8 @@ export async function resetDb() {
 
 /** Empties every table, for tests that start from a new site (bootstrap, create-admin). */
 export async function emptyDb() {
+  // A broadcast kicked by the last test must not write into the tables being emptied.
+  await flushFanOut()
   const rows = await db.execute<{ name: string }>(
     sql`select tablename as name from pg_tables where schemaname = 'public'`
   )

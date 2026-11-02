@@ -2,6 +2,7 @@ import type { Role } from "@sayaratak/shared/schemas/fields"
 
 import { type Transaction, transaction } from "~/shared/db/tx"
 import { BATCH_SIZE } from "~/shared/jobs/batches"
+import { runJob } from "~/shared/jobs/run-job"
 import { newId } from "~/shared/text/ids"
 import { clock } from "~/shared/time/clock"
 import { listAnnouncementTargets } from "~/modules/auth/auth.overview.service"
@@ -13,6 +14,9 @@ import * as q from "./notifications.fanout.queries"
 import { toNotificationHref } from "./notifications.mapper"
 
 const ID_PREFIX = "n"
+/** The job's name: the schedule and the kick below share it, so they share one lock. */
+export const FANOUT_JOB = "broadcast-fanout"
+const running = new Set<Promise<unknown>>()
 
 /**
  * One pass of the `broadcast-fanout` job (A10): rings the bells of every queued or sending
@@ -29,6 +33,23 @@ export async function fanOut(size = BATCH_SIZE) {
     if (chunk === null) return reached
     reached += chunk
   }
+}
+
+/**
+ * Starts a pass of the job right after a Send, without waiting for it, so the admin does not
+ * wait for the next minute. It runs as the job does (same name, so same lock and same log line):
+ * when a pass is already going it skips, and that pass finds the new broadcast or the next tick
+ * does. The third fire-and-forget of the API (A17.5, with mail and push); `runJob` never throws.
+ */
+export function kickFanOut() {
+  const started = runJob({ name: FANOUT_JOB, run: () => fanOut() })
+  running.add(started)
+  void started.finally(() => running.delete(started))
+}
+
+/** Waits for every kick started so far. Tests call it before reading the bells. */
+export async function flushFanOut() {
+  await Promise.all(running)
 }
 
 /** Takes the next chunk of the oldest unfinished broadcast; null when none is left. */

@@ -4,10 +4,15 @@ import { pageOf } from "@sayaratak/shared/schemas/fields"
 import { and, eq, sql } from "drizzle-orm"
 
 import { db } from "~/shared/db/client"
+import { takeJobLock } from "~/shared/jobs/job-lock"
 import { auditLog } from "~/modules/audit/audit.tables"
 import { user } from "~/modules/auth/auth.tables"
 import { dealerships } from "~/modules/businesses/businesses.tables"
-import { fanOut } from "~/modules/notifications/notifications.fanout.service"
+import {
+  FANOUT_JOB,
+  fanOut,
+  flushFanOut,
+} from "~/modules/notifications/notifications.fanout.service"
 import { notifications } from "~/modules/notifications/notifications.tables"
 
 import { adminCaller, errorOf } from "../../../tests/admin"
@@ -48,7 +53,7 @@ const stopAnnouncements = (userId: string) =>
     .where(eq(user.id, userId))
 
 describe("POST /admin/broadcasts", () => {
-  test("queues the announcement at once; the job rings the bell of every account in the audience once", async () => {
+  test("answers queued at once; a pass started after the commit rings the bell of every account in the audience once", async () => {
     await stopAnnouncements("ud-2")
     const res = await send({ roles: ["dealership"] }, { href: "/search" })
     expect(res.status).toBe(200)
@@ -61,10 +66,7 @@ describe("POST /admin/broadcasts", () => {
       title: message.title,
       href: "/search",
     })
-    // Nothing rings until the job runs.
-    expect(await bellsOf("Hello")).toEqual([])
-
-    expect(await fanOut()).toBe(11)
+    await flushFanOut()
 
     const bells = await bellsOf("Hello")
     expect(bells).toHaveLength(11)
@@ -91,6 +93,20 @@ describe("POST /admin/broadcasts", () => {
     })
   })
 
+  test("while another pass is running the start is skipped, and the next pass rings the bells", async () => {
+    const release = await takeJobLock(FANOUT_JOB)
+    if (!release) throw new Error("the job lock was taken before the test")
+    try {
+      expect((await send({ roles: ["mechanic"] })).status).toBe(200)
+      await flushFanOut()
+      expect(await bellsOf("Hello")).toEqual([])
+    } finally {
+      await release()
+    }
+    expect(await fanOut()).toBe(18)
+    expect(await bellsOf("Hello")).toHaveLength(18)
+  })
+
   test("sends to the verified businesses of one city only", async () => {
     const shops = await db.select().from(dealerships)
     const target = shops.find((row) => row.verified)
@@ -102,7 +118,7 @@ describe("POST /admin/broadcasts", () => {
       { title: { ar: "ع", en: "Verified" } }
     )
     expect(res.status).toBe(200)
-    expect(await fanOut()).toBe(wanted.length)
+    await flushFanOut()
     expect(
       (await bellsOf("Verified")).map((bell) => bell.userId).sort()
     ).toEqual(wanted.map((row) => row.ownerUserId).sort())
@@ -136,7 +152,7 @@ describe("GET /admin/broadcasts", () => {
   test("lists the history newest first and finds a title in either language", async () => {
     await send({ roles: ["mechanic"] }, { title: { ar: "عرض", en: "Offer" } })
     await send({ roles: ["workshop"] }, { title: { ar: "خبر", en: "News" } })
-    await fanOut()
+    await flushFanOut()
     const all = await expectSchema(
       await call("GET", "/admin/broadcasts"),
       pageOf(broadcastSchema)

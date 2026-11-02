@@ -92,13 +92,15 @@ export async function flushMail() {
 
 /** Sends one outbox row; the outbox job (A10) calls it again for failed rows. */
 export async function deliver(row: OutboxRow) {
-  const mail: CodeMail = {
-    to: row.to,
-    template: templateSchema.parse(row.template),
-    locale: localeSchema.parse(row.locale),
-    code: row.payload.code ?? "",
-  }
   try {
+    // Parsed inside the try: a row with an unknown template fails like any send and is given up
+    // after its attempts, instead of stopping the outbox job on every pass.
+    const mail: CodeMail = {
+      to: row.to,
+      template: templateSchema.parse(row.template),
+      locale: localeSchema.parse(row.locale),
+      code: row.payload.code ?? "",
+    }
     await transmit({ ...mail, ...renderCode(mail) })
     await q.updateOutboxSent(db, row.id, clock.now())
   } catch (error) {

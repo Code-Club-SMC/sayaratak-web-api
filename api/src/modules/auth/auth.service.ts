@@ -1,5 +1,6 @@
 import { db } from "~/shared/db/client"
 import type { Executor } from "~/shared/db/tx"
+import { drain } from "~/shared/jobs/batches"
 
 import { clock } from "~/shared/time/clock"
 import * as uploads from "~/modules/uploads/uploads.service"
@@ -105,6 +106,18 @@ export function isBannedNow(user: SessionUser) {
 function isBanOver(user: SessionUser) {
   return (
     user.banned && user.banExpires !== null && user.banExpires <= clock.now()
+  )
+}
+
+/**
+ * Clears the timed bans that are over (A10). A banned person's next request lifts it too and
+ * `isBannedNow` already ignores it; this makes the stored state catch up for everyone else.
+ * Answers how many accounts it freed.
+ */
+export function liftExpiredBans(size?: number) {
+  return drain(
+    (limit) => accounts.updateBansLifted(db, { now: clock.now(), size: limit }),
+    size
   )
 }
 

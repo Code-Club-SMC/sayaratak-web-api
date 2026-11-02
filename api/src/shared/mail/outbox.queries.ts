@@ -1,4 +1,15 @@
-import { and, eq, gt, sql } from "drizzle-orm"
+import {
+  and,
+  asc,
+  eq,
+  gt,
+  inArray,
+  isNull,
+  lt,
+  lte,
+  or,
+  sql,
+} from "drizzle-orm"
 
 import type { Executor } from "~/shared/db/tx"
 
@@ -41,4 +52,66 @@ export function updateOutboxFailed(
 /** Mails written to one address since `since`, sent or not. */
 export function countSentTo(ex: Executor, to: string, since: Date) {
   return ex.$count(outbox, and(eq(outbox.to, to), gt(outbox.createdAt, since)))
+}
+
+type DueFilter = {
+  now: Date
+  size: number
+  /** Rows that failed this many times are left alone. */
+  maxAttempts: number
+  /** A new row is sent by the request that wrote it; the job only takes it once it is this old. */
+  firstTryBefore: Date
+}
+
+/**
+ * Unsent rows whose turn has come, oldest first. A row on its first try belongs to the request
+ * that wrote it, so it is left alone until `firstTryBefore` (a crash between the insert and the send).
+ */
+export function listDue(ex: Executor, find: DueFilter) {
+  return ex
+    .select()
+    .from(outbox)
+    .where(
+      and(
+        isNull(outbox.sentAt),
+        lt(outbox.attempts, find.maxAttempts),
+        lte(outbox.sendAfter, find.now),
+        or(gt(outbox.attempts, 0), lte(outbox.createdAt, find.firstTryBefore))
+      )
+    )
+    .orderBy(asc(outbox.sendAfter))
+    .limit(find.size)
+}
+
+/**
+ * Empties the code of up to `size` unsent mails written before `before` and gives them up, so a
+ * dump never holds a live code and no mail goes out with a dead one (A9, A10). Answers how many.
+ */
+export function updateCodesCleared(
+  ex: Executor,
+  change: { before: Date; size: number; maxAttempts: number }
+) {
+  const due = ex
+    .select({ id: outbox.id })
+    .from(outbox)
+    .where(
+      and(
+        eq(outbox.channel, "email"),
+        isNull(outbox.sentAt),
+        lte(outbox.createdAt, change.before),
+        sql`${outbox.payload} ->> 'code' is not null`
+      )
+    )
+    .limit(change.size)
+    .for("update", { skipLocked: true })
+  return ex
+    .update(outbox)
+    .set({
+      payload: {},
+      attempts: change.maxAttempts,
+      lastError: "code_expired",
+    })
+    .where(inArray(outbox.id, due))
+    .returning({ id: outbox.id })
+    .then((rows) => rows.length)
 }

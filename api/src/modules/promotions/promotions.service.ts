@@ -1,11 +1,14 @@
 import type { Listing } from "@sayaratak/shared/schemas/listing"
 
+import { db } from "~/shared/db/client"
 import type { Executor, Transaction } from "~/shared/db/tx"
 import { fail } from "~/shared/http/errors"
+import { drain } from "~/shared/jobs/batches"
 import { clock } from "~/shared/time/clock"
 import { bumpListing } from "~/modules/listings/listings.service"
 
 import * as admin from "./promotions.admin.queries"
+import * as expiry from "./promotions.expiry.queries"
 import * as q from "./promotions.queries"
 
 /**
@@ -16,6 +19,17 @@ import * as q from "./promotions.queries"
 export async function endPromotionsOf(tx: Transaction, listingIds: string[]) {
   if (listingIds.length === 0) return
   await q.updateEndedFor(tx, { listingIds, at: clock.now() })
+}
+
+/**
+ * Marks running promotions past their end as `ended` (A10). Reads already treat them as over, so
+ * this only makes the stored state catch up. Answers how many it ended.
+ */
+export function endExpired(size?: number) {
+  return drain(
+    (limit) => expiry.updateEndedBatch(db, { now: clock.now(), size: limit }),
+    size
+  )
 }
 
 /**

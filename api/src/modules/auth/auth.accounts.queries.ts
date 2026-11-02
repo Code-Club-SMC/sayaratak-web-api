@@ -1,4 +1,14 @@
-import { and, eq, gt, inArray, isNull, or, sql } from "drizzle-orm"
+import {
+  and,
+  eq,
+  gt,
+  inArray,
+  isNotNull,
+  isNull,
+  lte,
+  or,
+  sql,
+} from "drizzle-orm"
 
 import type { Executor } from "~/shared/db/tx"
 
@@ -30,6 +40,31 @@ export function listBannedIds(ex: Executor, now: Date) {
       )
     )
     .then((rows) => rows.map((row) => row.id))
+}
+
+/** Clears the ban of up to `size` accounts whose timed ban is over at `now`; answers how many. */
+export function updateBansLifted(
+  ex: Executor,
+  batch: { now: Date; size: number }
+) {
+  const due = ex
+    .select({ id: user.id })
+    .from(user)
+    .where(
+      and(
+        eq(user.banned, true),
+        isNotNull(user.banExpires),
+        lte(user.banExpires, batch.now)
+      )
+    )
+    .limit(batch.size)
+    .for("update", { skipLocked: true })
+  return ex
+    .update(user)
+    .set({ banned: false, banReason: null, banExpires: null })
+    .where(inArray(user.id, due))
+    .returning({ id: user.id })
+    .then((rows) => rows.length)
 }
 
 export function listPhoneVerifiedIds(ex: Executor) {

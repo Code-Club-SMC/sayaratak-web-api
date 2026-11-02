@@ -80,7 +80,8 @@ export async function submitVerification(
   return result
 }
 
-async function toRequests(ex: Executor, rows: q.RequestRow[]) {
+/** The requests as the owner and the admin read them, each with its documents. */
+export async function toRequests(ex: Executor, rows: q.RequestRow[]) {
   const documents = await q.listDocuments(
     ex,
     rows.map((row) => row.id)

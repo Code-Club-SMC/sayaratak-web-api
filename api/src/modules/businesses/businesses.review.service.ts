@@ -124,3 +124,15 @@ async function restore(tx: Transaction, actor: Actor, { kind, row }: Target) {
     href: DASHBOARD[kind],
   })
 }
+
+/**
+ * Gives the badge after an admin accepted a verification request. A business
+ * that is gone, or already verified, is left as it is; no notice here (the
+ * request's decision tells the owner).
+ */
+export async function markVerified(
+  tx: Transaction,
+  ref: { kind: BusinessKind; id: string }
+) {
+  await q.updateFlags(tx, { ...ref, set: { verified: true } })
+}

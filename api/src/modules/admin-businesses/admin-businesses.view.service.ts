@@ -4,7 +4,6 @@ import type { Rating } from "@sayaratak/shared/schemas/review"
 import type { Executor } from "~/shared/db/tx"
 import { both } from "~/shared/text/bilingual"
 import * as auth from "~/modules/auth/auth.service"
-import type { SessionUser } from "~/modules/auth/auth.types"
 import type { AdminBusinessRow } from "~/modules/businesses/businesses.admin.service"
 import type { BusinessKind } from "~/modules/businesses/businesses.types"
 import * as listings from "~/modules/listings/listings.overview.service"
@@ -77,6 +76,7 @@ async function freePlansOf(ex: Executor, kinds: Set<BusinessKind>) {
 function viewOf(row: AdminBusinessRow, found: Gathered): AdminBusiness {
   const image = row.imageUploadId ? found.media.get(row.imageUploadId) : null
   const dealer = row.kind === "dealership"
+  const owner = found.owners.get(row.ownerUserId)
   const used = dealer ? (found.live.get(row.ownerUserId) ?? 0) : 0
   return {
     id: row.id,
@@ -88,7 +88,7 @@ function viewOf(row: AdminBusinessRow, found: Gathered): AdminBusiness {
     phone: row.phone,
     whatsapp: row.whatsapp,
     ownerId: row.ownerUserId,
-    owner: ownerOf(found.owners.get(row.ownerUserId)),
+    owner: owner ? auth.toOwnerContact(owner) : null,
     verified: row.verified,
     status: row.status,
     ...(row.suspendedReason !== null && {
@@ -98,15 +98,6 @@ function viewOf(row: AdminBusinessRow, found: Gathered): AdminBusiness {
     listings: dealer ? used : null,
     plan: planOf(row, found, used),
     createdAt: row.createdAt.toISOString(),
-  }
-}
-
-function ownerOf(owner: SessionUser | undefined) {
-  if (!owner) return null
-  return {
-    name: owner.name,
-    ...(owner.phone !== null && { phone: owner.phone }),
-    email: owner.email,
   }
 }
 

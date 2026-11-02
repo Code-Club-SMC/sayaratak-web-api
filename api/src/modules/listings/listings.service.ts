@@ -41,3 +41,11 @@ export async function getListingHead(ex: Executor, id: string) {
     }
   )
 }
+
+/** A paid bump: the listing goes back to the top of the newest from `at`. */
+export async function bumpListing(
+  tx: Transaction,
+  change: { id: string; at: Date }
+) {
+  await q.updateListing(tx, { id: change.id, set: { bumpedAt: change.at } })
+}

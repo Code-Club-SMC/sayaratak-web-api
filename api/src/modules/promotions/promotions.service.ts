@@ -1,8 +1,11 @@
 import type { Listing } from "@sayaratak/shared/schemas/listing"
 
 import type { Executor, Transaction } from "~/shared/db/tx"
+import { fail } from "~/shared/http/errors"
 import { clock } from "~/shared/time/clock"
+import { bumpListing } from "~/modules/listings/listings.service"
 
+import * as admin from "./promotions.admin.queries"
 import * as q from "./promotions.queries"
 
 /**
@@ -58,4 +61,39 @@ export async function getPromotionToPay(ex: Executor, id: string) {
   const row = await q.getPromotion(ex, id)
   if (!row) return undefined
   return { ...row, price: (await q.getPrice(ex, row)) ?? 0 }
+}
+
+const DAY_MS = 86_400_000
+
+/**
+ * The admin accepted the receipt for an unpaid promotion: it starts now for
+ * its days. A bump is done at once (it ends as it starts) and moves the
+ * listing back to the top of the newest. A promotion that already runs or
+ * ended is left alone. 404 for an unknown promotion.
+ */
+export async function startPaidPromotion(
+  tx: Transaction,
+  paid: { id: string; paymentId: string }
+) {
+  const row = await admin.lockPromotion(tx, paid.id)
+  if (!row) fail.notFound()
+  if (row.status !== "pending_payment") return
+  const now = clock.now()
+  const bump = row.type === "bump"
+  await admin.updateStarted(tx, {
+    id: row.id,
+    set: {
+      paymentId: paid.paymentId,
+      status: bump ? "ended" : "active",
+      startsAt: now,
+      endsAt: bump ? now : new Date(now.getTime() + row.durationDays * DAY_MS),
+    },
+  })
+  if (bump) await bumpListing(tx, { id: row.listingId, at: now })
+}
+
+/** What approval of a promotion payment starts, keyed by promotion id: type, length and listing. */
+export async function getPromotions(ex: Executor, ids: string[]) {
+  const rows = await admin.listByIds(ex, ids)
+  return new Map(rows.map((row) => [row.id, row]))
 }

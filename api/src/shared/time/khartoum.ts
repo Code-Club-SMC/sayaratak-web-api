@@ -31,6 +31,16 @@ export function dayColumn(column: PgColumn | SQL) {
   return sql<string>`to_char(${column} at time zone ${SQL_ZONE}, 'YYYY-MM-DD')`
 }
 
+/** The Khartoum calendar month of an instant, `"2026-11"`: the first seven letters of its day. */
+export function monthOf(at: Date) {
+  return dayOf(at).slice(0, 7)
+}
+
+/** The Khartoum calendar month of a timestamp column or expression, as text (`"2026-11"`). */
+export function monthColumn(column: PgColumn | SQL) {
+  return sql<string>`to_char(${column} at time zone ${SQL_ZONE}, 'YYYY-MM')`
+}
+
 /** Matches timestamps inside the Khartoum days `first` to `last`, both included. */
 export function withinDays(column: PgColumn | SQL, days: DayRange): SQL {
   return sql`${column} >= (${days.first}::date::timestamp at time zone ${SQL_ZONE}) and ${column} < ((${days.last}::date + 1)::timestamp at time zone ${SQL_ZONE})`

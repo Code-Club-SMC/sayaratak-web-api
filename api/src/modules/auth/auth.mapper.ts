@@ -39,3 +39,12 @@ export function toUser(row: UserRow, extras: Extras): User {
     chosenPlanId: row.chosenPlanId ?? undefined,
   }
 }
+
+/** How an admin table names an account: its name, phone (when it has one) and email. */
+export function toOwnerContact(row: UserRow) {
+  return {
+    name: row.name,
+    ...(row.phone !== null && { phone: row.phone }),
+    email: row.email,
+  }
+}

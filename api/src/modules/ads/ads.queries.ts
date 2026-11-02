@@ -68,3 +68,39 @@ export function lockPages(tx: Transaction, ids: AdPageId[]) {
     .orderBy(asc(adPages.id))
     .for("update")
 }
+
+/** The campaign, held until the transaction ends, so two decisions on its receipt queue up. */
+export function lockCampaign(tx: Transaction, id: string) {
+  return tx
+    .select({ status: campaigns.status })
+    .from(campaigns)
+    .where(eq(campaigns.id, id))
+    .for("update")
+    .then(([row]) => row)
+}
+
+export function updateStatus(
+  ex: Executor,
+  change: {
+    id: string
+    status: "approved" | "pending_payment"
+    rejectionReason: string | null
+  }
+) {
+  return ex
+    .update(campaigns)
+    .set({
+      status: change.status,
+      rejectionReason: change.rejectionReason,
+    })
+    .where(eq(campaigns.id, change.id))
+}
+
+/** The campaigns with these ids: what a payment row names. */
+export function listByIds(ex: Executor, ids: string[]) {
+  if (ids.length === 0) return Promise.resolve([])
+  return ex
+    .select({ id: campaigns.id, weeks: campaigns.weeks })
+    .from(campaigns)
+    .where(inArray(campaigns.id, ids))
+}

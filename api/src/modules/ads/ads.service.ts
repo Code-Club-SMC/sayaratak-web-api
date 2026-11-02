@@ -41,3 +41,30 @@ export async function assertCampaignRoom(tx: Transaction, id: string) {
   if (!campaign) fail.notFound()
   await lockRoom(tx, { ...campaign, except: id })
 }
+
+/** The admin accepted the receipt: a campaign under review is approved. One in any other state is left alone. */
+export async function approveCampaign(tx: Transaction, id: string) {
+  const campaign = await q.lockCampaign(tx, id)
+  if (campaign?.status !== "under_review") return
+  await q.updateStatus(tx, { id, status: "approved", rejectionReason: null })
+}
+
+/** The admin refused the receipt: a campaign under review goes back to unpaid with the reason, and its slots are free again. */
+export async function sendCampaignBack(
+  tx: Transaction,
+  back: { id: string; reason: string }
+) {
+  const campaign = await q.lockCampaign(tx, back.id)
+  if (campaign?.status !== "under_review") return
+  await q.updateStatus(tx, {
+    id: back.id,
+    status: "pending_payment",
+    rejectionReason: back.reason,
+  })
+}
+
+/** The weeks each campaign runs, keyed by campaign id: what a payment row names. */
+export async function getCampaignWeeks(ex: Executor, ids: string[]) {
+  const rows = await q.listByIds(ex, ids)
+  return new Map(rows.map((row) => [row.id, row.weeks]))
+}

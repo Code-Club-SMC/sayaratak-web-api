@@ -88,7 +88,7 @@ export async function listAdminBusinesses(
     .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
   const refs = all.slice((page - 1) * size, page * size)
   return {
-    rows: await getAdminRows(ex, refs),
+    rows: await getAdminBusinessRows(ex, refs),
     total: all.length,
     page,
     pageSize: size,
@@ -99,8 +99,13 @@ export async function listAdminBusinesses(
 export async function findAdminBusiness(ex: Executor, id: string) {
   const owner = await getOwnerOf(ex, id)
   if (!owner) return undefined
-  const [row] = await getAdminRows(ex, [{ kind: owner.kind, id }])
+  const [row] = await getAdminBusinessRows(ex, [{ kind: owner.kind, id }])
   return row
+}
+
+/** Ids of the businesses, of every kind, whose name holds `term` (lower case): the text search of other admin tables. */
+export function listBusinessIdsNamed(ex: Executor, term: string) {
+  return q.listIdsNamed(ex, term)
 }
 
 /** The kind and owner of a business, locked until the transaction ends; 404 for an unknown id. */
@@ -114,7 +119,7 @@ export async function lockBusinessById(tx: Transaction, id: string) {
   }
 }
 
-async function getAdminRows(
+export async function getAdminBusinessRows(
   ex: Executor,
   refs: { kind: BusinessKind; id: string }[]
 ): Promise<AdminBusinessRow[]> {

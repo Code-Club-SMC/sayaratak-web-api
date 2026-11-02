@@ -6,6 +6,8 @@ import * as uploads from "~/modules/uploads/uploads.service"
 
 import { auth } from "./auth.config"
 import { toUser } from "./auth.mapper"
+
+export { toOwnerContact } from "./auth.mapper"
 import * as accounts from "./auth.accounts.queries"
 import * as q from "./auth.queries"
 import type { NewUserRow, SessionUser } from "./auth.types"
@@ -67,6 +69,14 @@ export async function clearChosenPlan(ex: Executor, id: string) {
   // The session just proved the account exists.
   if (!row) throw new Error("chosen plan cleared for a missing account")
   return getMeOf(ex, row)
+}
+
+/** Puts a paid plan back as the one the account still has to pay for (a refused receipt). Does nothing for an unknown account. */
+export async function setChosenPlan(
+  ex: Executor,
+  change: { id: string; planId: string }
+) {
+  await q.updateProfile(ex, change.id, { chosenPlanId: change.planId })
 }
 
 /** The accounts with these ids, as the session middleware loads them. */

@@ -85,11 +85,29 @@ export function updateFlags(
   return ex.update(table).set(change.set).where(eq(table.id, change.id))
 }
 
+/** Ids of the businesses of every kind whose name, in either language, holds `term` (lower case). */
+export async function listIdsNamed(ex: Executor, term: string) {
+  const lists = await Promise.all(
+    Object.values(TABLES).map((table) =>
+      ex
+        .select({ id: table.id })
+        .from(table)
+        .where(nameHolds(table, term))
+        .then((rows) => rows.map((row) => row.id))
+    )
+  )
+  return lists.flat()
+}
+
+// Raw SQL: the name is jsonb `{ ar, en }`; the mock searches both joined by a space.
+function nameHolds(table: (typeof TABLES)[BusinessKind], term: string) {
+  return sql`strpos(lower((${table.name} ->> 'ar') || ' ' || (${table.name} ->> 'en')), ${term}) > 0`
+}
+
 function textWhere(table: (typeof TABLES)[BusinessKind], find: AdminFilters) {
   if (!find.q) return undefined
   return or(
-    // Raw SQL: the name is jsonb `{ ar, en }`; the mock searches both joined by a space.
-    sql`strpos(lower((${table.name} ->> 'ar') || ' ' || (${table.name} ->> 'en')), ${find.q}) > 0`,
+    nameHolds(table, find.q),
     find.namedOwnerIds.length > 0
       ? inArray(table.ownerUserId, find.namedOwnerIds)
       : undefined

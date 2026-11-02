@@ -51,6 +51,16 @@ const WORDS: Record<MailTemplate, Record<Locale, Words>> = {
       lead: "Enter this code to confirm your new email:",
     },
   },
+  "platform-admin": {
+    ar: {
+      subject: "رمز تأكيد تغيير حساب مدير المنصة",
+      lead: "أدخل هذا الرمز لتأكيد التغيير على حساب مدير المنصة:",
+    },
+    en: {
+      subject: "Confirm a change to the platform admin",
+      lead: "Enter this code to confirm the change to the platform admin account:",
+    },
+  },
   "admin-code": {
     ar: {
       subject: "رمز دخول المشرف",

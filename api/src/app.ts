@@ -18,6 +18,7 @@ import { adminPaymentsRoutes } from "~/modules/admin-payments/admin-payments.rou
 import { adminVerificationsRoutes } from "~/modules/admin-verifications/admin-verifications.routes"
 import { adminReportsRoutes } from "~/modules/admin-reports/admin-reports.routes"
 import { adminReviewsRoutes } from "~/modules/admin-reviews/admin-reviews.routes"
+import { platformAdminRoutes } from "~/modules/platform-admin/platform-admin.routes"
 import { adminPlansRoutes } from "~/modules/admin-plans/admin-plans.routes"
 import { adminPromotionsRoutes } from "~/modules/admin-promotions/admin-promotions.routes"
 import { adminUsersRoutes } from "~/modules/admin-users/admin-users.routes"
@@ -103,6 +104,7 @@ const v1 = new Hono()
   .route("/", adminPromotionsRoutes)
   .route("/", adminReviewsRoutes)
   .route("/", adminReportsRoutes)
+  .route("/", platformAdminRoutes)
 
 // Middleware in A3 order. The per-request log line comes with 10.4; the 500
 // log line is in onError.

@@ -18,12 +18,13 @@ const templateSchema = z.enum([
   "forget-password",
   "change-email",
   "admin-code",
+  "platform-admin",
 ])
 const localeSchema = z.enum(["ar", "en"]).catch("ar")
 
 export type MailTemplate = z.infer<typeof templateSchema>
 /** What a code is for, in Better-Auth's emailOTP words. */
-export type OtpPurpose = Exclude<MailTemplate, "admin-code">
+export type OtpPurpose = Exclude<MailTemplate, "admin-code" | "platform-admin">
 export type Locale = z.infer<typeof localeSchema>
 
 type CodeMail = {
@@ -67,6 +68,16 @@ export const send = {
     locale: Locale | Promise<Locale>
   }) {
     queue({ ...mail, template: mail.purpose })
+  },
+  /** The confirm code of a platform admin change, to the owner's inbox (`ADMIN_RECOVERY_EMAIL`, English). */
+  platformAdminCode(code: string) {
+    if (!env.ADMIN_RECOVERY_EMAIL) return
+    queue({
+      to: env.ADMIN_RECOVERY_EMAIL,
+      template: "platform-admin",
+      locale: "en",
+      code,
+    })
   },
   adminCode(user: { email: string; locale?: unknown }, code: string) {
     const locale = localeSchema.parse(user.locale)

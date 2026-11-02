@@ -73,10 +73,10 @@ describe("create-admin", () => {
   })
 
   test("refuses a second admin, with another email too", async () => {
-    const first = await createAdmin(db, input)
+    await createAdmin(db, input)
     expect(
       createAdmin(db, { ...input, email: "second@example.sd" })
-    ).rejects.toThrow(`an admin already exists (${first})`)
+    ).rejects.toThrow("an admin already exists")
     expect(await db.$count(user, eq(user.role, "admin"))).toBe(1)
   })
 

@@ -53,6 +53,10 @@ const core = {
   MIN_APP_VERSION_IOS: semver.optional(),
   MIN_APP_VERSION_ANDROID: semver.optional(),
   LOG_LEVEL: z.enum(["debug", "info", "warn", "error"]).default("info"),
+  // The platform admin endpoint (8.12) is off while either is blank. The inbox gets the confirm
+  // codes, so a lost admin mailbox can still be fixed.
+  ADMIN_SECRET_KEY: z.string().min(32).optional(),
+  ADMIN_RECOVERY_EMAIL: z.email().optional(),
 }
 
 const devSchema = z.object({ ...core, ...z.object(services).partial().shape })

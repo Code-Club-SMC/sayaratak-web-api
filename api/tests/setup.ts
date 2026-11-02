@@ -7,6 +7,9 @@ process.env.DATABASE_URL = url
 // app.request() has no socket, so every test request comes from 127.0.0.1.
 // Trusting it as a proxy lets a test pick its client IP with X-Forwarded-For.
 process.env.TRUSTED_PROXIES = "127.0.0.1"
+// The platform admin endpoint (platform-admin.test.ts) is on in tests.
+process.env.ADMIN_SECRET_KEY = "test-admin-secret-key-0123456789abcdef"
+process.env.ADMIN_RECOVERY_EMAIL = "owner-inbox@example.sd"
 // Fixed provider apps, so social sign-in tests run against a stubbed provider
 // whatever the owner put in .env (auth.social.test.ts).
 process.env.GOOGLE_CLIENT_ID = "test-google-id"

@@ -23,3 +23,19 @@ export async function recordAudit(
     createdAt: clock.now(),
   })
 }
+
+/**
+ * The audit row of a change nobody was signed in for: the `create-admin` command and the platform
+ * admin endpoint (8.12). The admin column stays empty; `reason` says where it came from.
+ */
+export async function recordSystemAudit(
+  ex: Executor,
+  entry: AuditEntry & { ip?: string }
+) {
+  await q.insert(ex, {
+    id: newId("au"),
+    adminId: null,
+    ...entry,
+    createdAt: clock.now(),
+  })
+}

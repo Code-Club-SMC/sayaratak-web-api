@@ -40,3 +40,6 @@ export const backups = pgTable(
     check("backups_bytes", sql`${table.bytes} >= 0`),
   ]
 )
+
+export type BackupRow = typeof backups.$inferSelect
+export type NewBackupRow = typeof backups.$inferInsert

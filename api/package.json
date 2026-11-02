@@ -16,6 +16,8 @@
     "db:bootstrap": "bun scripts/bootstrap.ts",
     "bootstrap:data": "bun scripts/bootstrap-data.make.ts",
     "create-admin": "bun scripts/create-admin.ts",
+    "db:backup": "bun scripts/db-backup.ts",
+    "db:restore": "bun scripts/db-restore.ts",
     "openapi": "bun scripts/openapi.ts",
     "parity": "bun test parity"
   },

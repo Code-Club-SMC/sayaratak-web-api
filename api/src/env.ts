@@ -52,6 +52,8 @@ const core = {
   // Semver such as 1.4.0 (A18 426 gate).
   MIN_APP_VERSION_IOS: semver.optional(),
   MIN_APP_VERSION_ANDROID: semver.optional(),
+  // Put in front of `pg_dump` and `pg_restore` (8.11); development runs a version 18 image, production leaves it blank.
+  PG_CLIENT_CMD: z.string().optional(),
   LOG_LEVEL: z.enum(["debug", "info", "warn", "error"]).default("info"),
   // The platform admin endpoint (8.12) is off while either is blank. The inbox gets the confirm
   // codes, so a lost admin mailbox can still be fixed.

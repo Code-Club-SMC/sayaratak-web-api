@@ -95,7 +95,7 @@ describe("Origin check", () => {
       },
     ]
     for (const init of cases) {
-      const res = await app.request("/api/v1/favorites", init)
+      const res = await app.request("/api/v1/no-such-route", init)
       expect(res.status).toBe(404)
     }
   })

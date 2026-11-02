@@ -66580,6 +66580,425 @@
         }
       }
     },
+    "/api/v1/admin/backups": {
+      "get": {
+        "operationId": "getAdminBackups",
+        "summary": "Every backup, newest first",
+        "security": [
+          {
+            "session": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "createdAt": {
+                        "type": "string"
+                      },
+                      "sizeMb": {
+                        "type": "number"
+                      },
+                      "type": {
+                        "type": "string",
+                        "enum": [
+                          "auto",
+                          "manual"
+                        ]
+                      },
+                      "status": {
+                        "type": "string",
+                        "enum": [
+                          "running",
+                          "ready",
+                          "restoring",
+                          "failed"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "createdAt",
+                      "sizeMb",
+                      "type",
+                      "status"
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "unauthenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "const": "unauthenticated"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "fields": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    "retryAfter": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "banned, forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "banned",
+                        "forbidden"
+                      ]
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "fields": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    "retryAfter": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "postAdminBackups",
+        "summary": "Takes a backup now: `pg_dump` into the private bucket. The answer comes when the file is stored, so it is `ready` (the mock answers `running` and flips it after 2 seconds); a failed dump answers 500 and leaves a `failed` row",
+        "security": [
+          {
+            "session": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "createdAt": {
+                      "type": "string"
+                    },
+                    "sizeMb": {
+                      "type": "number"
+                    },
+                    "type": {
+                      "type": "string",
+                      "enum": [
+                        "auto",
+                        "manual"
+                      ]
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "running",
+                        "ready",
+                        "restoring",
+                        "failed"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "createdAt",
+                    "sizeMb",
+                    "type",
+                    "status"
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "unauthenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "const": "unauthenticated"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "fields": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    "retryAfter": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "banned, forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "banned",
+                        "forbidden"
+                      ]
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "fields": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    "retryAfter": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ]
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "server_error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "const": "server_error"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "fields": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    "retryAfter": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/backups/{id}/restore": {
+      "post": {
+        "operationId": "postAdminBackupsByIdRestore",
+        "summary": "Always 403 `forbidden` with a message: a restore replaces the whole database, so it runs from the command line (`bun scripts/db-restore.ts <id>`), never from the API",
+        "security": [
+          {
+            "session": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "unauthenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "const": "unauthenticated"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "fields": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    "retryAfter": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "banned, forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "banned",
+                        "forbidden"
+                      ]
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "fields": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    "retryAfter": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/admin/banners": {
       "get": {
         "operationId": "getAdminBanners",

@@ -1,3 +1,5 @@
+import type { Actor } from "~/modules/audit/audit.types"
+
 import type { NewUserRow as UserInsert, UserRow } from "./auth.tables"
 
 /** The signed-in account, as the session middleware loads it. */
@@ -12,5 +14,7 @@ declare module "hono" {
     viewer: SessionUser | null
     // Set by `requireUser`; routes after it read the user from here.
     user: SessionUser
+    // Set by `requireAdmin`: who acts and from where, for the audit row.
+    actor: Actor
   }
 }

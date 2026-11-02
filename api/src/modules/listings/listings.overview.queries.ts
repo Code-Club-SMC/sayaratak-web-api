@@ -1,4 +1,15 @@
-import { and, asc, count, desc, eq, ilike, ne, or, sql } from "drizzle-orm"
+import {
+  and,
+  asc,
+  count,
+  desc,
+  eq,
+  ilike,
+  inArray,
+  ne,
+  or,
+  sql,
+} from "drizzle-orm"
 
 import type { Executor } from "~/shared/db/tx"
 import { type DayRange, dayColumn, withinDays } from "~/shared/time/khartoum"
@@ -57,4 +68,17 @@ export function search(ex: Executor, find: { pattern: string; limit: number }) {
     )
     .orderBy(asc(sql`length(${listings.id})`), asc(listings.id))
     .limit(find.limit)
+}
+
+/** The ids of every listing but drafts that these owners have, with the owner of each. */
+export function listIdsOfOwners(ex: Executor, ownerIds: string[]) {
+  return ex
+    .select({ id: listings.id, ownerUserId: listings.ownerUserId })
+    .from(listings)
+    .where(
+      and(
+        inArray(listings.ownerUserId, ownerIds),
+        ne(listings.moderation, "draft")
+      )
+    )
 }

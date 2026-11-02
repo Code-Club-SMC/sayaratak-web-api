@@ -9,12 +9,11 @@ import {
 } from "@sayaratak/shared/schemas/inputs"
 import { listingSchema } from "@sayaratak/shared/schemas/listing"
 import { pageOf } from "@sayaratak/shared/schemas/fields"
-import { type Context, Hono } from "hono"
+import { Hono } from "hono"
 
 import { validate } from "~/shared/http/validate"
 import { spec } from "~/shared/openapi/registry"
-import type { Actor } from "~/modules/audit/audit.types"
-import { requireRole } from "~/modules/auth/auth.middleware"
+import { requireAdmin } from "~/modules/auth/auth.middleware"
 
 import {
   getAdminListings,
@@ -28,12 +27,6 @@ const ADMIN_ERRORS = ["unauthenticated", "banned", "forbidden"] as const
 
 export const adminListingsRoutes = new Hono()
 
-// The signed-in admin and where they came from, for the audit row.
-const actorOf = (c: Context): Actor => ({
-  admin: c.get("user"),
-  ip: c.get("clientIp"),
-})
-
 adminListingsRoutes.get(
   "/admin/moderation",
   spec({
@@ -43,8 +36,8 @@ adminListingsRoutes.get(
     responses: { 200: pageOf(listingSchema) },
     errors: [...ADMIN_ERRORS],
   }),
-  requireRole("admin"),
-  async (c) => c.json(await getModerationQueue(actorOf(c), c.req.query()))
+  requireAdmin,
+  async (c) => c.json(await getModerationQueue(c.get("actor"), c.req.query()))
 )
 
 adminListingsRoutes.get(
@@ -56,8 +49,8 @@ adminListingsRoutes.get(
     responses: { 200: pageOf(adminListingSchema) },
     errors: [...ADMIN_ERRORS],
   }),
-  requireRole("admin"),
-  async (c) => c.json(await getAdminListings(actorOf(c), c.req.query()))
+  requireAdmin,
+  async (c) => c.json(await getAdminListings(c.get("actor"), c.req.query()))
 )
 
 adminListingsRoutes.post(
@@ -69,9 +62,10 @@ adminListingsRoutes.post(
     responses: { 200: bulkResultSchema },
     errors: [...ADMIN_ERRORS, "validation"],
   }),
-  requireRole("admin"),
+  requireAdmin,
   validate.json(bulkInputSchema),
-  async (c) => c.json(await moderateListings(actorOf(c), c.req.valid("json")))
+  async (c) =>
+    c.json(await moderateListings(c.get("actor"), c.req.valid("json")))
 )
 
 adminListingsRoutes.post(
@@ -83,11 +77,11 @@ adminListingsRoutes.post(
     responses: { 200: listingSchema },
     errors: [...ADMIN_ERRORS, "not_found", "conflict", "validation"],
   }),
-  requireRole("admin"),
+  requireAdmin,
   validate.json(rejectInputSchema),
   async (c) =>
     c.json(
-      await moderateListing(actorOf(c), {
+      await moderateListing(c.get("actor"), {
         id: c.req.param("id"),
         action: "reject",
         reason: c.req.valid("json").reason,
@@ -113,10 +107,10 @@ for (const [action, summary] of Object.entries(ACTIONS) as [
       responses: { 200: listingSchema },
       errors: [...ADMIN_ERRORS, "not_found", "conflict"],
     }),
-    requireRole("admin"),
+    requireAdmin,
     async (c) =>
       c.json(
-        await moderateListing(actorOf(c), { id: c.req.param("id"), action })
+        await moderateListing(c.get("actor"), { id: c.req.param("id"), action })
       )
   )
 
@@ -129,11 +123,11 @@ adminListingsRoutes.patch(
     responses: { 200: listingSchema },
     errors: [...ADMIN_ERRORS, "not_found", "validation"],
   }),
-  requireRole("admin"),
+  requireAdmin,
   validate.json(adminListingPatchSchema),
   async (c) =>
     c.json(
-      await updateListing(actorOf(c), {
+      await updateListing(c.get("actor"), {
         id: c.req.param("id"),
         patch: c.req.valid("json"),
       })

@@ -54,3 +54,10 @@ export function requireRole(...roles: Role[]): MiddlewareHandler {
     })
   }
 }
+
+/** `requireRole("admin")`, then sets `actor` (the admin and their address) for the audit row. */
+export const requireAdmin: MiddlewareHandler = (c, next) =>
+  requireRole("admin")(c, async () => {
+    c.set("actor", { admin: c.get("user"), ip: c.get("clientIp") })
+    await next()
+  })

@@ -32,3 +32,18 @@ export function searchListings(
 ) {
   return q.search(ex, { pattern: containing(find.term), limit: find.limit })
 }
+
+/**
+ * The ids of the listings (drafts left out) of each owner, as an owner id to
+ * ids map; an owner with none is missing.
+ */
+// ponytail: loads every id of the page's owners; a SQL count and join when one owner holds tens of thousands.
+export async function listIdsPerOwner(ex: Executor, ownerIds: string[]) {
+  const ids = new Map<string, string[]>()
+  if (ownerIds.length === 0) return ids
+  for (const row of await q.listIdsOfOwners(ex, ownerIds)) {
+    if (!row.ownerUserId) continue
+    ids.set(row.ownerUserId, [...(ids.get(row.ownerUserId) ?? []), row.id])
+  }
+  return ids
+}

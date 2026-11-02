@@ -22,8 +22,8 @@ import {
 
 // A listing counts against the plan limit while pending or approved,
 // available or reserved, and not expired (mock `listingUsage`).
-const LIVE_MODERATION = ["pending", "approved"] as const
-const LIVE_STATUS = ["available", "reserved"] as const
+export const LIVE_MODERATION = ["pending", "approved"] as const
+export const LIVE_STATUS = ["available", "reserved"] as const
 
 /** Marks every listing of the owner removed and returns their ids. */
 export function updateRemovedOf(ex: Executor, ownerUserId: string) {

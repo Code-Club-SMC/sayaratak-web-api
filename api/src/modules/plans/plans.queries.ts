@@ -104,3 +104,36 @@ export function listCurrent(ex: Executor, userId: string) {
 export function countActive(ex: Executor) {
   return ex.$count(subscriptions, eq(subscriptions.status, "active"))
 }
+
+/** The active subscription of each of these accounts; an account with none is missing. */
+export function listActiveSubscriptions(ex: Executor, userIds: string[]) {
+  if (userIds.length === 0) return Promise.resolve([])
+  return ex
+    .select()
+    .from(subscriptions)
+    .where(
+      and(
+        inArray(subscriptions.userId, userIds),
+        eq(subscriptions.status, "active")
+      )
+    )
+}
+
+export function listPlansByIds(ex: Executor, ids: string[]) {
+  if (ids.length === 0) return Promise.resolve([])
+  return ex.select().from(plans).where(inArray(plans.id, ids))
+}
+
+/** Accounts with an active subscription to this plan, or to any plan when `planId` is not given. */
+export function listActiveOwnerIds(ex: Executor, planId?: string) {
+  return ex
+    .select({ userId: subscriptions.userId })
+    .from(subscriptions)
+    .where(
+      and(
+        eq(subscriptions.status, "active"),
+        planId ? eq(subscriptions.planId, planId) : undefined
+      )
+    )
+    .then((rows) => rows.map((row) => row.userId))
+}

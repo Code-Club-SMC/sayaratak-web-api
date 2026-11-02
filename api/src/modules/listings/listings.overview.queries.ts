@@ -4,6 +4,7 @@ import {
   count,
   desc,
   eq,
+  gt,
   ilike,
   inArray,
   ne,
@@ -14,6 +15,7 @@ import {
 import type { Executor } from "~/shared/db/tx"
 import { type DayRange, dayColumn, withinDays } from "~/shared/time/khartoum"
 
+import { LIVE_MODERATION, LIVE_STATUS } from "./listings.queries"
 import { listings } from "./listings.tables"
 
 // Ids run `l00001`, `l00002`, ...: all the same length, so id order is the mock's array order.
@@ -81,4 +83,24 @@ export function listIdsOfOwners(ex: Executor, ownerIds: string[]) {
         ne(listings.moderation, "draft")
       )
     )
+}
+
+/** Live listings per owner, as `countLiveOf` counts them for one; an owner with none is missing. */
+export function countLivePerOwner(
+  ex: Executor,
+  find: { ownerUserIds: string[]; now: Date }
+) {
+  if (find.ownerUserIds.length === 0) return Promise.resolve([])
+  return ex
+    .select({ ownerUserId: listings.ownerUserId, count: count() })
+    .from(listings)
+    .where(
+      and(
+        inArray(listings.ownerUserId, find.ownerUserIds),
+        inArray(listings.moderation, LIVE_MODERATION),
+        inArray(listings.status, LIVE_STATUS),
+        gt(listings.expiresAt, find.now)
+      )
+    )
+    .groupBy(listings.ownerUserId)
 }

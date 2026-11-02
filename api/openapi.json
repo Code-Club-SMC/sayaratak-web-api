@@ -49200,6 +49200,1221 @@
           }
         }
       }
+    },
+    "/api/v1/admin/businesses": {
+      "get": {
+        "operationId": "getAdminBusinesses",
+        "summary": "Dealerships, workshops and mechanics newest first, each with its owner, plan and rating; filters `type`, `id`, `cityId`, `verified` (yes, no), `status`, `planId` and `q` (name or owner), paged",
+        "security": [
+          {
+            "session": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "type": {
+                            "type": "string",
+                            "enum": [
+                              "dealership",
+                              "workshop",
+                              "mechanic"
+                            ]
+                          },
+                          "name": {
+                            "type": "object",
+                            "properties": {
+                              "ar": {
+                                "type": "string"
+                              },
+                              "en": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "ar",
+                              "en"
+                            ]
+                          },
+                          "slug": {
+                            "type": "string"
+                          },
+                          "imageUrl": {
+                            "type": "string"
+                          },
+                          "cityId": {
+                            "type": "string"
+                          },
+                          "phone": {
+                            "type": "string"
+                          },
+                          "whatsapp": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "ownerId": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "owner": {
+                            "anyOf": [
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "name": {
+                                    "type": "string"
+                                  },
+                                  "phone": {
+                                    "type": "string"
+                                  },
+                                  "email": {
+                                    "type": "string"
+                                  }
+                                },
+                                "required": [
+                                  "name"
+                                ]
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "verified": {
+                            "type": "boolean"
+                          },
+                          "status": {
+                            "type": "string",
+                            "enum": [
+                              "active",
+                              "suspended"
+                            ]
+                          },
+                          "suspendedReason": {
+                            "type": "string"
+                          },
+                          "rating": {
+                            "type": "object",
+                            "properties": {
+                              "avg": {
+                                "type": "number"
+                              },
+                              "count": {
+                                "type": "integer",
+                                "minimum": -9007199254740991,
+                                "maximum": 9007199254740991
+                              },
+                              "distribution": {
+                                "minItems": 5,
+                                "maxItems": 5,
+                                "type": "array",
+                                "items": {
+                                  "type": "integer",
+                                  "minimum": -9007199254740991,
+                                  "maximum": 9007199254740991
+                                }
+                              }
+                            },
+                            "required": [
+                              "avg",
+                              "count",
+                              "distribution"
+                            ]
+                          },
+                          "listings": {
+                            "anyOf": [
+                              {
+                                "type": "integer",
+                                "minimum": -9007199254740991,
+                                "maximum": 9007199254740991
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "plan": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string",
+                                "minLength": 1
+                              },
+                              "name": {
+                                "type": "object",
+                                "properties": {
+                                  "ar": {
+                                    "type": "string"
+                                  },
+                                  "en": {
+                                    "type": "string"
+                                  }
+                                },
+                                "required": [
+                                  "ar",
+                                  "en"
+                                ]
+                              },
+                              "price": {
+                                "type": "integer",
+                                "minimum": -9007199254740991,
+                                "maximum": 9007199254740991
+                              },
+                              "endsAt": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
+                              },
+                              "used": {
+                                "type": "integer",
+                                "minimum": -9007199254740991,
+                                "maximum": 9007199254740991
+                              },
+                              "limit": {
+                                "anyOf": [
+                                  {
+                                    "type": "integer",
+                                    "minimum": -9007199254740991,
+                                    "maximum": 9007199254740991
+                                  },
+                                  {
+                                    "type": "null"
+                                  }
+                                ]
+                              },
+                              "note": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "id",
+                              "name",
+                              "price",
+                              "endsAt",
+                              "used",
+                              "limit"
+                            ]
+                          },
+                          "createdAt": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "type",
+                          "name",
+                          "slug",
+                          "imageUrl",
+                          "cityId",
+                          "phone",
+                          "whatsapp",
+                          "ownerId",
+                          "owner",
+                          "verified",
+                          "status",
+                          "rating",
+                          "listings",
+                          "plan",
+                          "createdAt"
+                        ]
+                      }
+                    },
+                    "total": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    },
+                    "page": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    },
+                    "pageSize": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "items",
+                    "total",
+                    "page",
+                    "pageSize"
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "unauthenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "const": "unauthenticated"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "fields": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    "retryAfter": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "banned, forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "banned",
+                        "forbidden"
+                      ]
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "fields": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    "retryAfter": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/businesses/{id}": {
+      "patch": {
+        "operationId": "patchAdminBusinessesById",
+        "summary": "Set the verified badge and the suspension of a business; suspending needs a `reason`; the owner is told when the badge is taken away, when the page is suspended and when it is back",
+        "security": [
+          {
+            "session": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "status": {
+                    "type": "string",
+                    "enum": [
+                      "active",
+                      "suspended"
+                    ]
+                  },
+                  "verified": {
+                    "type": "boolean"
+                  },
+                  "reason": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 300
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "type": {
+                      "type": "string",
+                      "enum": [
+                        "dealership",
+                        "workshop",
+                        "mechanic"
+                      ]
+                    },
+                    "name": {
+                      "type": "object",
+                      "properties": {
+                        "ar": {
+                          "type": "string"
+                        },
+                        "en": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "ar",
+                        "en"
+                      ]
+                    },
+                    "slug": {
+                      "type": "string"
+                    },
+                    "imageUrl": {
+                      "type": "string"
+                    },
+                    "cityId": {
+                      "type": "string"
+                    },
+                    "phone": {
+                      "type": "string"
+                    },
+                    "whatsapp": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "ownerId": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "owner": {
+                      "anyOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "name": {
+                              "type": "string"
+                            },
+                            "phone": {
+                              "type": "string"
+                            },
+                            "email": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "name"
+                          ]
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "verified": {
+                      "type": "boolean"
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "active",
+                        "suspended"
+                      ]
+                    },
+                    "suspendedReason": {
+                      "type": "string"
+                    },
+                    "rating": {
+                      "type": "object",
+                      "properties": {
+                        "avg": {
+                          "type": "number"
+                        },
+                        "count": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991
+                        },
+                        "distribution": {
+                          "minItems": 5,
+                          "maxItems": 5,
+                          "type": "array",
+                          "items": {
+                            "type": "integer",
+                            "minimum": -9007199254740991,
+                            "maximum": 9007199254740991
+                          }
+                        }
+                      },
+                      "required": [
+                        "avg",
+                        "count",
+                        "distribution"
+                      ]
+                    },
+                    "listings": {
+                      "anyOf": [
+                        {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "plan": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "name": {
+                          "type": "object",
+                          "properties": {
+                            "ar": {
+                              "type": "string"
+                            },
+                            "en": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "ar",
+                            "en"
+                          ]
+                        },
+                        "price": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991
+                        },
+                        "endsAt": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "used": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991
+                        },
+                        "limit": {
+                          "anyOf": [
+                            {
+                              "type": "integer",
+                              "minimum": -9007199254740991,
+                              "maximum": 9007199254740991
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "note": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "name",
+                        "price",
+                        "endsAt",
+                        "used",
+                        "limit"
+                      ]
+                    },
+                    "createdAt": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "type",
+                    "name",
+                    "slug",
+                    "imageUrl",
+                    "cityId",
+                    "phone",
+                    "whatsapp",
+                    "ownerId",
+                    "owner",
+                    "verified",
+                    "status",
+                    "rating",
+                    "listings",
+                    "plan",
+                    "createdAt"
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "unauthenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "const": "unauthenticated"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "fields": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    "retryAfter": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "banned, forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "banned",
+                        "forbidden"
+                      ]
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "fields": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    "retryAfter": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "not_found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "const": "not_found"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "fields": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    "retryAfter": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ]
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "validation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "const": "validation"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "fields": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    "retryAfter": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/businesses/{id}/assign-plan": {
+      "post": {
+        "operationId": "postAdminBusinessesByIdAssignPlan",
+        "summary": "Give a business a plan now, replacing its active subscription; price, listing limit (dealerships only) and length left out take the plan's own",
+        "security": [
+          {
+            "session": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "planId": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "price": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 9007199254740991
+                  },
+                  "limit": {
+                    "anyOf": [
+                      {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 9007199254740991
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "durationDays": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9007199254740991
+                  },
+                  "note": {
+                    "type": "string",
+                    "maxLength": 200
+                  }
+                },
+                "required": [
+                  "planId"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "type": {
+                      "type": "string",
+                      "enum": [
+                        "dealership",
+                        "workshop",
+                        "mechanic"
+                      ]
+                    },
+                    "name": {
+                      "type": "object",
+                      "properties": {
+                        "ar": {
+                          "type": "string"
+                        },
+                        "en": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "ar",
+                        "en"
+                      ]
+                    },
+                    "slug": {
+                      "type": "string"
+                    },
+                    "imageUrl": {
+                      "type": "string"
+                    },
+                    "cityId": {
+                      "type": "string"
+                    },
+                    "phone": {
+                      "type": "string"
+                    },
+                    "whatsapp": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "ownerId": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "owner": {
+                      "anyOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "name": {
+                              "type": "string"
+                            },
+                            "phone": {
+                              "type": "string"
+                            },
+                            "email": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "name"
+                          ]
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "verified": {
+                      "type": "boolean"
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "active",
+                        "suspended"
+                      ]
+                    },
+                    "suspendedReason": {
+                      "type": "string"
+                    },
+                    "rating": {
+                      "type": "object",
+                      "properties": {
+                        "avg": {
+                          "type": "number"
+                        },
+                        "count": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991
+                        },
+                        "distribution": {
+                          "minItems": 5,
+                          "maxItems": 5,
+                          "type": "array",
+                          "items": {
+                            "type": "integer",
+                            "minimum": -9007199254740991,
+                            "maximum": 9007199254740991
+                          }
+                        }
+                      },
+                      "required": [
+                        "avg",
+                        "count",
+                        "distribution"
+                      ]
+                    },
+                    "listings": {
+                      "anyOf": [
+                        {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "plan": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "name": {
+                          "type": "object",
+                          "properties": {
+                            "ar": {
+                              "type": "string"
+                            },
+                            "en": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "ar",
+                            "en"
+                          ]
+                        },
+                        "price": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991
+                        },
+                        "endsAt": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "used": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991
+                        },
+                        "limit": {
+                          "anyOf": [
+                            {
+                              "type": "integer",
+                              "minimum": -9007199254740991,
+                              "maximum": 9007199254740991
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "note": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "name",
+                        "price",
+                        "endsAt",
+                        "used",
+                        "limit"
+                      ]
+                    },
+                    "createdAt": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "type",
+                    "name",
+                    "slug",
+                    "imageUrl",
+                    "cityId",
+                    "phone",
+                    "whatsapp",
+                    "ownerId",
+                    "owner",
+                    "verified",
+                    "status",
+                    "rating",
+                    "listings",
+                    "plan",
+                    "createdAt"
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "unauthenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "const": "unauthenticated"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "fields": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    "retryAfter": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "banned, forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "banned",
+                        "forbidden"
+                      ]
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "fields": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    "retryAfter": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "not_found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "const": "not_found"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "fields": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    "retryAfter": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ]
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "validation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "const": "validation"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "fields": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    "retryAfter": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {

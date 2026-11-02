@@ -103,6 +103,11 @@ export function listBannedIds(ex: Executor) {
   return accounts.listBannedIds(ex, clock.now())
 }
 
+/** Ids of the accounts whose name holds `term` (lower case), for admin text search. */
+export function listIdsNamed(ex: Executor, term: string) {
+  return accounts.listIdsNamed(ex, term)
+}
+
 /** Ids of accounts with a verified phone: a person's listings show them as verified. */
 export function listPhoneVerifiedIds(ex: Executor) {
   return accounts.listPhoneVerifiedIds(ex)

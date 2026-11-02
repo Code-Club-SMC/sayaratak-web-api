@@ -1,5 +1,6 @@
 import type { Executor } from "~/shared/db/tx"
 import { containing } from "~/shared/text/like"
+import { clock } from "~/shared/time/clock"
 import type { DayRange } from "~/shared/time/khartoum"
 
 import * as q from "./listings.overview.queries"
@@ -18,6 +19,15 @@ export async function countApproved(ex: Executor) {
 export async function countCreatedPerDay(ex: Executor, days: DayRange) {
   const rows = await q.listCreatedPerDay(ex, days)
   return new Map(rows.map((row) => [row.day, row.count]))
+}
+
+/** Live listings (the ones counted against a plan limit) per owner; an owner with none is missing. */
+export async function countLivePerOwner(ex: Executor, ownerUserIds: string[]) {
+  const rows = await q.countLivePerOwner(ex, {
+    ownerUserIds,
+    now: clock.now(),
+  })
+  return new Map(rows.map((row) => [row.ownerUserId ?? "", row.count]))
 }
 
 /** The newest listings that were sent in, newest first, for the admin activity feed. */

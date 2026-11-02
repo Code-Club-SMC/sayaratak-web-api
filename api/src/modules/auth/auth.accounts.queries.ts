@@ -1,4 +1,4 @@
-import { and, eq, gt, inArray, isNull, or } from "drizzle-orm"
+import { and, eq, gt, inArray, isNull, or, sql } from "drizzle-orm"
 
 import type { Executor } from "~/shared/db/tx"
 
@@ -37,5 +37,14 @@ export function listPhoneVerifiedIds(ex: Executor) {
     .select({ id: user.id })
     .from(user)
     .where(eq(user.verifiedPhone, true))
+    .then((rows) => rows.map((row) => row.id))
+}
+
+/** Ids of accounts whose name holds `term` (already lower case). */
+export function listIdsNamed(ex: Executor, term: string) {
+  return ex
+    .select({ id: user.id })
+    .from(user)
+    .where(sql`strpos(lower(${user.name}), ${term}) > 0`)
     .then((rows) => rows.map((row) => row.id))
 }

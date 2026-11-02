@@ -41,17 +41,44 @@ export async function startFreeSubscription(
 ) {
   const plan = await q.getFreePlan(ex, account.audience)
   if (!plan) return
-  const now = clock.now()
-  await q.updateActiveCanceled(ex, account.userId)
-  await q.insertSubscription(ex, {
-    id: newId(SUBSCRIPTION_ID_PREFIX),
+  await startSubscription(ex, {
     userId: account.userId,
-    planId: plan.id,
-    status: "active",
-    startsAt: now,
-    endsAt: new Date(now.getTime() + plan.durationDays * DAY_MS),
+    plan,
     price: plan.price,
     listingLimit: plan.listingLimit,
+    durationDays: plan.durationDays,
+  })
+}
+
+/**
+ * Ends the account's active subscription and starts a new one to `plan` at
+ * once. Price, listing limit and length are the values to keep (the plan's own,
+ * or an admin's custom ones). The caller holds the account's lock, so two
+ * starts cannot both pass the one-active-subscription index.
+ */
+export async function startSubscription(
+  ex: Executor,
+  start: {
+    userId: string
+    plan: { id: string }
+    price: number
+    listingLimit: number | null
+    durationDays: number
+    note?: string
+  }
+) {
+  const now = clock.now()
+  await q.updateActiveCanceled(ex, start.userId)
+  await q.insertSubscription(ex, {
+    id: newId(SUBSCRIPTION_ID_PREFIX),
+    userId: start.userId,
+    planId: start.plan.id,
+    status: "active",
+    startsAt: now,
+    endsAt: new Date(now.getTime() + start.durationDays * DAY_MS),
+    price: start.price,
+    listingLimit: start.listingLimit,
+    note: start.note,
   })
 }
 
@@ -105,4 +132,41 @@ export async function getCreditsOf(ex: Executor, userId: string) {
 /** Accounts on an active plan, the free one included. */
 export function countActiveSubscriptions(ex: Executor) {
   return q.countActive(ex)
+}
+
+/** The active subscription of each account, keyed by account id; an account with none is missing. */
+export async function getActiveSubscriptions(ex: Executor, userIds: string[]) {
+  const rows = await q.listActiveSubscriptions(ex, userIds)
+  return new Map(rows.map((row) => [row.userId, row]))
+}
+
+/** The plans with these ids, keyed by id. */
+export async function getPlans(ex: Executor, ids: string[]) {
+  const rows = await q.listPlansByIds(ex, ids)
+  return new Map(rows.map((row) => [row.id, row]))
+}
+
+/** The audience's free plan: its first plan by list order, priced 0. */
+export function getFreePlan(ex: Executor, audience: Plan["audience"]) {
+  return q.getFreePlan(ex, audience)
+}
+
+/**
+ * Which accounts show a plan: `in` the accounts with an active subscription to
+ * it, or, for the audience's free plan (what an account without a subscription
+ * shows), `notIn` the accounts whose active subscription is to another plan.
+ */
+export async function getPlanOwnerFilter(
+  ex: Executor,
+  of: { planId: string; audience: Plan["audience"] }
+): Promise<{ in: string[] } | { notIn: string[] }> {
+  const free = await q.getFreePlan(ex, of.audience)
+  if (free?.id !== of.planId)
+    return { in: await q.listActiveOwnerIds(ex, of.planId) }
+  const [all, onPlan] = await Promise.all([
+    q.listActiveOwnerIds(ex),
+    q.listActiveOwnerIds(ex, of.planId),
+  ])
+  const onThis = new Set(onPlan)
+  return { notIn: all.filter((id) => !onThis.has(id)) }
 }

@@ -376,6 +376,11 @@ const cases: Case[] = [
     async () => first(await get("/admin/campaigns", "u-admin")),
   ],
   [
+    "adminCampaignSchema",
+    adsSchemas.adminCampaignSchema,
+    async () => first(await get("/admin/campaigns", "u-admin")),
+  ],
+  [
     "creativeSchema",
     adsSchemas.creativeSchema,
     async () =>

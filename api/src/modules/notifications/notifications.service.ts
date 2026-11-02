@@ -20,6 +20,7 @@ const PREF_OF: Record<Notification["type"], keyof NotificationPrefs> = {
   message: "messages",
   listing_approved: "updates",
   listing_rejected: "updates",
+  listing_expired: "updates",
   verification_result: "updates",
   business_status: "updates",
   saved_search_match: "savedSearchMatches",

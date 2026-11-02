@@ -42,6 +42,7 @@ export const notificationSchema = z.object({
     "message",
     "listing_approved",
     "listing_rejected",
+    "listing_expired",
     "saved_search_match",
     "review_new",
     "payment_approved",

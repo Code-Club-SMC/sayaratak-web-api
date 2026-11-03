@@ -9,6 +9,7 @@ import { Hono } from "hono"
 import { z } from "zod"
 
 import { publicCache } from "~/shared/http/cache"
+import { rateLimit } from "~/shared/http/rate-limit"
 import { validate } from "~/shared/http/validate"
 import { spec } from "~/shared/openapi/registry"
 
@@ -50,8 +51,9 @@ contentRoutes.post(
     summary: "Send a message from the contact form",
     access: "public",
     responses: { 200: okSchema },
-    errors: ["validation"],
+    errors: ["validation", "too_many_attempts"],
   }),
+  rateLimit("contact"),
   validate.json(contactInputSchema),
   async (c) => c.json(await sendContact(c.req.valid("json")))
 )

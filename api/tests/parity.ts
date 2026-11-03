@@ -1,6 +1,7 @@
 import { expect } from "bun:test"
 
 import { app } from "~/app"
+import { resetRateLimits } from "~/shared/http/rate-limit"
 
 type MockHandler = (request: Request) => Promise<Response>
 
@@ -25,6 +26,8 @@ export async function expectParity(
     ignore?: (body: unknown) => unknown
   } = {}
 ) {
+  // The mock has no rate limits; parity compares what a route does, not how often it may be called.
+  resetRateLimits()
   const mock = options.mock ?? (await loadMock())
   const mockUrl = `http://localhost${path.replace(/^\/api\/v1\//, "/api/")}`
   // x-mock-ssr turns off the mock's random latency.

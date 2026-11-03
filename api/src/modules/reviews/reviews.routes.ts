@@ -13,6 +13,7 @@ import { Hono } from "hono"
 import { z } from "zod"
 
 import { pageParams } from "~/shared/http/page"
+import { rateLimit } from "~/shared/http/rate-limit"
 import { validate } from "~/shared/http/validate"
 import { spec } from "~/shared/openapi/registry"
 import { requireUser } from "~/modules/auth/auth.middleware"
@@ -65,10 +66,17 @@ reviewsRoutes.post(
       "Review a business: 403 for its own owner, 409 already_reviewed for a second review",
     access: "user",
     responses: { 200: reviewSchema },
-    errors: [...USER_ERRORS, "validation", "forbidden", "already_reviewed"],
+    errors: [
+      ...USER_ERRORS,
+      "validation",
+      "forbidden",
+      "already_reviewed",
+      "too_many_attempts",
+    ],
     idempotent: true,
   }),
   requireUser,
+  rateLimit("reviews"),
   validate.json(reviewInputSchema),
   async (c) => c.json(await createReview(c.get("user"), c.req.valid("json")))
 )

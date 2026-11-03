@@ -5,6 +5,7 @@ import { bodyLimit } from "hono/body-limit"
 import { z } from "zod"
 
 import { fail } from "~/shared/http/errors"
+import { rateLimit } from "~/shared/http/rate-limit"
 import { validate } from "~/shared/http/validate"
 import { spec } from "~/shared/openapi/registry"
 import { requireUser } from "~/modules/auth/auth.middleware"
@@ -37,10 +38,11 @@ uploadsRoutes.post(
       "Upload a photo, or a video with its poster; answers the Media to attach",
     access: "user",
     responses: { 201: mediaSchema },
-    errors: ["unauthenticated", "banned"],
+    errors: ["unauthenticated", "banned", "too_many_attempts"],
     idempotent: true,
   }),
   requireUser,
+  rateLimit("uploads"),
   validate.form(uploadFormSchema),
   async (c) => {
     const media = await storeMedia(c.get("user"), c.req.valid("form"))

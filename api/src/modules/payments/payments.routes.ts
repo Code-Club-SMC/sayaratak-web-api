@@ -7,6 +7,7 @@ import { bodyLimit } from "hono/body-limit"
 
 import { fail } from "~/shared/http/errors"
 import { pageParams } from "~/shared/http/page"
+import { rateLimit } from "~/shared/http/rate-limit"
 import { validate } from "~/shared/http/validate"
 import { spec } from "~/shared/openapi/registry"
 import { requireUser } from "~/modules/auth/auth.middleware"
@@ -55,10 +56,12 @@ paymentsRoutes.post(
       "validation",
       "exists",
       "payment_pending",
+      "too_many_attempts",
     ],
     idempotent: true,
   }),
   requireUser,
+  rateLimit("payments"),
   validate.form(paymentFormSchema),
   async (c) => c.json(await submitReceipt(c.get("user"), c.req.valid("form")))
 )

@@ -12,6 +12,7 @@ import { Hono } from "hono"
 import { z } from "zod"
 
 import { pageParams } from "~/shared/http/page"
+import { rateLimit } from "~/shared/http/rate-limit"
 import { validate } from "~/shared/http/validate"
 import { spec } from "~/shared/openapi/registry"
 import { requireUser } from "~/modules/auth/auth.middleware"
@@ -49,10 +50,11 @@ messagingRoutes.post(
       "Write the first message about a listing or a business; asking again about the same one reuses the thread. 422 for your own",
     access: "user",
     responses: { 200: threadSchema },
-    errors: [...USER_ERRORS, "validation", "not_found"],
+    errors: [...USER_ERRORS, "validation", "not_found", "too_many_attempts"],
     idempotent: true,
   }),
   requireUser,
+  rateLimit("threads"),
   validate.json(threadInputSchema),
   async (c) => c.json(await startThread(c.get("user"), c.req.valid("json")))
 )
@@ -85,10 +87,11 @@ messagingRoutes.post(
     summary: "Write to the other person in a conversation",
     access: "user",
     responses: { 200: messageSchema },
-    errors: [...THREAD_ERRORS, "validation"],
+    errors: [...THREAD_ERRORS, "validation", "too_many_attempts"],
     idempotent: true,
   }),
   requireUser,
+  rateLimit("messages"),
   validate.json(messageInputSchema),
   async (c) =>
     c.json(

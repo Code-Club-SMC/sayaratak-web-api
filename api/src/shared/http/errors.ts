@@ -118,6 +118,7 @@ export function onNotFound(c: Context) {
 // `message` repeats the code, as the mock does; the UI reads `code` only.
 function errorResponse(c: Context, error: ApiError) {
   const { code, fields, retryAfter } = error
+  if (retryAfter !== undefined) c.header("Retry-After", String(retryAfter))
   return c.json(
     {
       code,

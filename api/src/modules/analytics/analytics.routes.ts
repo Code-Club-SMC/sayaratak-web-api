@@ -5,6 +5,7 @@ import { analyticsSchema } from "@sayaratak/shared/schemas/responses"
 import { Hono } from "hono"
 import { z } from "zod"
 
+import { rateLimit } from "~/shared/http/rate-limit"
 import { validate } from "~/shared/http/validate"
 import { spec } from "~/shared/openapi/registry"
 import { requireUser } from "~/modules/auth/auth.middleware"
@@ -24,7 +25,9 @@ analyticsRoutes.post(
       "Count one view, call, WhatsApp tap, share or banner view or click; always answers ok, ids that match nothing are ignored",
     access: "public",
     responses: { 200: okSchema },
+    errors: ["too_many_attempts"],
   }),
+  rateLimit("events"),
   validate.json(eventInputSchema),
   async (c) => {
     await recordEvent(c.req.valid("json"))

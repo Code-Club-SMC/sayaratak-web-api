@@ -117,6 +117,10 @@ export const auth = betterAuth({
     // Better-Auth reads only our header, which carries the A3 client IP, so a
     // forged X-Forwarded-For cannot dodge its limits.
     ipAddress: { ipAddressHeaders: [CLIENT_IP_HEADER] },
+    // Better-Auth switches its Origin and callbackURL checks off when
+    // NODE_ENV is "test". Stating `false` keeps production's behaviour in
+    // tests too, so auth.origin.test.ts proves `trustedOrigins` (A12).
+    disableOriginCheck: false,
   },
   rateLimit: {
     enabled: true,

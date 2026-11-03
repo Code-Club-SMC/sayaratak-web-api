@@ -6,6 +6,7 @@ import { env } from "~/env"
 import { app } from "~/app"
 import { createLogger } from "~/shared/log/logger"
 
+import { clientIp } from "./client-ip"
 import { onError } from "./errors"
 import { requestLog } from "./request-log"
 
@@ -17,6 +18,7 @@ function logged(enabled = true) {
   const router = new Hono()
     .onError(onError)
     .use(requestId())
+    .use(clientIp(["10.0.0.0/8"]))
     .use(requestLog(logger, () => enabled))
     .use(async (c, next) => {
       if (c.req.header("x-user")) {
@@ -49,6 +51,17 @@ describe("requestLog", () => {
       userId: "u-omar",
     })
     expect(typeof lines[0]?.ms).toBe("number")
+  })
+
+  test("the line carries the client IP, read through the trusted proxy", async () => {
+    const { lines, router } = logged()
+    const proxy = { requestIP: () => ({ address: "10.0.0.2" }) }
+    await router.request(
+      "/api/v1/listings/l-1",
+      { headers: { "x-forwarded-for": "6.6.6.6, 41.1.1.1" } },
+      proxy
+    )
+    expect(lines[0]).toMatchObject({ ip: "41.1.1.1" })
   })
 
   test("the id, the query string and the token never reach the line", async () => {

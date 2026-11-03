@@ -9,7 +9,7 @@ const HEALTH_PREFIX = "/api/health/"
 
 /**
  * 10.4: one line per answered request with its id, method, route, status,
- * duration and the signed-in account's id. `route` is the registered pattern
+ * duration, the signed-in account's id and the client's IP (`clientIp`). `route` is the registered pattern
  * (`/api/v1/listings/:id`), never the raw path or query, so ids, slugs and
  * device tokens stay out of the logs (A12). Health checks are debug lines: a
  * load balancer asks every few seconds.
@@ -31,6 +31,8 @@ export function requestLog(
       status: c.res.status,
       ms: Math.round(performance.now() - startedAt),
       userId: c.get("viewer")?.id,
+      // The address the rate limits use, so the 10.5 proxy check can read it off the log.
+      ip: c.get("clientIp"),
     })
   }
 }

@@ -18,5 +18,8 @@ export async function runMigrations(url: string) {
 
 if (import.meta.main) {
   const { env } = await import("~/env")
-  await runMigrations(env.DATABASE_URL)
+  const { ensureAppRole } = await import("~/shared/db/app-role")
+  await runMigrations(env.MIGRATE_DATABASE_URL ?? env.DATABASE_URL)
+  if (env.MIGRATE_DATABASE_URL)
+    await ensureAppRole(env.MIGRATE_DATABASE_URL, env.DATABASE_URL)
 }

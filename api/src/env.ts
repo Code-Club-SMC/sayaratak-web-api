@@ -35,6 +35,8 @@ const core = {
   APP_ENV: z.enum(["development", "test", "production"]),
   PORT: z.coerce.number().int().positive().default(4000),
   DATABASE_URL: z.url(),
+  // Owner of the database, for `db:migrate` and `pg_restore`. When set, `DATABASE_URL` is the limited app user (10.5).
+  MIGRATE_DATABASE_URL: z.url().optional(),
   TEST_DATABASE_URL: z.url().optional(),
   DB_POOL_MAX: z.coerce.number().int().positive().default(10),
   WEB_ORIGIN: z.url(),

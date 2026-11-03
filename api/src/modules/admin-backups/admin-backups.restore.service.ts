@@ -2,6 +2,7 @@ import { rm } from "node:fs/promises"
 import { tmpdir } from "node:os"
 
 import { env } from "~/env"
+import { ensureAppRole } from "~/shared/db/app-role"
 import { connect, db } from "~/shared/db/client"
 import { pgTool } from "~/shared/db/pg-tool"
 import { apiIsRunning } from "~/shared/db/running-lock"
@@ -30,6 +31,9 @@ export async function restoreBackup(id: string, { force }: { force: boolean }) {
     const before = await takeBackup({ type: "manual" })
     const history = await q.listBackups(db)
     await runRestore(file)
+    // The restore made the tables again without grants (`--no-privileges`).
+    if (env.MIGRATE_DATABASE_URL)
+      await ensureAppRole(env.MIGRATE_DATABASE_URL, env.DATABASE_URL)
     await afterRestore(id, before.id, history)
     return { safetyBackupId: before.id }
   } finally {
@@ -46,7 +50,7 @@ async function runRestore(file: string) {
       "--no-owner",
       "--no-privileges",
       "--dbname",
-      env.DATABASE_URL,
+      env.MIGRATE_DATABASE_URL ?? env.DATABASE_URL,
     ]),
     { stdin: Bun.file(file), stdout: "ignore", stderr: "pipe" }
   )

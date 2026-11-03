@@ -1,5 +1,6 @@
-import { and, eq, inArray } from "drizzle-orm"
+import { and, eq, inArray, lt } from "drizzle-orm"
 
+import { deleteBatch } from "~/shared/db/delete-batch"
 import type { Executor } from "~/shared/db/tx"
 
 import { type NewDeviceRow, devices } from "./devices.tables"
@@ -55,4 +56,16 @@ export function getById(ex: Executor, id: string) {
 
 export function removeById(ex: Executor, id: string) {
   return ex.delete(devices).where(eq(devices.id, id))
+}
+
+/** Deletes up to `size` devices the app has not opened since `before`. */
+export function deleteStaleBatch(
+  ex: Executor,
+  batch: { before: Date; size: number }
+) {
+  const target = {
+    table: devices,
+    where: lt(devices.lastSeenAt, batch.before),
+  }
+  return deleteBatch(ex, target, batch.size)
 }

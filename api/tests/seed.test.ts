@@ -86,6 +86,7 @@ const runtimeOnly = new Set([
   schema.outbox,
   schema.devices,
   schema.fileDeletions,
+  schema.eventsMonthly,
 ])
 
 beforeAll(resetDb)

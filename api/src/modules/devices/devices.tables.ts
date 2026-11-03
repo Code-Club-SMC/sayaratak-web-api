@@ -36,6 +36,8 @@ export const devices = pgTable(
   (table) => [
     // A person's devices, read on every notification.
     index().on(table.userId),
+    // The prune job finds phones the app has not opened for 90 days.
+    index().on(table.lastSeenAt),
     check("devices_locale", sql`${table.locale} in ('ar', 'en')`),
   ]
 )

@@ -41,7 +41,13 @@ export const outbox = pgTable(
     createdAt: createdAt(),
   },
   // The retry job reads unsent rows that are due.
-  (table) => [index().on(table.sendAfter).where(sql`${table.sentAt} is null`)]
+  (table) => [
+    index().on(table.sendAfter).where(sql`${table.sentAt} is null`),
+    // The prune job deletes sent rows a week old.
+    index("outbox_sent")
+      .on(table.sentAt)
+      .where(sql`${table.sentAt} is not null`),
+  ]
 )
 
 export type OutboxRow = typeof outbox.$inferSelect

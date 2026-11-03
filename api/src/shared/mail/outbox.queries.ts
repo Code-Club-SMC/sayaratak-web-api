@@ -11,6 +11,7 @@ import {
   sql,
 } from "drizzle-orm"
 
+import { deleteBatch } from "~/shared/db/delete-batch"
 import type { Executor } from "~/shared/db/tx"
 
 import { type NewOutboxRow, outbox } from "./outbox.tables"
@@ -119,4 +120,19 @@ export function updateCodesCleared(
     .where(inArray(outbox.id, due))
     .returning({ id: outbox.id })
     .then((rows) => rows.length)
+}
+
+/** Deletes up to `size` rows sent before `before`, or given up (never sent, `maxAttempts` tries) and written before it. */
+export function deleteDoneBatch(
+  ex: Executor,
+  batch: { before: Date; size: number; maxAttempts: number }
+) {
+  // Written as SQL text, not `and`/`or`, which may answer undefined; this one must never be empty.
+  const sent = sql`(${outbox.sentAt} is not null and ${outbox.sentAt} < ${batch.before})`
+  const givenUp = sql`(${outbox.sentAt} is null and ${outbox.attempts} >= ${batch.maxAttempts} and ${outbox.createdAt} < ${batch.before})`
+  return deleteBatch(
+    ex,
+    { table: outbox, where: sql`${sent} or ${givenUp}` },
+    batch.size
+  )
 }

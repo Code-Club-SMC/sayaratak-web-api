@@ -38,6 +38,10 @@ export const notifications = pgTable(
   (table) => [
     // The bell's unread count and the newest-first list.
     index().on(table.userId, table.readAt, table.createdAt),
+    // The prune job deletes the read ones that are six months old.
+    index("notifications_read_created")
+      .on(table.createdAt)
+      .where(sql`${table.readAt} is not null`),
     check("notifications_title", bilingual(table.title)),
     check("notifications_body", bilingual(table.body)),
   ]

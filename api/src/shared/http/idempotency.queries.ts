@@ -1,5 +1,6 @@
 import { and, eq, isNull, lt, or, sql } from "drizzle-orm"
 
+import { deleteBatch } from "~/shared/db/delete-batch"
 import type { Executor } from "~/shared/db/tx"
 
 import {
@@ -78,4 +79,16 @@ export async function updateKeyResponse(
 
 export async function deleteKey(ex: Executor, id: Id) {
   await ex.delete(idempotencyKeys).where(claimed(id))
+}
+
+/** Deletes up to `size` keys written before `before`: past their 24 hours nobody can replay them. */
+export function deleteOldKeys(
+  ex: Executor,
+  batch: { before: Date; size: number }
+) {
+  const target = {
+    table: idempotencyKeys,
+    where: lt(idempotencyKeys.createdAt, batch.before),
+  }
+  return deleteBatch(ex, target, batch.size)
 }

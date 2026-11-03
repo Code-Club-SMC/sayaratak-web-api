@@ -1,5 +1,5 @@
 import { db } from "~/shared/db/client"
-import { drain } from "~/shared/jobs/batches"
+import { BATCH_SIZE, drain } from "~/shared/jobs/batches"
 import { MAX_ATTEMPTS } from "~/shared/mail/backoff"
 import * as outbox from "~/shared/mail/outbox.queries"
 import { deliver } from "~/shared/mail/send"
@@ -12,6 +12,8 @@ const CODE_MINUTES = 10
 // request died between the insert and the send.
 const FIRST_TRY_GRACE_MINUTES = 2
 const MINUTE_MS = 60_000
+const DONE_KEPT_DAYS = 7
+const DAY_MS = 86_400_000
 
 /**
  * One pass of the outbox job (A10): empties the codes of mails too old to be useful, then sends
@@ -50,4 +52,22 @@ export async function sendDue(size?: number) {
 
 function minutesBefore(at: Date, minutes: number) {
   return new Date(at.getTime() - minutes * MINUTE_MS)
+}
+
+/**
+ * Deletes the outbox rows that are done for good (A10, `prune`): sent more than a week ago, or
+ * given up more than a week ago (their code was emptied long before, see `sendDue`). Answers how
+ * many it deleted.
+ */
+export function pruneOutbox(size = BATCH_SIZE) {
+  const before = new Date(clock.now().getTime() - DONE_KEPT_DAYS * DAY_MS)
+  return drain(
+    (limit) =>
+      outbox.deleteDoneBatch(db, {
+        before,
+        size: limit,
+        maxAttempts: MAX_ATTEMPTS,
+      }),
+    size
+  )
 }

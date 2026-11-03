@@ -50,7 +50,7 @@ describe("error responses", () => {
       await app.request("/crash", { headers: { "x-request-id": "req-1" } })
       const line = String(write.mock.calls[0]?.[0])
       expect(line).toContain('"requestId":"req-1"')
-      expect(line).toContain('"path":"/crash"')
+      expect(line).toContain('"route":"/crash"')
       expect(line).toContain("password=[redacted]")
       expect(line).not.toContain("hunter2")
     } finally {

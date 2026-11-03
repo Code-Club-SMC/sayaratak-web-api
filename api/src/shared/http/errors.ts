@@ -104,7 +104,8 @@ export function onError(error: Error, c: Context) {
   log.error("server_error", {
     requestId: c.get("requestId"),
     method: c.req.method,
-    path: c.req.path,
+    // The registered pattern, never the raw path: ids, slugs and device tokens stay out of logs (A12).
+    route: c.req.routePath,
     error,
   })
   return errorResponse(c, new ApiError("server_error"))

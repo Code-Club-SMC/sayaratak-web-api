@@ -1,5 +1,6 @@
 import { log } from "~/shared/log/logger"
 
+import { recordOutcome, trackRun } from "./job-health"
 import { takeJobLock } from "./job-lock"
 
 export type RunnableJob = {
@@ -15,6 +16,15 @@ export type JobOutcome = "done" | "skipped" | "failed"
  * so a failure is logged at error level with the job name and the next tick tries again.
  */
 export async function runJob(job: RunnableJob): Promise<JobOutcome> {
+  const pass = onePass(job)
+  // Shutdown waits for it; readiness counts its failures in a row (10.4).
+  trackRun(pass)
+  const outcome = await pass
+  recordOutcome(job.name, outcome)
+  return outcome
+}
+
+async function onePass(job: RunnableJob): Promise<JobOutcome> {
   const startedAt = performance.now()
   try {
     const release = await takeJobLock(job.name)

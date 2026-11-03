@@ -4,6 +4,9 @@ import { runMigrations } from "../scripts/migrate"
 const url = process.env.TEST_DATABASE_URL
 if (!url) throw new Error("TEST_DATABASE_URL is not set")
 process.env.DATABASE_URL = url
+// One log line per request would bury the test output; request-log.test.ts
+// and index.shutdown.test.ts turn it on where they read it.
+process.env.LOG_REQUESTS = "false"
 // app.request() has no socket, so every test request comes from 127.0.0.1.
 // Trusting it as a proxy lets a test pick its client IP with X-Forwarded-For.
 process.env.TRUSTED_PROXIES = "127.0.0.1"

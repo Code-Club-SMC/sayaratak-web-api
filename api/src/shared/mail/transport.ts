@@ -24,15 +24,39 @@ export const transport =
       })
     : null
 
+const RECHECK_MS = 60_000
+let verified: { ok: boolean; at: number } | undefined
+
 /** Boot check: logs whether SMTP answers; never stops the API (A9). */
 export async function verifyTransport() {
   if (!transport) return
   try {
     await transport.verify()
+    verified = { ok: true, at: Date.now() }
     log.info("smtp_ready", { host: env.SMTP_HOST })
   } catch (error) {
+    verified = { ok: false, at: Date.now() }
     log.error("smtp_unreachable", { host: env.SMTP_HOST, error })
   }
+}
+
+/**
+ * For `/api/health/ready` (10.4): `off` without an SMTP host, else whether the
+ * last check passed. The check repeats once a minute, so a probe every few
+ * seconds does not open an SMTP connection each time and a recovered server
+ * turns ready again.
+ */
+export async function smtpStatus(): Promise<"ok" | "failed" | "off"> {
+  if (!transport) return "off"
+  if (!verified || Date.now() - verified.at > RECHECK_MS) {
+    await verifyTransport()
+  }
+  return verified?.ok ? "ok" : "failed"
+}
+
+/** Closes the SMTP pool (shutdown, 10.4). */
+export function closeTransport() {
+  transport?.close()
 }
 
 export async function sendSmtp(

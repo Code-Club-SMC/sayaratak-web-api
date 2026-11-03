@@ -55,6 +55,8 @@ const core = {
   // Put in front of `pg_dump` and `pg_restore` (8.11); development runs a version 18 image, production leaves it blank.
   PG_CLIENT_CMD: z.string().optional(),
   LOG_LEVEL: z.enum(["debug", "info", "warn", "error"]).default("info"),
+  // One info line per request (10.4); `false` silences it, tests do.
+  LOG_REQUESTS: z.stringbool().default(true),
   // The platform admin endpoint (8.12) is off while either is blank. The inbox gets the confirm
   // codes, so a lost admin mailbox can still be fixed.
   ADMIN_SECRET_KEY: z.string().min(32).optional(),

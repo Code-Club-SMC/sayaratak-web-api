@@ -9,6 +9,8 @@ import { appVersion } from "~/shared/http/app-version"
 import { clientIp } from "~/shared/http/client-ip"
 import { csrfOrigin } from "~/shared/http/csrf-origin"
 import { onError, onNotFound } from "~/shared/http/errors"
+import { healthRoutes } from "~/shared/http/health"
+import { requestLog } from "~/shared/http/request-log"
 import { buildOpenApi } from "~/shared/openapi/build"
 import { spec } from "~/shared/openapi/registry"
 import { session } from "~/modules/auth/auth.middleware"
@@ -118,13 +120,14 @@ const v1 = new Hono()
   .route("/", adminBroadcastsRoutes)
   .route("/", platformAdminRoutes)
 
-// Middleware in A3 order. The per-request log line comes with 10.4; the 500
-// log line is in onError.
+// Middleware in A3 order. The 500 log line is in onError, the per-request
+// line in requestLog.
 export const app = new Hono()
   .onError(onError)
   .notFound(onNotFound)
   .use(requestId())
   .use(clientIp(env.TRUSTED_PROXIES))
+  .use(requestLog())
   .use(
     secureHeaders({
       // HSTS is set by Render's edge (A12).
@@ -157,5 +160,5 @@ export const app = new Hono()
     })
   )
   .use(csrfOrigin(webOrigin))
-  .get("/api/health/live", (c) => c.json({ ok: true }))
+  .route("/api/health", healthRoutes())
   .route("/api/v1", v1)

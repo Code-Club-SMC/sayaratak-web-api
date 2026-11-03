@@ -1,3 +1,4 @@
+import { autoBackupJob } from "./auto-backup.job"
 import { banLiftJob } from "./ban-lift.job"
 import { broadcastFanoutJob } from "./broadcast-fanout.job"
 import { listingExpiryJob } from "./listing-expiry.job"
@@ -21,5 +22,6 @@ export const jobs: Job[] = [
   banLiftJob,
   unverifiedCleanupJob,
   orphanUploadsJob,
+  autoBackupJob,
   pruneJob,
 ]

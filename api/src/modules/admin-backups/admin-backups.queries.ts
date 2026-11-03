@@ -1,4 +1,4 @@
-import { desc, eq } from "drizzle-orm"
+import { and, desc, eq } from "drizzle-orm"
 
 import type { Executor } from "~/shared/db/tx"
 
@@ -49,4 +49,18 @@ export async function markFailed(ex: Executor, id: string) {
 export async function replaceBackups(ex: Executor, rows: BackupRow[]) {
   await ex.delete(backups)
   if (rows.length > 0) await ex.insert(backups).values(rows)
+}
+
+/** Ready automatic backups past the newest `keep`: the ones the nightly job deletes. */
+export function listAutoBeyond(ex: Executor, keep: number) {
+  return ex
+    .select({ id: backups.id, objectKey: backups.objectKey })
+    .from(backups)
+    .where(and(eq(backups.type, "auto"), eq(backups.status, "ready")))
+    .orderBy(desc(backups.createdAt), desc(backups.id))
+    .offset(keep)
+}
+
+export async function deleteBackup(ex: Executor, id: string) {
+  await ex.delete(backups).where(eq(backups.id, id))
 }

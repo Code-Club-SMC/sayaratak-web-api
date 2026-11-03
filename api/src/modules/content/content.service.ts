@@ -57,3 +57,18 @@ export async function getBankak(ex: Executor) {
   if (!row) fail.notFound()
   return { name: row.bankakName, number: row.bankakNumber }
 }
+
+/** When the nightly backup runs and when it last did (A10 `auto-backup`). */
+export async function getBackupPlan(ex: Executor) {
+  const row = await q.getSettings(ex)
+  if (!row) fail.notFound()
+  return {
+    schedule: row.backupSchedule,
+    lastAutoBackupAt: row.lastAutoBackupAt,
+  }
+}
+
+/** Notes that the nightly backup ran at `at`. */
+export function stampAutoBackup(ex: Executor, at: Date) {
+  return q.setLastAutoBackup(ex, at)
+}

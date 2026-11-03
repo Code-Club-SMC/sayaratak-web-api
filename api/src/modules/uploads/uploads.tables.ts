@@ -63,5 +63,21 @@ export const uploads = pgTable(
   ]
 )
 
+// A file the host still has to delete (A8, A10). Written in the same transaction that deletes the
+// upload row, so a failed or missed host delete is never forgotten: the orphan job tries again.
+export const fileDeletions = pgTable(
+  "file_deletions",
+  {
+    id: text().primaryKey(),
+    publicId: text().notNull(),
+    mime: text().notNull(),
+    delivery: uploadDelivery().notNull(),
+    attempts: integer().default(0).notNull(),
+    createdAt: createdAt(),
+  },
+  (table) => [index().on(table.createdAt)]
+)
+
 export type UploadRow = typeof uploads.$inferSelect
 export type NewUploadRow = typeof uploads.$inferInsert
+export type FileDeletionRow = typeof fileDeletions.$inferSelect

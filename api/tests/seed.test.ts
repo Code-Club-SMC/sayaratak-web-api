@@ -85,6 +85,7 @@ const runtimeOnly = new Set([
   schema.idempotencyKeys,
   schema.outbox,
   schema.devices,
+  schema.fileDeletions,
 ])
 
 beforeAll(resetDb)

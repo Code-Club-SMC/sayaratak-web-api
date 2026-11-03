@@ -1,12 +1,11 @@
 import type { Media } from "@sayaratak/shared/schemas/listing"
 
-import { db } from "~/shared/db/client"
-import { type Executor, afterCommit, type Transaction } from "~/shared/db/tx"
-import { files } from "~/shared/files/store"
+import type { Executor, Transaction } from "~/shared/db/tx"
 import { fail } from "~/shared/http/errors"
 import { newId } from "~/shared/text/ids"
 import { clock } from "~/shared/time/clock"
 
+import { queueHostDeletes } from "./uploads.host.service"
 import { toMedia } from "./uploads.mapper"
 import * as q from "./uploads.queries"
 import { toUrl, type UploadRow } from "./uploads.service"
@@ -110,24 +109,13 @@ export async function copyMedia(
 
 /**
  * Deletes upload rows (and their posters), then, after the commit, each file
- * on the host that no other row still uses (A8). A failed host delete is
- * logged and never blocks the user.
+ * on the host that no other row still uses (A8). A failed host delete never
+ * blocks the user: its note stays and the orphan job tries again.
  */
 export async function deleteMediaFiles(tx: Transaction, ids: string[]) {
   const rows = await q.listUploads(tx, ids)
   const deleted = await q.deleteUploads(tx, [...ids, ...posterIdsOf(rows)])
-  // The transaction is closed by then, so the check reads with `db`.
-  afterCommit(tx, async () => {
-    for (const row of deleted) {
-      if (!row.cloudinaryId || (await q.hasCloudinaryId(db, row.cloudinaryId)))
-        continue
-      await files.remove({
-        publicId: row.cloudinaryId,
-        mime: row.mime ?? "",
-        delivery: row.delivery,
-      })
-    }
-  })
+  await queueHostDeletes(tx, deleted)
 }
 
 function posterIdsOf(rows: UploadRow[]) {

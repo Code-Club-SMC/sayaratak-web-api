@@ -1,8 +1,10 @@
-import { and, eq, inArray, isNull } from "drizzle-orm"
+import { and, asc, eq, inArray, isNull, lt, sql } from "drizzle-orm"
 
 import type { Executor } from "~/shared/db/tx"
 
-import { type NewUploadRow, uploads } from "./uploads.tables"
+import { fileDeletions, type NewUploadRow, uploads } from "./uploads.tables"
+
+export type { FileDeletionRow } from "./uploads.tables"
 
 export function getUpload(ex: Executor, id: string) {
   return ex
@@ -99,4 +101,51 @@ export function listVideoIds(ex: Executor) {
     .from(uploads)
     .where(eq(uploads.kind, "video"))
     .then((rows) => rows.map((row) => row.id))
+}
+
+/** Up to `size` uploads nobody attached before `before`, locked until the transaction ends. */
+export function lockOrphans(
+  ex: Executor,
+  find: { before: Date; size: number }
+) {
+  return ex
+    .select({ id: uploads.id })
+    .from(uploads)
+    .where(and(isNull(uploads.attachedAt), lt(uploads.createdAt, find.before)))
+    .orderBy(asc(uploads.createdAt))
+    .limit(find.size)
+    .for("update", { skipLocked: true })
+    .then((rows) => rows.map((row) => row.id))
+}
+
+export function insertDeletions(
+  ex: Executor,
+  rows: (typeof fileDeletions.$inferInsert)[]
+) {
+  if (rows.length === 0) return Promise.resolve([])
+  return ex.insert(fileDeletions).values(rows).returning()
+}
+
+/** Files still waiting for the host to delete them, oldest first, that have not run out of tries. */
+export function listDeletions(
+  ex: Executor,
+  find: { maxAttempts: number; size: number }
+) {
+  return ex
+    .select()
+    .from(fileDeletions)
+    .where(lt(fileDeletions.attempts, find.maxAttempts))
+    .orderBy(asc(fileDeletions.createdAt), asc(fileDeletions.id))
+    .limit(find.size)
+}
+
+export function deleteDeletion(ex: Executor, id: string) {
+  return ex.delete(fileDeletions).where(eq(fileDeletions.id, id))
+}
+
+export function updateDeletionFailed(ex: Executor, id: string) {
+  return ex
+    .update(fileDeletions)
+    .set({ attempts: sql`${fileDeletions.attempts} + 1` })
+    .where(eq(fileDeletions.id, id))
 }

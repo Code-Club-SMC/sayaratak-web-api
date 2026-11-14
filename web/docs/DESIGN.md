@@ -23,6 +23,7 @@ Light theme only. OKLCH is the source of truth; re-run `bun run contrast` after 
 | Token | OKLCH | Use |
 |---|---|---|
 | `--background` | `0.97219139 0.00342312 247.85811179` | Page (#F4F6F8) |
+| `--auth-panel` | `0.9570046 0.00625563 255.47539223` | Neutral auth carousel surface (#EEF1F5), shared by all four slides |
 | `--card` | `1 0 0` | Cards, dialogs, sheets, sidebar, header |
 | `--foreground` | `0.2 0.012 260` | Text |
 | `--muted` | `0.952 0.005 260` | Inset blocks, hover rows, skeletons, quiet badge fill, `secondary` buttons |
@@ -41,6 +42,10 @@ Light theme only. OKLCH is the source of truth; re-run `bun run contrast` after 
 | `--chart-1` to `--chart-5` | primary, signal, `0.55 0.02 170`, `0.55 0.07 200`, `0.5 0.1 350` | Charts. Every series is also labeled |
 
 Status badges: 12 percent tint of the status color as fill, solid color as text, no border, no icon. Sold and Rented use the muted fill. Verified uses primary. A card shows the Featured badge, solid signal, while a Featured promotion runs. A bump shows no badge.
+
+The auth carousel uses contained, responsive product previews rather than an enlarged analytics screenshot. Primary and supporting cards stay in normal flow within balanced horizontal padding; short viewports can scroll the panel instead of cutting off content. Blue is limited to small chart, badge and selection accents. Homepage campaign surfaces keep their own deep/custom colors.
+
+The public footer keeps a solid neutral surface, a brand/contact column and four navigation groups. An oversized decorative Latin `SAYARATAK` wordmark sits behind the supplied realistic graphite sedan. The car is served as a lazy transparent WebP with the original PNG retained; data saver and image errors leave the wordmark without the car. Neither decorative layer covers links or enters the accessibility tree. Social links use translated accessible names and 44px targets.
 
 ## Type
 

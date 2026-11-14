@@ -6,7 +6,7 @@ import { floatCard, mainCard } from "./styles"
 
 const rows = [1, 2, 3]
 
-// An inbox with unread buyer messages, and a new call floating over it.
+// An inbox preview with a separate incoming-call summary below it.
 export function InboxScene() {
   const { t } = useT()
   return (
@@ -35,7 +35,7 @@ export function InboxScene() {
                   {t(`auth.scene_msg_${n}`)}
                 </p>
               </div>
-              <div className="flex flex-col items-end gap-1.5">
+              <div className="flex shrink-0 flex-col items-end gap-1.5">
                 <span className="text-caption text-muted-foreground">
                   {t(`auth.scene_time_${n}`)}
                 </span>
@@ -45,9 +45,7 @@ export function InboxScene() {
           ))}
         </ul>
       </div>
-      <div
-        className={`${floatCard} start-64 top-72 flex w-80 items-center gap-3`}
-      >
+      <div className={`${floatCard} flex items-center gap-3`}>
         <span className="grid size-10 shrink-0 place-items-center rounded-full bg-success/10 text-success">
           <PhoneIncomingIcon aria-hidden className="size-5" />
         </span>

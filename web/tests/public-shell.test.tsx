@@ -188,6 +188,18 @@ describe("public shell", () => {
       locales: db.settings.locales,
     })
   })
+  it("labels the footer language action with its destination and preserves the URL", async () => {
+    await renderShell(<Footer />, {
+      locale: "en",
+      path: "/en/search?city=x&city=y#results",
+    })
+    expect(screen.getByText("Sudan / English")).toBeTruthy()
+    const language = screen.getByRole("link", { name: "العربية" })
+    expect(language.getAttribute("href")).toBe(
+      "/ar/search?city=x&city=y#results"
+    )
+    expect(language.getAttribute("lang")).toBe("ar")
+  })
   it("keeps footer links usable after a contact failure and recovers on retry", async () => {
     setFailMode("500")
     await renderShell(<Footer />)

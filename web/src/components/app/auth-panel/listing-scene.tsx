@@ -8,7 +8,7 @@ import { floatCard, mainCard } from "./styles"
 
 const week = [18, 26, 21, 34, 29, 41, 37]
 
-// A featured listing with its numbers, and its contacts per day floating over it.
+// A contained listing preview with a compact weekly contact chart below it.
 export function ListingScene() {
   const { t, locale } = useT()
   const { dataSaver } = usePrefs()
@@ -20,8 +20,8 @@ export function ListingScene() {
   ]
   return (
     <>
-      <div className={`${mainCard} flex flex-col gap-4`}>
-        <div className="relative aspect-[16/9] overflow-hidden rounded-xl bg-muted">
+      <div className={`${mainCard} flex flex-col gap-3`}>
+        <div className="relative h-28 overflow-hidden rounded-lg bg-muted">
           {!dataSaver && (
             <img
               src="/images/categories/cars-640.webp"
@@ -30,7 +30,7 @@ export function ListingScene() {
               alt=""
               loading="lazy"
               decoding="async"
-              className="size-full object-cover"
+              className="size-full object-contain"
             />
           )}
           <Badge variant="signal" className="absolute start-3 top-3">
@@ -60,9 +60,9 @@ export function ListingScene() {
           ))}
         </div>
       </div>
-      <div className={`${floatCard} start-80 top-40 w-64`}>
+      <div className={floatCard}>
         <p className="text-ui font-semibold">{t("auth.scene_contacts_week")}</p>
-        <div className="mt-4 flex h-24 items-end gap-2">
+        <div className="mt-3 flex h-16 items-end gap-2">
           {week.map((v, i) => (
             <div
               key={i}

@@ -16,7 +16,7 @@ const line = views
   .map((v, i) => `${(i / (views.length - 1)) * W},${H - (v / max) * H}`)
   .join(" L")
 
-// Views over 30 days as an area chart, with calls and WhatsApp clicks floating over it.
+// A scalable 30-day chart with readable contact totals below it.
 export function ViewsScene() {
   const { t, locale } = useT()
   const stats = [
@@ -45,7 +45,7 @@ export function ViewsScene() {
         </p>
         <svg
           viewBox={`0 0 ${W} ${H}`}
-          className="mt-6 h-40 w-full rtl:-scale-x-100"
+          className="mt-4 h-28 w-full rtl:-scale-x-100"
           preserveAspectRatio="none"
         >
           <path
@@ -62,7 +62,7 @@ export function ViewsScene() {
           />
         </svg>
       </div>
-      <div className={`${floatCard} start-56 top-64 flex w-72 flex-col gap-4`}>
+      <div className={`${floatCard} flex flex-col gap-4`}>
         {stats.map((s) => (
           <div key={s.label} className="flex flex-col gap-2">
             <div className="flex items-center gap-2 text-ui">

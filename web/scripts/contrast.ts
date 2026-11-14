@@ -46,6 +46,7 @@ const composite = (color: Rgb, base: Rgb, alpha: number): Rgb =>
 const table: Record<string, Rgb> = Object.fromEntries(
   [
     "background",
+    "auth-panel",
     "card",
     "foreground",
     "muted",
@@ -75,6 +76,13 @@ const t = (name: string): Rgb => {
 // [label, foreground, background, minimum]
 const pairs: Array<[string, Rgb, Rgb, number]> = [
   ["foreground on background", t("foreground"), t("background"), 4.5],
+  ["foreground on auth-panel", t("foreground"), t("auth-panel"), 4.5],
+  [
+    "muted-foreground on auth-panel",
+    t("muted-foreground"),
+    t("auth-panel"),
+    4.5,
+  ],
   ["foreground on card", t("foreground"), t("card"), 4.5],
   [
     "muted-foreground on background",

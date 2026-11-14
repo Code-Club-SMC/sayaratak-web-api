@@ -2,19 +2,20 @@ import { useEffect, useState } from "react"
 
 import { useT } from "@/lib/i18n/use-t"
 import { HeroCarouselControls } from "../hero-carousel-controls"
-import { AnalyticsShot } from "./analytics-shot"
 import { InboxScene } from "./inbox-scene"
 import { ListingScene } from "./listing-scene"
 import { PlanScene } from "./plan-scene"
+import { ViewsScene } from "./views-scene"
 
 const slides = [
-  { id: "views", Scene: AnalyticsShot },
+  { id: "views", Scene: ViewsScene },
   { id: "plan", Scene: PlanScene },
   { id: "listing", Scene: ListingScene },
   { id: "inbox", Scene: InboxScene },
 ]
 
-// The auth side panel: four slides (a headline and a picture of the product: the real analytics page, then three drawn scenes) that cross fade. Autoplay works as the home hero's: the active dot's CSS fill is the timer, it holds on hover, keyboard focus, a hidden tab and the pause button, and starts paused under reduced motion. The scenes are pictures (aria-hidden, no buttons), so nothing in them reads as clickable.
+// Four contained product previews share a stable grid and the hero's autoplay
+// controls. Decorative scenes are hidden from assistive technology.
 export function AuthCarousel() {
   const { t } = useT()
   const [index, setIndex] = useState(0)
@@ -46,11 +47,11 @@ export function AuthCarousel() {
       onBlur={(e) => {
         if (!e.currentTarget.contains(e.relatedTarget)) setFocused(false)
       }}
-      className="flex min-h-0 flex-1 flex-col"
+      className="flex min-h-0 flex-1 flex-col items-center gap-6 overflow-y-auto px-6 py-8 xl:px-8 xl:py-12"
     >
       <div
         aria-live={paused ? "polite" : "off"}
-        className="grid ps-12 pe-12 pt-24"
+        className="grid w-full max-w-lg shrink-0"
       >
         {slides.map((s, i) => (
           <div
@@ -62,7 +63,7 @@ export function AuthCarousel() {
               total: slides.length,
             })}
             aria-hidden={i !== index}
-            className={`${fade(i === index)} flex max-w-lg flex-col gap-4`}
+            className={`${fade(i === index)} flex min-w-0 flex-col gap-3`}
           >
             <p className="text-title font-semibold">
               {t(`auth.slide_${s.id}_title`)}
@@ -73,12 +74,13 @@ export function AuthCarousel() {
           </div>
         ))}
       </div>
-      <div
-        aria-hidden
-        className="relative ms-12 mt-12 min-h-0 flex-1 overflow-hidden rounded-xl"
-      >
+      <div aria-hidden className="grid w-full max-w-lg shrink-0">
         {slides.map((s, i) => (
-          <div key={s.id} className={`absolute inset-0 ${fade(i === index)}`}>
+          <div
+            key={s.id}
+            data-auth-scene={s.id}
+            className={`${fade(i === index)} flex min-w-0 flex-col gap-4`}
+          >
             <s.Scene />
           </div>
         ))}
@@ -90,7 +92,7 @@ export function AuthCarousel() {
         onSelect={setIndex}
         onAdvance={() => setIndex((index + 1) % slides.length)}
         onToggle={() => setUserPaused(!userPaused)}
-        className="my-8 ms-12 self-start bg-foreground/70"
+        className="mt-auto shrink-0 bg-foreground/70"
       />
     </section>
   )

@@ -10,13 +10,13 @@ const features = [
   "auth.scene_plan_f3",
 ]
 
-// A plan card with its listing meter, and an approved Bankak payment floating over it.
+// A plan preview and its approved Bankak payment, both contained in the panel.
 export function PlanScene() {
   const { t, locale } = useT()
   const price = formatPrice(250000, locale)
   return (
     <>
-      <div className={`${mainCard} flex flex-col gap-5`}>
+      <div className={`${mainCard} flex flex-col gap-4`}>
         <div>
           <p className="text-ui text-muted-foreground">
             {t("auth.scene_plan_caption")}
@@ -55,9 +55,7 @@ export function PlanScene() {
           </div>
         </div>
       </div>
-      <div
-        className={`${floatCard} start-64 top-80 flex w-88 items-center gap-3`}
-      >
+      <div className={`${floatCard} flex flex-wrap items-center gap-3`}>
         <CircleCheckIcon aria-hidden className="size-9 shrink-0 text-success" />
         <div className="min-w-0">
           <p className="text-ui font-semibold">{t("auth.scene_paid")}</p>

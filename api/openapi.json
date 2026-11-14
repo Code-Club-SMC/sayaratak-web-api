@@ -67300,6 +67300,1580 @@
         }
       }
     },
+    "/api/v1/admin/seed": {
+      "get": {
+        "operationId": "getAdminSeed",
+        "summary": "Admin preview dataset capability and durable progress",
+        "security": [
+          {
+            "session": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "capability": {
+                      "type": "object",
+                      "properties": {
+                        "enabled": {
+                          "type": "boolean"
+                        },
+                        "missing": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "enum": [
+                              "ADMIN_SEED_ENABLED",
+                              "CLOUDINARY_URL",
+                              "R2_ACCOUNT_ID",
+                              "R2_ACCESS_KEY_ID",
+                              "R2_SECRET_ACCESS_KEY",
+                              "R2_BUCKET",
+                              "TEST_ENVIRONMENT"
+                            ]
+                          }
+                        }
+                      },
+                      "required": [
+                        "enabled",
+                        "missing"
+                      ]
+                    },
+                    "catalog": {
+                      "type": "object",
+                      "properties": {
+                        "version": {
+                          "type": "string",
+                          "const": "sudan-marketplace-v1"
+                        },
+                        "manifestDigest": {
+                          "type": "string",
+                          "pattern": "^[a-f0-9]{64}$"
+                        },
+                        "listings": {
+                          "type": "number",
+                          "const": 200
+                        },
+                        "businesses": {
+                          "type": "number",
+                          "const": 30
+                        },
+                        "images": {
+                          "type": "number",
+                          "const": 460
+                        }
+                      },
+                      "required": [
+                        "version",
+                        "manifestDigest",
+                        "listings",
+                        "businesses",
+                        "images"
+                      ]
+                    },
+                    "dataset": {
+                      "anyOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "string",
+                              "minLength": 1
+                            },
+                            "version": {
+                              "type": "string",
+                              "const": "sudan-marketplace-v1"
+                            },
+                            "manifestDigest": {
+                              "type": "string",
+                              "pattern": "^[a-f0-9]{64}$"
+                            },
+                            "state": {
+                              "type": "string",
+                              "enum": [
+                                "preparing",
+                                "ready",
+                                "seeding",
+                                "installed",
+                                "removing",
+                                "removed",
+                                "retained"
+                              ]
+                            },
+                            "createdAt": {
+                              "type": "string",
+                              "format": "date-time",
+                              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "version",
+                            "manifestDigest",
+                            "state",
+                            "createdAt"
+                          ]
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "operation": {
+                      "anyOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "string",
+                              "minLength": 1
+                            },
+                            "kind": {
+                              "type": "string",
+                              "enum": [
+                                "archive",
+                                "seed",
+                                "remove"
+                              ]
+                            },
+                            "state": {
+                              "type": "string",
+                              "enum": [
+                                "receiving",
+                                "queued",
+                                "running",
+                                "failed",
+                                "completed"
+                              ]
+                            },
+                            "progress": {
+                              "type": "object",
+                              "properties": {
+                                "stage": {
+                                  "type": "string",
+                                  "enum": [
+                                    "upload",
+                                    "validate",
+                                    "store-images",
+                                    "insert-businesses",
+                                    "insert-listings",
+                                    "hide",
+                                    "remove-records",
+                                    "remove-media",
+                                    "complete"
+                                  ]
+                                },
+                                "completed": {
+                                  "type": "integer",
+                                  "minimum": 0,
+                                  "maximum": 9007199254740991
+                                },
+                                "total": {
+                                  "type": "integer",
+                                  "minimum": 0,
+                                  "maximum": 9007199254740991
+                                },
+                                "percent": {
+                                  "anyOf": [
+                                    {
+                                      "type": "integer",
+                                      "minimum": 0,
+                                      "maximum": 100
+                                    },
+                                    {
+                                      "type": "null"
+                                    }
+                                  ]
+                                }
+                              },
+                              "required": [
+                                "stage",
+                                "completed",
+                                "total",
+                                "percent"
+                              ]
+                            },
+                            "committedImages": {
+                              "type": "integer",
+                              "minimum": 0,
+                              "maximum": 460
+                            },
+                            "committedBusinesses": {
+                              "type": "integer",
+                              "minimum": 0,
+                              "maximum": 30
+                            },
+                            "committedListings": {
+                              "type": "integer",
+                              "minimum": 0,
+                              "maximum": 200
+                            },
+                            "retainedRecords": {
+                              "type": "integer",
+                              "minimum": 0,
+                              "maximum": 230
+                            },
+                            "error": {
+                              "anyOf": [
+                                {
+                                  "type": "string",
+                                  "pattern": "^[a-z0-9_]+$"
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            },
+                            "createdAt": {
+                              "type": "string",
+                              "format": "date-time",
+                              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                            },
+                            "updatedAt": {
+                              "type": "string",
+                              "format": "date-time",
+                              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "kind",
+                            "state",
+                            "progress",
+                            "committedImages",
+                            "committedBusinesses",
+                            "committedListings",
+                            "retainedRecords",
+                            "error",
+                            "createdAt",
+                            "updatedAt"
+                          ]
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "assets": {
+                      "type": "object",
+                      "properties": {
+                        "accepted": {
+                          "type": "integer",
+                          "minimum": 0,
+                          "maximum": 460
+                        },
+                        "missing": {
+                          "type": "integer",
+                          "minimum": 0,
+                          "maximum": 460
+                        },
+                        "rejected": {
+                          "type": "integer",
+                          "minimum": 0,
+                          "maximum": 460
+                        }
+                      },
+                      "required": [
+                        "accepted",
+                        "missing",
+                        "rejected"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "capability",
+                    "catalog",
+                    "dataset",
+                    "operation",
+                    "assets"
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "unauthenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "const": "unauthenticated"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "fields": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    "retryAfter": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "banned, forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "banned",
+                        "forbidden"
+                      ]
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "fields": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    "retryAfter": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/seed/prepare": {
+      "post": {
+        "operationId": "postAdminSeedPrepare",
+        "summary": "Prepare the one versioned preview dataset without publishing data",
+        "security": [
+          {
+            "session": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {},
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "capability": {
+                      "type": "object",
+                      "properties": {
+                        "enabled": {
+                          "type": "boolean"
+                        },
+                        "missing": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "enum": [
+                              "ADMIN_SEED_ENABLED",
+                              "CLOUDINARY_URL",
+                              "R2_ACCOUNT_ID",
+                              "R2_ACCESS_KEY_ID",
+                              "R2_SECRET_ACCESS_KEY",
+                              "R2_BUCKET",
+                              "TEST_ENVIRONMENT"
+                            ]
+                          }
+                        }
+                      },
+                      "required": [
+                        "enabled",
+                        "missing"
+                      ]
+                    },
+                    "catalog": {
+                      "type": "object",
+                      "properties": {
+                        "version": {
+                          "type": "string",
+                          "const": "sudan-marketplace-v1"
+                        },
+                        "manifestDigest": {
+                          "type": "string",
+                          "pattern": "^[a-f0-9]{64}$"
+                        },
+                        "listings": {
+                          "type": "number",
+                          "const": 200
+                        },
+                        "businesses": {
+                          "type": "number",
+                          "const": 30
+                        },
+                        "images": {
+                          "type": "number",
+                          "const": 460
+                        }
+                      },
+                      "required": [
+                        "version",
+                        "manifestDigest",
+                        "listings",
+                        "businesses",
+                        "images"
+                      ]
+                    },
+                    "dataset": {
+                      "anyOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "string",
+                              "minLength": 1
+                            },
+                            "version": {
+                              "type": "string",
+                              "const": "sudan-marketplace-v1"
+                            },
+                            "manifestDigest": {
+                              "type": "string",
+                              "pattern": "^[a-f0-9]{64}$"
+                            },
+                            "state": {
+                              "type": "string",
+                              "enum": [
+                                "preparing",
+                                "ready",
+                                "seeding",
+                                "installed",
+                                "removing",
+                                "removed",
+                                "retained"
+                              ]
+                            },
+                            "createdAt": {
+                              "type": "string",
+                              "format": "date-time",
+                              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "version",
+                            "manifestDigest",
+                            "state",
+                            "createdAt"
+                          ]
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "operation": {
+                      "anyOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "string",
+                              "minLength": 1
+                            },
+                            "kind": {
+                              "type": "string",
+                              "enum": [
+                                "archive",
+                                "seed",
+                                "remove"
+                              ]
+                            },
+                            "state": {
+                              "type": "string",
+                              "enum": [
+                                "receiving",
+                                "queued",
+                                "running",
+                                "failed",
+                                "completed"
+                              ]
+                            },
+                            "progress": {
+                              "type": "object",
+                              "properties": {
+                                "stage": {
+                                  "type": "string",
+                                  "enum": [
+                                    "upload",
+                                    "validate",
+                                    "store-images",
+                                    "insert-businesses",
+                                    "insert-listings",
+                                    "hide",
+                                    "remove-records",
+                                    "remove-media",
+                                    "complete"
+                                  ]
+                                },
+                                "completed": {
+                                  "type": "integer",
+                                  "minimum": 0,
+                                  "maximum": 9007199254740991
+                                },
+                                "total": {
+                                  "type": "integer",
+                                  "minimum": 0,
+                                  "maximum": 9007199254740991
+                                },
+                                "percent": {
+                                  "anyOf": [
+                                    {
+                                      "type": "integer",
+                                      "minimum": 0,
+                                      "maximum": 100
+                                    },
+                                    {
+                                      "type": "null"
+                                    }
+                                  ]
+                                }
+                              },
+                              "required": [
+                                "stage",
+                                "completed",
+                                "total",
+                                "percent"
+                              ]
+                            },
+                            "committedImages": {
+                              "type": "integer",
+                              "minimum": 0,
+                              "maximum": 460
+                            },
+                            "committedBusinesses": {
+                              "type": "integer",
+                              "minimum": 0,
+                              "maximum": 30
+                            },
+                            "committedListings": {
+                              "type": "integer",
+                              "minimum": 0,
+                              "maximum": 200
+                            },
+                            "retainedRecords": {
+                              "type": "integer",
+                              "minimum": 0,
+                              "maximum": 230
+                            },
+                            "error": {
+                              "anyOf": [
+                                {
+                                  "type": "string",
+                                  "pattern": "^[a-z0-9_]+$"
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            },
+                            "createdAt": {
+                              "type": "string",
+                              "format": "date-time",
+                              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                            },
+                            "updatedAt": {
+                              "type": "string",
+                              "format": "date-time",
+                              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "kind",
+                            "state",
+                            "progress",
+                            "committedImages",
+                            "committedBusinesses",
+                            "committedListings",
+                            "retainedRecords",
+                            "error",
+                            "createdAt",
+                            "updatedAt"
+                          ]
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "assets": {
+                      "type": "object",
+                      "properties": {
+                        "accepted": {
+                          "type": "integer",
+                          "minimum": 0,
+                          "maximum": 460
+                        },
+                        "missing": {
+                          "type": "integer",
+                          "minimum": 0,
+                          "maximum": 460
+                        },
+                        "rejected": {
+                          "type": "integer",
+                          "minimum": 0,
+                          "maximum": 460
+                        }
+                      },
+                      "required": [
+                        "accepted",
+                        "missing",
+                        "rejected"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "capability",
+                    "catalog",
+                    "dataset",
+                    "operation",
+                    "assets"
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "unauthenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "const": "unauthenticated"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "fields": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    "retryAfter": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "banned, forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "banned",
+                        "forbidden"
+                      ]
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "fields": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    "retryAfter": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ]
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "const": "conflict"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "fields": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    "retryAfter": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ]
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "validation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "const": "validation"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "fields": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    "retryAfter": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/seed/manifest": {
+      "get": {
+        "operationId": "getAdminSeedManifest",
+        "summary": "Download the prepared catalog with one prompt per required image",
+        "security": [
+          {
+            "session": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "version": {
+                      "type": "string",
+                      "const": "sudan-marketplace-v1"
+                    },
+                    "owners": {
+                      "minItems": 30,
+                      "maxItems": 30,
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "role": {
+                            "type": "string",
+                            "enum": [
+                              "dealership",
+                              "workshop",
+                              "mechanic"
+                            ]
+                          },
+                          "name": {
+                            "type": "object",
+                            "properties": {
+                              "ar": {
+                                "type": "string",
+                                "minLength": 1
+                              },
+                              "en": {
+                                "type": "string",
+                                "minLength": 1
+                              }
+                            },
+                            "required": [
+                              "ar",
+                              "en"
+                            ]
+                          },
+                          "cityId": {
+                            "type": "string",
+                            "minLength": 1
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "role",
+                          "name",
+                          "cityId"
+                        ]
+                      }
+                    },
+                    "records": {
+                      "minItems": 230,
+                      "maxItems": 230,
+                      "type": "array",
+                      "items": {
+                        "anyOf": [
+                          {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string",
+                                "pattern": "^l[0-9a-z]{5}$"
+                              },
+                              "ownerId": {
+                                "type": "string",
+                                "minLength": 1
+                              },
+                              "name": {
+                                "type": "object",
+                                "properties": {
+                                  "ar": {
+                                    "type": "string",
+                                    "minLength": 1
+                                  },
+                                  "en": {
+                                    "type": "string",
+                                    "minLength": 1
+                                  }
+                                },
+                                "required": [
+                                  "ar",
+                                  "en"
+                                ]
+                              },
+                              "description": {
+                                "type": "object",
+                                "properties": {
+                                  "ar": {
+                                    "type": "string",
+                                    "minLength": 1
+                                  },
+                                  "en": {
+                                    "type": "string",
+                                    "minLength": 1
+                                  }
+                                },
+                                "required": [
+                                  "ar",
+                                  "en"
+                                ]
+                              },
+                              "cityId": {
+                                "type": "string",
+                                "minLength": 1
+                              },
+                              "price": {
+                                "type": "integer",
+                                "minimum": 1,
+                                "maximum": 9999999999
+                              },
+                              "condition": {
+                                "type": "string",
+                                "enum": [
+                                  "new",
+                                  "used"
+                                ]
+                              },
+                              "kind": {
+                                "type": "string",
+                                "const": "vehicle"
+                              },
+                              "group": {
+                                "type": "string",
+                                "enum": [
+                                  "cars",
+                                  "trucks",
+                                  "motorcycles",
+                                  "tuk_tuks",
+                                  "rentals"
+                                ]
+                              },
+                              "intent": {
+                                "type": "string",
+                                "enum": [
+                                  "sale",
+                                  "rent"
+                                ]
+                              },
+                              "vehicleType": {
+                                "type": "string",
+                                "enum": [
+                                  "car",
+                                  "truck",
+                                  "motorcycle",
+                                  "tuk_tuk",
+                                  "rickshaw"
+                                ]
+                              },
+                              "makeId": {
+                                "type": "string",
+                                "minLength": 1
+                              },
+                              "modelId": {
+                                "type": "string",
+                                "minLength": 1
+                              },
+                              "year": {
+                                "type": "integer",
+                                "minimum": 1970,
+                                "maximum": 2026
+                              },
+                              "mileageKm": {
+                                "type": "integer",
+                                "minimum": 0,
+                                "maximum": 2000000
+                              },
+                              "fuel": {
+                                "type": "string",
+                                "enum": [
+                                  "petrol",
+                                  "diesel",
+                                  "hybrid",
+                                  "electric",
+                                  "lpg"
+                                ]
+                              },
+                              "transmission": {
+                                "type": "string",
+                                "enum": [
+                                  "automatic",
+                                  "manual"
+                                ]
+                              },
+                              "engineCc": {
+                                "anyOf": [
+                                  {
+                                    "type": "integer",
+                                    "minimum": 50,
+                                    "maximum": 20000
+                                  },
+                                  {
+                                    "type": "null"
+                                  }
+                                ]
+                              },
+                              "payloadTons": {
+                                "anyOf": [
+                                  {
+                                    "type": "number",
+                                    "exclusiveMinimum": 0
+                                  },
+                                  {
+                                    "type": "null"
+                                  }
+                                ]
+                              },
+                              "color": {
+                                "type": "object",
+                                "properties": {
+                                  "ar": {
+                                    "type": "string",
+                                    "minLength": 1
+                                  },
+                                  "en": {
+                                    "type": "string",
+                                    "minLength": 1
+                                  }
+                                },
+                                "required": [
+                                  "ar",
+                                  "en"
+                                ]
+                              },
+                              "rentPeriod": {
+                                "anyOf": [
+                                  {
+                                    "type": "string",
+                                    "enum": [
+                                      "day",
+                                      "week",
+                                      "month"
+                                    ]
+                                  },
+                                  {
+                                    "type": "null"
+                                  }
+                                ]
+                              }
+                            },
+                            "required": [
+                              "id",
+                              "ownerId",
+                              "name",
+                              "description",
+                              "cityId",
+                              "price",
+                              "condition",
+                              "kind",
+                              "group",
+                              "intent",
+                              "vehicleType",
+                              "makeId",
+                              "modelId",
+                              "year",
+                              "mileageKm",
+                              "fuel",
+                              "transmission",
+                              "engineCc",
+                              "payloadTons",
+                              "color",
+                              "rentPeriod"
+                            ]
+                          },
+                          {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string",
+                                "pattern": "^l[0-9a-z]{5}$"
+                              },
+                              "ownerId": {
+                                "type": "string",
+                                "minLength": 1
+                              },
+                              "name": {
+                                "type": "object",
+                                "properties": {
+                                  "ar": {
+                                    "type": "string",
+                                    "minLength": 1
+                                  },
+                                  "en": {
+                                    "type": "string",
+                                    "minLength": 1
+                                  }
+                                },
+                                "required": [
+                                  "ar",
+                                  "en"
+                                ]
+                              },
+                              "description": {
+                                "type": "object",
+                                "properties": {
+                                  "ar": {
+                                    "type": "string",
+                                    "minLength": 1
+                                  },
+                                  "en": {
+                                    "type": "string",
+                                    "minLength": 1
+                                  }
+                                },
+                                "required": [
+                                  "ar",
+                                  "en"
+                                ]
+                              },
+                              "cityId": {
+                                "type": "string",
+                                "minLength": 1
+                              },
+                              "price": {
+                                "type": "integer",
+                                "minimum": 1,
+                                "maximum": 9999999999
+                              },
+                              "condition": {
+                                "type": "string",
+                                "enum": [
+                                  "new",
+                                  "used"
+                                ]
+                              },
+                              "kind": {
+                                "type": "string",
+                                "const": "part"
+                              },
+                              "group": {
+                                "type": "string",
+                                "const": "parts"
+                              },
+                              "partCategoryId": {
+                                "type": "string",
+                                "minLength": 1
+                              },
+                              "compatibleTypes": {
+                                "minItems": 1,
+                                "type": "array",
+                                "items": {
+                                  "type": "string",
+                                  "enum": [
+                                    "car",
+                                    "truck",
+                                    "motorcycle",
+                                    "tuk_tuk",
+                                    "rickshaw"
+                                  ]
+                                }
+                              },
+                              "visualDescription": {
+                                "type": "string",
+                                "minLength": 1
+                              }
+                            },
+                            "required": [
+                              "id",
+                              "ownerId",
+                              "name",
+                              "description",
+                              "cityId",
+                              "price",
+                              "condition",
+                              "kind",
+                              "group",
+                              "partCategoryId",
+                              "compatibleTypes",
+                              "visualDescription"
+                            ]
+                          },
+                          {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string",
+                                "minLength": 1
+                              },
+                              "ownerId": {
+                                "type": "string",
+                                "minLength": 1
+                              },
+                              "name": {
+                                "type": "object",
+                                "properties": {
+                                  "ar": {
+                                    "type": "string",
+                                    "minLength": 1
+                                  },
+                                  "en": {
+                                    "type": "string",
+                                    "minLength": 1
+                                  }
+                                },
+                                "required": [
+                                  "ar",
+                                  "en"
+                                ]
+                              },
+                              "description": {
+                                "type": "object",
+                                "properties": {
+                                  "ar": {
+                                    "type": "string",
+                                    "minLength": 1
+                                  },
+                                  "en": {
+                                    "type": "string",
+                                    "minLength": 1
+                                  }
+                                },
+                                "required": [
+                                  "ar",
+                                  "en"
+                                ]
+                              },
+                              "cityId": {
+                                "type": "string",
+                                "minLength": 1
+                              },
+                              "kind": {
+                                "type": "string",
+                                "enum": [
+                                  "dealership",
+                                  "workshop",
+                                  "mechanic"
+                                ]
+                              },
+                              "specializationIds": {
+                                "type": "array",
+                                "items": {
+                                  "type": "string",
+                                  "minLength": 1
+                                }
+                              },
+                              "serviceTemplateIds": {
+                                "type": "array",
+                                "items": {
+                                  "type": "string",
+                                  "minLength": 1
+                                }
+                              },
+                              "yearsOfExperience": {
+                                "type": "integer",
+                                "minimum": 0,
+                                "maximum": 60
+                              }
+                            },
+                            "required": [
+                              "id",
+                              "ownerId",
+                              "name",
+                              "description",
+                              "cityId",
+                              "kind",
+                              "specializationIds",
+                              "serviceTemplateIds",
+                              "yearsOfExperience"
+                            ]
+                          }
+                        ]
+                      }
+                    },
+                    "assets": {
+                      "minItems": 460,
+                      "maxItems": 460,
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "recordId": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "position": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 1
+                          },
+                          "filename": {
+                            "type": "string",
+                            "pattern": "^[a-z0-9-]+\\.jpg$"
+                          },
+                          "allowedFilenames": {
+                            "minItems": 3,
+                            "maxItems": 3,
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "minLength": 1
+                            }
+                          },
+                          "referenceFilename": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "minLength": 1
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "width": {
+                            "type": "number",
+                            "const": 1600
+                          },
+                          "height": {
+                            "type": "number",
+                            "const": 1200
+                          },
+                          "prompt": {
+                            "type": "string",
+                            "minLength": 200
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "recordId",
+                          "position",
+                          "filename",
+                          "allowedFilenames",
+                          "referenceFilename",
+                          "width",
+                          "height",
+                          "prompt"
+                        ]
+                      }
+                    },
+                    "instructions": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "required": [
+                    "version",
+                    "owners",
+                    "records",
+                    "assets",
+                    "instructions"
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "unauthenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "const": "unauthenticated"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "fields": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    "retryAfter": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "banned, forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "banned",
+                        "forbidden"
+                      ]
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "fields": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    "retryAfter": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "not_found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "const": "not_found"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "fields": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    "retryAfter": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ]
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "const": "conflict"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "fields": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    "retryAfter": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/admin/banners": {
       "get": {
         "operationId": "getAdminBanners",

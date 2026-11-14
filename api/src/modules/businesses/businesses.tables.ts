@@ -50,6 +50,8 @@ const profile = () => ({
   status: profileStatus().default("active").notNull(),
   suspendedReason: text(),
   createdAt: createdAt(),
+  seedDatasetId: text(),
+  seedHidden: boolean().default(false).notNull(),
 })
 
 // Dealerships and workshops have a street address and an optional map pin (indexed for the map bbox); the district can be left empty.
@@ -145,7 +147,6 @@ export const mechanics = pgTable(
     check("mechanics_years", sql`${table.yearsOfExperience} >= 0`),
   ]
 )
-
 // Served cities and skills; `position` keeps the order the mechanic picked them in.
 export const mechanicCities = pgTable(
   "mechanic_cities",

@@ -12,6 +12,14 @@ const HOUR = 3600
 // because whole mobile carriers share a few addresses (A12). No `user` means
 // a public route.
 const LIMITS = {
+  adminSeed: {
+    user: { max: 30, seconds: HOUR },
+    ip: { max: 60, seconds: HOUR },
+  },
+  adminSeedArchives: {
+    user: { max: 20, seconds: HOUR },
+    ip: { max: 40, seconds: HOUR },
+  },
   contact: { ip: { max: 10, seconds: HOUR } },
   reports: {
     user: { max: 10, seconds: HOUR },

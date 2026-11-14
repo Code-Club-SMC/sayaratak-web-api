@@ -46,6 +46,7 @@ export const uploads = pgTable(
     }),
     attachedAt: timestamp({ withTimezone: true }),
     createdAt: createdAt(),
+    seedDatasetId: text(),
   },
   (table) => [
     index().on(table.ownerUserId),

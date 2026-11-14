@@ -82,6 +82,8 @@ const core = {
   // codes, so a lost admin mailbox can still be fixed.
   ADMIN_SECRET_KEY: z.string().min(32).optional(),
   ADMIN_RECOVERY_EMAIL: z.email().optional(),
+  // Public preview datasets are separate from the development/test database seed.
+  ADMIN_SEED_ENABLED: z.stringbool().default(false),
 }
 
 const devSchema = z

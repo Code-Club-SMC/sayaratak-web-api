@@ -42,6 +42,22 @@ test("boots in development without service keys", () => {
   expect(boot(valid)).toEqual({ code: 0, stderr: "" })
 })
 
+test("admin preview seeding defaults off and rejects invalid enable values", () => {
+  const result = Bun.spawnSync(
+    [
+      "bun",
+      "--no-env-file",
+      "-e",
+      "const {env}=await import('~/env'); process.stdout.write(String(env.ADMIN_SEED_ENABLED))",
+    ],
+    { cwd: `${import.meta.dir}/..`, env: { PATH: process.env.PATH, ...valid } }
+  )
+  expect(result.exitCode).toBe(0)
+  expect(result.stdout.toString()).toBe("false")
+  expect(boot({ ...valid, ADMIN_SEED_ENABLED: "invalid" }).code).toBe(1)
+  expect(boot({ ...valid, ADMIN_SEED_ENABLED: "true" }).code).toBe(0)
+})
+
 test("Render IP mode requires a dedicated secret and fixed public API origin", () => {
   const missing = boot({ ...valid, CLIENT_IP_MODE: "render" })
   expect(missing.code).toBe(1)

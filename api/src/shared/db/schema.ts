@@ -2,6 +2,8 @@
 // whole schema. Add a line here when a module adds tables.
 export * from "~/modules/account/account.tables"
 export * from "~/modules/admin-backups/admin-backups.tables"
+export * from "~/modules/admin-seed/admin-seed.tables"
+export * from "~/modules/admin-seed/admin-seed.assets.tables"
 export * from "~/modules/ads/ads.tables"
 export * from "~/modules/analytics/analytics.tables"
 export * from "~/modules/audit/audit.tables"

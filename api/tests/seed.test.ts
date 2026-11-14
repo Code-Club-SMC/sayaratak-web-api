@@ -87,6 +87,12 @@ const runtimeOnly = new Set([
   schema.devices,
   schema.fileDeletions,
   schema.eventsMonthly,
+  // Public-preview preparation is runtime admin state, never part of the development seed.
+  schema.seedDatasets,
+  schema.seedOperations,
+  schema.seedAssets,
+  schema.seedRecords,
+  schema.seedStorageIntents,
 ])
 
 beforeAll(resetDb)

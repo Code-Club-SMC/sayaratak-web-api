@@ -102,6 +102,8 @@ export const listings = pgTable(
     expiredNotifiedAt: at(),
     createdAt: createdAt(),
     updatedAt: at().notNull(),
+    seedDatasetId: text(),
+    seedHidden: boolean().default(false).notNull(),
   },
   (table) => [
     index().on(table.ownerUserId),

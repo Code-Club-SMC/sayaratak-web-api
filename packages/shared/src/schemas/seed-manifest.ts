@@ -82,6 +82,9 @@ export const seedManifestSchema = z
   .superRefine(checkManifestLinks)
 
 export type SeedVehicle = z.infer<typeof seedVehicleSchema>
+export const seedPromptPackSchema = seedManifestSchema.safeExtend({
+  instructions: z.array(z.string()),
+})
 export type SeedPart = z.infer<typeof seedPartSchema>
 export type SeedBusiness = z.infer<typeof seedBusinessSchema>
 export type SeedRecord = z.infer<typeof seedRecordSchema>

@@ -36,7 +36,7 @@ export async function getCityCenters(ex: Executor) {
 }
 
 /** Every public list the site builds its menus and filters from. Cities of a turned-off country, and their districts, stay off. */
-export async function getTaxonomy() {
+export async function getTaxonomy(ex: Executor = db) {
   // Eight small independent reads, run together.
   const [
     cities,
@@ -48,14 +48,14 @@ export async function getTaxonomy() {
     specializations,
     serviceTemplates,
   ] = await Promise.all([
-    q.listShownCities(db),
-    q.listShownDistricts(db),
-    q.listMakes(db),
-    q.listModels(db),
-    q.listVehicleTypes(db),
-    q.listPartCategories(db),
-    q.listSpecializations(db),
-    q.listServiceTemplates(db),
+    q.listShownCities(ex),
+    q.listShownDistricts(ex),
+    q.listMakes(ex),
+    q.listModels(ex),
+    q.listVehicleTypes(ex),
+    q.listPartCategories(ex),
+    q.listSpecializations(ex),
+    q.listServiceTemplates(ex),
   ])
   return toTaxonomy({
     cities,

@@ -66,6 +66,8 @@ export const user = pgTable(
     chosenPlanId: text().references((): AnyPgColumn => plans.id, {
       onDelete: "set null",
     }),
+    // Internal provenance only; never a Better-Auth client-writable field.
+    seedDatasetId: text(),
   },
   (table) => [
     uniqueIndex().on(table.phone).where(sql`${table.phone} is not null`),

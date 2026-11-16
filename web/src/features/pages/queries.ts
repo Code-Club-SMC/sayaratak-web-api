@@ -13,7 +13,8 @@ import { siteSchema } from "@sayaratak/shared/schemas/responses"
 export const siteQuery = queryOptions({
   queryKey: keys.content.site,
   queryFn: ({ signal }) => apiFetch("/site", { schema: siteSchema, signal }),
-  staleTime: 5 * 60_000,
+  staleTime: 0,
+  refetchOnWindowFocus: true,
 })
 
 export const pageQuery = (slug: string) =>

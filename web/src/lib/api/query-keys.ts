@@ -80,6 +80,7 @@ export const keys = {
   admin: {
     all: ["admin"] as const,
     list: (name: string, f?: Params) => ["admin", name, f] as const,
+    seed: ["admin", "seed"] as const,
   },
 }
 

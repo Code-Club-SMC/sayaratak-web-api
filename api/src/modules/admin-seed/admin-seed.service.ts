@@ -26,6 +26,8 @@ import * as q from "./admin-seed.queries"
 import { checkSeedTaxonomy } from "./admin-seed.taxonomy.service"
 
 export { requestSeedRemoval } from "./admin-seed.removal.service"
+export { startSeedInstall } from "./admin-seed.start.service"
+export { retrySeedInstall } from "./admin-seed.install-recovery.service"
 
 /** Returns durable state and capability names, never storage credentials or owner identities. */
 export async function getSeedStatus(): Promise<SeedStatus> {

@@ -65,5 +65,6 @@ export async function listingLoader(
       listing.interactionMode === "preview" ||
       listing.moderation !== "approved" ||
       listing.status !== "available",
+    containsPreview: listing.interactionMode === "preview",
   }
 }

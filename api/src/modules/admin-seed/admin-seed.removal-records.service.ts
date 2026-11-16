@@ -135,17 +135,13 @@ export async function advanceToMedia(
   return 1
 }
 
-export async function processRecordsPass(
-  tx: Transaction,
-  dataset: NonNullable<Awaited<ReturnType<typeof qInstall.lockInstallDataset>>>,
-  op: NonNullable<Awaited<ReturnType<typeof qInstall.lockInstallOperation>>>
-): Promise<number> {
-  const records = await qRem.listOwnedRecordsByDataset(tx, dataset.id)
-  const remaining = records.filter((r) => r.outcome === "owned")
-  if (!remaining.length) return advanceToMedia(tx, op)
-  const uploadIds = await qRem.listAcceptedUploadIds(tx, dataset.id)
-  const protection = await resolveTransitiveProtection(tx, {
-    datasetId: dataset.id,
+function getProtectionScope(
+  datasetId: string,
+  records: Array<{ domain: string; recordId: string }>,
+  uploadIds: string[]
+) {
+  return {
+    datasetId,
     listingIds: records
       .filter((r) => r.domain === "listing")
       .map((r) => r.recordId),
@@ -156,7 +152,20 @@ export async function processRecordsPass(
       .filter((r) => r.domain === "owner")
       .map((r) => r.recordId),
     uploadIds,
-  })
+  }
+}
+
+export async function processRecordsPass(
+  tx: Transaction,
+  dataset: NonNullable<Awaited<ReturnType<typeof qInstall.lockInstallDataset>>>,
+  op: NonNullable<Awaited<ReturnType<typeof qInstall.lockInstallOperation>>>
+): Promise<number> {
+  const records = await qRem.listOwnedRecordsByDataset(tx, dataset.id)
+  const remaining = records.filter((r) => r.outcome === "owned")
+  if (!remaining.length) return advanceToMedia(tx, op)
+  const uploadIds = await qRem.listAcceptedUploadIds(tx, dataset.id)
+  const scope = getProtectionScope(dataset.id, records, uploadIds)
+  const protection = await resolveTransitiveProtection(tx, scope)
   const remListings = remaining.filter((r) => r.domain === "listing")
   if (remListings.length)
     return removeListingBatch(

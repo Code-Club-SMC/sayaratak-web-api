@@ -92,10 +92,21 @@ test("disabled capability is explained to admins but preparation and download ar
   expect((await admin("GET", "/admin/seed/manifest")).status).toBe(403)
 })
 
-test("execution and retry are not exposed before their tasks exist", async () => {
-  const admin = adminCaller()
-  for (const action of ["start", "retry"])
-    expect((await admin("POST", `/admin/seed/${action}`, {})).status).toBe(404)
+test("anonymous and regular accounts cannot invoke seed execution or retry", async () => {
+  for (const action of ["start", "retry"]) {
+    expect(
+      (await req(`/admin/seed/${action}`, { method: "POST" })).status
+    ).toBe(401)
+    const viewer = await signIn("user")
+    expect(
+      (
+        await call(viewer, `/admin/seed/${action}`, {
+          method: "POST",
+          body: {},
+        })
+      ).status
+    ).toBe(403)
+  }
 })
 
 test("anonymous and regular accounts cannot invoke seed removal", async () => {

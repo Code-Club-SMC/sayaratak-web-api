@@ -285,5 +285,6 @@
   "common.leave_title": "Leave without saving?",
   "common.leave_body": "Your unsaved changes will be lost.",
   "common.leave_confirm": "Leave",
-  "common.zoom": "Zoom"
+  "common.zoom": "Zoom",
+  "common.seed_notice": "Demo data. Contact and payments are unavailable for these listings."
 }

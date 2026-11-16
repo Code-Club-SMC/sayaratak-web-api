@@ -293,5 +293,6 @@
   "common.leave_title": "المغادرة دون حفظ؟",
   "common.leave_body": "ستفقد التغييرات غير المحفوظة.",
   "common.leave_confirm": "مغادرة",
-  "common.zoom": "تكبير"
+  "common.zoom": "تكبير",
+  "common.seed_notice": "بيانات تجريبية. الاتصال والدفع غير متاحين لهذه الإعلانات."
 }

@@ -36,9 +36,13 @@ export async function searchLoader(
   const t = (key: string, vars?: Record<string, string>) =>
     fill(messages[key] ?? "", vars)
   const title = searchTitle(search, tax, locale, t)
+  const listData = queryClient.getQueryData(list.queryKey)
+  const containsPreview =
+    listData?.items.some((i) => i.interactionMode === "preview") ?? false
   return {
     locale,
     title,
     description: t("search.description", { title }),
+    containsPreview,
   }
 }

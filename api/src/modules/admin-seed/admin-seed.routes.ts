@@ -1,8 +1,10 @@
 import {
   seedArchiveInputSchema,
+  seedInputSchema,
   seedOperationSchema,
   seedPrepareInputSchema,
   seedRemovalInputSchema,
+  seedRetryInputSchema,
   seedStatusSchema,
 } from "@sayaratak/shared/schemas/admin-seed"
 import { seedPromptPackSchema } from "@sayaratak/shared/schemas/seed-manifest"
@@ -20,6 +22,8 @@ import {
   getSeedStatus,
   prepareSeedDataset,
   requestSeedRemoval,
+  retrySeedInstall,
+  startSeedInstall,
 } from "./admin-seed.service"
 import { receiveSeedArchive } from "./admin-seed.archives.service"
 
@@ -117,4 +121,40 @@ adminSeedRoutes.post(
   validate.json(seedRemovalInputSchema),
   async (c) =>
     c.json(await requestSeedRemoval(c.get("actor"), c.req.valid("json")), 202)
+)
+
+adminSeedRoutes.post(
+  "/admin/seed/start",
+  spec({
+    summary: "Start or queue seed installation for the prepared dataset",
+    access: "user",
+    responses: { 202: seedOperationSchema },
+    errors: [...ADMIN_ERRORS, "conflict", "not_found"],
+  }),
+  requireAdmin,
+  rateLimit("adminSeed"),
+  validate.json(seedInputSchema),
+  async (c) =>
+    c.json(
+      await startSeedInstall(
+        c.get("actor"),
+        c.req.valid("json").manifestDigest
+      ),
+      202
+    )
+)
+
+adminSeedRoutes.post(
+  "/admin/seed/retry",
+  spec({
+    summary: "Retry an existing failed seed install without resetting progress",
+    access: "user",
+    responses: { 202: seedOperationSchema },
+    errors: [...ADMIN_ERRORS, "conflict", "not_found"],
+  }),
+  requireAdmin,
+  rateLimit("adminSeed"),
+  validate.json(seedRetryInputSchema),
+  async (c) =>
+    c.json(await retrySeedInstall(c.get("actor"), c.req.valid("json")), 202)
 )

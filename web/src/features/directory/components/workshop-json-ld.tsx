@@ -7,6 +7,7 @@ import { workshopJsonLd } from "../json-ld"
 
 export function WorkshopJsonLd({ workshop: w }: { workshop: Workshop }) {
   const { locale } = useT()
+  if (w.interactionMode === "preview") return null
   const city = useCityName(w.cityId)
   const base = origin()
   const json = workshopJsonLd(w, {

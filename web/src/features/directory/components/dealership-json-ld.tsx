@@ -11,6 +11,7 @@ export function DealershipJsonLd({
   dealership: Dealership
 }) {
   const { locale } = useT()
+  if (d.interactionMode === "preview") return null
   const city = useCityName(d.cityId)
   const base = origin()
   const json = dealershipJsonLd(d, {

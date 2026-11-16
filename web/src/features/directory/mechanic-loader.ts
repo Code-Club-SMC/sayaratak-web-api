@@ -72,6 +72,7 @@ export async function mechanicLoader(
     slug: m.slug,
     unavailable: m.unavailable,
     preview: m.interactionMode === "preview",
+    containsPreview: m.interactionMode === "preview",
     title: [name, city].filter(Boolean).join(", "),
     description: (m.bio[locale] || m.bio.ar)
       .replace(/\s+/g, " ")

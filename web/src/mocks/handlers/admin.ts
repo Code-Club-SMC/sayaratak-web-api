@@ -16,6 +16,7 @@ import {
   bulkInputSchema,
   rejectInputSchema,
 } from "@sayaratak/shared/schemas/inputs"
+import type { SeedStatus } from "@sayaratak/shared/schemas/admin-seed"
 import { listingSchema } from "@sayaratak/shared/schemas/listing"
 import { pageOf } from "@sayaratak/shared/schemas/fields"
 import type { z } from "zod"
@@ -452,6 +453,7 @@ route("POST", "/admin/verifications/:id/approve", (c) => {
   )
   return adminVerificationSchema.parse(verificationRow(row))
 })
+
 route("POST", "/admin/verifications/:id/reject", async (c) => {
   admin(c)
   const row = verificationOf(c.params.id ?? "")
@@ -466,4 +468,190 @@ route("POST", "/admin/verifications/:id/reject", async (c) => {
     "/verification"
   )
   return adminVerificationSchema.parse(verificationRow(row))
+})
+
+let mockSeedStatus: SeedStatus = {
+  capability: {
+    enabled: true,
+    missing: [],
+  },
+  catalog: {
+    version: "sudan-marketplace-v1",
+    manifestDigest: "a".repeat(64),
+    listings: 200,
+    businesses: 30,
+    images: 460,
+  },
+  dataset: null,
+  operation: null,
+  assets: {
+    accepted: 0,
+    missing: 460,
+    rejected: 0,
+  },
+}
+
+export function setMockSeedStatus(status: SeedStatus) {
+  mockSeedStatus = status
+}
+
+export function resetMockSeedStatus() {
+  mockSeedStatus = {
+    capability: {
+      enabled: true,
+      missing: [],
+    },
+    catalog: {
+      version: "sudan-marketplace-v1",
+      manifestDigest: "a".repeat(64),
+      listings: 200,
+      businesses: 30,
+      images: 460,
+    },
+    dataset: null,
+    operation: null,
+    assets: {
+      accepted: 0,
+      missing: 460,
+      rejected: 0,
+    },
+  }
+}
+
+route("GET", "/admin/seed", (c) => {
+  admin(c)
+  return mockSeedStatus
+})
+
+route("POST", "/admin/seed/prepare", (c) => {
+  admin(c)
+  mockSeedStatus = {
+    ...mockSeedStatus,
+    dataset: {
+      id: "sd-mock-1",
+      version: "sudan-marketplace-v1",
+      manifestDigest: "a".repeat(64),
+      state: "ready",
+      createdAt: nowIso(),
+    },
+    assets: {
+      accepted: 460,
+      missing: 0,
+      rejected: 0,
+    },
+  }
+  return mockSeedStatus
+})
+
+route("GET", "/admin/seed/manifest", (c) => {
+  admin(c)
+  return Response.json({
+    version: "sudan-marketplace-v1",
+    manifestDigest: "a".repeat(64),
+    distribution: { listings: 200, businesses: 30, images: 460 },
+    prompts: [],
+  })
+})
+
+route("POST", "/admin/seed/archives", (c) => {
+  admin(c)
+  return Response.json(
+    {
+      id: "so-mock-archive",
+      kind: "archive",
+      state: "queued",
+      progress: { stage: "validate", completed: 0, total: 10, percent: 0 },
+      committedImages: 0,
+      committedBusinesses: 0,
+      committedListings: 0,
+      retainedRecords: 0,
+      error: null,
+      actorId: "usr-admin",
+      actorIp: "127.0.0.1",
+      createdAt: nowIso(),
+      updatedAt: nowIso(),
+    },
+    { status: 202 }
+  )
+})
+
+route("POST", "/admin/seed/start", (c) => {
+  admin(c)
+  return Response.json(
+    {
+      id: "so-mock-start",
+      kind: "seed",
+      state: "queued",
+      progress: {
+        stage: "insert-businesses",
+        completed: 0,
+        total: 230,
+        percent: 0,
+      },
+      committedImages: 460,
+      committedBusinesses: 0,
+      committedListings: 0,
+      retainedRecords: 0,
+      error: null,
+      actorId: "usr-admin",
+      actorIp: "127.0.0.1",
+      createdAt: nowIso(),
+      updatedAt: nowIso(),
+    },
+    { status: 202 }
+  )
+})
+
+route("POST", "/admin/seed/retry", (c) => {
+  admin(c)
+  return Response.json(
+    {
+      id: "so-mock-retry",
+      kind: "seed",
+      state: "queued",
+      progress: {
+        stage: "insert-listings",
+        completed: 50,
+        total: 230,
+        percent: 21,
+      },
+      committedImages: 460,
+      committedBusinesses: 30,
+      committedListings: 20,
+      retainedRecords: 0,
+      error: null,
+      actorId: "usr-admin",
+      actorIp: "127.0.0.1",
+      createdAt: nowIso(),
+      updatedAt: nowIso(),
+    },
+    { status: 202 }
+  )
+})
+
+route("POST", "/admin/seed/remove", (c) => {
+  admin(c)
+  return Response.json(
+    {
+      id: "so-mock-remove",
+      kind: "remove",
+      state: "queued",
+      progress: {
+        stage: "remove-records",
+        completed: 0,
+        total: 230,
+        percent: 0,
+      },
+      committedImages: 0,
+      committedBusinesses: 0,
+      committedListings: 0,
+      retainedRecords: 0,
+      error: null,
+      actorId: "usr-admin",
+      actorIp: "127.0.0.1",
+      createdAt: nowIso(),
+      updatedAt: nowIso(),
+    },
+    { status: 202 }
+  )
 })

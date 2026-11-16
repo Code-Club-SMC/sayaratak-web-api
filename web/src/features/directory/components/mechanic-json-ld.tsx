@@ -7,6 +7,7 @@ import { mechanicJsonLd } from "../json-ld"
 
 export function MechanicJsonLd({ mechanic: m }: { mechanic: Mechanic }) {
   const { t, locale } = useT()
+  if (m.interactionMode === "preview") return null
   const city = useCityName(m.cityId)
   const served = useCityNames(m.servedCityIds)
   const base = origin()

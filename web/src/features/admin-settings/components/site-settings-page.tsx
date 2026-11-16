@@ -9,6 +9,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { ContactSettings } from "./contact-settings"
 import { ListingSettings } from "./listing-settings"
 import { PaymentSettings } from "./payment-settings"
+import { SeedSettings } from "@/features/admin-seed/components/seed-settings"
 
 // Rules for listings, the Bankak account checkout shows and the public contact details. Each section saves alone.
 export function SiteSettingsPage() {
@@ -24,6 +25,7 @@ export function SiteSettingsPage() {
           <ListingSettings settings={settings.data} />
           <PaymentSettings settings={settings.data} />
           <ContactSettings settings={settings.data} />
+          <SeedSettings />
         </div>
       ) : settings.isError ? (
         <SectionError

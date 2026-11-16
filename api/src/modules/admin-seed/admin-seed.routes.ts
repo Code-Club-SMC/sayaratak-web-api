@@ -2,6 +2,7 @@ import {
   seedArchiveInputSchema,
   seedOperationSchema,
   seedPrepareInputSchema,
+  seedRemovalInputSchema,
   seedStatusSchema,
 } from "@sayaratak/shared/schemas/admin-seed"
 import { seedPromptPackSchema } from "@sayaratak/shared/schemas/seed-manifest"
@@ -18,6 +19,7 @@ import {
   getSeedPromptPack,
   getSeedStatus,
   prepareSeedDataset,
+  requestSeedRemoval,
 } from "./admin-seed.service"
 import { receiveSeedArchive } from "./admin-seed.archives.service"
 
@@ -100,4 +102,19 @@ adminSeedRoutes.get(
       "Content-Disposition":
         'attachment; filename="sayaratak-seed-prompts-v1.json"',
     })
+)
+
+adminSeedRoutes.post(
+  "/admin/seed/remove",
+  spec({
+    summary: "Confirmed seed-only removal with dependency preservation",
+    access: "user",
+    responses: { 202: seedOperationSchema },
+    errors: [...ADMIN_ERRORS, "conflict", "not_found"],
+  }),
+  requireAdmin,
+  rateLimit("adminSeed"),
+  validate.json(seedRemovalInputSchema),
+  async (c) =>
+    c.json(await requestSeedRemoval(c.get("actor"), c.req.valid("json")), 202)
 )

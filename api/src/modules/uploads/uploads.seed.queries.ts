@@ -79,3 +79,11 @@ export async function hasSeedDeletion(ex: Executor, id: string) {
     .where(eq(fileDeletions.id, id))
   return rows.length > 0
 }
+
+export async function getSeedDeletionRow(ex: Executor, id: string) {
+  const [row] = await ex
+    .select({ id: fileDeletions.id, attempts: fileDeletions.attempts })
+    .from(fileDeletions)
+    .where(eq(fileDeletions.id, id))
+  return row
+}

@@ -1,4 +1,4 @@
-import { beforeEach, expect, test } from "bun:test"
+import { afterEach, beforeEach, expect, test } from "bun:test"
 import { eq } from "drizzle-orm"
 import { z } from "zod"
 import { listingSchema } from "@sayaratak/shared/schemas/listing"
@@ -9,6 +9,7 @@ import {
   sitemapEntrySchema,
 } from "@sayaratak/shared/schemas/responses"
 
+import { env } from "~/env"
 import { db } from "~/shared/db/client"
 import { dealerships } from "~/modules/businesses/businesses.tables"
 import { favorites } from "~/modules/favorites/favorites.tables"
@@ -17,7 +18,14 @@ import { listings, listingStats } from "~/modules/listings/listings.tables"
 import { seedPreviewFixture } from "../../../tests/admin-seed"
 import { call, req, resetDb, signIn } from "../../../tests/helpers"
 
-beforeEach(resetDb)
+const ORIGINAL_ENABLED = env.ADMIN_SEED_ENABLED
+beforeEach(async () => {
+  env.ADMIN_SEED_ENABLED = true
+  await resetDb()
+})
+afterEach(() => {
+  env.ADMIN_SEED_ENABLED = ORIGINAL_ENABLED
+})
 
 test("a signed-in user cannot save a preview listing", async () => {
   const { listingId } = await seedPreviewFixture()

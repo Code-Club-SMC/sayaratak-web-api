@@ -89,6 +89,15 @@ export const seedRetryInputSchema = z.strictObject({
   operationId: z.string().min(1),
   manifestDigest: seedDigestSchema,
 })
+export const seedInputSchema = z.strictObject({
+  manifestDigest: seedDigestSchema,
+  confirmation: z.literal(true),
+})
+export const seedRemovalInputSchema = z.strictObject({
+  datasetId: z.string().min(1),
+  manifestDigest: seedDigestSchema,
+  confirmation: z.literal(true),
+})
 export const seedDatasetSummarySchema = z.object({
   id: z.string().min(1),
   version: z.literal("sudan-marketplace-v1"),
@@ -143,5 +152,7 @@ export type SeedDatasetSummary = z.infer<typeof seedDatasetSummarySchema>
 export type SeedOperation = z.infer<typeof seedOperationSchema>
 export type SeedStatus = z.infer<typeof seedStatusSchema>
 export type SeedArchiveInput = z.infer<typeof seedArchiveInputSchema>
+export type SeedInput = z.infer<typeof seedInputSchema>
+export type SeedRemovalInput = z.infer<typeof seedRemovalInputSchema>
 export type SeedRetryInput = z.infer<typeof seedRetryInputSchema>
 export type SeedArchiveRejection = z.infer<typeof seedArchiveRejectionSchema>

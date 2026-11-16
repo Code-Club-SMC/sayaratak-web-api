@@ -1,5 +1,8 @@
 import type { SeedAssetBinding } from "@sayaratak/shared/schemas/seed-batches"
-import type { SeedManifest } from "@sayaratak/shared/schemas/seed-manifest"
+import type {
+  SeedManifest,
+  SeedRecord,
+} from "@sayaratak/shared/schemas/seed-manifest"
 
 import { db } from "~/shared/db/client"
 import { type Transaction, transaction } from "~/shared/db/tx"

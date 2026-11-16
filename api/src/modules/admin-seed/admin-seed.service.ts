@@ -25,6 +25,8 @@ import { renderSeedPromptPack } from "./admin-seed.prompts.service"
 import * as q from "./admin-seed.queries"
 import { checkSeedTaxonomy } from "./admin-seed.taxonomy.service"
 
+export { requestSeedRemoval } from "./admin-seed.removal.service"
+
 /** Returns durable state and capability names, never storage credentials or owner identities. */
 export async function getSeedStatus(): Promise<SeedStatus> {
   const manifest = buildSeedManifest()

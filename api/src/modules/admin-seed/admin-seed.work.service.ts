@@ -9,8 +9,10 @@ import {
   expireSeedArchiveReceipts,
   failSeedArchive,
 } from "./admin-seed.archives.service"
+import { processSeedInstall } from "./admin-seed.install.service"
 import { cleanUpSeedImages } from "./admin-seed.media-cleanup.service"
 import { processSeedMedia } from "./admin-seed.media.service"
+import { processSeedRemoval } from "./admin-seed.removal.service"
 import { processSeedArchiveValidation } from "./admin-seed.validation.service"
 import * as q from "./admin-seed.work.queries"
 
@@ -25,7 +27,10 @@ export async function runSeedPass(): Promise<number> {
   await cleanUpSeedImages()
   await cleanArchiveSources()
   const operation = await q.getQueuedWork(db)
-  if (operation?.kind !== "archive") return 0
+  if (!operation) return 0
+  if (operation.kind === "seed") return processSeedInstall(operation.id)
+  if (operation.kind === "remove") return processSeedRemoval(operation.id)
+  if (operation.kind !== "archive") return 0
   try {
     if (operation.stage === "validate")
       return await processSeedArchiveValidation(operation.id)

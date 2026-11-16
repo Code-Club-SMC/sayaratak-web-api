@@ -10,7 +10,12 @@ import * as q from "./uploads.seed.queries"
 /** Queues the exact immutable intent even when its provider acknowledgment was lost. */
 export async function queueSeedImageDeletion(
   tx: Transaction,
-  input: { datasetId: string; immutableKey: string; mime: string }
+  input: {
+    datasetId: string
+    immutableKey: string
+    mime: string
+    allowAttached?: boolean
+  }
 ) {
   // The orchestrator must hold and verify the durable storage intent before calling this.
   const root = `sayaratak/${env.APP_ENV}/seed/${input.datasetId}/`
@@ -28,7 +33,7 @@ export async function queueSeedImageDeletion(
     row &&
     (row.seedDatasetId !== input.datasetId ||
       row.cloudinaryId !== input.immutableKey ||
-      row.attachedAt !== null)
+      (!input.allowAttached && row.attachedAt !== null))
   )
     fail.conflict()
   if (row) await uploads.deleteUploads(tx, [uploadId])
@@ -47,4 +52,21 @@ export function hasSeedImageDeletion(tx: Transaction, immutableKey: string) {
     .update(immutableKey)
     .digest("hex")
   return q.hasSeedDeletion(tx, `${SEED_DELETE_ID_PREFIX}${digest}`)
+}
+
+/** Reports the granular outbox status of the intent for progress and retry tracking. */
+export async function getSeedImageDeletionStatus(
+  tx: Transaction,
+  immutableKey: string
+): Promise<"pending" | "completed" | "failed"> {
+  const digest = new Bun.CryptoHasher("sha256")
+    .update(immutableKey)
+    .digest("hex")
+  const row = await q.getSeedDeletionRow(
+    tx,
+    `${SEED_DELETE_ID_PREFIX}${digest}`
+  )
+  if (!row) return "completed"
+  if (row.attempts >= 20) return "failed"
+  return "pending"
 }

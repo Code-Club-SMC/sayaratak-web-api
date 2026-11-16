@@ -48,6 +48,47 @@ export const seedCapabilitySchema = z.object({
   ),
 })
 export const seedPrepareInputSchema = z.strictObject({})
+export const seedArchiveRejectionSchema = z.object({
+  assetId: z.string().min(1),
+  filename: z.string().min(1),
+  reason: z.enum(["seed_image_invalid", "seed_asset_replacement_required"]),
+})
+export const seedArchiveInputSchema = z.strictObject({
+  archiveDigest: seedDigestSchema,
+  manifestDigest: seedDigestSchema,
+  archiveBytes: z.coerce
+    .number()
+    .int()
+    .min(1)
+    .max(25 * 1024 * 1024),
+  replaceGenerations: z
+    .string()
+    .max(8192)
+    .default("[]")
+    .transform((value, context) => {
+      try {
+        return JSON.parse(value)
+      } catch {
+        context.addIssue({ code: "custom", message: "validation.required" })
+        return z.NEVER
+      }
+    })
+    .pipe(
+      z
+        .array(
+          z.strictObject({
+            assetId: z.string().min(1).max(100),
+            generation: requiredInt(1, Number.MAX_SAFE_INTEGER),
+          })
+        )
+        .max(50)
+    ),
+  supersedesOperationId: z.string().min(1).max(100).optional(),
+})
+export const seedRetryInputSchema = z.strictObject({
+  operationId: z.string().min(1),
+  manifestDigest: seedDigestSchema,
+})
 export const seedDatasetSummarySchema = z.object({
   id: z.string().min(1),
   version: z.literal("sudan-marketplace-v1"),
@@ -76,6 +117,7 @@ export const seedOperationSchema = z.object({
     .string()
     .regex(/^[a-z0-9_]+$/)
     .nullable(),
+  rejections: z.array(seedArchiveRejectionSchema).max(50).optional(),
   createdAt: z.iso.datetime(),
   updatedAt: z.iso.datetime(),
 })
@@ -100,3 +142,6 @@ export type SeedCapability = z.infer<typeof seedCapabilitySchema>
 export type SeedDatasetSummary = z.infer<typeof seedDatasetSummarySchema>
 export type SeedOperation = z.infer<typeof seedOperationSchema>
 export type SeedStatus = z.infer<typeof seedStatusSchema>
+export type SeedArchiveInput = z.infer<typeof seedArchiveInputSchema>
+export type SeedRetryInput = z.infer<typeof seedRetryInputSchema>
+export type SeedArchiveRejection = z.infer<typeof seedArchiveRejectionSchema>

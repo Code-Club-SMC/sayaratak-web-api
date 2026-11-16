@@ -100,7 +100,18 @@ function toOperation(path: string, { spec, inputs }: Required<Operation>) {
       ...queryParameters(query),
       ...(spec.idempotent ? [IDEMPOTENCY_KEY] : []),
     ],
-    ...(body && { requestBody: requestBody(body) }),
+    ...(spec.rawBody
+      ? {
+          requestBody: {
+            required: true,
+            content: {
+              [spec.rawBody.mediaType]: {
+                schema: { type: "string", format: "binary" },
+              },
+            },
+          },
+        }
+      : body && { requestBody: requestBody(body) }),
     responses: { ...successResponses(spec), ...errorResponses(errors) },
   }
 }

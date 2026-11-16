@@ -83,4 +83,28 @@ describe("buildOpenApi", () => {
     const bare = new Hono().get("/api/v1/bare", (c) => c.json({}))
     expect(() => buildOpenApi(bare)).toThrow("GET /api/v1/bare has no spec()")
   })
+
+  test("raw ZIP bodies stay binary while query metadata remains separate", () => {
+    const archive = new Hono().post(
+      "/api/v1/archive",
+      spec({
+        summary: "Upload a ZIP",
+        access: "user",
+        rawBody: { mediaType: "application/zip" },
+        responses: { 202: itemSchema },
+      }),
+      validate.query(z.object({ digest: z.string() })),
+      (c) => c.json({}, 202)
+    )
+    expect(buildOpenApi(archive).paths["/api/v1/archive"]?.post).toMatchObject({
+      parameters: [{ name: "digest", in: "query", required: true }],
+      requestBody: {
+        required: true,
+        content: {
+          "application/zip": { schema: { type: "string", format: "binary" } },
+        },
+      },
+      responses: { "202": { description: "OK" } },
+    })
+  })
 })

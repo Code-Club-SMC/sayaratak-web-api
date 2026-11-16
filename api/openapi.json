@@ -1161,6 +1161,10 @@
                 "schema": {
                   "type": "object",
                   "properties": {
+                    "demoActive": {
+                      "default": false,
+                      "type": "boolean"
+                    },
                     "contact": {
                       "type": "object",
                       "properties": {
@@ -1196,6 +1200,7 @@
                     }
                   },
                   "required": [
+                    "demoActive",
                     "contact",
                     "locales"
                   ]
@@ -2177,6 +2182,14 @@
                     {
                       "type": "object",
                       "properties": {
+                        "interactionMode": {
+                          "default": "live",
+                          "type": "string",
+                          "enum": [
+                            "live",
+                            "preview"
+                          ]
+                        },
                         "id": {
                           "type": "string",
                           "minLength": 1
@@ -2364,6 +2377,7 @@
                         }
                       },
                       "required": [
+                        "interactionMode",
                         "id",
                         "slug",
                         "ownerId",
@@ -2388,6 +2402,14 @@
                     {
                       "type": "object",
                       "properties": {
+                        "interactionMode": {
+                          "default": "live",
+                          "type": "string",
+                          "enum": [
+                            "live",
+                            "preview"
+                          ]
+                        },
                         "id": {
                           "type": "string",
                           "minLength": 1
@@ -2656,6 +2678,7 @@
                         }
                       },
                       "required": [
+                        "interactionMode",
                         "id",
                         "slug",
                         "ownerId",
@@ -2680,6 +2703,14 @@
                     {
                       "type": "object",
                       "properties": {
+                        "interactionMode": {
+                          "default": "live",
+                          "type": "string",
+                          "enum": [
+                            "live",
+                            "preview"
+                          ]
+                        },
                         "id": {
                           "type": "string",
                           "minLength": 1
@@ -2855,6 +2886,7 @@
                         }
                       },
                       "required": [
+                        "interactionMode",
                         "id",
                         "slug",
                         "ownerId",
@@ -3032,6 +3064,14 @@
                     {
                       "type": "object",
                       "properties": {
+                        "interactionMode": {
+                          "default": "live",
+                          "type": "string",
+                          "enum": [
+                            "live",
+                            "preview"
+                          ]
+                        },
                         "id": {
                           "type": "string",
                           "minLength": 1
@@ -3219,6 +3259,7 @@
                         }
                       },
                       "required": [
+                        "interactionMode",
                         "id",
                         "slug",
                         "ownerId",
@@ -3243,6 +3284,14 @@
                     {
                       "type": "object",
                       "properties": {
+                        "interactionMode": {
+                          "default": "live",
+                          "type": "string",
+                          "enum": [
+                            "live",
+                            "preview"
+                          ]
+                        },
                         "id": {
                           "type": "string",
                           "minLength": 1
@@ -3511,6 +3560,7 @@
                         }
                       },
                       "required": [
+                        "interactionMode",
                         "id",
                         "slug",
                         "ownerId",
@@ -3535,6 +3585,14 @@
                     {
                       "type": "object",
                       "properties": {
+                        "interactionMode": {
+                          "default": "live",
+                          "type": "string",
+                          "enum": [
+                            "live",
+                            "preview"
+                          ]
+                        },
                         "id": {
                           "type": "string",
                           "minLength": 1
@@ -3710,6 +3768,7 @@
                         }
                       },
                       "required": [
+                        "interactionMode",
                         "id",
                         "slug",
                         "ownerId",
@@ -3940,6 +3999,14 @@
                 "schema": {
                   "type": "object",
                   "properties": {
+                    "interactionMode": {
+                      "default": "live",
+                      "type": "string",
+                      "enum": [
+                        "live",
+                        "preview"
+                      ]
+                    },
                     "id": {
                       "type": "string",
                       "minLength": 1
@@ -4208,6 +4275,7 @@
                     }
                   },
                   "required": [
+                    "interactionMode",
                     "id",
                     "slug",
                     "ownerId",
@@ -4467,6 +4535,14 @@
                 "schema": {
                   "type": "object",
                   "properties": {
+                    "interactionMode": {
+                      "default": "live",
+                      "type": "string",
+                      "enum": [
+                        "live",
+                        "preview"
+                      ]
+                    },
                     "id": {
                       "type": "string",
                       "minLength": 1
@@ -4735,6 +4811,7 @@
                     }
                   },
                   "required": [
+                    "interactionMode",
                     "id",
                     "slug",
                     "ownerId",
@@ -7149,6 +7226,14 @@
                       "items": {
                         "type": "object",
                         "properties": {
+                          "interactionMode": {
+                            "default": "live",
+                            "type": "string",
+                            "enum": [
+                              "live",
+                              "preview"
+                            ]
+                          },
                           "id": {
                             "type": "string",
                             "minLength": 1
@@ -7336,6 +7421,7 @@
                           }
                         },
                         "required": [
+                          "interactionMode",
                           "id",
                           "slug",
                           "ownerId",
@@ -7410,6 +7496,14 @@
                 "schema": {
                   "type": "object",
                   "properties": {
+                    "interactionMode": {
+                      "default": "live",
+                      "type": "string",
+                      "enum": [
+                        "live",
+                        "preview"
+                      ]
+                    },
                     "id": {
                       "type": "string",
                       "minLength": 1
@@ -7597,6 +7691,7 @@
                     }
                   },
                   "required": [
+                    "interactionMode",
                     "id",
                     "slug",
                     "ownerId",
@@ -7680,6 +7775,14 @@
                       "items": {
                         "type": "object",
                         "properties": {
+                          "interactionMode": {
+                            "default": "live",
+                            "type": "string",
+                            "enum": [
+                              "live",
+                              "preview"
+                            ]
+                          },
                           "id": {
                             "type": "string",
                             "minLength": 1
@@ -7948,6 +8051,7 @@
                           }
                         },
                         "required": [
+                          "interactionMode",
                           "id",
                           "slug",
                           "ownerId",
@@ -8022,6 +8126,14 @@
                 "schema": {
                   "type": "object",
                   "properties": {
+                    "interactionMode": {
+                      "default": "live",
+                      "type": "string",
+                      "enum": [
+                        "live",
+                        "preview"
+                      ]
+                    },
                     "id": {
                       "type": "string",
                       "minLength": 1
@@ -8290,6 +8402,7 @@
                     }
                   },
                   "required": [
+                    "interactionMode",
                     "id",
                     "slug",
                     "ownerId",
@@ -8373,6 +8486,14 @@
                       "items": {
                         "type": "object",
                         "properties": {
+                          "interactionMode": {
+                            "default": "live",
+                            "type": "string",
+                            "enum": [
+                              "live",
+                              "preview"
+                            ]
+                          },
                           "id": {
                             "type": "string",
                             "minLength": 1
@@ -8548,6 +8669,7 @@
                           }
                         },
                         "required": [
+                          "interactionMode",
                           "id",
                           "slug",
                           "ownerId",
@@ -8621,6 +8743,14 @@
                 "schema": {
                   "type": "object",
                   "properties": {
+                    "interactionMode": {
+                      "default": "live",
+                      "type": "string",
+                      "enum": [
+                        "live",
+                        "preview"
+                      ]
+                    },
                     "id": {
                       "type": "string",
                       "minLength": 1
@@ -8796,6 +8926,7 @@
                     }
                   },
                   "required": [
+                    "interactionMode",
                     "id",
                     "slug",
                     "ownerId",
@@ -10868,6 +10999,14 @@
                       "items": {
                         "type": "object",
                         "properties": {
+                          "interactionMode": {
+                            "default": "live",
+                            "type": "string",
+                            "enum": [
+                              "live",
+                              "preview"
+                            ]
+                          },
                           "id": {
                             "type": "string",
                             "minLength": 1
@@ -11939,44 +12078,82 @@
                             ]
                           },
                           "contact": {
-                            "type": "object",
-                            "properties": {
-                              "phone": {
-                                "type": "string",
-                                "pattern": "^\\+[1-9]\\d{7,14}$"
+                            "anyOf": [
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "phone": {
+                                    "type": "null"
+                                  },
+                                  "whatsapp": {
+                                    "type": "null"
+                                  },
+                                  "showPhone": {
+                                    "type": "boolean",
+                                    "const": false
+                                  },
+                                  "methods": {
+                                    "minItems": 0,
+                                    "maxItems": 0,
+                                    "type": "array",
+                                    "items": {
+                                      "type": "string",
+                                      "enum": [
+                                        "call",
+                                        "whatsapp",
+                                        "chat"
+                                      ]
+                                    }
+                                  }
+                                },
+                                "required": [
+                                  "phone",
+                                  "whatsapp",
+                                  "showPhone",
+                                  "methods"
+                                ]
                               },
-                              "whatsapp": {
-                                "anyOf": [
-                                  {
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "phone": {
                                     "type": "string",
                                     "pattern": "^\\+[1-9]\\d{7,14}$"
                                   },
-                                  {
-                                    "type": "null"
+                                  "whatsapp": {
+                                    "anyOf": [
+                                      {
+                                        "type": "string",
+                                        "pattern": "^\\+[1-9]\\d{7,14}$"
+                                      },
+                                      {
+                                        "type": "null"
+                                      }
+                                    ]
+                                  },
+                                  "showPhone": {
+                                    "type": "boolean"
+                                  },
+                                  "methods": {
+                                    "minItems": 1,
+                                    "type": "array",
+                                    "items": {
+                                      "type": "string",
+                                      "enum": [
+                                        "call",
+                                        "whatsapp",
+                                        "chat"
+                                      ]
+                                    }
                                   }
+                                },
+                                "required": [
+                                  "phone",
+                                  "whatsapp",
+                                  "showPhone",
+                                  "methods"
                                 ]
-                              },
-                              "showPhone": {
-                                "type": "boolean"
-                              },
-                              "methods": {
-                                "minItems": 1,
-                                "type": "array",
-                                "items": {
-                                  "type": "string",
-                                  "enum": [
-                                    "call",
-                                    "whatsapp",
-                                    "chat"
-                                  ]
-                                }
                               }
-                            },
-                            "required": [
-                              "phone",
-                              "whatsapp",
-                              "showPhone",
-                              "methods"
                             ]
                           },
                           "stats": {
@@ -12013,6 +12190,7 @@
                           }
                         },
                         "required": [
+                          "interactionMode",
                           "id",
                           "slug",
                           "kind",
@@ -13343,6 +13521,14 @@
                 "schema": {
                   "type": "object",
                   "properties": {
+                    "interactionMode": {
+                      "default": "live",
+                      "type": "string",
+                      "enum": [
+                        "live",
+                        "preview"
+                      ]
+                    },
                     "id": {
                       "type": "string",
                       "minLength": 1
@@ -14414,44 +14600,82 @@
                       ]
                     },
                     "contact": {
-                      "type": "object",
-                      "properties": {
-                        "phone": {
-                          "type": "string",
-                          "pattern": "^\\+[1-9]\\d{7,14}$"
+                      "anyOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "phone": {
+                              "type": "null"
+                            },
+                            "whatsapp": {
+                              "type": "null"
+                            },
+                            "showPhone": {
+                              "type": "boolean",
+                              "const": false
+                            },
+                            "methods": {
+                              "minItems": 0,
+                              "maxItems": 0,
+                              "type": "array",
+                              "items": {
+                                "type": "string",
+                                "enum": [
+                                  "call",
+                                  "whatsapp",
+                                  "chat"
+                                ]
+                              }
+                            }
+                          },
+                          "required": [
+                            "phone",
+                            "whatsapp",
+                            "showPhone",
+                            "methods"
+                          ]
                         },
-                        "whatsapp": {
-                          "anyOf": [
-                            {
+                        {
+                          "type": "object",
+                          "properties": {
+                            "phone": {
                               "type": "string",
                               "pattern": "^\\+[1-9]\\d{7,14}$"
                             },
-                            {
-                              "type": "null"
+                            "whatsapp": {
+                              "anyOf": [
+                                {
+                                  "type": "string",
+                                  "pattern": "^\\+[1-9]\\d{7,14}$"
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            },
+                            "showPhone": {
+                              "type": "boolean"
+                            },
+                            "methods": {
+                              "minItems": 1,
+                              "type": "array",
+                              "items": {
+                                "type": "string",
+                                "enum": [
+                                  "call",
+                                  "whatsapp",
+                                  "chat"
+                                ]
+                              }
                             }
+                          },
+                          "required": [
+                            "phone",
+                            "whatsapp",
+                            "showPhone",
+                            "methods"
                           ]
-                        },
-                        "showPhone": {
-                          "type": "boolean"
-                        },
-                        "methods": {
-                          "minItems": 1,
-                          "type": "array",
-                          "items": {
-                            "type": "string",
-                            "enum": [
-                              "call",
-                              "whatsapp",
-                              "chat"
-                            ]
-                          }
                         }
-                      },
-                      "required": [
-                        "phone",
-                        "whatsapp",
-                        "showPhone",
-                        "methods"
                       ]
                     },
                     "stats": {
@@ -14488,6 +14712,7 @@
                     }
                   },
                   "required": [
+                    "interactionMode",
                     "id",
                     "slug",
                     "kind",
@@ -14765,6 +14990,14 @@
                 "schema": {
                   "type": "object",
                   "properties": {
+                    "interactionMode": {
+                      "default": "live",
+                      "type": "string",
+                      "enum": [
+                        "live",
+                        "preview"
+                      ]
+                    },
                     "id": {
                       "type": "string",
                       "minLength": 1
@@ -15836,44 +16069,82 @@
                       ]
                     },
                     "contact": {
-                      "type": "object",
-                      "properties": {
-                        "phone": {
-                          "type": "string",
-                          "pattern": "^\\+[1-9]\\d{7,14}$"
+                      "anyOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "phone": {
+                              "type": "null"
+                            },
+                            "whatsapp": {
+                              "type": "null"
+                            },
+                            "showPhone": {
+                              "type": "boolean",
+                              "const": false
+                            },
+                            "methods": {
+                              "minItems": 0,
+                              "maxItems": 0,
+                              "type": "array",
+                              "items": {
+                                "type": "string",
+                                "enum": [
+                                  "call",
+                                  "whatsapp",
+                                  "chat"
+                                ]
+                              }
+                            }
+                          },
+                          "required": [
+                            "phone",
+                            "whatsapp",
+                            "showPhone",
+                            "methods"
+                          ]
                         },
-                        "whatsapp": {
-                          "anyOf": [
-                            {
+                        {
+                          "type": "object",
+                          "properties": {
+                            "phone": {
                               "type": "string",
                               "pattern": "^\\+[1-9]\\d{7,14}$"
                             },
-                            {
-                              "type": "null"
+                            "whatsapp": {
+                              "anyOf": [
+                                {
+                                  "type": "string",
+                                  "pattern": "^\\+[1-9]\\d{7,14}$"
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            },
+                            "showPhone": {
+                              "type": "boolean"
+                            },
+                            "methods": {
+                              "minItems": 1,
+                              "type": "array",
+                              "items": {
+                                "type": "string",
+                                "enum": [
+                                  "call",
+                                  "whatsapp",
+                                  "chat"
+                                ]
+                              }
                             }
+                          },
+                          "required": [
+                            "phone",
+                            "whatsapp",
+                            "showPhone",
+                            "methods"
                           ]
-                        },
-                        "showPhone": {
-                          "type": "boolean"
-                        },
-                        "methods": {
-                          "minItems": 1,
-                          "type": "array",
-                          "items": {
-                            "type": "string",
-                            "enum": [
-                              "call",
-                              "whatsapp",
-                              "chat"
-                            ]
-                          }
                         }
-                      },
-                      "required": [
-                        "phone",
-                        "whatsapp",
-                        "showPhone",
-                        "methods"
                       ]
                     },
                     "stats": {
@@ -15910,6 +16181,7 @@
                     }
                   },
                   "required": [
+                    "interactionMode",
                     "id",
                     "slug",
                     "kind",
@@ -16071,6 +16343,14 @@
                   "items": {
                     "type": "object",
                     "properties": {
+                      "interactionMode": {
+                        "default": "live",
+                        "type": "string",
+                        "enum": [
+                          "live",
+                          "preview"
+                        ]
+                      },
                       "id": {
                         "type": "string",
                         "minLength": 1
@@ -17142,44 +17422,82 @@
                         ]
                       },
                       "contact": {
-                        "type": "object",
-                        "properties": {
-                          "phone": {
-                            "type": "string",
-                            "pattern": "^\\+[1-9]\\d{7,14}$"
+                        "anyOf": [
+                          {
+                            "type": "object",
+                            "properties": {
+                              "phone": {
+                                "type": "null"
+                              },
+                              "whatsapp": {
+                                "type": "null"
+                              },
+                              "showPhone": {
+                                "type": "boolean",
+                                "const": false
+                              },
+                              "methods": {
+                                "minItems": 0,
+                                "maxItems": 0,
+                                "type": "array",
+                                "items": {
+                                  "type": "string",
+                                  "enum": [
+                                    "call",
+                                    "whatsapp",
+                                    "chat"
+                                  ]
+                                }
+                              }
+                            },
+                            "required": [
+                              "phone",
+                              "whatsapp",
+                              "showPhone",
+                              "methods"
+                            ]
                           },
-                          "whatsapp": {
-                            "anyOf": [
-                              {
+                          {
+                            "type": "object",
+                            "properties": {
+                              "phone": {
                                 "type": "string",
                                 "pattern": "^\\+[1-9]\\d{7,14}$"
                               },
-                              {
-                                "type": "null"
+                              "whatsapp": {
+                                "anyOf": [
+                                  {
+                                    "type": "string",
+                                    "pattern": "^\\+[1-9]\\d{7,14}$"
+                                  },
+                                  {
+                                    "type": "null"
+                                  }
+                                ]
+                              },
+                              "showPhone": {
+                                "type": "boolean"
+                              },
+                              "methods": {
+                                "minItems": 1,
+                                "type": "array",
+                                "items": {
+                                  "type": "string",
+                                  "enum": [
+                                    "call",
+                                    "whatsapp",
+                                    "chat"
+                                  ]
+                                }
                               }
+                            },
+                            "required": [
+                              "phone",
+                              "whatsapp",
+                              "showPhone",
+                              "methods"
                             ]
-                          },
-                          "showPhone": {
-                            "type": "boolean"
-                          },
-                          "methods": {
-                            "minItems": 1,
-                            "type": "array",
-                            "items": {
-                              "type": "string",
-                              "enum": [
-                                "call",
-                                "whatsapp",
-                                "chat"
-                              ]
-                            }
                           }
-                        },
-                        "required": [
-                          "phone",
-                          "whatsapp",
-                          "showPhone",
-                          "methods"
                         ]
                       },
                       "stats": {
@@ -17216,6 +17534,7 @@
                       }
                     },
                     "required": [
+                      "interactionMode",
                       "id",
                       "slug",
                       "kind",
@@ -18415,6 +18734,14 @@
                 "schema": {
                   "type": "object",
                   "properties": {
+                    "interactionMode": {
+                      "default": "live",
+                      "type": "string",
+                      "enum": [
+                        "live",
+                        "preview"
+                      ]
+                    },
                     "id": {
                       "type": "string",
                       "minLength": 1
@@ -19486,44 +19813,82 @@
                       ]
                     },
                     "contact": {
-                      "type": "object",
-                      "properties": {
-                        "phone": {
-                          "type": "string",
-                          "pattern": "^\\+[1-9]\\d{7,14}$"
+                      "anyOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "phone": {
+                              "type": "null"
+                            },
+                            "whatsapp": {
+                              "type": "null"
+                            },
+                            "showPhone": {
+                              "type": "boolean",
+                              "const": false
+                            },
+                            "methods": {
+                              "minItems": 0,
+                              "maxItems": 0,
+                              "type": "array",
+                              "items": {
+                                "type": "string",
+                                "enum": [
+                                  "call",
+                                  "whatsapp",
+                                  "chat"
+                                ]
+                              }
+                            }
+                          },
+                          "required": [
+                            "phone",
+                            "whatsapp",
+                            "showPhone",
+                            "methods"
+                          ]
                         },
-                        "whatsapp": {
-                          "anyOf": [
-                            {
+                        {
+                          "type": "object",
+                          "properties": {
+                            "phone": {
                               "type": "string",
                               "pattern": "^\\+[1-9]\\d{7,14}$"
                             },
-                            {
-                              "type": "null"
+                            "whatsapp": {
+                              "anyOf": [
+                                {
+                                  "type": "string",
+                                  "pattern": "^\\+[1-9]\\d{7,14}$"
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            },
+                            "showPhone": {
+                              "type": "boolean"
+                            },
+                            "methods": {
+                              "minItems": 1,
+                              "type": "array",
+                              "items": {
+                                "type": "string",
+                                "enum": [
+                                  "call",
+                                  "whatsapp",
+                                  "chat"
+                                ]
+                              }
                             }
+                          },
+                          "required": [
+                            "phone",
+                            "whatsapp",
+                            "showPhone",
+                            "methods"
                           ]
-                        },
-                        "showPhone": {
-                          "type": "boolean"
-                        },
-                        "methods": {
-                          "minItems": 1,
-                          "type": "array",
-                          "items": {
-                            "type": "string",
-                            "enum": [
-                              "call",
-                              "whatsapp",
-                              "chat"
-                            ]
-                          }
                         }
-                      },
-                      "required": [
-                        "phone",
-                        "whatsapp",
-                        "showPhone",
-                        "methods"
                       ]
                     },
                     "stats": {
@@ -19560,6 +19925,7 @@
                     }
                   },
                   "required": [
+                    "interactionMode",
                     "id",
                     "slug",
                     "kind",
@@ -20022,6 +20388,14 @@
                 "schema": {
                   "type": "object",
                   "properties": {
+                    "interactionMode": {
+                      "default": "live",
+                      "type": "string",
+                      "enum": [
+                        "live",
+                        "preview"
+                      ]
+                    },
                     "id": {
                       "type": "string",
                       "minLength": 1
@@ -21093,44 +21467,82 @@
                       ]
                     },
                     "contact": {
-                      "type": "object",
-                      "properties": {
-                        "phone": {
-                          "type": "string",
-                          "pattern": "^\\+[1-9]\\d{7,14}$"
+                      "anyOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "phone": {
+                              "type": "null"
+                            },
+                            "whatsapp": {
+                              "type": "null"
+                            },
+                            "showPhone": {
+                              "type": "boolean",
+                              "const": false
+                            },
+                            "methods": {
+                              "minItems": 0,
+                              "maxItems": 0,
+                              "type": "array",
+                              "items": {
+                                "type": "string",
+                                "enum": [
+                                  "call",
+                                  "whatsapp",
+                                  "chat"
+                                ]
+                              }
+                            }
+                          },
+                          "required": [
+                            "phone",
+                            "whatsapp",
+                            "showPhone",
+                            "methods"
+                          ]
                         },
-                        "whatsapp": {
-                          "anyOf": [
-                            {
+                        {
+                          "type": "object",
+                          "properties": {
+                            "phone": {
                               "type": "string",
                               "pattern": "^\\+[1-9]\\d{7,14}$"
                             },
-                            {
-                              "type": "null"
+                            "whatsapp": {
+                              "anyOf": [
+                                {
+                                  "type": "string",
+                                  "pattern": "^\\+[1-9]\\d{7,14}$"
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            },
+                            "showPhone": {
+                              "type": "boolean"
+                            },
+                            "methods": {
+                              "minItems": 1,
+                              "type": "array",
+                              "items": {
+                                "type": "string",
+                                "enum": [
+                                  "call",
+                                  "whatsapp",
+                                  "chat"
+                                ]
+                              }
                             }
+                          },
+                          "required": [
+                            "phone",
+                            "whatsapp",
+                            "showPhone",
+                            "methods"
                           ]
-                        },
-                        "showPhone": {
-                          "type": "boolean"
-                        },
-                        "methods": {
-                          "minItems": 1,
-                          "type": "array",
-                          "items": {
-                            "type": "string",
-                            "enum": [
-                              "call",
-                              "whatsapp",
-                              "chat"
-                            ]
-                          }
                         }
-                      },
-                      "required": [
-                        "phone",
-                        "whatsapp",
-                        "showPhone",
-                        "methods"
                       ]
                     },
                     "stats": {
@@ -21167,6 +21579,7 @@
                     }
                   },
                   "required": [
+                    "interactionMode",
                     "id",
                     "slug",
                     "kind",
@@ -21447,6 +21860,14 @@
                 "schema": {
                   "type": "object",
                   "properties": {
+                    "interactionMode": {
+                      "default": "live",
+                      "type": "string",
+                      "enum": [
+                        "live",
+                        "preview"
+                      ]
+                    },
                     "id": {
                       "type": "string",
                       "minLength": 1
@@ -22518,44 +22939,82 @@
                       ]
                     },
                     "contact": {
-                      "type": "object",
-                      "properties": {
-                        "phone": {
-                          "type": "string",
-                          "pattern": "^\\+[1-9]\\d{7,14}$"
+                      "anyOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "phone": {
+                              "type": "null"
+                            },
+                            "whatsapp": {
+                              "type": "null"
+                            },
+                            "showPhone": {
+                              "type": "boolean",
+                              "const": false
+                            },
+                            "methods": {
+                              "minItems": 0,
+                              "maxItems": 0,
+                              "type": "array",
+                              "items": {
+                                "type": "string",
+                                "enum": [
+                                  "call",
+                                  "whatsapp",
+                                  "chat"
+                                ]
+                              }
+                            }
+                          },
+                          "required": [
+                            "phone",
+                            "whatsapp",
+                            "showPhone",
+                            "methods"
+                          ]
                         },
-                        "whatsapp": {
-                          "anyOf": [
-                            {
+                        {
+                          "type": "object",
+                          "properties": {
+                            "phone": {
                               "type": "string",
                               "pattern": "^\\+[1-9]\\d{7,14}$"
                             },
-                            {
-                              "type": "null"
+                            "whatsapp": {
+                              "anyOf": [
+                                {
+                                  "type": "string",
+                                  "pattern": "^\\+[1-9]\\d{7,14}$"
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            },
+                            "showPhone": {
+                              "type": "boolean"
+                            },
+                            "methods": {
+                              "minItems": 1,
+                              "type": "array",
+                              "items": {
+                                "type": "string",
+                                "enum": [
+                                  "call",
+                                  "whatsapp",
+                                  "chat"
+                                ]
+                              }
                             }
+                          },
+                          "required": [
+                            "phone",
+                            "whatsapp",
+                            "showPhone",
+                            "methods"
                           ]
-                        },
-                        "showPhone": {
-                          "type": "boolean"
-                        },
-                        "methods": {
-                          "minItems": 1,
-                          "type": "array",
-                          "items": {
-                            "type": "string",
-                            "enum": [
-                              "call",
-                              "whatsapp",
-                              "chat"
-                            ]
-                          }
                         }
-                      },
-                      "required": [
-                        "phone",
-                        "whatsapp",
-                        "showPhone",
-                        "methods"
                       ]
                     },
                     "stats": {
@@ -22592,6 +23051,7 @@
                     }
                   },
                   "required": [
+                    "interactionMode",
                     "id",
                     "slug",
                     "kind",
@@ -22845,6 +23305,14 @@
                 "schema": {
                   "type": "object",
                   "properties": {
+                    "interactionMode": {
+                      "default": "live",
+                      "type": "string",
+                      "enum": [
+                        "live",
+                        "preview"
+                      ]
+                    },
                     "id": {
                       "type": "string",
                       "minLength": 1
@@ -23916,44 +24384,82 @@
                       ]
                     },
                     "contact": {
-                      "type": "object",
-                      "properties": {
-                        "phone": {
-                          "type": "string",
-                          "pattern": "^\\+[1-9]\\d{7,14}$"
+                      "anyOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "phone": {
+                              "type": "null"
+                            },
+                            "whatsapp": {
+                              "type": "null"
+                            },
+                            "showPhone": {
+                              "type": "boolean",
+                              "const": false
+                            },
+                            "methods": {
+                              "minItems": 0,
+                              "maxItems": 0,
+                              "type": "array",
+                              "items": {
+                                "type": "string",
+                                "enum": [
+                                  "call",
+                                  "whatsapp",
+                                  "chat"
+                                ]
+                              }
+                            }
+                          },
+                          "required": [
+                            "phone",
+                            "whatsapp",
+                            "showPhone",
+                            "methods"
+                          ]
                         },
-                        "whatsapp": {
-                          "anyOf": [
-                            {
+                        {
+                          "type": "object",
+                          "properties": {
+                            "phone": {
                               "type": "string",
                               "pattern": "^\\+[1-9]\\d{7,14}$"
                             },
-                            {
-                              "type": "null"
+                            "whatsapp": {
+                              "anyOf": [
+                                {
+                                  "type": "string",
+                                  "pattern": "^\\+[1-9]\\d{7,14}$"
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            },
+                            "showPhone": {
+                              "type": "boolean"
+                            },
+                            "methods": {
+                              "minItems": 1,
+                              "type": "array",
+                              "items": {
+                                "type": "string",
+                                "enum": [
+                                  "call",
+                                  "whatsapp",
+                                  "chat"
+                                ]
+                              }
                             }
+                          },
+                          "required": [
+                            "phone",
+                            "whatsapp",
+                            "showPhone",
+                            "methods"
                           ]
-                        },
-                        "showPhone": {
-                          "type": "boolean"
-                        },
-                        "methods": {
-                          "minItems": 1,
-                          "type": "array",
-                          "items": {
-                            "type": "string",
-                            "enum": [
-                              "call",
-                              "whatsapp",
-                              "chat"
-                            ]
-                          }
                         }
-                      },
-                      "required": [
-                        "phone",
-                        "whatsapp",
-                        "showPhone",
-                        "methods"
                       ]
                     },
                     "stats": {
@@ -23990,6 +24496,7 @@
                     }
                   },
                   "required": [
+                    "interactionMode",
                     "id",
                     "slug",
                     "kind",
@@ -24306,6 +24813,14 @@
                       "items": {
                         "type": "object",
                         "properties": {
+                          "interactionMode": {
+                            "default": "live",
+                            "type": "string",
+                            "enum": [
+                              "live",
+                              "preview"
+                            ]
+                          },
                           "id": {
                             "type": "string",
                             "minLength": 1
@@ -25377,44 +25892,82 @@
                             ]
                           },
                           "contact": {
-                            "type": "object",
-                            "properties": {
-                              "phone": {
-                                "type": "string",
-                                "pattern": "^\\+[1-9]\\d{7,14}$"
+                            "anyOf": [
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "phone": {
+                                    "type": "null"
+                                  },
+                                  "whatsapp": {
+                                    "type": "null"
+                                  },
+                                  "showPhone": {
+                                    "type": "boolean",
+                                    "const": false
+                                  },
+                                  "methods": {
+                                    "minItems": 0,
+                                    "maxItems": 0,
+                                    "type": "array",
+                                    "items": {
+                                      "type": "string",
+                                      "enum": [
+                                        "call",
+                                        "whatsapp",
+                                        "chat"
+                                      ]
+                                    }
+                                  }
+                                },
+                                "required": [
+                                  "phone",
+                                  "whatsapp",
+                                  "showPhone",
+                                  "methods"
+                                ]
                               },
-                              "whatsapp": {
-                                "anyOf": [
-                                  {
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "phone": {
                                     "type": "string",
                                     "pattern": "^\\+[1-9]\\d{7,14}$"
                                   },
-                                  {
-                                    "type": "null"
+                                  "whatsapp": {
+                                    "anyOf": [
+                                      {
+                                        "type": "string",
+                                        "pattern": "^\\+[1-9]\\d{7,14}$"
+                                      },
+                                      {
+                                        "type": "null"
+                                      }
+                                    ]
+                                  },
+                                  "showPhone": {
+                                    "type": "boolean"
+                                  },
+                                  "methods": {
+                                    "minItems": 1,
+                                    "type": "array",
+                                    "items": {
+                                      "type": "string",
+                                      "enum": [
+                                        "call",
+                                        "whatsapp",
+                                        "chat"
+                                      ]
+                                    }
                                   }
+                                },
+                                "required": [
+                                  "phone",
+                                  "whatsapp",
+                                  "showPhone",
+                                  "methods"
                                 ]
-                              },
-                              "showPhone": {
-                                "type": "boolean"
-                              },
-                              "methods": {
-                                "minItems": 1,
-                                "type": "array",
-                                "items": {
-                                  "type": "string",
-                                  "enum": [
-                                    "call",
-                                    "whatsapp",
-                                    "chat"
-                                  ]
-                                }
                               }
-                            },
-                            "required": [
-                              "phone",
-                              "whatsapp",
-                              "showPhone",
-                              "methods"
                             ]
                           },
                           "stats": {
@@ -25451,6 +26004,7 @@
                           }
                         },
                         "required": [
+                          "interactionMode",
                           "id",
                           "slug",
                           "kind",
@@ -26123,6 +26677,14 @@
                       "items": {
                         "type": "object",
                         "properties": {
+                          "interactionMode": {
+                            "default": "live",
+                            "type": "string",
+                            "enum": [
+                              "live",
+                              "preview"
+                            ]
+                          },
                           "id": {
                             "type": "string",
                             "minLength": 1
@@ -26199,6 +26761,7 @@
                           }
                         },
                         "required": [
+                          "interactionMode",
                           "id",
                           "kind",
                           "title",
@@ -28641,6 +29204,14 @@
                       "items": {
                         "type": "object",
                         "properties": {
+                          "interactionMode": {
+                            "default": "live",
+                            "type": "string",
+                            "enum": [
+                              "live",
+                              "preview"
+                            ]
+                          },
                           "id": {
                             "type": "string",
                             "minLength": 1
@@ -29712,44 +30283,82 @@
                             ]
                           },
                           "contact": {
-                            "type": "object",
-                            "properties": {
-                              "phone": {
-                                "type": "string",
-                                "pattern": "^\\+[1-9]\\d{7,14}$"
+                            "anyOf": [
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "phone": {
+                                    "type": "null"
+                                  },
+                                  "whatsapp": {
+                                    "type": "null"
+                                  },
+                                  "showPhone": {
+                                    "type": "boolean",
+                                    "const": false
+                                  },
+                                  "methods": {
+                                    "minItems": 0,
+                                    "maxItems": 0,
+                                    "type": "array",
+                                    "items": {
+                                      "type": "string",
+                                      "enum": [
+                                        "call",
+                                        "whatsapp",
+                                        "chat"
+                                      ]
+                                    }
+                                  }
+                                },
+                                "required": [
+                                  "phone",
+                                  "whatsapp",
+                                  "showPhone",
+                                  "methods"
+                                ]
                               },
-                              "whatsapp": {
-                                "anyOf": [
-                                  {
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "phone": {
                                     "type": "string",
                                     "pattern": "^\\+[1-9]\\d{7,14}$"
                                   },
-                                  {
-                                    "type": "null"
+                                  "whatsapp": {
+                                    "anyOf": [
+                                      {
+                                        "type": "string",
+                                        "pattern": "^\\+[1-9]\\d{7,14}$"
+                                      },
+                                      {
+                                        "type": "null"
+                                      }
+                                    ]
+                                  },
+                                  "showPhone": {
+                                    "type": "boolean"
+                                  },
+                                  "methods": {
+                                    "minItems": 1,
+                                    "type": "array",
+                                    "items": {
+                                      "type": "string",
+                                      "enum": [
+                                        "call",
+                                        "whatsapp",
+                                        "chat"
+                                      ]
+                                    }
                                   }
+                                },
+                                "required": [
+                                  "phone",
+                                  "whatsapp",
+                                  "showPhone",
+                                  "methods"
                                 ]
-                              },
-                              "showPhone": {
-                                "type": "boolean"
-                              },
-                              "methods": {
-                                "minItems": 1,
-                                "type": "array",
-                                "items": {
-                                  "type": "string",
-                                  "enum": [
-                                    "call",
-                                    "whatsapp",
-                                    "chat"
-                                  ]
-                                }
                               }
-                            },
-                            "required": [
-                              "phone",
-                              "whatsapp",
-                              "showPhone",
-                              "methods"
                             ]
                           },
                           "stats": {
@@ -29792,6 +30401,7 @@
                           }
                         },
                         "required": [
+                          "interactionMode",
                           "id",
                           "slug",
                           "kind",
@@ -38581,6 +39191,14 @@
                       "items": {
                         "type": "object",
                         "properties": {
+                          "interactionMode": {
+                            "default": "live",
+                            "type": "string",
+                            "enum": [
+                              "live",
+                              "preview"
+                            ]
+                          },
                           "id": {
                             "type": "string",
                             "minLength": 1
@@ -39652,44 +40270,82 @@
                             ]
                           },
                           "contact": {
-                            "type": "object",
-                            "properties": {
-                              "phone": {
-                                "type": "string",
-                                "pattern": "^\\+[1-9]\\d{7,14}$"
+                            "anyOf": [
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "phone": {
+                                    "type": "null"
+                                  },
+                                  "whatsapp": {
+                                    "type": "null"
+                                  },
+                                  "showPhone": {
+                                    "type": "boolean",
+                                    "const": false
+                                  },
+                                  "methods": {
+                                    "minItems": 0,
+                                    "maxItems": 0,
+                                    "type": "array",
+                                    "items": {
+                                      "type": "string",
+                                      "enum": [
+                                        "call",
+                                        "whatsapp",
+                                        "chat"
+                                      ]
+                                    }
+                                  }
+                                },
+                                "required": [
+                                  "phone",
+                                  "whatsapp",
+                                  "showPhone",
+                                  "methods"
+                                ]
                               },
-                              "whatsapp": {
-                                "anyOf": [
-                                  {
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "phone": {
                                     "type": "string",
                                     "pattern": "^\\+[1-9]\\d{7,14}$"
                                   },
-                                  {
-                                    "type": "null"
+                                  "whatsapp": {
+                                    "anyOf": [
+                                      {
+                                        "type": "string",
+                                        "pattern": "^\\+[1-9]\\d{7,14}$"
+                                      },
+                                      {
+                                        "type": "null"
+                                      }
+                                    ]
+                                  },
+                                  "showPhone": {
+                                    "type": "boolean"
+                                  },
+                                  "methods": {
+                                    "minItems": 1,
+                                    "type": "array",
+                                    "items": {
+                                      "type": "string",
+                                      "enum": [
+                                        "call",
+                                        "whatsapp",
+                                        "chat"
+                                      ]
+                                    }
                                   }
+                                },
+                                "required": [
+                                  "phone",
+                                  "whatsapp",
+                                  "showPhone",
+                                  "methods"
                                 ]
-                              },
-                              "showPhone": {
-                                "type": "boolean"
-                              },
-                              "methods": {
-                                "minItems": 1,
-                                "type": "array",
-                                "items": {
-                                  "type": "string",
-                                  "enum": [
-                                    "call",
-                                    "whatsapp",
-                                    "chat"
-                                  ]
-                                }
                               }
-                            },
-                            "required": [
-                              "phone",
-                              "whatsapp",
-                              "showPhone",
-                              "methods"
                             ]
                           },
                           "stats": {
@@ -39726,6 +40382,7 @@
                           }
                         },
                         "required": [
+                          "interactionMode",
                           "id",
                           "slug",
                           "kind",
@@ -39952,6 +40609,14 @@
                       "items": {
                         "type": "object",
                         "properties": {
+                          "interactionMode": {
+                            "default": "live",
+                            "type": "string",
+                            "enum": [
+                              "live",
+                              "preview"
+                            ]
+                          },
                           "id": {
                             "type": "string",
                             "minLength": 1
@@ -41023,44 +41688,82 @@
                             ]
                           },
                           "contact": {
-                            "type": "object",
-                            "properties": {
-                              "phone": {
-                                "type": "string",
-                                "pattern": "^\\+[1-9]\\d{7,14}$"
+                            "anyOf": [
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "phone": {
+                                    "type": "null"
+                                  },
+                                  "whatsapp": {
+                                    "type": "null"
+                                  },
+                                  "showPhone": {
+                                    "type": "boolean",
+                                    "const": false
+                                  },
+                                  "methods": {
+                                    "minItems": 0,
+                                    "maxItems": 0,
+                                    "type": "array",
+                                    "items": {
+                                      "type": "string",
+                                      "enum": [
+                                        "call",
+                                        "whatsapp",
+                                        "chat"
+                                      ]
+                                    }
+                                  }
+                                },
+                                "required": [
+                                  "phone",
+                                  "whatsapp",
+                                  "showPhone",
+                                  "methods"
+                                ]
                               },
-                              "whatsapp": {
-                                "anyOf": [
-                                  {
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "phone": {
                                     "type": "string",
                                     "pattern": "^\\+[1-9]\\d{7,14}$"
                                   },
-                                  {
-                                    "type": "null"
+                                  "whatsapp": {
+                                    "anyOf": [
+                                      {
+                                        "type": "string",
+                                        "pattern": "^\\+[1-9]\\d{7,14}$"
+                                      },
+                                      {
+                                        "type": "null"
+                                      }
+                                    ]
+                                  },
+                                  "showPhone": {
+                                    "type": "boolean"
+                                  },
+                                  "methods": {
+                                    "minItems": 1,
+                                    "type": "array",
+                                    "items": {
+                                      "type": "string",
+                                      "enum": [
+                                        "call",
+                                        "whatsapp",
+                                        "chat"
+                                      ]
+                                    }
                                   }
+                                },
+                                "required": [
+                                  "phone",
+                                  "whatsapp",
+                                  "showPhone",
+                                  "methods"
                                 ]
-                              },
-                              "showPhone": {
-                                "type": "boolean"
-                              },
-                              "methods": {
-                                "minItems": 1,
-                                "type": "array",
-                                "items": {
-                                  "type": "string",
-                                  "enum": [
-                                    "call",
-                                    "whatsapp",
-                                    "chat"
-                                  ]
-                                }
                               }
-                            },
-                            "required": [
-                              "phone",
-                              "whatsapp",
-                              "showPhone",
-                              "methods"
                             ]
                           },
                           "stats": {
@@ -41102,6 +41805,7 @@
                           }
                         },
                         "required": [
+                          "interactionMode",
                           "id",
                           "slug",
                           "kind",
@@ -41539,6 +42243,14 @@
                 "schema": {
                   "type": "object",
                   "properties": {
+                    "interactionMode": {
+                      "default": "live",
+                      "type": "string",
+                      "enum": [
+                        "live",
+                        "preview"
+                      ]
+                    },
                     "id": {
                       "type": "string",
                       "minLength": 1
@@ -42610,44 +43322,82 @@
                       ]
                     },
                     "contact": {
-                      "type": "object",
-                      "properties": {
-                        "phone": {
-                          "type": "string",
-                          "pattern": "^\\+[1-9]\\d{7,14}$"
+                      "anyOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "phone": {
+                              "type": "null"
+                            },
+                            "whatsapp": {
+                              "type": "null"
+                            },
+                            "showPhone": {
+                              "type": "boolean",
+                              "const": false
+                            },
+                            "methods": {
+                              "minItems": 0,
+                              "maxItems": 0,
+                              "type": "array",
+                              "items": {
+                                "type": "string",
+                                "enum": [
+                                  "call",
+                                  "whatsapp",
+                                  "chat"
+                                ]
+                              }
+                            }
+                          },
+                          "required": [
+                            "phone",
+                            "whatsapp",
+                            "showPhone",
+                            "methods"
+                          ]
                         },
-                        "whatsapp": {
-                          "anyOf": [
-                            {
+                        {
+                          "type": "object",
+                          "properties": {
+                            "phone": {
                               "type": "string",
                               "pattern": "^\\+[1-9]\\d{7,14}$"
                             },
-                            {
-                              "type": "null"
+                            "whatsapp": {
+                              "anyOf": [
+                                {
+                                  "type": "string",
+                                  "pattern": "^\\+[1-9]\\d{7,14}$"
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            },
+                            "showPhone": {
+                              "type": "boolean"
+                            },
+                            "methods": {
+                              "minItems": 1,
+                              "type": "array",
+                              "items": {
+                                "type": "string",
+                                "enum": [
+                                  "call",
+                                  "whatsapp",
+                                  "chat"
+                                ]
+                              }
                             }
+                          },
+                          "required": [
+                            "phone",
+                            "whatsapp",
+                            "showPhone",
+                            "methods"
                           ]
-                        },
-                        "showPhone": {
-                          "type": "boolean"
-                        },
-                        "methods": {
-                          "minItems": 1,
-                          "type": "array",
-                          "items": {
-                            "type": "string",
-                            "enum": [
-                              "call",
-                              "whatsapp",
-                              "chat"
-                            ]
-                          }
                         }
-                      },
-                      "required": [
-                        "phone",
-                        "whatsapp",
-                        "showPhone",
-                        "methods"
                       ]
                     },
                     "stats": {
@@ -42684,6 +43434,7 @@
                     }
                   },
                   "required": [
+                    "interactionMode",
                     "id",
                     "slug",
                     "kind",
@@ -43001,6 +43752,14 @@
                 "schema": {
                   "type": "object",
                   "properties": {
+                    "interactionMode": {
+                      "default": "live",
+                      "type": "string",
+                      "enum": [
+                        "live",
+                        "preview"
+                      ]
+                    },
                     "id": {
                       "type": "string",
                       "minLength": 1
@@ -44072,44 +44831,82 @@
                       ]
                     },
                     "contact": {
-                      "type": "object",
-                      "properties": {
-                        "phone": {
-                          "type": "string",
-                          "pattern": "^\\+[1-9]\\d{7,14}$"
+                      "anyOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "phone": {
+                              "type": "null"
+                            },
+                            "whatsapp": {
+                              "type": "null"
+                            },
+                            "showPhone": {
+                              "type": "boolean",
+                              "const": false
+                            },
+                            "methods": {
+                              "minItems": 0,
+                              "maxItems": 0,
+                              "type": "array",
+                              "items": {
+                                "type": "string",
+                                "enum": [
+                                  "call",
+                                  "whatsapp",
+                                  "chat"
+                                ]
+                              }
+                            }
+                          },
+                          "required": [
+                            "phone",
+                            "whatsapp",
+                            "showPhone",
+                            "methods"
+                          ]
                         },
-                        "whatsapp": {
-                          "anyOf": [
-                            {
+                        {
+                          "type": "object",
+                          "properties": {
+                            "phone": {
                               "type": "string",
                               "pattern": "^\\+[1-9]\\d{7,14}$"
                             },
-                            {
-                              "type": "null"
+                            "whatsapp": {
+                              "anyOf": [
+                                {
+                                  "type": "string",
+                                  "pattern": "^\\+[1-9]\\d{7,14}$"
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            },
+                            "showPhone": {
+                              "type": "boolean"
+                            },
+                            "methods": {
+                              "minItems": 1,
+                              "type": "array",
+                              "items": {
+                                "type": "string",
+                                "enum": [
+                                  "call",
+                                  "whatsapp",
+                                  "chat"
+                                ]
+                              }
                             }
+                          },
+                          "required": [
+                            "phone",
+                            "whatsapp",
+                            "showPhone",
+                            "methods"
                           ]
-                        },
-                        "showPhone": {
-                          "type": "boolean"
-                        },
-                        "methods": {
-                          "minItems": 1,
-                          "type": "array",
-                          "items": {
-                            "type": "string",
-                            "enum": [
-                              "call",
-                              "whatsapp",
-                              "chat"
-                            ]
-                          }
                         }
-                      },
-                      "required": [
-                        "phone",
-                        "whatsapp",
-                        "showPhone",
-                        "methods"
                       ]
                     },
                     "stats": {
@@ -44146,6 +44943,7 @@
                     }
                   },
                   "required": [
+                    "interactionMode",
                     "id",
                     "slug",
                     "kind",
@@ -44426,6 +45224,14 @@
                 "schema": {
                   "type": "object",
                   "properties": {
+                    "interactionMode": {
+                      "default": "live",
+                      "type": "string",
+                      "enum": [
+                        "live",
+                        "preview"
+                      ]
+                    },
                     "id": {
                       "type": "string",
                       "minLength": 1
@@ -45497,44 +46303,82 @@
                       ]
                     },
                     "contact": {
-                      "type": "object",
-                      "properties": {
-                        "phone": {
-                          "type": "string",
-                          "pattern": "^\\+[1-9]\\d{7,14}$"
+                      "anyOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "phone": {
+                              "type": "null"
+                            },
+                            "whatsapp": {
+                              "type": "null"
+                            },
+                            "showPhone": {
+                              "type": "boolean",
+                              "const": false
+                            },
+                            "methods": {
+                              "minItems": 0,
+                              "maxItems": 0,
+                              "type": "array",
+                              "items": {
+                                "type": "string",
+                                "enum": [
+                                  "call",
+                                  "whatsapp",
+                                  "chat"
+                                ]
+                              }
+                            }
+                          },
+                          "required": [
+                            "phone",
+                            "whatsapp",
+                            "showPhone",
+                            "methods"
+                          ]
                         },
-                        "whatsapp": {
-                          "anyOf": [
-                            {
+                        {
+                          "type": "object",
+                          "properties": {
+                            "phone": {
                               "type": "string",
                               "pattern": "^\\+[1-9]\\d{7,14}$"
                             },
-                            {
-                              "type": "null"
+                            "whatsapp": {
+                              "anyOf": [
+                                {
+                                  "type": "string",
+                                  "pattern": "^\\+[1-9]\\d{7,14}$"
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            },
+                            "showPhone": {
+                              "type": "boolean"
+                            },
+                            "methods": {
+                              "minItems": 1,
+                              "type": "array",
+                              "items": {
+                                "type": "string",
+                                "enum": [
+                                  "call",
+                                  "whatsapp",
+                                  "chat"
+                                ]
+                              }
                             }
+                          },
+                          "required": [
+                            "phone",
+                            "whatsapp",
+                            "showPhone",
+                            "methods"
                           ]
-                        },
-                        "showPhone": {
-                          "type": "boolean"
-                        },
-                        "methods": {
-                          "minItems": 1,
-                          "type": "array",
-                          "items": {
-                            "type": "string",
-                            "enum": [
-                              "call",
-                              "whatsapp",
-                              "chat"
-                            ]
-                          }
                         }
-                      },
-                      "required": [
-                        "phone",
-                        "whatsapp",
-                        "showPhone",
-                        "methods"
                       ]
                     },
                     "stats": {
@@ -45571,6 +46415,7 @@
                     }
                   },
                   "required": [
+                    "interactionMode",
                     "id",
                     "slug",
                     "kind",
@@ -45851,6 +46696,14 @@
                 "schema": {
                   "type": "object",
                   "properties": {
+                    "interactionMode": {
+                      "default": "live",
+                      "type": "string",
+                      "enum": [
+                        "live",
+                        "preview"
+                      ]
+                    },
                     "id": {
                       "type": "string",
                       "minLength": 1
@@ -46922,44 +47775,82 @@
                       ]
                     },
                     "contact": {
-                      "type": "object",
-                      "properties": {
-                        "phone": {
-                          "type": "string",
-                          "pattern": "^\\+[1-9]\\d{7,14}$"
+                      "anyOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "phone": {
+                              "type": "null"
+                            },
+                            "whatsapp": {
+                              "type": "null"
+                            },
+                            "showPhone": {
+                              "type": "boolean",
+                              "const": false
+                            },
+                            "methods": {
+                              "minItems": 0,
+                              "maxItems": 0,
+                              "type": "array",
+                              "items": {
+                                "type": "string",
+                                "enum": [
+                                  "call",
+                                  "whatsapp",
+                                  "chat"
+                                ]
+                              }
+                            }
+                          },
+                          "required": [
+                            "phone",
+                            "whatsapp",
+                            "showPhone",
+                            "methods"
+                          ]
                         },
-                        "whatsapp": {
-                          "anyOf": [
-                            {
+                        {
+                          "type": "object",
+                          "properties": {
+                            "phone": {
                               "type": "string",
                               "pattern": "^\\+[1-9]\\d{7,14}$"
                             },
-                            {
-                              "type": "null"
+                            "whatsapp": {
+                              "anyOf": [
+                                {
+                                  "type": "string",
+                                  "pattern": "^\\+[1-9]\\d{7,14}$"
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            },
+                            "showPhone": {
+                              "type": "boolean"
+                            },
+                            "methods": {
+                              "minItems": 1,
+                              "type": "array",
+                              "items": {
+                                "type": "string",
+                                "enum": [
+                                  "call",
+                                  "whatsapp",
+                                  "chat"
+                                ]
+                              }
                             }
+                          },
+                          "required": [
+                            "phone",
+                            "whatsapp",
+                            "showPhone",
+                            "methods"
                           ]
-                        },
-                        "showPhone": {
-                          "type": "boolean"
-                        },
-                        "methods": {
-                          "minItems": 1,
-                          "type": "array",
-                          "items": {
-                            "type": "string",
-                            "enum": [
-                              "call",
-                              "whatsapp",
-                              "chat"
-                            ]
-                          }
                         }
-                      },
-                      "required": [
-                        "phone",
-                        "whatsapp",
-                        "showPhone",
-                        "methods"
                       ]
                     },
                     "stats": {
@@ -46996,6 +47887,7 @@
                     }
                   },
                   "required": [
+                    "interactionMode",
                     "id",
                     "slug",
                     "kind",
@@ -47329,6 +48221,14 @@
                 "schema": {
                   "type": "object",
                   "properties": {
+                    "interactionMode": {
+                      "default": "live",
+                      "type": "string",
+                      "enum": [
+                        "live",
+                        "preview"
+                      ]
+                    },
                     "id": {
                       "type": "string",
                       "minLength": 1
@@ -48400,44 +49300,82 @@
                       ]
                     },
                     "contact": {
-                      "type": "object",
-                      "properties": {
-                        "phone": {
-                          "type": "string",
-                          "pattern": "^\\+[1-9]\\d{7,14}$"
+                      "anyOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "phone": {
+                              "type": "null"
+                            },
+                            "whatsapp": {
+                              "type": "null"
+                            },
+                            "showPhone": {
+                              "type": "boolean",
+                              "const": false
+                            },
+                            "methods": {
+                              "minItems": 0,
+                              "maxItems": 0,
+                              "type": "array",
+                              "items": {
+                                "type": "string",
+                                "enum": [
+                                  "call",
+                                  "whatsapp",
+                                  "chat"
+                                ]
+                              }
+                            }
+                          },
+                          "required": [
+                            "phone",
+                            "whatsapp",
+                            "showPhone",
+                            "methods"
+                          ]
                         },
-                        "whatsapp": {
-                          "anyOf": [
-                            {
+                        {
+                          "type": "object",
+                          "properties": {
+                            "phone": {
                               "type": "string",
                               "pattern": "^\\+[1-9]\\d{7,14}$"
                             },
-                            {
-                              "type": "null"
+                            "whatsapp": {
+                              "anyOf": [
+                                {
+                                  "type": "string",
+                                  "pattern": "^\\+[1-9]\\d{7,14}$"
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            },
+                            "showPhone": {
+                              "type": "boolean"
+                            },
+                            "methods": {
+                              "minItems": 1,
+                              "type": "array",
+                              "items": {
+                                "type": "string",
+                                "enum": [
+                                  "call",
+                                  "whatsapp",
+                                  "chat"
+                                ]
+                              }
                             }
+                          },
+                          "required": [
+                            "phone",
+                            "whatsapp",
+                            "showPhone",
+                            "methods"
                           ]
-                        },
-                        "showPhone": {
-                          "type": "boolean"
-                        },
-                        "methods": {
-                          "minItems": 1,
-                          "type": "array",
-                          "items": {
-                            "type": "string",
-                            "enum": [
-                              "call",
-                              "whatsapp",
-                              "chat"
-                            ]
-                          }
                         }
-                      },
-                      "required": [
-                        "phone",
-                        "whatsapp",
-                        "showPhone",
-                        "methods"
                       ]
                     },
                     "stats": {
@@ -48474,6 +49412,7 @@
                     }
                   },
                   "required": [
+                    "interactionMode",
                     "id",
                     "slug",
                     "kind",
@@ -56150,6 +57089,14 @@
                               {
                                 "type": "object",
                                 "properties": {
+                                  "interactionMode": {
+                                    "default": "live",
+                                    "type": "string",
+                                    "enum": [
+                                      "live",
+                                      "preview"
+                                    ]
+                                  },
                                   "id": {
                                     "type": "string",
                                     "minLength": 1
@@ -57221,44 +58168,82 @@
                                     ]
                                   },
                                   "contact": {
-                                    "type": "object",
-                                    "properties": {
-                                      "phone": {
-                                        "type": "string",
-                                        "pattern": "^\\+[1-9]\\d{7,14}$"
+                                    "anyOf": [
+                                      {
+                                        "type": "object",
+                                        "properties": {
+                                          "phone": {
+                                            "type": "null"
+                                          },
+                                          "whatsapp": {
+                                            "type": "null"
+                                          },
+                                          "showPhone": {
+                                            "type": "boolean",
+                                            "const": false
+                                          },
+                                          "methods": {
+                                            "minItems": 0,
+                                            "maxItems": 0,
+                                            "type": "array",
+                                            "items": {
+                                              "type": "string",
+                                              "enum": [
+                                                "call",
+                                                "whatsapp",
+                                                "chat"
+                                              ]
+                                            }
+                                          }
+                                        },
+                                        "required": [
+                                          "phone",
+                                          "whatsapp",
+                                          "showPhone",
+                                          "methods"
+                                        ]
                                       },
-                                      "whatsapp": {
-                                        "anyOf": [
-                                          {
+                                      {
+                                        "type": "object",
+                                        "properties": {
+                                          "phone": {
                                             "type": "string",
                                             "pattern": "^\\+[1-9]\\d{7,14}$"
                                           },
-                                          {
-                                            "type": "null"
+                                          "whatsapp": {
+                                            "anyOf": [
+                                              {
+                                                "type": "string",
+                                                "pattern": "^\\+[1-9]\\d{7,14}$"
+                                              },
+                                              {
+                                                "type": "null"
+                                              }
+                                            ]
+                                          },
+                                          "showPhone": {
+                                            "type": "boolean"
+                                          },
+                                          "methods": {
+                                            "minItems": 1,
+                                            "type": "array",
+                                            "items": {
+                                              "type": "string",
+                                              "enum": [
+                                                "call",
+                                                "whatsapp",
+                                                "chat"
+                                              ]
+                                            }
                                           }
+                                        },
+                                        "required": [
+                                          "phone",
+                                          "whatsapp",
+                                          "showPhone",
+                                          "methods"
                                         ]
-                                      },
-                                      "showPhone": {
-                                        "type": "boolean"
-                                      },
-                                      "methods": {
-                                        "minItems": 1,
-                                        "type": "array",
-                                        "items": {
-                                          "type": "string",
-                                          "enum": [
-                                            "call",
-                                            "whatsapp",
-                                            "chat"
-                                          ]
-                                        }
                                       }
-                                    },
-                                    "required": [
-                                      "phone",
-                                      "whatsapp",
-                                      "showPhone",
-                                      "methods"
                                     ]
                                   },
                                   "stats": {
@@ -57295,6 +58280,7 @@
                                   }
                                 },
                                 "required": [
+                                  "interactionMode",
                                   "id",
                                   "slug",
                                   "kind",
@@ -57616,6 +58602,14 @@
                         {
                           "type": "object",
                           "properties": {
+                            "interactionMode": {
+                              "default": "live",
+                              "type": "string",
+                              "enum": [
+                                "live",
+                                "preview"
+                              ]
+                            },
                             "id": {
                               "type": "string",
                               "minLength": 1
@@ -58687,44 +59681,82 @@
                               ]
                             },
                             "contact": {
-                              "type": "object",
-                              "properties": {
-                                "phone": {
-                                  "type": "string",
-                                  "pattern": "^\\+[1-9]\\d{7,14}$"
+                              "anyOf": [
+                                {
+                                  "type": "object",
+                                  "properties": {
+                                    "phone": {
+                                      "type": "null"
+                                    },
+                                    "whatsapp": {
+                                      "type": "null"
+                                    },
+                                    "showPhone": {
+                                      "type": "boolean",
+                                      "const": false
+                                    },
+                                    "methods": {
+                                      "minItems": 0,
+                                      "maxItems": 0,
+                                      "type": "array",
+                                      "items": {
+                                        "type": "string",
+                                        "enum": [
+                                          "call",
+                                          "whatsapp",
+                                          "chat"
+                                        ]
+                                      }
+                                    }
+                                  },
+                                  "required": [
+                                    "phone",
+                                    "whatsapp",
+                                    "showPhone",
+                                    "methods"
+                                  ]
                                 },
-                                "whatsapp": {
-                                  "anyOf": [
-                                    {
+                                {
+                                  "type": "object",
+                                  "properties": {
+                                    "phone": {
                                       "type": "string",
                                       "pattern": "^\\+[1-9]\\d{7,14}$"
                                     },
-                                    {
-                                      "type": "null"
+                                    "whatsapp": {
+                                      "anyOf": [
+                                        {
+                                          "type": "string",
+                                          "pattern": "^\\+[1-9]\\d{7,14}$"
+                                        },
+                                        {
+                                          "type": "null"
+                                        }
+                                      ]
+                                    },
+                                    "showPhone": {
+                                      "type": "boolean"
+                                    },
+                                    "methods": {
+                                      "minItems": 1,
+                                      "type": "array",
+                                      "items": {
+                                        "type": "string",
+                                        "enum": [
+                                          "call",
+                                          "whatsapp",
+                                          "chat"
+                                        ]
+                                      }
                                     }
+                                  },
+                                  "required": [
+                                    "phone",
+                                    "whatsapp",
+                                    "showPhone",
+                                    "methods"
                                   ]
-                                },
-                                "showPhone": {
-                                  "type": "boolean"
-                                },
-                                "methods": {
-                                  "minItems": 1,
-                                  "type": "array",
-                                  "items": {
-                                    "type": "string",
-                                    "enum": [
-                                      "call",
-                                      "whatsapp",
-                                      "chat"
-                                    ]
-                                  }
                                 }
-                              },
-                              "required": [
-                                "phone",
-                                "whatsapp",
-                                "showPhone",
-                                "methods"
                               ]
                             },
                             "stats": {
@@ -58761,6 +59793,7 @@
                             }
                           },
                           "required": [
+                            "interactionMode",
                             "id",
                             "slug",
                             "kind",
@@ -59191,6 +60224,14 @@
                         {
                           "type": "object",
                           "properties": {
+                            "interactionMode": {
+                              "default": "live",
+                              "type": "string",
+                              "enum": [
+                                "live",
+                                "preview"
+                              ]
+                            },
                             "id": {
                               "type": "string",
                               "minLength": 1
@@ -60262,44 +61303,82 @@
                               ]
                             },
                             "contact": {
-                              "type": "object",
-                              "properties": {
-                                "phone": {
-                                  "type": "string",
-                                  "pattern": "^\\+[1-9]\\d{7,14}$"
+                              "anyOf": [
+                                {
+                                  "type": "object",
+                                  "properties": {
+                                    "phone": {
+                                      "type": "null"
+                                    },
+                                    "whatsapp": {
+                                      "type": "null"
+                                    },
+                                    "showPhone": {
+                                      "type": "boolean",
+                                      "const": false
+                                    },
+                                    "methods": {
+                                      "minItems": 0,
+                                      "maxItems": 0,
+                                      "type": "array",
+                                      "items": {
+                                        "type": "string",
+                                        "enum": [
+                                          "call",
+                                          "whatsapp",
+                                          "chat"
+                                        ]
+                                      }
+                                    }
+                                  },
+                                  "required": [
+                                    "phone",
+                                    "whatsapp",
+                                    "showPhone",
+                                    "methods"
+                                  ]
                                 },
-                                "whatsapp": {
-                                  "anyOf": [
-                                    {
+                                {
+                                  "type": "object",
+                                  "properties": {
+                                    "phone": {
                                       "type": "string",
                                       "pattern": "^\\+[1-9]\\d{7,14}$"
                                     },
-                                    {
-                                      "type": "null"
+                                    "whatsapp": {
+                                      "anyOf": [
+                                        {
+                                          "type": "string",
+                                          "pattern": "^\\+[1-9]\\d{7,14}$"
+                                        },
+                                        {
+                                          "type": "null"
+                                        }
+                                      ]
+                                    },
+                                    "showPhone": {
+                                      "type": "boolean"
+                                    },
+                                    "methods": {
+                                      "minItems": 1,
+                                      "type": "array",
+                                      "items": {
+                                        "type": "string",
+                                        "enum": [
+                                          "call",
+                                          "whatsapp",
+                                          "chat"
+                                        ]
+                                      }
                                     }
+                                  },
+                                  "required": [
+                                    "phone",
+                                    "whatsapp",
+                                    "showPhone",
+                                    "methods"
                                   ]
-                                },
-                                "showPhone": {
-                                  "type": "boolean"
-                                },
-                                "methods": {
-                                  "minItems": 1,
-                                  "type": "array",
-                                  "items": {
-                                    "type": "string",
-                                    "enum": [
-                                      "call",
-                                      "whatsapp",
-                                      "chat"
-                                    ]
-                                  }
                                 }
-                              },
-                              "required": [
-                                "phone",
-                                "whatsapp",
-                                "showPhone",
-                                "methods"
                               ]
                             },
                             "stats": {
@@ -60336,6 +61415,7 @@
                             }
                           },
                           "required": [
+                            "interactionMode",
                             "id",
                             "slug",
                             "kind",
@@ -67300,6 +68380,435 @@
         }
       }
     },
+    "/api/v1/admin/seed/archives": {
+      "post": {
+        "operationId": "postAdminSeedArchives",
+        "summary": "Receive a bounded private ZIP for durable image validation",
+        "security": [
+          {
+            "session": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "archiveDigest",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          },
+          {
+            "name": "manifestDigest",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          },
+          {
+            "name": "archiveBytes",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 26214400
+            }
+          },
+          {
+            "name": "replaceGenerations",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "default": "[]",
+              "type": "string",
+              "maxLength": 8192
+            }
+          },
+          {
+            "name": "supersedesOperationId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 100
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/zip": {
+              "schema": {
+                "type": "string",
+                "format": "binary"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "kind": {
+                      "type": "string",
+                      "enum": [
+                        "archive",
+                        "seed",
+                        "remove"
+                      ]
+                    },
+                    "state": {
+                      "type": "string",
+                      "enum": [
+                        "receiving",
+                        "queued",
+                        "running",
+                        "failed",
+                        "completed"
+                      ]
+                    },
+                    "progress": {
+                      "type": "object",
+                      "properties": {
+                        "stage": {
+                          "type": "string",
+                          "enum": [
+                            "upload",
+                            "validate",
+                            "store-images",
+                            "insert-businesses",
+                            "insert-listings",
+                            "hide",
+                            "remove-records",
+                            "remove-media",
+                            "complete"
+                          ]
+                        },
+                        "completed": {
+                          "type": "integer",
+                          "minimum": 0,
+                          "maximum": 9007199254740991
+                        },
+                        "total": {
+                          "type": "integer",
+                          "minimum": 0,
+                          "maximum": 9007199254740991
+                        },
+                        "percent": {
+                          "anyOf": [
+                            {
+                              "type": "integer",
+                              "minimum": 0,
+                              "maximum": 100
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        }
+                      },
+                      "required": [
+                        "stage",
+                        "completed",
+                        "total",
+                        "percent"
+                      ]
+                    },
+                    "committedImages": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 460
+                    },
+                    "committedBusinesses": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 30
+                    },
+                    "committedListings": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 200
+                    },
+                    "retainedRecords": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 230
+                    },
+                    "error": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "pattern": "^[a-z0-9_]+$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "rejections": {
+                      "maxItems": 50,
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "assetId": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "filename": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "reason": {
+                            "type": "string",
+                            "enum": [
+                              "seed_image_invalid",
+                              "seed_asset_replacement_required"
+                            ]
+                          }
+                        },
+                        "required": [
+                          "assetId",
+                          "filename",
+                          "reason"
+                        ]
+                      }
+                    },
+                    "createdAt": {
+                      "type": "string",
+                      "format": "date-time",
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                    },
+                    "updatedAt": {
+                      "type": "string",
+                      "format": "date-time",
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "kind",
+                    "state",
+                    "progress",
+                    "committedImages",
+                    "committedBusinesses",
+                    "committedListings",
+                    "retainedRecords",
+                    "error",
+                    "createdAt",
+                    "updatedAt"
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "unauthenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "const": "unauthenticated"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "fields": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    "retryAfter": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "banned, forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "banned",
+                        "forbidden"
+                      ]
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "fields": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    "retryAfter": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "not_found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "const": "not_found"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "fields": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    "retryAfter": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ]
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "const": "conflict"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "fields": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    "retryAfter": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ]
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "validation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "const": "validation"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "fields": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    "retryAfter": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/admin/seed": {
       "get": {
         "operationId": "getAdminSeed",
@@ -67532,6 +69041,35 @@
                                   "type": "null"
                                 }
                               ]
+                            },
+                            "rejections": {
+                              "maxItems": 50,
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "assetId": {
+                                    "type": "string",
+                                    "minLength": 1
+                                  },
+                                  "filename": {
+                                    "type": "string",
+                                    "minLength": 1
+                                  },
+                                  "reason": {
+                                    "type": "string",
+                                    "enum": [
+                                      "seed_image_invalid",
+                                      "seed_asset_replacement_required"
+                                    ]
+                                  }
+                                },
+                                "required": [
+                                  "assetId",
+                                  "filename",
+                                  "reason"
+                                ]
+                              }
                             },
                             "createdAt": {
                               "type": "string",
@@ -67924,6 +69462,35 @@
                                   "type": "null"
                                 }
                               ]
+                            },
+                            "rejections": {
+                              "maxItems": 50,
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "assetId": {
+                                    "type": "string",
+                                    "minLength": 1
+                                  },
+                                  "filename": {
+                                    "type": "string",
+                                    "minLength": 1
+                                  },
+                                  "reason": {
+                                    "type": "string",
+                                    "enum": [
+                                      "seed_image_invalid",
+                                      "seed_asset_replacement_required"
+                                    ]
+                                  }
+                                },
+                                "required": [
+                                  "assetId",
+                                  "filename",
+                                  "reason"
+                                ]
+                              }
                             },
                             "createdAt": {
                               "type": "string",

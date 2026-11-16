@@ -1,4 +1,6 @@
 import {
+  seedArchiveInputSchema,
+  seedOperationSchema,
   seedPrepareInputSchema,
   seedStatusSchema,
 } from "@sayaratak/shared/schemas/admin-seed"
@@ -17,11 +19,40 @@ import {
   getSeedStatus,
   prepareSeedDataset,
 } from "./admin-seed.service"
+import { receiveSeedArchive } from "./admin-seed.archives.service"
 
 const ADMIN_ERRORS = ["unauthenticated", "banned", "forbidden"] as const
 const PREPARE_BODY_MAX_BYTES = 1024
 
 export const adminSeedRoutes = new Hono()
+
+adminSeedRoutes.post(
+  "/admin/seed/archives",
+  spec({
+    summary: "Receive a bounded private ZIP for durable image validation",
+    access: "user",
+    rawBody: { mediaType: "application/zip" },
+    responses: { 202: seedOperationSchema },
+    errors: [...ADMIN_ERRORS, "conflict", "not_found"],
+  }),
+  requireAdmin,
+  rateLimit("adminSeedArchives"),
+  validate.query(seedArchiveInputSchema),
+  async (c) =>
+    c.json(
+      await receiveSeedArchive(
+        c.get("actor"),
+        c.req.valid("query"),
+        c.req.raw.body ??
+          new ReadableStream({
+            start(controller) {
+              controller.close()
+            },
+          })
+      ),
+      202
+    )
+)
 
 adminSeedRoutes.get(
   "/admin/seed",

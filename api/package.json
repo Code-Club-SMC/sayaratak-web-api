@@ -29,12 +29,15 @@
     "drizzle-orm": "^0.45.4",
     "hono": "^4.13.13",
     "nodemailer": "10.1.2",
+    "sharp": "0.35.5",
+    "yauzl": "3.4.0",
     "zod": "^4.6.7"
   },
   "devDependencies": {
     "@biomejs/biome": "2.6.4",
     "@types/bun": "^1.4.4",
     "@types/nodemailer": "8.0.2",
+    "@types/yauzl": "3.4.0",
     "drizzle-kit": "^0.31.11",
     "typescript": "^6.0.3"
   }

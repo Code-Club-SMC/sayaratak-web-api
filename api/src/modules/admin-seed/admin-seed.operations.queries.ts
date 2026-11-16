@@ -4,6 +4,8 @@ import type { Executor } from "~/shared/db/tx"
 
 import { seedOperations } from "./admin-seed.tables"
 
+export type { SeedDatasetRow, SeedOperationRow } from "./admin-seed.tables"
+
 export async function getActiveOperation(ex: Executor, datasetId: string) {
   const [row] = await ex
     .select()

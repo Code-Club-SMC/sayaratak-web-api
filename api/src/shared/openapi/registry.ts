@@ -10,11 +10,13 @@ export type RouteSpec = {
   /** `user` routes need the session cookie or a bearer token (A18). */
   access: "public" | "user"
   /** The success answers, each checked against the code by a B1 test. */
-  responses: Partial<Record<200 | 201, z.ZodType>>
+  responses: Partial<Record<200 | 201 | 202, z.ZodType>>
   /** Error codes the route can answer. `validation` is added for every route that takes input. */
   errors?: ErrorCode[]
   /** Runs the route once per `Idempotency-Key` (A18). For POSTs that create something. */
   idempotent?: boolean
+  /** Raw binary request body, e.g. for direct file streaming */
+  rawBody?: { mediaType: string }
 }
 
 export type InputSpec = {

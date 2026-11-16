@@ -1,3 +1,4 @@
+import { adminSeedJob } from "./admin-seed.job"
 import { autoBackupJob } from "./auto-backup.job"
 import { banLiftJob } from "./ban-lift.job"
 import { broadcastFanoutJob } from "./broadcast-fanout.job"
@@ -13,6 +14,7 @@ import { unverifiedCleanupJob } from "./unverified-cleanup.job"
 
 /** Every scheduled job (A10), one `*.job.ts` file each. */
 export const jobs: Job[] = [
+  adminSeedJob,
   outboxJob,
   broadcastFanoutJob,
   listingExpiryJob,

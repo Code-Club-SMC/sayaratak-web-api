@@ -21,6 +21,8 @@ export type PutFile = {
   delivery: Delivery
   /** Folder under the environment's root, such as `images` or `receipts`. */
   folder: string
+  /** Server-created, content-addressed identity, never supplied by an upload client. */
+  immutableKey?: string
 }
 
 export type FileStore = {

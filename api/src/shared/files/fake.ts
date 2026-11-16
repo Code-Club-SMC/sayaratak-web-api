@@ -17,8 +17,12 @@ export function fakeStore(): FileStore & {
     saved,
     put(file) {
       next += 1
-      const publicId = `sayaratak/test/${file.folder}/f${next}`
-      saved.set(publicId, file.bytes)
+      const publicId =
+        file.immutableKey ?? `sayaratak/test/${file.folder}/f${next}`
+      const previous = saved.get(publicId)
+      if (previous && !Buffer.from(previous).equals(Buffer.from(file.bytes)))
+        return Promise.reject(new Error("immutable file content mismatch"))
+      saved.set(publicId, file.bytes.slice())
       return Promise.resolve({
         publicId,
         ...FAKE_SIZE,

@@ -41,6 +41,8 @@ export function cloudinaryStore(url: string): FileStore {
         }
       )
       const stored = uploadAnswerSchema.parse(answer)
+      if (file.immutableKey && stored.public_id !== file.immutableKey)
+        throw new Error("immutable provider identity mismatch")
       return {
         publicId: stored.public_id,
         width: stored.width,
@@ -73,6 +75,21 @@ function uploadParams(file: PutFile): Record<string, string> {
     type: typeOf(file.delivery),
     folder: `sayaratak/${env.APP_ENV}/${file.folder}`,
     transformation: image ? INCOMING_IMAGE : INCOMING_VIDEO,
+  }
+  if (file.immutableKey) {
+    const digest = new Bun.CryptoHasher("sha256")
+      .update(file.bytes)
+      .digest("hex")
+    const root = `sayaratak/${env.APP_ENV}/seed/`
+    if (
+      !file.immutableKey.startsWith(root) ||
+      !file.immutableKey.endsWith(`/${digest}`)
+    )
+      throw new Error("immutable file content mismatch")
+    delete params.folder
+    params.public_id = file.immutableKey
+    params.overwrite = "true"
+    params.unique_filename = "false"
   }
   if (!image) return params
   params.colors = "true"

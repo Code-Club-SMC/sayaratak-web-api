@@ -37,7 +37,8 @@ export function getImageIdByUrl(
       and(
         eq(uploads.ownerUserId, image.ownerUserId),
         eq(uploads.url, image.url),
-        eq(uploads.kind, "image")
+        eq(uploads.kind, "image"),
+        isNull(uploads.seedDatasetId)
       )
     )
     .then(([row]) => row?.id)
@@ -55,7 +56,8 @@ export function getImageIdByCloudinaryId(
         eq(uploads.ownerUserId, image.ownerUserId),
         eq(uploads.cloudinaryId, image.cloudinaryId),
         eq(uploads.kind, "image"),
-        eq(uploads.delivery, "public")
+        eq(uploads.delivery, "public"),
+        isNull(uploads.seedDatasetId)
       )
     )
     .then(([row]) => row?.id)
@@ -111,7 +113,13 @@ export function lockOrphans(
   return ex
     .select({ id: uploads.id })
     .from(uploads)
-    .where(and(isNull(uploads.attachedAt), lt(uploads.createdAt, find.before)))
+    .where(
+      and(
+        isNull(uploads.attachedAt),
+        isNull(uploads.seedDatasetId),
+        lt(uploads.createdAt, find.before)
+      )
+    )
     .orderBy(asc(uploads.createdAt))
     .limit(find.size)
     .for("update", { skipLocked: true })

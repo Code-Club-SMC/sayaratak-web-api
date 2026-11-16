@@ -9,6 +9,7 @@ import * as q from "./uploads.queries"
 import type { UploadRow } from "./uploads.service"
 
 const ID_PREFIX = "fd"
+export const SEED_DELETE_ID_PREFIX = "fdseed"
 /** A file the host keeps refusing to delete is left in the table after this many tries, for a person to look at. */
 const MAX_ATTEMPTS = 20
 
@@ -54,7 +55,10 @@ export async function retryHostDeletes(size: number) {
 // A file another upload row still uses (a duplicated listing shares its photos) stays on the host.
 async function deleteHostFile(note: q.FileDeletionRow) {
   try {
-    if (!(await q.hasCloudinaryId(db, note.publicId)))
+    const referenced = await q.hasCloudinaryId(db, note.publicId)
+    // A seed intent must not report physical cleanup complete while another row retains its file.
+    if (referenced && note.id.startsWith(SEED_DELETE_ID_PREFIX)) return false
+    if (!referenced)
       await files.remove({
         publicId: note.publicId,
         mime: note.mime,

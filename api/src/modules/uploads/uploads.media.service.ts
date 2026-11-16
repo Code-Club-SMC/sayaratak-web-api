@@ -56,6 +56,7 @@ export async function attachMedia(
   const usable = rows.filter(
     (row) =>
       row.ownerUserId === attach.ownerUserId &&
+      row.seedDatasetId === null &&
       kinds.has(row.kind) &&
       row.delivery === "public" &&
       (row.attachedAt === null || attach.kept.includes(row.id))
@@ -76,6 +77,7 @@ export async function copyMedia(
   copy: { ids: string[]; ownerUserId: string }
 ) {
   const rows = await q.listUploads(tx, copy.ids)
+  if (rows.some((row) => row.seedDatasetId !== null)) fail.forbidden()
   const posters = await q.listUploads(tx, posterIdsOf(rows))
   const now = clock.now()
   const posterCopies = new Map(posters.map((row) => [row.id, newId(ID_PREFIX)]))

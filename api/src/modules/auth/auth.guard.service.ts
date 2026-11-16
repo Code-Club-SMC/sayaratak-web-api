@@ -6,6 +6,10 @@ import { log } from "~/shared/log/logger"
 import { clock } from "~/shared/time/clock"
 
 import * as q from "./auth.queries"
+import {
+  refuseSyntheticEmail,
+  refuseSyntheticSessionResult,
+} from "./auth.seed.service"
 
 // Owner, 3.6. Per email and IP, so an attacker cannot lock the owner out
 // from elsewhere; per email from every IP, so spreading guesses over many
@@ -40,6 +44,8 @@ type HookInput = {
  * routes answer with.
  */
 export async function authBefore(input: HookInput) {
+  const email = emailOf(input)
+  if (email) await refuseSyntheticEmail(email)
   const field = PASSWORD_FIELDS[input.path]
   const problem = field ? passwordProblem(input.body?.[field]) : null
   if (field && problem)
@@ -47,7 +53,6 @@ export async function authBefore(input: HookInput) {
       code: "validation",
       fields: { [field]: problem },
     })
-  const email = emailOf(input)
   if (
     input.path === "/sign-up/email" &&
     (await existingSignUp(email)) === "exists"
@@ -59,6 +64,7 @@ export async function authBefore(input: HookInput) {
 
 /** Better-Auth `hooks.after`: counts failed sign-ins, clears them on success or reset. */
 export async function authAfter(input: HookInput & { returned: unknown }) {
+  await refuseSyntheticSessionResult(input.returned)
   const failed = isAPIError(input.returned)
   if (input.path === "/email-otp/reset-password" && !failed)
     await clearSignInFailures(emailOf(input))
@@ -122,6 +128,7 @@ export async function clearSignInFailures(email: string) {
 export async function existingSignUp(email: string) {
   const row = await q.getUserByEmail(db, email)
   if (!row) return "new"
+  if (row.seedDatasetId) return "exists"
   const providers = await q.listProviders(db, row.id)
   const isUnfinished =
     !row.emailVerified && providers.every((id) => id === "credential")

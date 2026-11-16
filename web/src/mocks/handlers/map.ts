@@ -45,6 +45,7 @@ route("GET", "/map", (c) => {
         const cover = l.media[0]
         points.push({
           id: l.id,
+          interactionMode: l.interactionMode,
           kind: "vehicle",
           title: both(l.title),
           slug: l.slug,
@@ -68,6 +69,7 @@ route("GET", "/map", (c) => {
       if (listed(b) && inside(b.location))
         points.push({
           id: b.id,
+          interactionMode: b.interactionMode,
           kind,
           title: b.name,
           slug: b.slug,
@@ -84,6 +86,7 @@ route("GET", "/map", (c) => {
       if (listed(m) && city && inside(city.center))
         points.push({
           id: m.id,
+          interactionMode: m.interactionMode,
           kind: "mechanic",
           title: m.name,
           slug: m.slug,

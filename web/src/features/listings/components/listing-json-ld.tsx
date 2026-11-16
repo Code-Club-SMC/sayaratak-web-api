@@ -16,6 +16,7 @@ export function ListingJsonLd({
   model?: string
 }) {
   const { locale } = useT()
+  if (listing.interactionMode === "preview") return null
   const base = origin()
   const json = listingJsonLd(
     listing,

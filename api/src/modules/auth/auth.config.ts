@@ -1,14 +1,13 @@
 import { betterAuth } from "better-auth"
 import { drizzleAdapter } from "better-auth/adapters/drizzle"
 import { admin, bearer, emailOTP, twoFactor } from "better-auth/plugins"
-import { createAuthMiddleware } from "better-auth/api"
+import { createAuthMiddleware, getSessionFromCtx } from "better-auth/api"
 
 import { env } from "~/env"
 import { db } from "~/shared/db/client"
 import { ALL_PREFS } from "~/shared/db/defaults"
 import * as schema from "~/shared/db/schema"
 import { send } from "~/shared/mail/send"
-import { localeOf } from "~/shared/mail/locale"
 
 import {
   ADMIN_CODE_PATH,
@@ -18,6 +17,11 @@ import {
 import { authAfter, authBefore, CLIENT_IP_HEADER } from "./auth.guard.service"
 import { mailCode } from "./auth.mail.service"
 import { hasApple, socialProviders } from "./auth.social.service"
+import { authDatabaseHooks } from "./auth.hooks.service"
+import {
+  refuseSyntheticBearer,
+  refuseSyntheticSessionResult,
+} from "./auth.seed.service"
 
 // 600 s and 5 tries: the web code step says "10 minutes" and "5 tries";
 // Better-Auth's defaults are 300 and 3.
@@ -107,15 +111,7 @@ export const auth = betterAuth({
       chosenPlanId: { type: "string", required: false, input: false },
     },
   },
-  databaseHooks: {
-    user: {
-      create: {
-        before: async (user, context) => ({
-          data: { ...user, locale: localeOf(context?.request) },
-        }),
-      },
-    },
-  },
+  databaseHooks: authDatabaseHooks,
   advanced: {
     cookiePrefix: "sy",
     useSecureCookies:
@@ -151,9 +147,19 @@ export const auth = betterAuth({
     },
   },
   hooks: {
-    before: createAuthMiddleware((ctx) =>
-      ctx.path === ADMIN_CODE_PATH ? adminCodeBefore(ctx) : authBefore(ctx)
-    ),
+    before: createAuthMiddleware(async (ctx) => {
+      // Installed getSessionFromCtx calls the session handler directly, not global hooks.
+      await refuseSyntheticSessionResult(
+        await getSessionFromCtx(ctx, {
+          disableCookieCache: true,
+          disableRefresh: true,
+        })
+      )
+      await refuseSyntheticBearer(ctx.request?.headers ?? ctx.headers)
+      return ctx.path === ADMIN_CODE_PATH
+        ? adminCodeBefore(ctx)
+        : authBefore(ctx)
+    }),
     after: createAuthMiddleware((ctx) =>
       ctx.path === ADMIN_CODE_PATH
         ? adminCodeAfter(ctx)
@@ -176,7 +182,7 @@ export const auth = betterAuth({
       storeOTP: "hashed",
       // Not awaited (A6): the answer time must not tell whether the email exists.
       sendVerificationOTP: async (mail, ctx) => {
-        mailCode(mail, ctx?.request)
+        await mailCode(mail, ctx?.request)
       },
     }),
     twoFactor({

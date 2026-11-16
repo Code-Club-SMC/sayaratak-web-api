@@ -3,16 +3,18 @@ import { requestedLocale } from "~/shared/mail/locale"
 import { type OtpPurpose, send } from "~/shared/mail/send"
 
 import * as q from "./auth.queries"
+import { refuseSyntheticEmail } from "./auth.seed.service"
 
 /**
  * Request-triggered codes follow Accept-Language, then the saved preference,
  * then Arabic. Returns at once; the
  * lookup and the send run after the answer (A6 "Email not awaited").
  */
-export function mailCode(
+export async function mailCode(
   mail: { email: string; otp: string; type: OtpPurpose },
   request?: Request
 ) {
+  await refuseSyntheticEmail(mail.email.trim().toLowerCase())
   send.otp({
     to: mail.email,
     code: mail.otp,

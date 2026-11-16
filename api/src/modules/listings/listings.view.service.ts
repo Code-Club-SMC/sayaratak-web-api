@@ -96,35 +96,56 @@ function mediaOf(listingId: string, loaded: Loaded) {
   })
 }
 
-// A dealership posts as its business, a person as themselves. The name is the
-// one kept on the listing; a deleted owner leaves only that name.
-function ownerOf(row: ListingRow, loaded: Loaded): Listing["owner"] {
-  const urlOf = (id: string | null) =>
-    id ? (loaded.media.get(id)?.url ?? null) : null
-  const base = {
-    id: row.ownerUserId ?? row.id,
+function dealershipOwner(
+  row: ListingRow,
+  loaded: Loaded,
+  dealer: NonNullable<ReturnType<Loaded["dealers"]["get"]>>
+): Listing["owner"] {
+  const avatarUrl = dealer.logoUploadId
+    ? (loaded.media.get(dealer.logoUploadId)?.url ?? null)
+    : null
+  const baseId = row.seedDatasetId ? row.id : (row.ownerUserId ?? row.id)
+  return {
+    id: row.seedDatasetId ? dealer.id : baseId,
+    type: row.ownerType,
+    name: row.seedDatasetId ? dealer.name : row.ownerName,
+    avatarUrl,
+    verified: dealer.verified,
+    memberSince: dealer.createdAt.toISOString(),
+    profileSlug: dealer.slug,
+  }
+}
+
+function userOwner(
+  row: ListingRow,
+  loaded: Loaded,
+  user: ReturnType<Loaded["users"]["get"]>
+): Listing["owner"] {
+  const avatarUrl = user?.avatarUploadId
+    ? (loaded.media.get(user.avatarUploadId)?.url ?? null)
+    : null
+  const baseId = row.seedDatasetId ? row.id : (row.ownerUserId ?? row.id)
+  return {
+    id: baseId,
     type: row.ownerType,
     name: row.ownerName,
-  }
-  const dealer = row.ownerUserId
-    ? loaded.dealers.get(row.ownerUserId)
-    : undefined
-  if (row.ownerType === "dealership" && dealer)
-    return {
-      ...base,
-      avatarUrl: urlOf(dealer.logoUploadId),
-      verified: dealer.verified,
-      memberSince: dealer.createdAt.toISOString(),
-      profileSlug: dealer.slug,
-    }
-  const user = row.ownerUserId ? loaded.users.get(row.ownerUserId) : undefined
-  return {
-    ...base,
-    avatarUrl: urlOf(user?.avatarUploadId ?? null),
+    avatarUrl,
     verified: user?.verifiedPhone ?? false,
     memberSince: (user?.createdAt ?? row.createdAt).toISOString(),
     profileSlug: null,
   }
+}
+
+// A dealership posts as its business, a person as themselves. The name is the
+// one kept on the listing; a deleted owner leaves only that name.
+function ownerOf(row: ListingRow, loaded: Loaded): Listing["owner"] {
+  const dealer = row.ownerUserId
+    ? loaded.dealers.get(row.ownerUserId)
+    : undefined
+  if (row.ownerType === "dealership" && dealer)
+    return dealershipOwner(row, loaded, dealer)
+  const user = row.ownerUserId ? loaded.users.get(row.ownerUserId) : undefined
+  return userOwner(row, loaded, user)
 }
 
 function locationFor(

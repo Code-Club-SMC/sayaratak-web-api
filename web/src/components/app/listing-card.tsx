@@ -87,6 +87,7 @@ export function ListingCard({
         {!preview && (
           <FavoriteButton
             listingId={listing.id}
+            interactionMode={listing.interactionMode}
             className="absolute end-1 top-1 z-10"
           />
         )}

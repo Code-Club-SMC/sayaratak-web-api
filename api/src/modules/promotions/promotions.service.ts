@@ -6,6 +6,7 @@ import { fail } from "~/shared/http/errors"
 import { drain } from "~/shared/jobs/batches"
 import { clock } from "~/shared/time/clock"
 import { bumpListing } from "~/modules/listings/listings.service"
+import { lockListingInteraction } from "~/modules/listings/listings.seed.service"
 
 import * as admin from "./promotions.admin.queries"
 import * as expiry from "./promotions.expiry.queries"
@@ -91,6 +92,8 @@ export async function startPaidPromotion(
 ) {
   const row = await admin.lockPromotion(tx, paid.id)
   if (!row) fail.notFound()
+  if ((await lockListingInteraction(tx, row.listingId)) === "preview")
+    fail.forbidden()
   if (row.status !== "pending_payment") return
   const now = clock.now()
   const run = runOf({ type: row.type, days: row.durationDays, now })

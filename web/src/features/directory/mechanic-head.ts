@@ -35,6 +35,7 @@ export function mechanicHead(
         image?: string
         // The owner is banned: the page stays up with a notice, out of search engines.
         unavailable?: true
+        preview?: boolean
       }
     | undefined,
   s: MechanicProfileSearch
@@ -44,6 +45,6 @@ export function mechanicHead(
   return buildHead({
     ...data,
     path: s.tab === "work" ? base : `${base}?tab=${s.tab}`,
-    noindex: !!data.unavailable,
+    noindex: !!data.unavailable || !!data.preview,
   })
 }

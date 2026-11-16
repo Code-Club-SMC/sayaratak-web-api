@@ -56,8 +56,9 @@ export function SellerCard({
           </p>
         </div>
       </div>
-      {contact && (
+      {(contact || listing.interactionMode === "preview") && (
         <ContactActions
+          interactionMode={listing.interactionMode}
           target={{ type: "listing", id: listing.id, title }}
           phone={listing.contact.phone}
           whatsapp={listing.contact.whatsapp}

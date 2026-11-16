@@ -9,6 +9,7 @@ import {
 } from "./fields"
 import { mediaSchema } from "./listing"
 import { ratingSchema } from "./review"
+import { interactionModeSchema } from "./interaction"
 
 // A banned owner's public page carries no contact: phones empty, `phone` empty text, `whatsapp` null.
 const hideablePhoneSchema = phoneSchema.or(z.literal(""))
@@ -19,6 +20,7 @@ export type ProfileStatus = z.infer<typeof profileStatusSchema>
 // Name, description and bio are stored in both languages: the owner types one, the server translates it on save, and each visitor reads their own.
 // A map pin is optional when a business signs up, and so is a WhatsApp number.
 export const dealershipSchema = z.object({
+  interactionMode: interactionModeSchema.default("live"),
   id: idSchema,
   slug: z.string(),
   ownerId: idSchema,
@@ -46,6 +48,7 @@ export const dealershipSchema = z.object({
 export type Dealership = z.infer<typeof dealershipSchema>
 
 export const workshopSchema = z.object({
+  interactionMode: interactionModeSchema.default("live"),
   id: idSchema,
   slug: z.string(),
   ownerId: idSchema,
@@ -83,6 +86,7 @@ export const workshopSchema = z.object({
 export type Workshop = z.infer<typeof workshopSchema>
 
 export const mechanicSchema = z.object({
+  interactionMode: interactionModeSchema.default("live"),
   id: idSchema,
   slug: z.string(),
   ownerId: idSchema,

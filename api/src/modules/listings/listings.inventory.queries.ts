@@ -12,6 +12,7 @@ export function countAvailableByOwner(ex: Executor, ownerUserIds: string[]) {
     .from(listings)
     .where(
       and(
+        eq(listings.seedHidden, false),
         inArray(listings.ownerUserId, ownerUserIds),
         eq(listings.moderation, "approved"),
         eq(listings.status, "available")

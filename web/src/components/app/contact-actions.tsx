@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils"
 import { buttonVariants, Button } from "@/components/ui/button"
 import { BrandIcon } from "./brand-icon"
 import { MessageComposer, type MessageSubject } from "./message-composer"
+import type { InteractionMode } from "@sayaratak/shared/schemas/interaction"
 
 type Method = "call" | "whatsapp" | "chat"
 
@@ -21,14 +22,16 @@ export function ContactActions({
   methods = ["call", "whatsapp", "chat"],
   layout = "stack",
   className,
+  interactionMode,
 }: {
   target: MessageSubject
-  phone: string
+  phone: string | null
   whatsapp: string | null
   showPhone?: boolean
   methods?: Method[]
   layout?: "stack" | "row" | "bar"
   className?: string
+  interactionMode?: InteractionMode
 }) {
   const { t } = useT()
   const url = usePageUrl()
@@ -47,6 +50,12 @@ export function ContactActions({
       : "listing.whatsapp_text_profile",
     { title: target.title, url }
   )
+  if (interactionMode === "preview")
+    return (
+      <p className="text-ui text-muted-foreground">
+        {t("listing.preview_unavailable")}
+      </p>
+    )
   return (
     <div
       className={cn(
@@ -55,6 +64,7 @@ export function ContactActions({
       )}
     >
       {methods.includes("call") &&
+        phone &&
         showPhone &&
         (revealed ? (
           <a

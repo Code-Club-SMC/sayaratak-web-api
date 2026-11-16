@@ -190,6 +190,7 @@ export function seedPeople(taxonomy: Taxonomy, empty: boolean) {
       const cityId = demo ? "khartoum" : pick(cities).id
       return {
         id: `d-${i + 1}`,
+        interactionMode: "live",
         slug: slugify(en),
         ownerId: ownerRow?.id ?? "u-dealer",
         name: { ar, en },
@@ -220,6 +221,7 @@ export function seedPeople(taxonomy: Taxonomy, empty: boolean) {
       const phoneNo = demo ? "+249912345603" : phone()
       return {
         id: `w-${i + 1}`,
+        interactionMode: "live",
         slug: slugify(en),
         ownerId: ownerRow?.id ?? "u-workshop",
         name: { ar, en },
@@ -259,6 +261,7 @@ export function seedPeople(taxonomy: Taxonomy, empty: boolean) {
       const phoneNo = demo ? "+249912345604" : (ownerRow?.phone ?? phone())
       return {
         id: `m-${i + 1}`,
+        interactionMode: "live",
         slug: demo
           ? "yousif-ibrahim"
           : `${slugify(ownerRow?.id ?? "m")}-${i + 1}`,

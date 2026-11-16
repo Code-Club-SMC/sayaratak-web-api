@@ -124,6 +124,7 @@ export function listOwnerIdsNamed(ex: Executor, term: string) {
 export async function lockBusinessById(tx: Transaction, id: string) {
   const found = await q.lockById(tx, id)
   if (!found) fail.notFound()
+  if (found.row.seedDatasetId) fail.forbidden()
   return {
     kind: found.kind,
     id: found.row.id,

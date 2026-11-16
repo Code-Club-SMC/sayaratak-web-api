@@ -20,14 +20,17 @@ import { FormField } from "./form-field"
 import { ResponsiveDialog } from "./responsive-dialog"
 import { SubmitButton } from "./submit-button"
 import { useAppForm } from "@/hooks/use-app-form"
+import type { InteractionMode } from "@sayaratak/shared/schemas/interaction"
 
 // Owns its trigger (the "Report" text button) and sits behind the sign in gate.
 export function ReportDialog({
   listingId,
   className,
+  interactionMode,
 }: {
   listingId: string
   className?: string
+  interactionMode?: InteractionMode
 }) {
   const { t } = useT()
   const requireAuth = useRequireAuth()
@@ -58,6 +61,12 @@ export function ReportDialog({
         type="button"
         variant="ghost"
         className={className}
+        disabled={interactionMode === "preview"}
+        aria-label={
+          interactionMode === "preview"
+            ? t("listing.preview_unavailable")
+            : undefined
+        }
         onClick={() => requireAuth(() => setOpen(true), "auth.reason_report")}
       >
         <FlagIcon

@@ -6,6 +6,7 @@ type Pinned = {
   slug: string
   name: Bilingual
   location: { lat: number; lng: number }
+  seedDatasetId: string | null
 }
 
 /** A business as a map point; `rating` is null until it has a shown review. */
@@ -17,6 +18,7 @@ export function toMapPoint(
   }
 ): MapPoint {
   return {
+    interactionMode: business.seedDatasetId ? "preview" : "live",
     id: business.id,
     kind: business.kind,
     title: business.name,

@@ -32,14 +32,13 @@ export async function seedPreviewFixture(): Promise<{
 }> {
   const prepared = await prepareSeedAssets(false)
   const listing = prepared.dataset.manifest.records.find(
-    (record) => record.kind === "vehicle"
+    (r) => r.kind === "vehicle"
   )
   const business = prepared.dataset.manifest.records.find(
-    (record) =>
-      record.kind === "dealership" && record.ownerId === listing?.ownerId
+    (r) => r.kind === "dealership" && r.ownerId === listing?.ownerId
   )
   const owner = prepared.dataset.manifest.owners.find(
-    (record) => record.id === listing?.ownerId
+    (r) => r.id === listing?.ownerId
   )
   if (listing?.kind !== "vehicle" || business?.kind !== "dealership" || !owner)
     throw new Error("the real manifest must contain dealership inventory")
@@ -101,12 +100,9 @@ export async function prepareSeedAssets(full: boolean) {
     .from(seedDatasets)
     .where(eq(seedDatasets.liveSlot, true))
   if (!dataset) throw new Error("dataset preparation failed")
-  const first = dataset.manifest.records.find(
-    (record) => record.kind === "vehicle"
-  )
+  const first = dataset.manifest.records.find((r) => r.kind === "vehicle")
   const business = dataset.manifest.records.find(
-    (record) =>
-      record.kind === "dealership" && record.ownerId === first?.ownerId
+    (r) => r.kind === "dealership" && r.ownerId === first?.ownerId
   )
   const assets = dataset.manifest.assets.filter(
     (asset) =>

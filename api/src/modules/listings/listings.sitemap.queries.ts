@@ -18,6 +18,8 @@ export function listIndexable(ex: Executor, hiddenOwnerIds: string[]) {
     .from(listings)
     .where(
       and(
+        isNull(listings.seedDatasetId),
+        eq(listings.seedHidden, false),
         eq(listings.moderation, "approved"),
         eq(listings.status, "available"),
         hiddenOwnerIds.length > 0

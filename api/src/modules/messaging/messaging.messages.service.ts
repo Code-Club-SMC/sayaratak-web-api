@@ -7,6 +7,9 @@ import { newId } from "~/shared/text/ids"
 import { clock } from "~/shared/time/clock"
 import type { SessionUser } from "~/modules/auth/auth.types"
 import { notify } from "~/modules/notifications/notifications.service"
+import { lockListingInteraction } from "~/modules/listings/listings.seed.service"
+import { lockBusinessInteraction } from "~/modules/businesses/businesses.seed.service"
+import { isSyntheticUser } from "~/modules/auth/auth.seed.service"
 
 import { toMessage } from "./messaging.mapper"
 import * as messages from "./messaging.messages.queries"
@@ -29,6 +32,13 @@ export async function postMessage(
   }
 ) {
   const { thread, sender } = post
+  const mode =
+    thread.subjectType === "listing"
+      ? await lockListingInteraction(tx, thread.subjectId)
+      : await lockBusinessInteraction(tx, thread.subjectId)
+  if (mode === "preview") fail.forbidden()
+  for (const id of post.participantIds)
+    if (await isSyntheticUser(tx, id)) fail.forbidden()
   const saved = await messages.insert(tx, {
     id: newId(ID_PREFIX),
     threadId: thread.id,

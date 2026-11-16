@@ -17,6 +17,7 @@ export type ListingParts = {
 export function toListing(parts: ListingParts): Listing {
   const { row } = parts
   return {
+    interactionMode: row.seedDatasetId ? "preview" : "live",
     id: row.id,
     slug: row.slug,
     kind: row.kind,
@@ -40,8 +41,12 @@ export function toListing(parts: ListingParts): Listing {
     moderation: row.moderation,
     rejectionReason: row.rejectionReason,
     promotions: parts.promotions,
-    owner: parts.owner,
-    contact: row.contact,
+    owner: row.seedDatasetId
+      ? { ...parts.owner, verified: false }
+      : parts.owner,
+    contact: row.seedDatasetId
+      ? { phone: null, whatsapp: null, showPhone: false, methods: [] }
+      : row.contact,
     stats: parts.stats,
     createdAt: row.createdAt.toISOString(),
     updatedAt: row.updatedAt.toISOString(),
@@ -73,6 +78,7 @@ export function toMapPoint(
 ): MapPoint {
   const cover = listing.media[0]
   return {
+    interactionMode: listing.interactionMode,
     id: listing.id,
     kind: "vehicle",
     // Listing titles are one string; the mock sends it in both slots.

@@ -1,0 +1,2 @@
+ALTER TABLE "dealerships" DROP CONSTRAINT "dealerships_phones";--> statement-breakpoint
+ALTER TABLE "dealerships" ADD CONSTRAINT "dealerships_phones" CHECK ("dealerships"."seed_dataset_id" is not null or cardinality("dealerships"."phones") > 0);

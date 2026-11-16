@@ -36,6 +36,7 @@ export async function reviewBusiness(
 ) {
   const found = await q.lockById(tx, change.id)
   if (!found) fail.notFound()
+  if (found.row.seedDatasetId) fail.forbidden()
   const { verified, status, reason } = change.patch
   const suspending = status === "suspended" && found.row.status !== "suspended"
   if (suspending && !reason) fail.validation({ reason: "validation.required" })

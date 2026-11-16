@@ -96,6 +96,7 @@ export async function dealershipLoader(
     locale,
     slug: d.slug,
     unavailable: d.unavailable,
+    preview: d.interactionMode === "preview",
     title: [name, city].filter(Boolean).join(", "),
     description: (d.description[locale] || d.description.ar)
       .replace(/\s+/g, " ")

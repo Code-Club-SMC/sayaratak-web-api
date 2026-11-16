@@ -7,6 +7,8 @@ import type { SessionUser } from "~/modules/auth/auth.types"
 import { getListingHead } from "~/modules/listings/listings.service"
 import * as plans from "~/modules/plans/plans.service"
 import * as promotions from "~/modules/promotions/promotions.service"
+import { isSyntheticUser } from "~/modules/auth/auth.seed.service"
+import { lockListingInteraction } from "~/modules/listings/listings.seed.service"
 
 export type ItemType = Payment["itemType"]
 const DAYS_PER_WEEK = 7
@@ -35,6 +37,7 @@ export async function getPayable(
   user: SessionUser,
   item: { type: ItemType; id: string }
 ) {
+  if (await isSyntheticUser(ex, user.id)) fail.forbidden()
   if (item.type === "campaign") return getCampaignItem(ex, user, item.id)
   if (item.type === "plan") return getPlanItem(ex, user, item.id)
   return getPromotionItem(ex, user, item.id)
@@ -70,6 +73,8 @@ async function getPlanItem(ex: Executor, user: SessionUser, id: string) {
 async function getPromotionItem(ex: Executor, user: SessionUser, id: string) {
   const promo = await promotions.getPromotionToPay(ex, id)
   if (!promo) fail.notFound()
+  if ((await lockListingInteraction(ex, promo.listingId)) === "preview")
+    fail.forbidden()
   const listing = await getListingHead(ex, promo.listingId)
   if (listing?.ownerUserId !== user.id) fail.forbidden()
   if (promo.status !== "pending_payment") fail.conflict("exists")

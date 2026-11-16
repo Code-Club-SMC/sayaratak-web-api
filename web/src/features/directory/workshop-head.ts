@@ -35,6 +35,7 @@ export function workshopHead(
         image?: string
         // The owner is banned: the page stays up with a notice, out of search engines.
         unavailable?: true
+        preview?: boolean
       }
     | undefined,
   s: WorkshopProfileSearch
@@ -44,6 +45,6 @@ export function workshopHead(
   return buildHead({
     ...data,
     path: s.tab === "services" ? base : `${base}?tab=${s.tab}`,
-    noindex: !!data.unavailable,
+    noindex: !!data.unavailable || !!data.preview,
   })
 }

@@ -62,6 +62,8 @@ export async function listingLoader(
     image: coverUrl ? mediaSrc(coverUrl, 1280) : undefined,
     // Anything other than a live, available listing stays out of search results (A4).
     noindex:
-      listing.moderation !== "approved" || listing.status !== "available",
+      listing.interactionMode === "preview" ||
+      listing.moderation !== "approved" ||
+      listing.status !== "available",
   }
 }

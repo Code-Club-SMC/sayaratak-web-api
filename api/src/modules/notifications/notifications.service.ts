@@ -49,7 +49,8 @@ type Message = {
  */
 export async function notify(ex: Executor, message: Message) {
   const [recipient] = await auth.listUsers(ex, [message.userId])
-  if (!recipient?.prefs[PREF_OF[message.type]]) return
+  if (!recipient?.prefs[PREF_OF[message.type]] || recipient.seedDatasetId)
+    return
   const id = newId(ID_PREFIX)
   const href = message.href && toNotificationHref(recipient.role, message.href)
   await q.insert(ex, {

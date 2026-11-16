@@ -42,9 +42,20 @@ export function TitleBlock({
           <bdi>{title}</bdi>
         </h1>
         <div className="-ms-2 flex shrink-0 items-center md:ms-0">
-          {!own && <FavoriteButton listingId={listing.id} variant="plain" />}
+          {!own && (
+            <FavoriteButton
+              listingId={listing.id}
+              variant="plain"
+              interactionMode={listing.interactionMode}
+            />
+          )}
           <ShareMenu listing={listing} title={title} />
-          {!own && <ReportDialog listingId={listing.id} />}
+          {!own && (
+            <ReportDialog
+              listingId={listing.id}
+              interactionMode={listing.interactionMode}
+            />
+          )}
         </div>
       </div>
       <div className="flex flex-wrap items-center gap-x-3 gap-y-2">

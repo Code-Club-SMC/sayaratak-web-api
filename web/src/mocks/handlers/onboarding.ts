@@ -8,6 +8,7 @@ import {
 } from "@sayaratak/shared/schemas/fields"
 import { onboardingInputSchema } from "@sayaratak/shared/schemas/inputs"
 import { interestSchema } from "@sayaratak/shared/schemas/user"
+import { interactionModeSchema } from "@sayaratak/shared/schemas/interaction"
 import { DAY, both, ratingFrom, slugify } from "@/mocks/seed/util"
 
 import { db, newId } from "../db"
@@ -39,6 +40,7 @@ route("POST", "/onboarding/complete", async (c) => {
   const phone = text("phone", user.phone ?? "+249900000000")
   const name = text("name", user.fullName)
   const base = {
+    interactionMode: interactionModeSchema.enum.live,
     ownerId: user.id,
     slug: `${slugify(name) || "business"}-${user.id.slice(-4)}`,
     name: both(name),

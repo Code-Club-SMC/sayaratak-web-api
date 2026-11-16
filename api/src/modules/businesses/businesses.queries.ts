@@ -140,6 +140,7 @@ export function listedWhere(
   hiddenOwnerIds: string[]
 ) {
   return and(
+    eq(table.seedHidden, false),
     eq(table.status, "active"),
     hiddenOwnerIds.length > 0
       ? notInArray(table.ownerUserId, hiddenOwnerIds)
@@ -166,6 +167,7 @@ export function listPinnedInBox(
       lat: table.lat,
       lng: table.lng,
       photoId: table.logoUploadId,
+      seedDatasetId: table.seedDatasetId,
     })
     .from(table)
     .where(
@@ -187,6 +189,7 @@ export function listListedMechanics(ex: Executor, hiddenOwnerIds: string[]) {
       name: mechanics.name,
       cityId: mechanics.cityId,
       photoId: mechanics.photoUploadId,
+      seedDatasetId: mechanics.seedDatasetId,
     })
     .from(mechanics)
     .where(listedWhere(mechanics, hiddenOwnerIds))

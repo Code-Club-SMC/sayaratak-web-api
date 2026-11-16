@@ -52,7 +52,6 @@ describe("Cache-Control (A12)", () => {
   // for advertisers), so a shared cache must never keep it: it stays no-store.
   test.each([
     "/taxonomy",
-    "/site",
     "/plans",
     "/promotion-prices",
     "/pages/about",

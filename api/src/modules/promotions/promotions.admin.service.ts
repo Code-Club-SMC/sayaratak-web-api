@@ -7,11 +7,9 @@ import { newId } from "~/shared/text/ids"
 import { clock } from "~/shared/time/clock"
 import { recordAudit } from "~/modules/audit/audit.service"
 import type { Actor } from "~/modules/audit/audit.types"
-import {
-  bumpListing,
-  getListingHead,
-} from "~/modules/listings/listings.service"
+import { bumpListing } from "~/modules/listings/listings.service"
 import { listCards } from "~/modules/listings/listings.stats.service"
+import { lockListingInteraction } from "~/modules/listings/listings.seed.service"
 import { getPromotionPaymentStatuses } from "~/modules/payments/payments.service"
 
 import * as admin from "./promotions.admin.queries"
@@ -73,7 +71,8 @@ export async function grantPromotion(
   actor: Actor,
   grant: { listingId: string; type: "featured" | "bump"; days: number }
 ) {
-  if (!(await getListingHead(tx, grant.listingId))) fail.notFound()
+  if ((await lockListingInteraction(tx, grant.listingId)) === "preview")
+    fail.forbidden()
   const now = clock.now()
   const days = grant.type === "bump" ? 0 : grant.days
   const row = await q.insert(tx, {

@@ -1,14 +1,13 @@
 import type { reportInputSchema } from "@sayaratak/shared/schemas/inputs"
 import type { z } from "zod"
 
-import { db } from "~/shared/db/client"
-import type { Executor } from "~/shared/db/tx"
+import { type Executor, transaction } from "~/shared/db/tx"
 import { fail } from "~/shared/http/errors"
 import { newId } from "~/shared/text/ids"
 import { clock } from "~/shared/time/clock"
 import type { SessionUser } from "~/modules/auth/auth.types"
 import { getRowsByIds } from "~/modules/listings/listings.read.service"
-import * as listings from "~/modules/listings/listings.stats.service"
+import { lockListingInteraction } from "~/modules/listings/listings.seed.service"
 
 import { toReport } from "./reports.mapper"
 import * as q from "./reports.queries"
@@ -29,18 +28,21 @@ export async function createReport(
   user: SessionUser,
   input: z.output<typeof reportInputSchema>
 ) {
-  if (!(await listings.hasListing(db, input.listingId))) fail.notFound()
   if (input.reason === "other" && !input.details)
     fail.validation({ details: "validation.details_required" })
-  const saved = await q.insert(db, {
-    id: newId(ID_PREFIX),
-    listingId: input.listingId,
-    reporterId: user.id,
-    reason: input.reason,
-    details: input.details,
-    createdAt: clock.now(),
+  return transaction(async (tx) => {
+    if ((await lockListingInteraction(tx, input.listingId)) === "preview")
+      fail.forbidden()
+    const saved = await q.insert(tx, {
+      id: newId(ID_PREFIX),
+      listingId: input.listingId,
+      reporterId: user.id,
+      reason: input.reason,
+      details: input.details,
+      createdAt: clock.now(),
+    })
+    return toReport(saved)
   })
-  return toReport(saved)
 }
 
 /** The newest reports, newest first, each named by its listing's title (its reason once the listing is gone). */

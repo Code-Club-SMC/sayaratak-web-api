@@ -14,6 +14,8 @@ import * as ads from "~/modules/ads/ads.service"
 import type { SessionUser } from "~/modules/auth/auth.types"
 import * as businesses from "~/modules/businesses/businesses.service"
 import * as listings from "~/modules/listings/listings.stats.service"
+import { isPreviewListing } from "~/modules/listings/listings.seed.service"
+import { isPreviewBusiness } from "~/modules/businesses/businesses.seed.service"
 
 import { groupByDay, NO_COUNTS, sumDays } from "./analytics.mapper"
 import * as q from "./analytics.queries"
@@ -98,6 +100,11 @@ export async function getListingAnalytics(
 
 async function countOnTarget(tx: Transaction, event: EventInput) {
   const { type, targetId } = event
+  if (
+    (await isPreviewListing(tx, targetId)) ||
+    (await isPreviewBusiness(tx, targetId))
+  )
+    return false
   if (isAdEvent(type))
     return ads.countAdEvent(tx, {
       targetId,

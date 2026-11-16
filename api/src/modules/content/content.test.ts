@@ -18,15 +18,23 @@ describe("GET /site", () => {
     const res = await req("/site")
     expect(res.status).toBe(200)
     const site = await expectSchema(res, siteSchema)
-    expect(site).toEqual({ contact: seeded.contact, locales: seeded.locales })
-    expect(res.headers.get("cache-control")).toBe("public, max-age=60")
+    expect(site).toEqual({
+      contact: seeded.contact,
+      locales: seeded.locales,
+      demoActive: false,
+    })
+    expect(res.headers.get("cache-control")).toBe("no-store")
   })
 
   test("never shows banking or moderation settings", async () => {
     const body = await (await req("/site")).json()
     const site = z.record(z.string(), z.unknown()).parse(body)
     const contact = z.record(z.string(), z.unknown()).parse(site.contact)
-    expect(Object.keys(site).sort()).toEqual(["contact", "locales"])
+    expect(Object.keys(site).sort()).toEqual([
+      "contact",
+      "demoActive",
+      "locales",
+    ])
     expect(Object.keys(contact).sort()).toEqual(CONTACT_KEYS)
   })
 

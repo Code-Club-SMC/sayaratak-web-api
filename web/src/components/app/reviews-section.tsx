@@ -13,6 +13,7 @@ import { EmptyState } from "./empty-state"
 import { RatingSummary } from "./rating-summary"
 import { ReviewForm } from "./review-form"
 import { ReviewItem } from "./review-item"
+import type { InteractionMode } from "@sayaratak/shared/schemas/interaction"
 
 // Summary, list, and the write or edit form. Owners cannot review themselves, so the button is hidden for them.
 export function ReviewsSection({
@@ -20,11 +21,13 @@ export function ReviewsSection({
   targetId,
   ownerId,
   rating,
+  interactionMode,
 }: {
   targetType: TargetType
   targetId: string
   ownerId: string
   rating: Rating
+  interactionMode?: InteractionMode
 }) {
   const { t } = useT()
   const requireAuth = useRequireAuth()
@@ -52,6 +55,12 @@ export function ReviewsSection({
           <Button
             type="button"
             variant="outline"
+            disabled={interactionMode === "preview"}
+            aria-label={
+              interactionMode === "preview"
+                ? t("listing.preview_unavailable")
+                : undefined
+            }
             onClick={() =>
               requireAuth(() => setWriting(true), "auth.reason_review")
             }

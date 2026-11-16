@@ -8,6 +8,7 @@ import {
   phoneSchema,
 } from "./fields"
 import { extraFields } from "./listing-fields"
+import { interactionModeSchema, withheldContactSchema } from "./interaction"
 
 export const vehicleTypeSchema = z.enum([
   "car",
@@ -63,73 +64,85 @@ export const mediaSchema = z.object({
 })
 export type Media = z.infer<typeof mediaSchema>
 
-export const listingSchema = z.object({
-  id: idSchema,
-  slug: z.string(),
-  kind: z.enum(["vehicle", "part"]),
-  intent: intentSchema,
-  vehicleType: vehicleTypeSchema.nullable(),
-  title: z.string(),
-  // Typed in one language, stored in both (the server translates on save).
-  description: bilingualSchema,
-  price: z.number().int(),
-  negotiable: z.boolean(),
-  rentPeriod: z.enum(["day", "week", "month"]).nullable(),
-  condition: z.enum(["new", "used"]),
-  makeId: z.string().nullable(),
-  modelId: z.string().nullable(),
-  makeOther: z.string().nullable(),
-  modelOther: z.string().nullable(),
-  year: z.number().nullable(),
-  mileageKm: z.number().nullable(),
-  fuel: fuelSchema.nullable(),
-  transmission: transmissionSchema.nullable(),
-  color: z.string().nullable(),
-  engineCc: z.number().nullable(),
-  payloadTons: z.number().nullable(),
-  partNumber: z.string().nullable(),
-  ...extraFields,
-  partCategoryId: z.string().nullable(),
-  compatibleTypes: z.array(vehicleTypeSchema),
-  media: z.array(mediaSchema),
-  cityId: z.string(),
-  districtId: z.string().nullable(),
-  location: geoSchema.nullable(),
-  status: listingStatusSchema,
-  moderation: moderationSchema,
-  rejectionReason: z.string().nullable(),
-  promotions: z.array(
-    z.object({
-      type: promotionTypeSchema,
-      startsAt: z.string(),
-      endsAt: z.string(),
-    })
-  ),
-  owner: z.object({
+export const listingSchema = z
+  .object({
+    interactionMode: interactionModeSchema.default("live"),
     id: idSchema,
-    type: z.enum(["user", "dealership"]),
-    name: bilingualSchema,
-    avatarUrl: z.string().nullable(),
-    verified: z.boolean(),
-    memberSince: z.string(),
-    profileSlug: z.string().nullable(),
-  }),
-  contact: z.object({
-    phone: phoneSchema,
-    whatsapp: phoneSchema.nullable(),
-    showPhone: z.boolean(),
-    methods: z.array(z.enum(["call", "whatsapp", "chat"])).min(1),
-  }),
-  stats: z.object({
-    views: z.number(),
-    favorites: z.number(),
-    phoneClicks: z.number(),
-    whatsappClicks: z.number(),
-  }),
-  createdAt: z.string(),
-  updatedAt: z.string(),
-  expiresAt: z.string(),
-})
+    slug: z.string(),
+    kind: z.enum(["vehicle", "part"]),
+    intent: intentSchema,
+    vehicleType: vehicleTypeSchema.nullable(),
+    title: z.string(),
+    // Typed in one language, stored in both (the server translates on save).
+    description: bilingualSchema,
+    price: z.number().int(),
+    negotiable: z.boolean(),
+    rentPeriod: z.enum(["day", "week", "month"]).nullable(),
+    condition: z.enum(["new", "used"]),
+    makeId: z.string().nullable(),
+    modelId: z.string().nullable(),
+    makeOther: z.string().nullable(),
+    modelOther: z.string().nullable(),
+    year: z.number().nullable(),
+    mileageKm: z.number().nullable(),
+    fuel: fuelSchema.nullable(),
+    transmission: transmissionSchema.nullable(),
+    color: z.string().nullable(),
+    engineCc: z.number().nullable(),
+    payloadTons: z.number().nullable(),
+    partNumber: z.string().nullable(),
+    ...extraFields,
+    partCategoryId: z.string().nullable(),
+    compatibleTypes: z.array(vehicleTypeSchema),
+    media: z.array(mediaSchema),
+    cityId: z.string(),
+    districtId: z.string().nullable(),
+    location: geoSchema.nullable(),
+    status: listingStatusSchema,
+    moderation: moderationSchema,
+    rejectionReason: z.string().nullable(),
+    promotions: z.array(
+      z.object({
+        type: promotionTypeSchema,
+        startsAt: z.string(),
+        endsAt: z.string(),
+      })
+    ),
+    owner: z.object({
+      id: idSchema,
+      type: z.enum(["user", "dealership"]),
+      name: bilingualSchema,
+      avatarUrl: z.string().nullable(),
+      verified: z.boolean(),
+      memberSince: z.string(),
+      profileSlug: z.string().nullable(),
+    }),
+    contact: z.union([
+      withheldContactSchema,
+      z.object({
+        phone: phoneSchema,
+        whatsapp: phoneSchema.nullable(),
+        showPhone: z.boolean(),
+        methods: z.array(z.enum(["call", "whatsapp", "chat"])).min(1),
+      }),
+    ]),
+    stats: z.object({
+      views: z.number(),
+      favorites: z.number(),
+      phoneClicks: z.number(),
+      whatsappClicks: z.number(),
+    }),
+    createdAt: z.string(),
+    updatedAt: z.string(),
+    expiresAt: z.string(),
+  })
+  .refine(
+    (listing) =>
+      listing.interactionMode === "preview"
+        ? withheldContactSchema.safeParse(listing.contact).success
+        : listing.contact.phone !== null,
+    { path: ["contact"], message: "validation.contact_required" }
+  )
 export type Listing = z.infer<typeof listingSchema>
 
 const facetSchema = z.array(
@@ -147,7 +160,7 @@ export const listingPageSchema = pageOf(listingSchema).extend({
 export type ListingPage = z.infer<typeof listingPageSchema>
 
 // A saved listing. `unavailable` is true when it cannot be opened any more (sold, rented, removed, or its seller is blocked); the card then offers only Remove.
-export const favoriteListingSchema = listingSchema.extend({
+export const favoriteListingSchema = listingSchema.safeExtend({
   savedAt: z.string(),
   unavailable: z.boolean(),
 })

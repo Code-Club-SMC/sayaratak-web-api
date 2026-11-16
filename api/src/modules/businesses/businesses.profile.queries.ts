@@ -1,4 +1,4 @@
-import { asc, inArray } from "drizzle-orm"
+import { and, asc, eq, inArray } from "drizzle-orm"
 
 import type { Executor } from "~/shared/db/tx"
 
@@ -18,17 +18,26 @@ const none = () => Promise.resolve([])
 
 export function listDealershipsByIds(ex: Executor, ids: string[]) {
   if (ids.length === 0) return none()
-  return ex.select().from(dealerships).where(inArray(dealerships.id, ids))
+  return ex
+    .select()
+    .from(dealerships)
+    .where(and(inArray(dealerships.id, ids), eq(dealerships.seedHidden, false)))
 }
 
 export function listWorkshopsByIds(ex: Executor, ids: string[]) {
   if (ids.length === 0) return none()
-  return ex.select().from(workshops).where(inArray(workshops.id, ids))
+  return ex
+    .select()
+    .from(workshops)
+    .where(and(inArray(workshops.id, ids), eq(workshops.seedHidden, false)))
 }
 
 export function listMechanicsByIds(ex: Executor, ids: string[]) {
   if (ids.length === 0) return none()
-  return ex.select().from(mechanics).where(inArray(mechanics.id, ids))
+  return ex
+    .select()
+    .from(mechanics)
+    .where(and(inArray(mechanics.id, ids), eq(mechanics.seedHidden, false)))
 }
 
 /** Photos of the workshops, each workshop's in the order the owner arranged. */

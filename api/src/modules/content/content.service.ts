@@ -8,6 +8,8 @@ import type { z } from "zod"
 
 import { newId } from "~/shared/text/ids"
 import { clock } from "~/shared/time/clock"
+import * as listings from "~/modules/listings/listings.visibility.service"
+import * as businesses from "~/modules/businesses/businesses.seed.service"
 
 import { toSite, toSitePage } from "./content.mapper"
 import * as q from "./content.queries"
@@ -17,7 +19,10 @@ export async function getSite() {
   const row = await q.getSettings(db)
   // db:bootstrap writes the one settings row; a database without it has no site to show.
   if (!row) fail.notFound()
-  return toSite(row)
+  const demoActive =
+    (await listings.hasPublicSeedContent(db)) ||
+    (await businesses.hasPublicSeedContent(db))
+  return toSite(row, demoActive)
 }
 
 /** One of the four fixed pages (about, contact, privacy, terms); any other slug is 404. */

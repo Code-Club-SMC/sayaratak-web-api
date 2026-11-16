@@ -28,6 +28,7 @@ export function dealershipHead(
         image?: string
         // The owner is banned: the page stays up with a notice, out of search engines.
         unavailable?: true
+        preview?: boolean
       }
     | undefined,
   s: DealershipProfileSearch
@@ -54,6 +55,6 @@ export function dealershipHead(
   return buildHead({
     ...data,
     path,
-    noindex: filtered || !!data.unavailable,
+    noindex: filtered || !!data.unavailable || !!data.preview,
   })
 }

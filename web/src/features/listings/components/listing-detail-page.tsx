@@ -167,8 +167,9 @@ export function ListingDetailPage({ slug }: { slug: string }) {
       <div className="mt-4 flex flex-col gap-8 empty:hidden md:mt-8 md:gap-12">
         <ListingRails listing={listing} />
       </div>
-      {!own && canContact && (
+      {!own && (canContact || listing.interactionMode === "preview") && (
         <MobileContactBar
+          interactionMode={listing.interactionMode}
           target={{ type: "listing", id: listing.id, title }}
           phone={contact.phone}
           whatsapp={contact.whatsapp}

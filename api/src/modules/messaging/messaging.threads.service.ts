@@ -1,7 +1,7 @@
 import type { Thread } from "@sayaratak/shared/schemas/messaging"
 
 import { db } from "~/shared/db/client"
-import { transaction } from "~/shared/db/tx"
+import { type Transaction, transaction } from "~/shared/db/tx"
 import { fail } from "~/shared/http/errors"
 import { newId } from "~/shared/text/ids"
 import { clock } from "~/shared/time/clock"
@@ -9,6 +9,8 @@ import * as auth from "~/modules/auth/auth.service"
 import type { SessionUser } from "~/modules/auth/auth.types"
 import * as businesses from "~/modules/businesses/businesses.subject.service"
 import * as listings from "~/modules/listings/listings.subject.service"
+import { lockListingInteraction } from "~/modules/listings/listings.seed.service"
+import { lockBusinessInteraction } from "~/modules/businesses/businesses.seed.service"
 
 import { toThread } from "./messaging.mapper"
 import * as messages from "./messaging.messages.queries"
@@ -39,6 +41,7 @@ export async function listThreads(user: SessionUser) {
  */
 export async function startThread(user: SessionUser, start: Start) {
   const id = await transaction(async (tx) => {
+    await checkSubjectInteraction(tx, start)
     const subject = await getSubject(start)
     if (!subject) fail.notFound()
     if (subject.ownerUserId === user.id)
@@ -75,6 +78,14 @@ export async function startThread(user: SessionUser, start: Start) {
   const [thread] = await toThreads(user, [row])
   if (!thread) throw new Error("the thread was just saved")
   return thread
+}
+
+async function checkSubjectInteraction(tx: Transaction, start: Start) {
+  const mode =
+    start.subjectType === "listing"
+      ? await lockListingInteraction(tx, start.subjectId)
+      : await lockBusinessInteraction(tx, start.subjectId)
+  if (mode === "preview") fail.forbidden()
 }
 
 // The listing or business a thread is about, with the owner to write to.

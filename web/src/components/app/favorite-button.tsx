@@ -7,16 +7,19 @@ import { useFavoriteActions } from "@/features/listings/favorite-actions"
 import { favoriteQueries } from "@/features/listings/queries"
 import { useT } from "@/lib/i18n/use-t"
 import { cn } from "@/lib/utils"
+import type { InteractionMode } from "@sayaratak/shared/schemas/interaction"
 
 // `overlay` is the white circle that sits on a card photo, `plain` is the bare icon for the detail page.
 export function FavoriteButton({
   listingId,
   variant = "overlay",
   className,
+  interactionMode,
 }: {
   listingId: string
   variant?: "overlay" | "plain"
   className?: string
+  interactionMode?: InteractionMode
 }) {
   const { t } = useT()
   const requireAuth = useRequireAuth()
@@ -35,7 +38,12 @@ export function FavoriteButton({
     <button
       type="button"
       aria-pressed={active}
-      aria-label={t("listing.favorite_add")}
+      aria-label={t(
+        interactionMode === "preview" && !active
+          ? "listing.preview_unavailable"
+          : "listing.favorite_add"
+      )}
+      disabled={interactionMode === "preview" && !active}
       onClick={toggle}
       className={cn(
         "grid size-11 press place-items-center rounded-full md:size-10",

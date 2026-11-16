@@ -28,7 +28,7 @@ export async function getListingBySlug(
   slug: string
 ) {
   const row = await q.getListing(db, parseListingId(slug))
-  if (!row) fail.notFound()
+  if (!row || row.seedHidden) fail.notFound()
   const mine =
     viewer && (viewer.id === row.ownerUserId || viewer.role === "admin")
   if (!mine && !(await isPublic(db, row))) fail.notFound()
@@ -38,7 +38,7 @@ export async function getListingBySlug(
 /** Up to 8 public, available listings of the same kind, intent and type, nearest in price first. */
 export async function listSimilar(viewer: SessionUser | null, id: string) {
   const row = await q.getListing(db, id)
-  if (!row) fail.notFound()
+  if (!row || row.seedHidden) fail.notFound()
   const rows = await q.listSimilar(db, {
     row,
     hiddenOwnerIds: await listHiddenOwnerIds(db),
@@ -79,6 +79,7 @@ export async function listHiddenOwnerIds(ex: Executor) {
 }
 
 async function isPublic(ex: Executor, row: ListingRow) {
+  if (row.seedHidden) return false
   if (row.moderation !== "approved") return false
   if (!row.ownerUserId) return true
   return !(await listHiddenOwnerIds(ex)).includes(row.ownerUserId)

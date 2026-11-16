@@ -27,8 +27,11 @@ const pinOf = (row: { lat: number | null; lng: number | null }) =>
 
 // A banned owner's page shows no contact (handoff "Visibility"): the numbers never leave the server.
 const WITHHELD_PHONE = ""
-const contactOf = (row: { whatsapp: string | null }, shown: Shown) => ({
-  whatsapp: shown.unavailable ? null : row.whatsapp,
+const contactOf = (
+  row: { whatsapp: string | null; seedDatasetId: string | null },
+  shown: Shown
+) => ({
+  whatsapp: shown.unavailable || row.seedDatasetId ? null : row.whatsapp,
 })
 
 // The optional wire keys: left out, not null, when there is nothing to show.
@@ -43,9 +46,10 @@ export function toDealership(
   shown: Shown & { logoUrl: string; coverUrl: string; inventoryCount: number }
 ): Dealership {
   return {
+    interactionMode: row.seedDatasetId ? "preview" : "live",
     id: row.id,
     slug: row.slug,
-    ownerId: row.ownerUserId,
+    ownerId: row.seedDatasetId ? row.id : row.ownerUserId,
     name: row.name,
     logoUrl: shown.logoUrl,
     coverUrl: shown.coverUrl,
@@ -54,7 +58,7 @@ export function toDealership(
     districtId: row.districtId ?? "",
     address: row.address,
     location: pinOf(row),
-    phones: shown.unavailable ? [] : row.phones,
+    phones: shown.unavailable || row.seedDatasetId ? [] : row.phones,
     ...contactOf(row, shown),
     hours: row.hours,
     rating: shown.rating,
@@ -77,9 +81,10 @@ export function toWorkshop(
   }
 ): Workshop {
   return {
+    interactionMode: row.seedDatasetId ? "preview" : "live",
     id: row.id,
     slug: row.slug,
-    ownerId: row.ownerUserId,
+    ownerId: row.seedDatasetId ? row.id : row.ownerUserId,
     name: row.name,
     logoUrl: shown.logoUrl,
     coverUrl: shown.coverUrl,
@@ -88,7 +93,7 @@ export function toWorkshop(
     districtId: row.districtId ?? "",
     address: row.address,
     location: pinOf(row),
-    phone: shown.unavailable ? WITHHELD_PHONE : row.phone,
+    phone: shown.unavailable || row.seedDatasetId ? WITHHELD_PHONE : row.phone,
     ...contactOf(row, shown),
     hours: row.hours,
     images: shown.images,
@@ -123,9 +128,10 @@ export function toMechanic(
   }
 ): Mechanic {
   return {
+    interactionMode: row.seedDatasetId ? "preview" : "live",
     id: row.id,
     slug: row.slug,
-    ownerId: row.ownerUserId,
+    ownerId: row.seedDatasetId ? row.id : row.ownerUserId,
     name: row.name,
     photoUrl: shown.photoUrl,
     bio: row.bio,
@@ -133,7 +139,7 @@ export function toMechanic(
     servedCityIds: shown.servedCityIds,
     yearsOfExperience: row.yearsOfExperience,
     specializationIds: shown.specializationIds,
-    phone: shown.unavailable ? WITHHELD_PHONE : row.phone,
+    phone: shown.unavailable || row.seedDatasetId ? WITHHELD_PHONE : row.phone,
     ...contactOf(row, shown),
     portfolio: shown.portfolio,
     available: row.available,

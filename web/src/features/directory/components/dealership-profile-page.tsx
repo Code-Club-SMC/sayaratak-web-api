@@ -45,6 +45,7 @@ export function DealershipProfilePage({
       ? null
       : {
           target: { type: "dealership", id: d.id, title: name },
+          interactionMode: d.interactionMode,
           phone: phone ?? "",
           whatsapp: d.whatsapp,
           methods: phone ? ["call", "whatsapp", "chat"] : ["whatsapp", "chat"],
@@ -108,12 +109,15 @@ export function DealershipProfilePage({
               targetId={d.id}
               ownerId={d.ownerId}
               rating={d.rating}
+              interactionMode={d.interactionMode}
             />
           </div>
         </TabsContent>
       </Tabs>
       {contact && <MobileContactBar {...contact} />}
-      {!d.unavailable && <DealershipJsonLd dealership={d} />}
+      {!d.unavailable && d.interactionMode !== "preview" && (
+        <DealershipJsonLd dealership={d} />
+      )}
     </div>
   )
 }

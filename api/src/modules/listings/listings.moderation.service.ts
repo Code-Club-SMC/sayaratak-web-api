@@ -117,6 +117,7 @@ async function move(
   change: { row: ListingRow; action: ModerationAction; reason?: string }
 ) {
   const { row } = change
+  if (row.seedDatasetId) fail.forbidden()
   const saved = await q.updateListing(tx, {
     id: row.id,
     set: setOf(change.action, change.reason),

@@ -1,4 +1,4 @@
-import { asc } from "drizzle-orm"
+import { and, asc, isNull } from "drizzle-orm"
 
 import type { Executor } from "~/shared/db/tx"
 
@@ -16,7 +16,9 @@ export function listListedSlugs(
   return ex
     .select({ slug: table.slug })
     .from(table)
-    .where(listedWhere(table, find.hiddenOwnerIds))
+    .where(
+      and(listedWhere(table, find.hiddenOwnerIds), isNull(table.seedDatasetId))
+    )
     .orderBy(...byIdNumber(table), asc(table.id))
     .then((rows) => rows.map((row) => row.slug))
 }

@@ -114,6 +114,7 @@ export async function unbanUser(
 async function ownedTarget(id: string) {
   const row = await q.getUser(db, id)
   if (!row) fail.notFound()
+  if (row.seedDatasetId) fail.forbidden()
   // Handoff "Moderation": admins cannot be banned.
   if (row.role === "admin") fail.forbidden()
   return row

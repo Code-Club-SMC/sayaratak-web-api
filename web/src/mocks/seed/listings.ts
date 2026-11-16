@@ -272,6 +272,7 @@ export function seedListings(ctx: Ctx) {
     const makeId = model?.makeId ?? partMake?.makeId ?? null
     const makeName = taxonomy.makes.find((m) => m.id === makeId)
     const row: ListingRow = {
+      interactionMode: "live",
       id,
       slug: makeListingSlug(title, cityRow?.id ?? "", id),
       kind,

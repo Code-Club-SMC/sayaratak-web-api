@@ -9,6 +9,7 @@ import type { DayRange } from "~/shared/time/khartoum"
 import type { SessionUser } from "~/modules/auth/auth.types"
 import * as businesses from "~/modules/businesses/businesses.update.service"
 import { notify } from "~/modules/notifications/notifications.service"
+import { lockBusinessInteraction } from "~/modules/businesses/businesses.seed.service"
 
 import { deleteReviewAsAdmin } from "./reviews.admin.service"
 import { toReview } from "./reviews.mapper"
@@ -116,6 +117,8 @@ export async function createReview(
   input: { targetId: string; rating: number; body?: string }
 ) {
   return transaction(async (tx) => {
+    if ((await lockBusinessInteraction(tx, input.targetId)) === "preview")
+      fail.forbidden()
     const target = await businesses.getBusinessOwnerOf(tx, input.targetId)
     if (!target) fail.notFound()
     if (target.ownerUserId === user.id) fail.forbidden()

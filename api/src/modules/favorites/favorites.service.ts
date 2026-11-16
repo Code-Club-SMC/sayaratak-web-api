@@ -11,6 +11,7 @@ import type { SessionUser } from "~/modules/auth/auth.types"
 import * as listings from "~/modules/listings/listings.read.service"
 import * as stats from "~/modules/listings/listings.stats.service"
 import { toListings } from "~/modules/listings/listings.view.service"
+import { lockListingInteraction } from "~/modules/listings/listings.seed.service"
 
 import * as q from "./favorites.queries"
 
@@ -98,7 +99,8 @@ const ORDER: Record<Sort, (a: number, b: number) => number> = {
  */
 export async function addFavorite(user: SessionUser, listingId: string) {
   await transaction(async (tx) => {
-    if (!(await stats.hasListing(tx, listingId))) fail.notFound()
+    if ((await lockListingInteraction(tx, listingId)) === "preview")
+      fail.forbidden()
     const added = await q.insert(tx, {
       userId: user.id,
       listingId,

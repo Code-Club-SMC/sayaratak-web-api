@@ -177,6 +177,7 @@ route("POST", "/listings", async (c) => {
   const phone = input.contact?.phone ?? user.phone ?? dealer?.phones[0] ?? ""
   const now = nowIso()
   const row: ListingRow = {
+    interactionMode: "live",
     id,
     slug: makeListingSlug(input.title, city.id, id),
     kind: input.kind ?? "vehicle",

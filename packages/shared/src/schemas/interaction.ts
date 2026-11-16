@@ -8,5 +8,5 @@ export const withheldContactSchema = z.strictObject({
   phone: z.null(),
   whatsapp: z.null(),
   showPhone: z.literal(false),
-  methods: z.array(z.never()).length(0),
+  methods: z.array(z.enum(["call", "whatsapp", "chat"])).length(0),
 })

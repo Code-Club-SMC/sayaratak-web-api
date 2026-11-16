@@ -1,4 +1,4 @@
-import { and, asc, eq, inArray } from "drizzle-orm"
+import { and, asc, eq, inArray, isNull } from "drizzle-orm"
 
 import type { Executor } from "~/shared/db/tx"
 
@@ -28,6 +28,8 @@ export function listApprovedLinks(
     .from(listings)
     .where(
       and(
+        eq(listings.seedHidden, false),
+        isNull(listings.seedDatasetId),
         eq(listings.ownerUserId, find.ownerUserId),
         eq(listings.moderation, "approved")
       )

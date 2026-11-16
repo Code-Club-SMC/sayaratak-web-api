@@ -32,8 +32,7 @@ export const profileStatus = pgEnum("profile_status", profileStatusSchema.enum)
 const image = () =>
   text().references((): AnyPgColumn => uploads.id, { onDelete: "set null" })
 
-// Columns every business profile has. One account has one business, so the owner is unique.
-// Rating, inventory count and `unavailable` are computed on read, never stored.
+// Common business profile columns (one per owner). Rating/inventory computed on read.
 const profile = () => ({
   id: text().primaryKey(),
   ownerUserId: text()
@@ -54,7 +53,7 @@ const profile = () => ({
   seedHidden: boolean().default(false).notNull(),
 })
 
-// Dealerships and workshops have a street address and an optional map pin (indexed for the map bbox); the district can be left empty.
+// Dealership and workshop location and media.
 const place = () => ({
   districtId: text().references(() => districts.id),
   address: text().notNull(),
@@ -75,7 +74,10 @@ export const dealerships = pgTable(
     check("dealerships_name", bilingual(table.name)),
     check("dealerships_description", bilingual(table.description)),
     check("dealerships_geo", geo(table.lat, table.lng)),
-    check("dealerships_phones", sql`cardinality(${table.phones}) > 0`),
+    check(
+      "dealerships_phones",
+      sql`${table.seedDatasetId} is not null or cardinality(${table.phones}) > 0`
+    ),
   ]
 )
 
@@ -106,7 +108,6 @@ export const workshopImages = pgTable(
   (table) => [primaryKey({ columns: [table.workshopId, table.position] })]
 )
 
-// `templateId` is set when the service came from a template; the directory `service` filter matches on it.
 export const workshopServices = pgTable(
   "workshop_services",
   {
@@ -116,7 +117,6 @@ export const workshopServices = pgTable(
       .references(() => workshops.id, { onDelete: "cascade" }),
     name: text().notNull(),
     description: text().notNull(),
-    // Money is bigint (A1 rule 18); the form allows up to 9,999,999,999.
     priceFrom: bigint({ mode: "number" }),
     templateId: text().references(() => serviceTemplates.id, {
       onDelete: "set null",
@@ -147,7 +147,7 @@ export const mechanics = pgTable(
     check("mechanics_years", sql`${table.yearsOfExperience} >= 0`),
   ]
 )
-// Served cities and skills; `position` keeps the order the mechanic picked them in.
+// Served cities and skills in selection order.
 export const mechanicCities = pgTable(
   "mechanic_cities",
   {

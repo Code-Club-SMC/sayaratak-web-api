@@ -72,6 +72,7 @@ export async function workshopLoader(
     locale,
     slug: w.slug,
     unavailable: w.unavailable,
+    preview: w.interactionMode === "preview",
     title: [name, city].filter(Boolean).join(", "),
     description: (w.description[locale] || w.description.ar)
       .replace(/\s+/g, " ")

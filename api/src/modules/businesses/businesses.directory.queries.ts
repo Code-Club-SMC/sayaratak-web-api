@@ -141,7 +141,13 @@ export function getActiveBySlug(
   return ex
     .select({ id: table.id, ownerUserId: table.ownerUserId })
     .from(table)
-    .where(and(eq(table.slug, find.slug), eq(table.status, "active")))
+    .where(
+      and(
+        eq(table.slug, find.slug),
+        eq(table.status, "active"),
+        eq(table.seedHidden, false)
+      )
+    )
     .then(([row]) => row)
 }
 

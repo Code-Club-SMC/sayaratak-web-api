@@ -1,6 +1,9 @@
+import { isAPIError } from "better-auth/api"
+
 import { db } from "~/shared/db/client"
 import type { Executor } from "~/shared/db/tx"
 import { drain } from "~/shared/jobs/batches"
+import { fail } from "~/shared/http/errors"
 
 import { clock } from "~/shared/time/clock"
 import * as uploads from "~/modules/uploads/uploads.service"
@@ -20,17 +23,23 @@ import type { NewUserRow, SessionUser } from "./auth.types"
  * refreshed cookie when the session was extended (once a day, A6).
  */
 export async function loadViewer(requestHeaders: Headers) {
-  const { headers, response } = await auth.api.getSession({
-    headers: requestHeaders,
-    returnHeaders: true,
-  })
-  const id = response?.user.id
-  const sessionId = response?.session.id
-  const row = id ? await q.getUser(db, id) : undefined
-  if (!row) return { viewer: null, headers, sessionId }
-  if (!isBanOver(row)) return { viewer: row, headers, sessionId }
-  const lifted = await q.updateBanLifted(db, row.id)
-  return { viewer: lifted ?? row, headers, sessionId }
+  try {
+    const { headers, response } = await auth.api.getSession({
+      headers: requestHeaders,
+      returnHeaders: true,
+    })
+    const id = response?.user.id
+    const sessionId = response?.session.id
+    const row = id ? await q.getUser(db, id) : undefined
+    if (!row) return { viewer: null, headers, sessionId }
+    if (row.seedDatasetId) fail.forbidden()
+    if (!isBanOver(row)) return { viewer: row, headers, sessionId }
+    const lifted = await q.updateBanLifted(db, row.id)
+    return { viewer: lifted ?? row, headers, sessionId }
+  } catch (error) {
+    if (isAPIError(error) && error.statusCode === 403) fail.forbidden()
+    throw error
+  }
 }
 
 /** `GET /me`: the signed-in account in `userSchema`, or null when signed out. */
@@ -44,8 +53,10 @@ export async function getMe(viewer: SessionUser | null) {
  * that count something the account owns (plan limit) run one after the other.
  * Answers the row as it is after the wait, which a session may not know yet.
  */
-export function lockUser(ex: Executor, id: string) {
-  return accounts.lockUser(ex, id)
+export async function lockUser(ex: Executor, id: string) {
+  const row = await accounts.lockUser(ex, id)
+  if (row?.seedDatasetId) fail.forbidden()
+  return row
 }
 
 /**

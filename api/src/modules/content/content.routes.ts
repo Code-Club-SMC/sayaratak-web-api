@@ -26,8 +26,8 @@ contentRoutes.get(
     responses: { 200: siteSchema },
     errors: ["not_found"],
   }),
-  publicCache,
   async (c) => {
+    c.header("Cache-Control", "no-store")
     const site = await getSite()
     return c.json(site)
   }

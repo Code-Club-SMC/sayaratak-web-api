@@ -60,6 +60,7 @@ export async function lockById(ex: Executor, id: string) {
         verified: table.verified,
         status: table.status,
         suspendedReason: table.suspendedReason,
+        seedDatasetId: table.seedDatasetId,
       })
       .from(table)
       .where(eq(table.id, id))

@@ -46,19 +46,11 @@ export async function createCampaign(
   user: SessionUser,
   input: z.output<typeof campaignInputSchema>
 ) {
-  const targets = await listAdTargets(db, user)
-  if (!targets.some((target) => target.href === input.href))
-    fail.validation({ href: "validation.ad_target" })
-  const pages = [...new Set(input.pages)]
-  const onSale = new Set(
-    (await q.listPages(db)).filter((p) => p.enabled).map((p) => p.id)
-  )
-  if (!pages.every((id) => onSale.has(id)))
-    fail.validation({ pages: "validation.ad_pages" })
-  const range = rangeOf(input.startDate, input.weeks)
-  if (!range || range.endsAt <= clock.now())
-    fail.validation({ startDate: "validation.date" })
+  const { pages, range } = await checkCampaignInput(user, input)
   return transaction(async (tx) => {
+    const currentTargets = await listAdTargets(tx, user)
+    if (!currentTargets.some((target) => target.href === input.href))
+      fail.forbidden()
     const held = await lockRoom(tx, { ...range, pages })
     const imageId = await uploads.getOwnImageId(tx, {
       ownerUserId: user.id,
@@ -91,4 +83,23 @@ export async function createCampaign(
       imageUrl: input.creative.imageUrl,
     })
   })
+}
+
+async function checkCampaignInput(
+  user: SessionUser,
+  input: z.output<typeof campaignInputSchema>
+) {
+  const targets = await listAdTargets(db, user)
+  if (!targets.some((target) => target.href === input.href))
+    fail.validation({ href: "validation.ad_target" })
+  const pages = [...new Set(input.pages)]
+  const onSale = new Set(
+    (await q.listPages(db)).filter((p) => p.enabled).map((p) => p.id)
+  )
+  if (!pages.every((id) => onSale.has(id)))
+    fail.validation({ pages: "validation.ad_pages" })
+  const range = rangeOf(input.startDate, input.weeks)
+  if (!range || range.endsAt <= clock.now())
+    fail.validation({ startDate: "validation.date" })
+  return { pages, range }
 }

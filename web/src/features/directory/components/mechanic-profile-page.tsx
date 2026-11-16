@@ -41,6 +41,7 @@ export function MechanicProfilePage({
       ? null
       : {
           target: { type: "mechanic", id: m.id, title: name },
+          interactionMode: m.interactionMode,
           phone: m.phone,
           whatsapp: m.whatsapp,
         }
@@ -114,12 +115,15 @@ export function MechanicProfilePage({
               targetId={m.id}
               ownerId={m.ownerId}
               rating={m.rating}
+              interactionMode={m.interactionMode}
             />
           </div>
         </TabsContent>
       </Tabs>
       {contact && <MobileContactBar {...contact} />}
-      {!m.unavailable && <MechanicJsonLd mechanic={m} />}
+      {!m.unavailable && m.interactionMode !== "preview" && (
+        <MechanicJsonLd mechanic={m} />
+      )}
     </div>
   )
 }

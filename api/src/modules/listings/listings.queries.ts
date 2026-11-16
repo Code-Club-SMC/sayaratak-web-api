@@ -179,6 +179,7 @@ export function listSimilar(
       .where(
         and(
           ne(listings.id, row.id),
+          eq(listings.seedHidden, false),
           eq(listings.moderation, "approved"),
           eq(listings.status, "available"),
           eq(listings.kind, row.kind),

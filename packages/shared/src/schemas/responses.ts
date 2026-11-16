@@ -8,6 +8,7 @@ import {
 } from "./billing"
 import { bilingualSchema, geoSchema, idSchema, pageOf } from "./fields"
 import { localeSchema } from "./locale"
+import { interactionModeSchema } from "./interaction"
 
 // Response shapes that are not an entity (A7, "Other response shapes").
 const range = z.enum(["7d", "30d", "90d"])
@@ -69,6 +70,7 @@ export const adminStatsSchema = z.object({
 export type AdminStats = z.infer<typeof adminStatsSchema>
 
 export const mapPointSchema = z.object({
+  interactionMode: interactionModeSchema.default("live"),
   id: idSchema,
   kind: z.enum(["vehicle", "dealership", "workshop", "mechanic"]),
   title: bilingualSchema,
@@ -97,6 +99,7 @@ export const checkoutSchema = z.object({
 export type Checkout = z.infer<typeof checkoutSchema>
 
 export const siteSchema = z.object({
+  demoActive: z.boolean().default(false),
   contact: z.object({
     phone: z.string(),
     whatsapp: z.string(),

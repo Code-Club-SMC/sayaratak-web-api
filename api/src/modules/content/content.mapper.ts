@@ -3,8 +3,9 @@ import type { Site } from "@sayaratak/shared/schemas/responses"
 
 import type { SettingsRow, SitePageRow } from "./content.tables"
 
-export function toSite(row: SettingsRow): Site {
+export function toSite(row: SettingsRow, demoActive: boolean): Site {
   return {
+    demoActive,
     contact: row.contact,
     locales: row.locales,
   }

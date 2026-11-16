@@ -7,6 +7,7 @@ import type { SessionUser } from "~/modules/auth/auth.types"
 import * as businesses from "~/modules/businesses/businesses.service"
 import * as promotions from "~/modules/promotions/promotions.service"
 import * as uploads from "~/modules/uploads/uploads.media.service"
+import { resolvePublicSeedSeller } from "~/modules/businesses/businesses.seed.service"
 
 import {
   type FacetKey,
@@ -115,6 +116,7 @@ export async function scopeOf(
       params.hasVideo ? uploads.listVideoIds(ex) : NO_IDS,
     ])
   return {
+    sellerOwnerId: await resolvePublicSeedSeller(ex, params.seller),
     hiddenOwnerIds,
     featuredIds,
     verified: { userIds, dealershipOwnerIds },

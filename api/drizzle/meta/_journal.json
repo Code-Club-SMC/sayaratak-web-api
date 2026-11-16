@@ -176,6 +176,13 @@
       "when": 1794584132621,
       "tag": "0024_admin_seed_state",
       "breakpoints": true
+    },
+    {
+      "idx": 25,
+      "version": "7",
+      "when": 1794839521860,
+      "tag": "0025_seed_dealership_phones",
+      "breakpoints": true
     }
   ]
 }

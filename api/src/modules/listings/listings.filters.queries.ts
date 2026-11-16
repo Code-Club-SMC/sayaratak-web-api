@@ -19,6 +19,7 @@ import { listingMedia, listings } from "./listings.tables"
 
 /** What the search needs from other modules, already read as id lists. */
 export type SearchScope = {
+  sellerOwnerId?: string
   hiddenOwnerIds: string[]
   featuredIds: string[]
   /** People with a verified phone, and owners of a verified dealership. */
@@ -50,6 +51,7 @@ export function searchWhere(
 ) {
   const on = (key: string) => !skip || !SKIPPED[skip].includes(key)
   return and(
+    eq(listings.seedHidden, false),
     eq(listings.moderation, "approved"),
     eq(listings.kind, p.kind),
     scope.hiddenOwnerIds.length > 0
@@ -63,7 +65,9 @@ export function searchWhere(
     ...placeWhere(p, on),
     ...rangeWhere(p),
     ...attributeWhere(p, on),
-    p.seller ? eq(listings.ownerUserId, p.seller) : undefined,
+    p.seller
+      ? eq(listings.ownerUserId, scope.sellerOwnerId ?? p.seller)
+      : undefined,
     ...scopeWhere(p, scope),
     ...detailsWhere(p),
     ...wordsWhere(p.q),

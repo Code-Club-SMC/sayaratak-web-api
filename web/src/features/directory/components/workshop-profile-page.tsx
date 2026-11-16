@@ -39,6 +39,7 @@ export function WorkshopProfilePage({
       ? null
       : {
           target: { type: "workshop", id: w.id, title: name },
+          interactionMode: w.interactionMode,
           phone: w.phone,
           whatsapp: w.whatsapp,
         }
@@ -88,7 +89,9 @@ export function WorkshopProfilePage({
             address={w.address}
             location={w.location}
             hours={w.hours}
-            phones={w.unavailable ? [] : [w.phone]}
+            phones={
+              w.unavailable || w.interactionMode === "preview" ? [] : [w.phone]
+            }
           />
         </TabsContent>
         <TabsContent value="reviews" className="pt-4">
@@ -98,12 +101,15 @@ export function WorkshopProfilePage({
               targetId={w.id}
               ownerId={w.ownerId}
               rating={w.rating}
+              interactionMode={w.interactionMode}
             />
           </div>
         </TabsContent>
       </Tabs>
       {contact && <MobileContactBar {...contact} />}
-      {!w.unavailable && <WorkshopJsonLd workshop={w} />}
+      {!w.unavailable && w.interactionMode !== "preview" && (
+        <WorkshopJsonLd workshop={w} />
+      )}
     </div>
   )
 }

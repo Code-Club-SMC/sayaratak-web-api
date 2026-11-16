@@ -2,7 +2,7 @@ import type { promotionInputSchema } from "@sayaratak/shared/schemas/inputs"
 import type { z } from "zod"
 
 import { db } from "~/shared/db/client"
-import { transaction } from "~/shared/db/tx"
+import { type Transaction, transaction } from "~/shared/db/tx"
 import { fail } from "~/shared/http/errors"
 import { newId } from "~/shared/text/ids"
 import { clock } from "~/shared/time/clock"
@@ -10,6 +10,7 @@ import * as auth from "~/modules/auth/auth.service"
 import type { SessionUser } from "~/modules/auth/auth.types"
 import { getListingHead } from "~/modules/listings/listings.service"
 import * as plans from "~/modules/plans/plans.service"
+import { lockListingInteraction } from "~/modules/listings/listings.seed.service"
 
 import { toPromotion, toPromotionPrice } from "./promotions.mapper"
 import * as q from "./promotions.queries"
@@ -37,11 +38,25 @@ export async function orderPromotion(
   user: SessionUser,
   input: z.output<typeof promotionInputSchema>
 ) {
-  const listing = await getListingHead(db, input.listingId)
+  return transaction(async (tx) => {
+    await auth.lockUser(tx, user.id)
+    if ((await lockListingInteraction(tx, input.listingId)) === "preview")
+      fail.forbidden()
+    return orderForListing(tx, user, input)
+  })
+}
+
+async function orderForListing(
+  tx: Transaction,
+  user: SessionUser,
+  input: z.output<typeof promotionInputSchema>
+) {
+  const listing = await getListingHead(tx, input.listingId)
   if (!listing) fail.notFound()
   if (listing.ownerUserId !== user.id) fail.forbidden()
-  if (input.useCredit) return useCredit(user, input.listingId)
-  const price = await q.getPriceRow(db, input.priceId ?? "")
+  if (input.useCredit)
+    return useCredit(tx, { user, listingId: input.listingId })
+  const price = await q.getPriceRow(tx, input.priceId ?? "")
   if (!price) fail.notFound()
   const bumped = listing.bumpedAt?.getTime()
   if (
@@ -57,34 +72,35 @@ export async function orderPromotion(
   }
   // The unpaid-order index decides a tie between two orders sent together.
   const saved =
-    (await q.insertIfNone(db, {
+    (await q.insertIfNone(tx, {
       ...order,
       id: newId(ID_PREFIX),
       status: "pending_payment",
       source: "paid",
-    })) ?? (await q.getUnpaid(db, order))
+    })) ?? (await q.getUnpaid(tx, order))
   // The other order was approved between the two statements: ask again.
   if (!saved) fail.conflict()
   return toPromotion(saved)
 }
 
 // One account's credit orders queue on its row, so the last credit is spent once.
-function useCredit(user: SessionUser, listingId: string) {
-  return transaction(async (tx) => {
-    await auth.lockUser(tx, user.id)
-    const credits = await plans.getCreditsOf(tx, user.id)
-    if (credits.left < 1) fail.conflict("no_credits")
-    const now = clock.now()
-    const saved = await q.insert(tx, {
-      id: newId(ID_PREFIX),
-      listingId,
-      type: "featured",
-      status: "active",
-      durationDays: CREDIT_DAYS,
-      startsAt: now,
-      endsAt: new Date(now.getTime() + CREDIT_DAYS * DAY_MS),
-      source: "credit",
-    })
-    return toPromotion(saved)
+async function useCredit(
+  tx: Transaction,
+  input: { user: SessionUser; listingId: string }
+) {
+  const { user, listingId } = input
+  const credits = await plans.getCreditsOf(tx, user.id)
+  if (credits.left < 1) fail.conflict("no_credits")
+  const now = clock.now()
+  const saved = await q.insert(tx, {
+    id: newId(ID_PREFIX),
+    listingId,
+    type: "featured",
+    status: "active",
+    durationDays: CREDIT_DAYS,
+    startsAt: now,
+    endsAt: new Date(now.getTime() + CREDIT_DAYS * DAY_MS),
+    source: "credit",
   })
+  return toPromotion(saved)
 }

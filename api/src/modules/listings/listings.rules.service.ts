@@ -30,6 +30,7 @@ const ID_TRIES = 5
 
 /** Only the owner or an admin may change a listing; anyone else gets 403 `forbidden`. */
 export function checkCanEdit(user: SessionUser, row: ListingRow) {
+  if (row.seedDatasetId) fail.forbidden()
   if (user.role !== "admin" && row.ownerUserId !== user.id) fail.forbidden()
 }
 

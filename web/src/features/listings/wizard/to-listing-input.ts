@@ -61,6 +61,7 @@ export function draftListing(
   const now = new Date().toISOString()
   return {
     ...rest,
+    interactionMode: "live",
     id: "draft",
     slug: "draft",
     description: { ar: description, en: description },

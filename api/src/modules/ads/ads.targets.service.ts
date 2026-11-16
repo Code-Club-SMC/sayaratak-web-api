@@ -5,6 +5,9 @@ import type { SessionUser } from "~/modules/auth/auth.types"
 import { getBusinessIdOf } from "~/modules/businesses/businesses.service"
 import { listSubjects } from "~/modules/businesses/businesses.subject.service"
 import { listPublicLinksOf } from "~/modules/listings/listings.read.service"
+import { fail } from "~/shared/http/errors"
+import { isSyntheticUser } from "~/modules/auth/auth.seed.service"
+import { lockBusinessInteraction } from "~/modules/businesses/businesses.seed.service"
 
 // The first 50 public listings only, as the mock: a banner can link to a few.
 const LISTING_TARGETS_MAX = 50
@@ -19,7 +22,13 @@ const PROFILE_BASE = {
  * public profile first, then their public listings.
  */
 export async function listAdTargets(ex: Executor, user: SessionUser) {
+  if (await isSyntheticUser(ex, user.id)) fail.forbidden()
   const businessId = await getBusinessIdOf(ex, user.id)
+  if (
+    businessId &&
+    (await lockBusinessInteraction(ex, businessId)) === "preview"
+  )
+    fail.forbidden()
   const [profile, links] = await Promise.all([
     businessId
       ? listSubjects(ex, [businessId]).then((found) => found.get(businessId))

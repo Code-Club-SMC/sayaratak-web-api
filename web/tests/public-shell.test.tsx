@@ -186,6 +186,7 @@ describe("public shell", () => {
     expect(data).toEqual({
       contact: db.settings.contact,
       locales: db.settings.locales,
+      demoActive: false,
     })
   })
   it("labels the footer language action with its destination and preserves the URL", async () => {

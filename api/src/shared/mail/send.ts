@@ -2,7 +2,7 @@ import { z } from "zod"
 
 import { env } from "~/env"
 import { db } from "~/shared/db/client"
-import { transaction } from "~/shared/db/tx"
+import { afterCommitOrNow, type Executor, transaction } from "~/shared/db/tx"
 import { log } from "~/shared/log/logger"
 import { newId } from "~/shared/text/ids"
 import { clock } from "~/shared/time/clock"
@@ -10,6 +10,7 @@ import { clock } from "~/shared/time/clock"
 import { retryAt } from "./backoff"
 import * as q from "./outbox.queries"
 import type { OutboxRow } from "./outbox.tables"
+import { type Notice, type NoticeTemplate, renderNotice } from "./notice"
 import { renderCode } from "./templates"
 import { sendSmtp, transport } from "./transport"
 
@@ -34,7 +35,8 @@ type CodeMail = {
   locale: Locale
   code: string
 }
-export type SentMail = CodeMail & {
+export type SentMail = Omit<CodeMail, "template"> & {
+  template: MailTemplate | NoticeTemplate
   subject: string
   text: string
   html: string
@@ -84,6 +86,25 @@ export const send = {
     const locale = localeSchema.parse(user.locale)
     queue({ to: user.email, template: "admin-code", locale, code })
   },
+  /** A notice, written in the caller's transaction and sent after commit; not under the code cap. */
+  async notice(
+    ex: Executor,
+    mail: { to: string; locale: unknown; notice: Notice; link: string }
+  ) {
+    if (mail.to.endsWith(".invalid")) return
+    const now = clock.now()
+    const row = await q.insertOutbox(ex, {
+      id: newId("out"),
+      channel: "email",
+      to: mail.to,
+      template: mail.notice.template,
+      locale: localeSchema.parse(mail.locale),
+      payload: { notice: mail.notice, link: mail.link },
+      sendAfter: now,
+      createdAt: now,
+    })
+    if (row) await afterCommitOrNow(ex, () => track(deliver(row)))
+  },
 }
 
 /** Waits for every delivery started so far. Tests call it before reading `testInbox`. */
@@ -96,13 +117,13 @@ export async function deliver(row: OutboxRow) {
   try {
     // Parsed inside the try: a row with an unknown template fails like any send and is given up
     // after its attempts, instead of stopping the outbox job on every pass.
-    const mail: CodeMail = {
-      to: row.to,
-      template: templateSchema.parse(row.template),
-      locale: localeSchema.parse(row.locale),
-      code: row.payload.code ?? "",
-    }
-    await transmit({ ...mail, ...renderCode(mail) })
+    const locale = localeSchema.parse(row.locale)
+    const { notice, link = "", code = "" } = row.payload
+    const template = notice?.template ?? templateSchema.parse(row.template)
+    const rendered = notice
+      ? renderNotice(notice, locale, link)
+      : renderCode({ template: templateSchema.parse(template), locale, code })
+    await transmit({ to: row.to, template, locale, code, ...rendered })
     await q.updateOutboxSent(db, row.id, clock.now())
   } catch (error) {
     const sendAfter = retryAt(row.attempts, clock.now())
@@ -119,10 +140,13 @@ function queue(mail: QueuedMail) {
   // A reserved `.invalid` address (Facebook accounts with no email) never
   // gets mail; nothing is written either.
   if (mail.to.endsWith(".invalid")) return
-  const work = writeAndDeliver(mail)
-  running.add(work)
   // A documented fire-and-forget (A17.5): the caller's answer never
   // waits on the database insert or on SMTP.
+  track(writeAndDeliver(mail))
+}
+
+function track(work: Promise<void>) {
+  running.add(work)
   void work.finally(() => running.delete(work))
 }
 
@@ -140,11 +164,11 @@ function reserveCode(mail: CodeMail) {
   return transaction(async (tx) => {
     await q.lockMailRecipient(tx, mail.to)
     const now = clock.now()
-    const recent = await q.countSentTo(
-      tx,
-      mail.to,
-      new Date(now.getTime() - HOUR_MS)
-    )
+    const recent = await q.countSentTo(tx, {
+      to: mail.to,
+      since: new Date(now.getTime() - HOUR_MS),
+      templates: templateSchema.options,
+    })
     if (recent >= CODES_PER_HOUR) {
       log.warn("mail_capped", { to: mail.to, template: mail.template })
       return

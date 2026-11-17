@@ -37,6 +37,7 @@ const MESSAGES: Record<Role, string> = {
 }
 // Dashboard pages that callers write without the role's base: "/billing" is "/dealer/billing" for a dealer.
 const UNDER_BASE = new Set([
+  "/ads",
   "/billing",
   "/reviews",
   "/verification",

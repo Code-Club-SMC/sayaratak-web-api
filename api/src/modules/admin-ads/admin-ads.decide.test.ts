@@ -53,7 +53,7 @@ describe("POST /admin/campaigns/:id/approve", () => {
     expect(await bannerNotices("payment_approved")).toMatchObject([
       {
         title: { en: "Your banner campaign is approved" },
-        href: "/ads",
+        href: "/workshop/ads",
       },
     ])
     expect(await auditOf("camp-2")).toMatchObject([
@@ -108,7 +108,7 @@ describe("POST /admin/campaigns/:id/reject", () => {
       {
         title: { en: "Your banner campaign was rejected" },
         body: { ar: "Blurry image", en: "Blurry image" },
-        href: "/ads",
+        href: "/workshop/ads",
       },
     ])
     expect(await auditOf("camp-2")).toMatchObject([

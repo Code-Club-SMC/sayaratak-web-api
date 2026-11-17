@@ -102,6 +102,7 @@ export async function startPaidPromotion(
     set: { paymentId: paid.paymentId, ...run },
   })
   if (row.type === "bump") await bumpListing(tx, { id: row.listingId, at: now })
+  return { type: row.type, endsAt: run.endsAt }
 }
 
 /**

@@ -47,6 +47,7 @@ export async function approveCampaign(tx: Transaction, id: string) {
   const campaign = await q.lockCampaign(tx, id)
   if (campaign?.status !== "under_review") return
   await q.updateStatus(tx, { id, status: "approved", rejectionReason: null })
+  return q.getCampaign(tx, id)
 }
 
 /** The admin refused the receipt: a campaign under review goes back to unpaid with the reason, and its slots are free again. */

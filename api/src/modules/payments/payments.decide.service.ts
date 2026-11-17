@@ -1,11 +1,13 @@
 import type { Transaction } from "~/shared/db/tx"
 import { fail } from "~/shared/http/errors"
 import { both } from "~/shared/text/bilingual"
+import type { NoticeRun } from "~/shared/mail/notice"
 import { clock } from "~/shared/time/clock"
 import { recordAudit } from "~/modules/audit/audit.service"
 import type { Actor } from "~/modules/audit/audit.types"
 import * as ads from "~/modules/ads/ads.service"
 import * as auth from "~/modules/auth/auth.service"
+import { mailNotice } from "~/modules/notifications/notifications.mail.service"
 import { notify } from "~/modules/notifications/notifications.service"
 import * as plans from "~/modules/plans/plans.service"
 import * as promotions from "~/modules/promotions/promotions.service"
@@ -17,7 +19,7 @@ import type { PaymentRow } from "./payments.admin.queries"
  * Approves a receipt and starts what it paid for, in one transaction: the
  * plan from now for its days, the promotion from now for its days (a bump
  * moves the listing to the top at once), or the campaign (approved). The
- * payer is told. Only a payment under review can be decided: 404 for an
+ * payer is told in the bell and by email. Only a payment under review can be decided: 404 for an
  * unknown one, 409 `exists` for one already decided. The row is locked, so
  * two admins pressing Approve together start the plan once.
  */
@@ -27,7 +29,7 @@ export async function approvePayment(
   id: string
 ) {
   const row = await lockUndecided(tx, id)
-  await start(tx, row)
+  const run = await start(tx, row)
   const saved = await decide(tx, { actor, row, status: "approved" })
   await notify(tx, {
     userId: row.userId ?? "",
@@ -36,6 +38,7 @@ export async function approvePayment(
     body: row.itemLabel,
     href: "/billing",
   })
+  await mailPaymentDecision(tx, row, { template: "payment-approved", run })
   return saved
 }
 
@@ -64,7 +67,36 @@ export async function rejectPayment(
     body: both(change.reason),
     href: "/billing",
   })
+  await mailPaymentDecision(tx, row, {
+    template: "payment-rejected",
+    reason: change.reason,
+  })
   return saved
+}
+
+/**
+ * Emails the payer the decision with the item, amount, reference code and
+ * Bankak transaction number. A campaign's mail links to the campaigns page.
+ */
+export function mailPaymentDecision(
+  tx: Transaction,
+  row: PaymentRow,
+  decision:
+    | { template: "payment-approved"; run: NoticeRun }
+    | { template: "payment-rejected"; reason: string }
+) {
+  return mailNotice(tx, {
+    userId: row.userId,
+    href: row.itemType === "campaign" ? "/ads" : "/billing",
+    notice: {
+      ...decision,
+      item: row.itemLabel,
+      itemType: row.itemType,
+      amount: row.amount,
+      reference: row.reference,
+      transactionRef: row.transactionRef,
+    },
+  })
 }
 
 /**
@@ -92,6 +124,7 @@ export async function decideCampaignReceipt(
     status: change.status,
     reason: change.reason,
   })
+  return row
 }
 
 async function lockUndecided(tx: Transaction, id: string) {
@@ -102,22 +135,41 @@ async function lockUndecided(tx: Transaction, id: string) {
   return { ...row, userId: row.userId }
 }
 
-async function start(tx: Transaction, row: PaymentRow & { userId: string }) {
-  if (row.itemType === "campaign") return ads.approveCampaign(tx, row.itemId)
-  if (row.itemType === "promotion")
-    return promotions.startPaidPromotion(tx, {
+/** Starts what the payment bought; answers what started, for the email. */
+async function start(
+  tx: Transaction,
+  row: PaymentRow & { userId: string }
+): Promise<NoticeRun> {
+  if (row.itemType === "campaign") {
+    const campaign = await ads.approveCampaign(tx, row.itemId)
+    return campaign
+      ? {
+          kind: "window",
+          startsAt: campaign.startsAt.toISOString(),
+          endsAt: campaign.endsAt.toISOString(),
+        }
+      : { kind: "none" }
+  }
+  if (row.itemType === "promotion") {
+    const run = await promotions.startPaidPromotion(tx, {
       id: row.itemId,
       paymentId: row.id,
     })
+    if (!run) return { kind: "none" }
+    return run.type === "bump"
+      ? { kind: "bump" }
+      : { kind: "until", endsAt: run.endsAt.toISOString() }
+  }
   const plan = await plans.getPlan(tx, row.itemId)
   if (!plan) fail.notFound()
-  await plans.startSubscription(tx, {
+  const endsAt = await plans.startSubscription(tx, {
     userId: row.userId,
     plan,
     price: plan.price,
     listingLimit: plan.listingLimit,
     durationDays: plan.durationDays,
   })
+  return { kind: "until", endsAt: endsAt.toISOString() }
 }
 
 async function sendBack(

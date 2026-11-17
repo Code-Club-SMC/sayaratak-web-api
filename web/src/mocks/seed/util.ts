@@ -18,6 +18,7 @@ export const defaultPrefs: NotificationPrefs = {
 }
 // Notifications carry a path with no language. The mock writes dashboard pages without the role's base ("/billing") and the two that differ by role ("/messages", "/listings"); this turns them into the recipient's real path. Public paths pass through.
 const underBase = [
+  "/ads",
   "/billing",
   "/reviews",
   "/verification",

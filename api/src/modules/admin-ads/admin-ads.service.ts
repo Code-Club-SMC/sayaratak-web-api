@@ -8,7 +8,10 @@ import { both } from "~/shared/text/bilingual"
 import * as ads from "~/modules/ads/ads.admin.service"
 import type { Actor } from "~/modules/audit/audit.types"
 import { notify } from "~/modules/notifications/notifications.service"
-import { decideCampaignReceipt } from "~/modules/payments/payments.decide.service"
+import {
+  decideCampaignReceipt,
+  mailPaymentDecision,
+} from "~/modules/payments/payments.decide.service"
 import { listCampaignReceiptUrls } from "~/modules/payments/payments.admin.service"
 
 /** `GET /admin/campaigns`: every campaign with the receipt it was paid with; the ones waiting come first. */
@@ -19,17 +22,26 @@ export async function getCampaigns() {
 
 /**
  * `POST /admin/campaigns/:id/approve`: approves the banner and the receipt sent for it
- * together, and tells the advertiser. Only a campaign waiting for review (409 `exists`).
+ * together, and tells the advertiser in the bell and by email. Only a campaign waiting for review (409 `exists`).
  * Answers the campaign without the receipt, as the mock does.
  */
 export function approveCampaign(actor: Actor, id: string) {
   return transaction(async (tx) => {
     await ads.approveUnderReview(tx, actor, id)
-    await decideCampaignReceipt(tx, actor, {
+    const receipt = await decideCampaignReceipt(tx, actor, {
       campaignId: id,
       status: "approved",
     })
     const campaign = await ads.getAdminCampaign(tx, id)
+    if (receipt)
+      await mailPaymentDecision(tx, receipt, {
+        template: "payment-approved",
+        run: {
+          kind: "window",
+          startsAt: campaign.startsAt,
+          endsAt: campaign.endsAt,
+        },
+      })
     if (campaign.ownerId)
       await notify(tx, {
         userId: campaign.ownerId,
@@ -55,11 +67,16 @@ export function rejectCampaign(
 ) {
   return transaction(async (tx) => {
     await ads.rejectUnderReview(tx, actor, rejection)
-    await decideCampaignReceipt(tx, actor, {
+    const receipt = await decideCampaignReceipt(tx, actor, {
       campaignId: rejection.id,
       status: "rejected",
       reason: rejection.reason,
     })
+    if (receipt)
+      await mailPaymentDecision(tx, receipt, {
+        template: "payment-rejected",
+        reason: rejection.reason,
+      })
     const campaign = await ads.getAdminCampaign(tx, rejection.id)
     if (campaign.ownerId)
       await notify(tx, {

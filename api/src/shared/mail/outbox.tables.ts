@@ -11,6 +11,8 @@ import {
 import { createdAt } from "~/shared/db/columns"
 import { jsonb } from "~/shared/db/jsonb"
 
+import type { Notice } from "./notice"
+
 export const outboxChannel = pgEnum("outbox_channel", ["email", "push"])
 
 // A push row holds what the phone shows until it is sent; `userId` lets the sender drop it if the phone moved to another account since.
@@ -20,7 +22,12 @@ export type PushPayload = {
   body: string
   data: Record<string, string>
 }
-export type OutboxPayload = { code?: string; push?: PushPayload }
+export type OutboxPayload = {
+  code?: string
+  push?: PushPayload
+  notice?: Notice
+  link?: string
+}
 
 // A9: every email (and later push, A18) is a row first, so the HTTP answer
 // never waits on SMTP. `payload` holds the code until it is sent or expires,

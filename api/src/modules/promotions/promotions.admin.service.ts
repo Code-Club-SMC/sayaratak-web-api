@@ -10,6 +10,7 @@ import type { Actor } from "~/modules/audit/audit.types"
 import { bumpListing } from "~/modules/listings/listings.service"
 import { listCards } from "~/modules/listings/listings.stats.service"
 import { lockListingInteraction } from "~/modules/listings/listings.seed.service"
+import { mailListingOwner } from "~/modules/notifications/notifications.mail.service"
 import { getPromotionPaymentStatuses } from "~/modules/payments/payments.service"
 
 import * as admin from "./promotions.admin.queries"
@@ -64,7 +65,8 @@ export async function findAdminPromotion(ex: Executor, id: string) {
 /**
  * Gives a listing a promotion for free, starting now: a Featured for `days`,
  * or a bump (which only moves the listing to the top and has no length).
- * 404 for an unknown listing. Returns the new promotion's id.
+ * The owner is told by email. 404 for an unknown listing. Returns the new
+ * promotion's id.
  */
 export async function grantPromotion(
   tx: Transaction,
@@ -75,13 +77,14 @@ export async function grantPromotion(
     fail.forbidden()
   const now = clock.now()
   const days = grant.type === "bump" ? 0 : grant.days
+  const run = runOf({ type: grant.type, days, now })
   const row = await q.insert(tx, {
     id: newId(ID_PREFIX),
     listingId: grant.listingId,
     type: grant.type,
     durationDays: days,
     source: "admin_grant",
-    ...runOf({ type: grant.type, days, now }),
+    ...run,
   })
   if (grant.type === "bump")
     await bumpListing(tx, { id: grant.listingId, at: now })
@@ -91,11 +94,20 @@ export async function grantPromotion(
     targetId: row.id,
     after: { listingId: grant.listingId, type: grant.type, days },
   })
+  await mailListingOwner(tx, grant.listingId, (listing) => ({
+    template: "promotion-granted",
+    listing,
+    run:
+      grant.type === "bump"
+        ? { kind: "bump" }
+        : { kind: "until", endsAt: run.endsAt.toISOString() },
+  }))
   return row.id
 }
 
 /**
- * Ends a running promotion now: it leaves its listing at once. 404 for an
+ * Ends a running promotion now: it leaves its listing at once, and the owner
+ * is told by email. 404 for an
  * unknown promotion, 409 `conflict` for one that is not running (unpaid or
  * already ended).
  */
@@ -113,6 +125,11 @@ export async function endPromotion(tx: Transaction, actor: Actor, id: string) {
     before: { status: row.status, endsAt: row.endsAt },
     after: { status: "ended", endsAt },
   })
+  await mailListingOwner(tx, row.listingId, (listing) => ({
+    template: "promotion-ended",
+    listing,
+    endedAt: endsAt.toISOString(),
+  }))
 }
 
 /** The price list as the admin edits it: Featured by length, then the bump. */

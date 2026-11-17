@@ -65,9 +65,19 @@ export function updateOutboxFailed(
     .where(eq(outbox.id, id))
 }
 
-/** Mails written to one address since `since`, sent or not. */
-export function countSentTo(ex: Executor, to: string, since: Date) {
-  return ex.$count(outbox, and(eq(outbox.to, to), gt(outbox.createdAt, since)))
+/** Mails of these templates written to one address since `since`, sent or not. */
+export function countSentTo(
+  ex: Executor,
+  find: { to: string; since: Date; templates: string[] }
+) {
+  return ex.$count(
+    outbox,
+    and(
+      eq(outbox.to, find.to),
+      gt(outbox.createdAt, find.since),
+      inArray(outbox.template, find.templates)
+    )
+  )
 }
 
 type DueFilter = {

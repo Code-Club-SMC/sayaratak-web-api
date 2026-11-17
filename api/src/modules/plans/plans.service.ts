@@ -68,6 +68,7 @@ export async function startSubscription(
   }
 ) {
   const now = clock.now()
+  const endsAt = new Date(now.getTime() + start.durationDays * DAY_MS)
   await q.updateActiveCanceled(ex, start.userId)
   await q.insertSubscription(ex, {
     id: newId(SUBSCRIPTION_ID_PREFIX),
@@ -75,11 +76,12 @@ export async function startSubscription(
     planId: start.plan.id,
     status: "active",
     startsAt: now,
-    endsAt: new Date(now.getTime() + start.durationDays * DAY_MS),
+    endsAt,
     price: start.price,
     listingLimit: start.listingLimit,
     note: start.note,
   })
+  return endsAt
 }
 
 /**

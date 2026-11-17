@@ -17,7 +17,7 @@ export function BannerPreview({
     <div
       dir={lang === "ar" ? "rtl" : "ltr"}
       lang={lang}
-      className="overflow-hidden rounded-xl bg-deep text-deep-foreground"
+      className="overflow-hidden rounded-xl bg-background"
     >
       <BannerCopy
         banner={{ sponsored: true, focus: 50 }}

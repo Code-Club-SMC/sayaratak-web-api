@@ -1,4 +1,4 @@
-import { useState, type CSSProperties } from "react"
+import { useState } from "react"
 import {
   ArrowRightIcon,
   BikeIcon,
@@ -11,9 +11,10 @@ import {
 
 import { useT } from "@/lib/i18n/use-t"
 import { mediaSrc, mediaSrcSet } from "@/lib/media"
-import { safeBackground, type Slide, type SlideIcon } from "@/lib/slide"
+import type { Slide, SlideIcon } from "@/lib/slide"
 import { cn } from "@/lib/utils"
 import { Badge } from "@/components/ui/badge"
+import { buttonVariants } from "@/components/ui/button"
 
 const icons: Record<SlideIcon, LucideIcon> = {
   car: CarIcon,
@@ -23,10 +24,7 @@ const icons: Record<SlideIcon, LucideIcon> = {
   tuk: CarTaxiFrontIcon,
 }
 
-const ring =
-  "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-deep-foreground"
-
-// One slide. The photo sits at the end edge (mirrored for Arabic by `image.flip`) so its subject faces the text; below md it fills the slide under a tint. The search card overlaps the banner's lower edge, so the text keeps clear of it. The CTA link is stretched over the whole slide. Text is always white, so `background` goes through `safeBackground`.
+// One slide (owner design, 2026-11-17): text at the start edge on the light card, the photo as a rounded inset at the end edge (mirrored for Arabic by `image.flip`, so its subject faces the text). On a phone the photo sits on top and the text below it. The CTA link is stretched over the whole slide. Without a photo, or when it fails, the photo box shows the slide's icon.
 export function HeroSlide({
   slide,
   index,
@@ -49,9 +47,6 @@ export function HeroSlide({
   const Icon = icons[slide.icon ?? "car"]
   const ad = slide.kind === "ad"
   const label = (ad && slide.advertiser) || slide.eyebrow
-  const vars: CSSProperties & Record<"--slide-bg", string | undefined> = {
-    "--slide-bg": safeBackground(slide),
-  }
   return (
     <div
       role="group"
@@ -59,62 +54,55 @@ export function HeroSlide({
       aria-label={t("nav.slide_of", { number: index + 1, total })}
       aria-hidden={!active}
       inert={!active}
-      style={vars}
-      className="relative isolate flex w-full shrink-0 bg-(--slide-bg,var(--deep)) text-deep-foreground"
+      className="relative flex w-full shrink-0 flex-col gap-4 p-3 md:flex-row md:items-center md:gap-0 md:p-6"
     >
-      {photo ? (
-        <>
-          <div className="absolute inset-0 -z-10 overflow-hidden md:start-auto md:w-1/2">
-            <img
-              ref={(img) => {
-                if (img?.complete && img.naturalWidth === 0) setFailed(true)
-              }}
-              src={mediaSrc(photo.src, 960)}
-              srcSet={mediaSrcSet(photo.src, 1280)}
-              sizes="(min-width: 768px) 50vw, 100vw"
-              width={1600}
-              height={400}
-              alt={photo.alt}
-              draggable={false}
-              loading={index === 0 ? "eager" : "lazy"}
-              fetchPriority={index === 0 ? "high" : undefined}
-              decoding="async"
-              onError={() => setFailed(true)}
-              style={{ objectPosition: photo.objectPosition }}
-              className={cn(
-                "size-full object-cover",
-                photo.flip && "-scale-x-100"
-              )}
-            />
-          </div>
-          <div
-            aria-hidden
-            className="absolute inset-0 -z-10 bg-[color-mix(in_oklch,var(--slide-bg,var(--deep))_70%,transparent)] md:hidden"
+      <div className="relative grid aspect-video shrink-0 place-items-center overflow-hidden rounded-lg bg-muted md:order-last md:aspect-auto md:w-[56%] md:self-stretch">
+        {photo ? (
+          <img
+            ref={(img) => {
+              if (img?.complete && img.naturalWidth === 0) setFailed(true)
+            }}
+            src={mediaSrc(photo.src, 960)}
+            srcSet={mediaSrcSet(photo.src, 1280)}
+            sizes="(min-width: 768px) 56vw, 100vw"
+            width={1600}
+            height={900}
+            alt={photo.alt}
+            draggable={false}
+            loading={index === 0 ? "eager" : "lazy"}
+            fetchPriority={index === 0 ? "high" : undefined}
+            decoding="async"
+            onError={() => setFailed(true)}
+            style={{ objectPosition: photo.objectPosition }}
+            className={cn(
+              "absolute inset-0 size-full object-cover",
+              photo.flip && "-scale-x-100"
+            )}
           />
-        </>
-      ) : (
-        <Icon
-          aria-hidden
-          strokeWidth={1}
-          className="absolute -end-8 top-1/2 -z-10 size-64 -translate-y-1/2 text-deep-foreground/10 md:size-80 rtl:-scale-x-100"
-        />
-      )}
-      <div className="flex w-full min-w-0 flex-col justify-center gap-1 p-4 pb-12 md:w-[46%] md:gap-2 md:ps-10 md:pe-0 md:pb-14 lg:gap-4 lg:ps-16 lg:pb-16">
-        <div
-          className={cn("items-center gap-2", ad ? "flex" : "hidden md:flex")}
-        >
-          {ad && <Badge variant="signal">{t("nav.ad_badge")}</Badge>}
-          {label && (
-            <span className="hidden text-caption font-medium text-deep-accent md:inline">
-              {label}
-            </span>
-          )}
-        </div>
-        <Heading className="line-clamp-2 text-lead font-semibold text-balance md:text-title lg:text-hero">
+        ) : (
+          <Icon
+            aria-hidden
+            strokeWidth={1}
+            className="size-24 text-muted-foreground/40 md:size-40 rtl:-scale-x-100"
+          />
+        )}
+      </div>
+      <div className="flex min-w-0 flex-1 flex-col gap-2 px-1 pb-1 md:gap-3 md:px-10 lg:gap-4 lg:px-14">
+        {(ad || label) && (
+          <div className="flex items-center gap-2">
+            {ad && <Badge variant="signal">{t("nav.ad_badge")}</Badge>}
+            {label && (
+              <span className="text-ui font-semibold text-primary">
+                {label}
+              </span>
+            )}
+          </div>
+        )}
+        <Heading className="line-clamp-2 text-title font-semibold text-balance md:text-page lg:text-hero">
           {slide.title}
         </Heading>
         {slide.body && (
-          <p className="hidden text-body text-deep-foreground/80 lg:block">
+          <p className="line-clamp-2 text-body text-muted-foreground lg:text-lead">
             {slide.body}
           </p>
         )}
@@ -123,11 +111,8 @@ export function HeroSlide({
           rel={ad ? "sponsored noopener" : undefined}
           onClick={() => onCtaClick(slide)}
           className={cn(
-            "mt-1 inline-flex items-center gap-1.5 text-ui font-semibold motion-color after:absolute after:inset-0 after:content-[''] md:mt-2 md:h-11 md:w-fit md:rounded-lg md:px-5",
-            ad
-              ? "md:bg-deep-foreground md:text-deep md:hover:bg-deep-foreground/90"
-              : "md:border md:border-deep-foreground md:hover:bg-deep-foreground/10",
-            ring
+            buttonVariants({ size: "lg" }),
+            "mt-1 w-fit after:absolute after:inset-0 after:content-[''] md:mt-2"
           )}
         >
           {slide.cta.label}

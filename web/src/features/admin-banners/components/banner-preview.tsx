@@ -24,7 +24,7 @@ export function BannerPreview() {
             key={l}
             dir={l === "ar" ? "rtl" : "ltr"}
             lang={l}
-            className="overflow-hidden rounded-xl bg-deep text-deep-foreground"
+            className="overflow-hidden rounded-xl bg-background"
           >
             <BannerCopy
               banner={{ sponsored, focus }}

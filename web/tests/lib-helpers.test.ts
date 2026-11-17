@@ -19,7 +19,6 @@ import { averageColor } from "@/lib/image-process"
 import { mediaSrc } from "@/lib/media"
 import { personalHref } from "@/lib/navigation"
 import { markSignIn, takeSignIn } from "@/lib/sign-in-flag"
-import { safeBackground } from "@/lib/slide"
 import { db } from "@/mocks/db"
 import { publicUser } from "@/mocks/lib"
 
@@ -66,20 +65,6 @@ it("personalHref sends a visitor to sign in with a return path", () => {
   expect(personalHref("/account/favorites", "ar", null)).toBe(
     "/ar/auth/login?redirect=%2Far%2Faccount%2Ffavorites"
   )
-})
-
-it("safeBackground keeps dark colors and drops ones too light for white text", () => {
-  const slide = {
-    id: "s",
-    kind: "house" as const,
-    title: "T",
-    cta: { label: "L", href: "/" },
-  }
-  vi.spyOn(console, "warn").mockImplementation(() => {})
-  expect(safeBackground({ ...slide, background: "#0b3d2e" })).toBe("#0b3d2e")
-  expect(safeBackground({ ...slide, background: "#ffff00" })).toBeUndefined()
-  expect(safeBackground({ ...slide, background: "var(--x)" })).toBe("var(--x)")
-  expect(safeBackground(slide)).toBeUndefined()
 })
 
 it("averageColor falls back to a neutral when no canvas is available", () => {

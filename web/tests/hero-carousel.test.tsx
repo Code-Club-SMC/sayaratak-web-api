@@ -2,7 +2,7 @@ import { act, fireEvent, screen } from "@testing-library/react"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 
 import { HeroCarousel } from "@/components/app/hero-carousel"
-import { contrastWithWhite, type Slide } from "@/lib/slide"
+import type { Slide } from "@/lib/slide"
 import { renderShell } from "./shell-render"
 
 const slide = (n: number, over: Partial<Slide> = {}): Slide => ({
@@ -288,11 +288,9 @@ describe("HeroCarousel ads and callbacks", () => {
     fireEvent.click(dots()[1]!)
     const link = screen.getByRole("link", { name: /Go 2/ })
     expect(link.getAttribute("rel")).toBe("sponsored noopener")
-    expect(link.className).toContain("md:bg-deep-foreground")
     fireEvent.click(dots()[0]!)
     const house = screen.getByRole("link", { name: /Go 1/ })
     expect(house.getAttribute("rel")).toBeNull()
-    expect(house.className).toContain("md:border")
   })
 
   it("calls onClick with the slide on its button", async () => {
@@ -334,35 +332,5 @@ describe("HeroCarousel ads and callbacks", () => {
     })
     expect(onImpression).toHaveBeenCalledTimes(2)
     expect(onImpression).toHaveBeenLastCalledWith(ads[1])
-  })
-})
-
-describe("slide background contrast", () => {
-  it("measures white text on a color", () => {
-    expect(contrastWithWhite("#ffffff")).toBeCloseTo(1, 1)
-    expect(contrastWithWhite("#000")).toBeCloseTo(21, 0)
-    expect(contrastWithWhite("rgb(0, 0, 0)")).toBeCloseTo(21, 0)
-    expect(contrastWithWhite("oklch(0.27 0.05 163)")).toBeNull()
-  })
-
-  it("drops a background below 4.5:1 and keeps a dark one", async () => {
-    const warn = vi.spyOn(console, "warn").mockImplementation(() => {})
-    await renderShell(
-      <HeroCarousel
-        slides={[
-          slide(1, { background: "#f5c542" }),
-          slide(2, { background: "#1b4332" }),
-          slide(3, { background: "var(--primary)" }),
-        ]}
-      />
-    )
-    const groups = screen.getAllByRole("group", { hidden: true })
-    expect(groups.map((g) => g.style.getPropertyValue("--slide-bg"))).toEqual([
-      "",
-      "#1b4332",
-      "var(--primary)",
-    ])
-    expect(warn).toHaveBeenCalledOnce()
-    warn.mockRestore()
   })
 })

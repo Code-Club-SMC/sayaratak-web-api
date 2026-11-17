@@ -109,12 +109,12 @@ export function HeroCarousel({
       onBlur={(e) => {
         if (!e.currentTarget.contains(e.relatedTarget)) setFocused(false)
       }}
-      className="relative mx-[calc(50%-50vw)] touch-pan-y overflow-hidden select-none"
+      className="relative touch-pan-y overflow-hidden rounded-xl bg-card select-none"
     >
       <div
         aria-live={paused ? "polite" : "off"}
         style={track}
-        className="flex aspect-[2/1] translate-x-[calc(var(--i)*-100%)] transition-transform duration-(--dur-sheet) ease-(--ease-standard) md:aspect-[3/1] rtl:translate-x-[calc(var(--i)*100%)]"
+        className="flex translate-x-[calc(var(--i)*-100%)] transition-transform duration-(--dur-sheet) ease-(--ease-standard) md:aspect-[5/2] lg:aspect-[3/1] rtl:translate-x-[calc(var(--i)*100%)]"
       >
         {slides.map((s, i) => (
           <HeroSlide
@@ -136,6 +136,7 @@ export function HeroCarousel({
           onSelect={setSelected}
           onAdvance={() => step(1)}
           onToggle={() => setUserPaused(!userPaused)}
+          className="absolute end-5 top-5 z-20 md:end-9 md:top-auto md:bottom-9"
         />
       )}
     </section>

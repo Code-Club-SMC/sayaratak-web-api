@@ -109,12 +109,12 @@ export function HeroCarousel({
       onBlur={(e) => {
         if (!e.currentTarget.contains(e.relatedTarget)) setFocused(false)
       }}
-      className="relative touch-pan-y overflow-hidden rounded-xl bg-card select-none"
+      className="relative mx-[calc(50%-50vw)] touch-pan-y overflow-hidden bg-deep text-deep-foreground select-none"
     >
       <div
         aria-live={paused ? "polite" : "off"}
         style={track}
-        className="flex translate-x-[calc(var(--i)*-100%)] transition-transform duration-(--dur-sheet) ease-(--ease-standard) md:aspect-[5/2] lg:aspect-[3/1] rtl:translate-x-[calc(var(--i)*100%)]"
+        className="flex translate-x-[calc(var(--i)*-100%)] transition-transform duration-(--dur-sheet) ease-(--ease-standard) rtl:translate-x-[calc(var(--i)*100%)]"
       >
         {slides.map((s, i) => (
           <HeroSlide
@@ -129,15 +129,19 @@ export function HeroCarousel({
         ))}
       </div>
       {count > 1 && (
-        <HeroCarouselControls
-          ids={slides.map((s) => s.id)}
-          index={index}
-          playing={!userPaused}
-          onSelect={setSelected}
-          onAdvance={() => step(1)}
-          onToggle={() => setUserPaused(!userPaused)}
-          className="absolute end-5 top-5 z-20 md:end-9 md:top-auto md:bottom-9"
-        />
+        <div className="pointer-events-none absolute inset-x-0 bottom-11 z-20 md:bottom-16">
+          <div className="mx-auto max-w-[1200px] px-4 md:px-6">
+            <HeroCarouselControls
+              ids={slides.map((s) => s.id)}
+              index={index}
+              playing={!userPaused}
+              onSelect={setSelected}
+              onAdvance={() => step(1)}
+              onToggle={() => setUserPaused(!userPaused)}
+              className="pointer-events-auto -ms-4 w-fit bg-transparent px-0"
+            />
+          </div>
+        </div>
       )}
     </section>
   )

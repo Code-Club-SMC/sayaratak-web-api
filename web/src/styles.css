@@ -100,7 +100,7 @@
   --signal: oklch(0.82 0.16 82);
   --signal-foreground: oklch(0.26 0.05 80);
   /* Deep blue #203582: the banner surface and its text. */
-  --deep: oklch(0.36248165 0.1322345 267.64160612);
+  --deep: oklch(0.24 0.075 265);
   --deep-foreground: oklch(0.99 0.004 260);
   --deep-accent: oklch(0.80530109 0.09752098 271.86818346);
   --success: oklch(0.5 0.13 150);
@@ -139,6 +139,9 @@
   --leading-page: 2rem;
   --text-hero: 2rem;
   --leading-hero: 2.5rem;
+  /* The home hero banner's headline only: grows with the viewport from 2rem to 3.25rem. */
+  --text-display: clamp(2rem, 1.25rem + 2.5vw, 3.25rem);
+  --leading-display: 1.15;
 
   /* z-index scale (A5): use as z-(--z-popover). */
   --z-sticky: 30;
@@ -193,6 +196,7 @@
   --leading-page: 2.25rem;
   --text-hero: 2.0625rem;
   --leading-hero: 2.875rem;
+  --leading-display: 1.35;
 }
 
 @utility text-caption {
@@ -226,6 +230,11 @@
 @utility text-hero {
   font-size: var(--text-hero);
   line-height: var(--leading-hero);
+  text-wrap: balance;
+}
+@utility text-display {
+  font-size: var(--text-display);
+  line-height: var(--leading-display);
   text-wrap: balance;
 }
 

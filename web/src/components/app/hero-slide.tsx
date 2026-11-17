@@ -24,7 +24,7 @@ const icons: Record<SlideIcon, LucideIcon> = {
   tuk: CarTaxiFrontIcon,
 }
 
-// One slide (owner design, 2026-11-17): text at the start edge on the light card, the photo as a rounded inset at the end edge (mirrored for Arabic by `image.flip`, so its subject faces the text). On a phone the photo sits on top and the text below it. The CTA link is stretched over the whole slide. Without a photo, or when it fails, the photo box shows the slide's icon.
+// One slide (owner design, 2026-11-17): white text at the start edge on the deep navy, the photo filling the end edge (mirrored for Arabic by `image.flip`, so its subject faces the text) and fading into the navy over its start edge (A5 gradient exception, see Deviations). On a phone the photo fills the slide under a navy layer. The bottom padding keeps the text clear of the dots and of the search card that overlaps the lower edge. The CTA link is stretched over the whole slide. Without a photo, or when it fails, a large outline icon stands in.
 export function HeroSlide({
   slide,
   index,
@@ -54,17 +54,17 @@ export function HeroSlide({
       aria-label={t("nav.slide_of", { number: index + 1, total })}
       aria-hidden={!active}
       inert={!active}
-      className="relative flex w-full shrink-0 flex-col gap-4 p-3 md:flex-row md:items-center md:gap-0 md:p-6"
+      className="relative isolate flex min-h-[26rem] w-full shrink-0 items-center md:min-h-[28rem] md:items-end lg:min-h-[32rem]"
     >
-      <div className="relative grid aspect-video shrink-0 place-items-center overflow-hidden rounded-lg bg-muted md:order-last md:aspect-auto md:w-[56%] md:self-stretch">
-        {photo ? (
+      {photo ? (
+        <div className="absolute inset-0 -z-10 overflow-hidden md:start-auto md:w-[62%]">
           <img
             ref={(img) => {
               if (img?.complete && img.naturalWidth === 0) setFailed(true)
             }}
-            src={mediaSrc(photo.src, 960)}
-            srcSet={mediaSrcSet(photo.src, 1280)}
-            sizes="(min-width: 768px) 56vw, 100vw"
+            src={mediaSrc(photo.src, 1280)}
+            srcSet={mediaSrcSet(photo.src, 1920)}
+            sizes="(min-width: 768px) 62vw, 100vw"
             width={1600}
             height={900}
             alt={photo.alt}
@@ -75,49 +75,55 @@ export function HeroSlide({
             onError={() => setFailed(true)}
             style={{ objectPosition: photo.objectPosition }}
             className={cn(
-              "absolute inset-0 size-full object-cover",
+              "size-full object-cover",
               photo.flip && "-scale-x-100"
             )}
           />
-        ) : (
-          <Icon
+          <div
             aria-hidden
-            strokeWidth={1}
-            className="size-24 text-muted-foreground/40 md:size-40 rtl:-scale-x-100"
+            className="absolute inset-0 bg-deep/75 md:start-0 md:end-auto md:w-1/2 md:bg-transparent md:bg-linear-to-r md:from-deep md:to-transparent md:rtl:bg-linear-to-l"
           />
-        )}
-      </div>
-      <div className="flex min-w-0 flex-1 flex-col gap-2 px-1 pb-1 md:gap-3 md:px-10 lg:gap-4 lg:px-14">
-        {(ad || label) && (
-          <div className="flex items-center gap-2">
-            {ad && <Badge variant="signal">{t("nav.ad_badge")}</Badge>}
-            {label && (
-              <span className="text-ui font-semibold text-primary">
-                {label}
-              </span>
-            )}
-          </div>
-        )}
-        <Heading className="line-clamp-2 text-title font-semibold text-balance md:text-page lg:text-hero">
-          {slide.title}
-        </Heading>
-        {slide.body && (
-          <p className="line-clamp-2 text-body text-muted-foreground lg:text-lead">
-            {slide.body}
-          </p>
-        )}
-        <a
-          href={slide.cta.href}
-          rel={ad ? "sponsored noopener" : undefined}
-          onClick={() => onCtaClick(slide)}
-          className={cn(
-            buttonVariants({ size: "lg" }),
-            "mt-1 w-fit after:absolute after:inset-0 after:content-[''] md:mt-2"
+        </div>
+      ) : (
+        <Icon
+          aria-hidden
+          strokeWidth={1}
+          className="absolute end-[8%] top-1/2 -z-10 size-64 -translate-y-1/2 text-deep-foreground/10 md:size-96 rtl:-scale-x-100"
+        />
+      )}
+      <div className="mx-auto w-full max-w-[1200px] px-4 pt-10 pb-[6.5rem] md:px-6 md:pt-12 md:pb-[8.5rem]">
+        <div className="flex max-w-md flex-col items-start gap-3 md:gap-4 lg:max-w-lg">
+          {(ad || label) && (
+            <div className="flex items-center gap-2">
+              {ad && <Badge variant="signal">{t("nav.ad_badge")}</Badge>}
+              {label && (
+                <span className="text-ui font-medium text-deep-accent md:text-lead">
+                  {label}
+                </span>
+              )}
+            </div>
           )}
-        >
-          {slide.cta.label}
-          <ArrowRightIcon aria-hidden className="size-4 rtl:-scale-x-100" />
-        </a>
+          <Heading className="line-clamp-3 text-display font-semibold tracking-tight">
+            {slide.title}
+          </Heading>
+          {slide.body && (
+            <p className="line-clamp-2 text-body text-deep-foreground/85 md:text-lead">
+              {slide.body}
+            </p>
+          )}
+          <a
+            href={slide.cta.href}
+            rel={ad ? "sponsored noopener" : undefined}
+            onClick={() => onCtaClick(slide)}
+            className={cn(
+              buttonVariants({ size: "lg" }),
+              "mt-2 after:absolute after:inset-0 after:content-[''] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-deep-foreground"
+            )}
+          >
+            {slide.cta.label}
+            <ArrowRightIcon aria-hidden className="size-4 rtl:-scale-x-100" />
+          </a>
+        </div>
       </div>
     </div>
   )

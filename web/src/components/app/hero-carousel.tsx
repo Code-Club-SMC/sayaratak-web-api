@@ -130,7 +130,7 @@ export function HeroCarousel({
       </div>
       {count > 1 && (
         <div className="pointer-events-none absolute inset-x-0 bottom-11 z-20 md:bottom-16">
-          <div className="mx-auto max-w-[1200px] px-4 md:px-6">
+          <div className="px-4 md:px-10 lg:px-16">
             <HeroCarouselControls
               ids={slides.map((s) => s.id)}
               index={index}

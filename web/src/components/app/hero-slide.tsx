@@ -91,7 +91,7 @@ export function HeroSlide({
           className="absolute end-[8%] top-1/2 -z-10 size-64 -translate-y-1/2 text-deep-foreground/10 md:size-96 rtl:-scale-x-100"
         />
       )}
-      <div className="mx-auto w-full max-w-[1200px] px-4 pt-10 pb-[6.5rem] md:px-6 md:pt-12 md:pb-[8.5rem]">
+      <div className="w-full px-4 pt-10 pb-[6.5rem] md:px-10 md:pt-12 md:pb-[8.5rem] lg:px-16">
         <div className="flex max-w-md flex-col items-start gap-3 md:gap-4 lg:max-w-lg">
           {(ad || label) && (
             <div className="flex items-center gap-2">

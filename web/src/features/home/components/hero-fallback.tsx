@@ -8,7 +8,7 @@ export function HeroFallback() {
   const { t } = useT()
   return (
     <section className="mx-[calc(50%-50vw)] flex min-h-[20rem] items-center bg-deep text-deep-foreground md:min-h-[24rem]">
-      <div className="mx-auto w-full max-w-[1200px] px-4 pt-10 pb-20 md:px-6 md:pb-24">
+      <div className="w-full px-4 pt-10 pb-20 md:px-10 md:pb-24 lg:px-16">
         <div className="flex max-w-xl flex-col gap-3 md:gap-4">
           <h2 className="text-display font-semibold tracking-tight">
             {t("home.hero_title")}

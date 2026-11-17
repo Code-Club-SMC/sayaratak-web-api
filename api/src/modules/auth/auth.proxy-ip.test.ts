@@ -1,5 +1,7 @@
 import { expect, test } from "bun:test"
 
+const SLOW_MS = 20_000
+
 const script = `
 import assert from "node:assert/strict";
 const target = new URL(process.env.DATABASE_URL);
@@ -48,24 +50,29 @@ try {
 } finally { await db.$client.close(); }
 `
 
-test("signed web/SSR and direct native sessions preserve trusted IP without auth bypass", () => {
-  const run = Bun.spawnSync(["bun", "--no-env-file", "-e", script], {
-    cwd: `${import.meta.dir}/../../..`,
-    env: {
-      PATH: process.env.PATH,
-      DATABASE_URL: process.env.TEST_DATABASE_URL,
-      NODE_ENV: "test",
-      APP_ENV: "test",
-      WEB_ORIGIN: "http://localhost:3000",
-      BETTER_AUTH_URL: "http://localhost:4000",
-      BETTER_AUTH_SECRET: "local-auth-test-secret-0123456789abcdef",
-      CLIENT_IP_MODE: "render",
-      API_PUBLIC_ORIGIN: "https://api.example.test",
-      PROXY_CLIENT_IP_SECRET: "local-proxy-test-key-0123456789abcdef",
-      LOG_REQUESTS: "false",
-    },
-  })
-  expect(run.stderr.toString()).toBe("")
-  expect(run.exitCode).toBe(0)
-  expect(run.stdout.toString()).toBe("render-auth-ip-ok")
-})
+// Spawns a cold Bun process that boots the app and signs in twice.
+test(
+  "signed web/SSR and direct native sessions preserve trusted IP without auth bypass",
+  () => {
+    const run = Bun.spawnSync(["bun", "--no-env-file", "-e", script], {
+      cwd: `${import.meta.dir}/../../..`,
+      env: {
+        PATH: process.env.PATH,
+        DATABASE_URL: process.env.TEST_DATABASE_URL,
+        NODE_ENV: "test",
+        APP_ENV: "test",
+        WEB_ORIGIN: "http://localhost:3000",
+        BETTER_AUTH_URL: "http://localhost:4000",
+        BETTER_AUTH_SECRET: "local-auth-test-secret-0123456789abcdef",
+        CLIENT_IP_MODE: "render",
+        API_PUBLIC_ORIGIN: "https://api.example.test",
+        PROXY_CLIENT_IP_SECRET: "local-proxy-test-key-0123456789abcdef",
+        LOG_REQUESTS: "false",
+      },
+    })
+    expect(run.stderr.toString()).toBe("")
+    expect(run.exitCode).toBe(0)
+    expect(run.stdout.toString()).toBe("render-auth-ip-ok")
+  },
+  SLOW_MS
+)

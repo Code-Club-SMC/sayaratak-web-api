@@ -7,6 +7,9 @@ process.env.DATABASE_URL = url
 // One log line per request would bury the test output; request-log.test.ts
 // and index.shutdown.test.ts turn it on where they read it.
 process.env.LOG_REQUESTS = "false"
+// Tests run as APP_ENV=test whatever the developer's .env says: the admin seed and
+// /api/_test routes only work there.
+process.env.APP_ENV = "test"
 // app.request() has no socket, so every test request comes from 127.0.0.1.
 // Trusting it as a proxy lets a test pick its client IP with X-Forwarded-For.
 process.env.TRUSTED_PROXIES = "127.0.0.1"

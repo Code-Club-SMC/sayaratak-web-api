@@ -16,6 +16,8 @@ import {
   upload,
 } from "../../../tests/onboarding"
 
+const SLOW_MS = 20_000
+
 beforeEach(resetDb)
 
 describe("POST /onboarding/complete access", () => {
@@ -87,21 +89,26 @@ describe("an individual", () => {
 })
 
 describe("the paid pick", () => {
-  test("ignores a free plan, a plan of another audience and an unknown id", async () => {
-    for (const planId of [
-      "plan-dealer-starter",
-      "plan-workshop-plus",
-      "nope",
-    ]) {
-      await resetDb()
-      const res = await complete(await signIn("new"), "dealership", {
-        ...dealerPayload,
-        planId,
-      })
-      expect(res.status).toBe(200)
-      expect(await res.json()).not.toHaveProperty("chosenPlanId")
-    }
-  })
+  // Three full database resets in one test, about 2 s each.
+  test(
+    "ignores a free plan, a plan of another audience and an unknown id",
+    async () => {
+      for (const planId of [
+        "plan-dealer-starter",
+        "plan-workshop-plus",
+        "nope",
+      ]) {
+        await resetDb()
+        const res = await complete(await signIn("new"), "dealership", {
+          ...dealerPayload,
+          planId,
+        })
+        expect(res.status).toBe(200)
+        expect(await res.json()).not.toHaveProperty("chosenPlanId")
+      }
+    },
+    SLOW_MS
+  )
 })
 
 describe("onboarding twice", () => {

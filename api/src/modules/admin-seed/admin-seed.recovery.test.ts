@@ -1,4 +1,10 @@
-import { afterEach, beforeEach, expect, test } from "bun:test"
+import {
+  afterEach,
+  beforeEach,
+  expect,
+  setDefaultTimeout,
+  test,
+} from "bun:test"
 import { and, eq } from "drizzle-orm"
 
 import { env } from "~/env"
@@ -25,6 +31,8 @@ import { cleanUpSeedImages } from "./admin-seed.media-cleanup.service"
 import { startSeedInstall } from "./admin-seed.start.service"
 import { seedDatasets, seedOperations } from "./admin-seed.tables"
 
+// Installs write the 230-record catalog in passes of 25; image checks decode real files.
+setDefaultTimeout(30_000)
 const ORIGINAL = { enabled: env.ADMIN_SEED_ENABLED, appEnv: env.APP_ENV }
 beforeEach(async () => {
   env.ADMIN_SEED_ENABLED = true

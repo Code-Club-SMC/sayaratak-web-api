@@ -18,6 +18,10 @@ const NO_NOTIFICATIONS = {
   announcements: false,
 }
 
+// Synthetic owners only. Other `.invalid` addresses are real people (a Facebook account with no
+// email gets `@facebook.invalid`, auth.mapper) and must still sign up.
+const SEED_EMAIL_DOMAIN = "@seed.invalid"
+
 /** Inserts non-login fictional owners without credentials, sessions or verified claims. */
 export async function insertSeedOwners(tx: Transaction, input: SeedOwnerBatch) {
   const batch = seedOwnerBatchSchema.parse(input)
@@ -27,11 +31,12 @@ export async function insertSeedOwners(tx: Transaction, input: SeedOwnerBatch) {
   )) {
     const existing = await seed.lockSeedOwner(tx, owner.id)
     if (existing) fail.conflict()
-    if (await q.getUserByEmail(tx, `${owner.id}@seed.invalid`)) fail.conflict()
+    if (await q.getUserByEmail(tx, `${owner.id}${SEED_EMAIL_DOMAIN}`))
+      fail.conflict()
     await seed.insertSeedOwner(tx, {
       id: owner.id,
       name: owner.name.ar,
-      email: `${owner.id}@seed.invalid`,
+      email: `${owner.id}${SEED_EMAIL_DOMAIN}`,
       role: owner.role,
       cityId: owner.cityId,
       seedDatasetId: batch.datasetId,
@@ -70,7 +75,7 @@ export async function refuseSyntheticUser(id: string) {
 /** Stops email auth before unfinished-account deletion, OTP storage or mail. */
 export async function refuseSyntheticEmail(email: string) {
   if (
-    email.endsWith(".invalid") ||
+    email.endsWith(SEED_EMAIL_DOMAIN) ||
     (await q.getUserByEmail(db, email))?.seedDatasetId
   )
     throw new APIError("FORBIDDEN", { code: "forbidden" })

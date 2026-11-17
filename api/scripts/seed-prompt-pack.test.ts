@@ -1,5 +1,6 @@
 import { expect, test } from "bun:test"
 import { mkdtemp, rm, rmdir } from "node:fs/promises"
+import { tmpdir } from "node:os"
 import { join } from "node:path"
 
 import { buildSeedManifest } from "~/modules/admin-seed/admin-seed.catalog.service"
@@ -7,7 +8,7 @@ import { buildSeedManifest } from "~/modules/admin-seed/admin-seed.catalog.servi
 import { exportSeedPromptPack } from "./seed-prompt-pack"
 
 test("export writes all prompts and refuses to overwrite an existing file", async () => {
-  const directory = await mkdtemp("/tmp/opencode/seed-export-")
+  const directory = await mkdtemp(join(tmpdir(), "seed-export-"))
   const path = join(directory, "prompts.json")
   try {
     await exportSeedPromptPack(path)
@@ -25,7 +26,7 @@ test("export writes all prompts and refuses to overwrite an existing file", asyn
 })
 
 test("CLI runs without database, provider or authentication environment", async () => {
-  const directory = await mkdtemp("/tmp/opencode/seed-cli-")
+  const directory = await mkdtemp(join(tmpdir(), "seed-cli-"))
   const path = join(directory, "prompts.json")
   try {
     const process = Bun.spawn(

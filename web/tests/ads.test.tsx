@@ -36,7 +36,9 @@ describe("banner ads", () => {
 
   it("serves the running campaign of the page as a sponsored banner", async () => {
     await renderShell(<BannerSlot placement="search_top" ad="search_truck" />)
-    expect(await screen.findByText("Pickups ready to work")).toBeTruthy()
+    expect(
+      await screen.findByRole("link", { name: "Pickups ready to work" })
+    ).toBeTruthy()
     expect(screen.getByText("Ad")).toBeTruthy()
   })
 

@@ -3,12 +3,11 @@ import { useEffect, useRef, useState } from "react"
 import { useT } from "@/lib/i18n/use-t"
 import { mediaSrc, mediaSrcSet } from "@/lib/media"
 import { bannerHref } from "@/lib/navigation"
-import { cn } from "@/lib/utils"
 import type { Banner } from "@sayaratak/shared/schemas/admin"
 import { useTrackEvent } from "@/features/listings/events"
-import { BannerCopy } from "./banner-copy"
+import { Badge } from "@/components/ui/badge"
 
-// The banner of every slot but the home hero (that is `HeroCarousel`). A banner with `copy` is a photo with real text (see `BannerCopy`); one without is a finished image (the older form), 1200 x 200 with its text and subject inside the middle 1200 px so the phone crop never cuts them.
+// The banner of every slot but the home hero (that is `HeroCarousel`): one image, the whole banner is the link (owner decision, 2026-11-17). A banner's `copy`, when present, only names the link for screen readers; a paid banner carries the Ad badge on the image. The photo's `focus` keeps its focal point in the 6:1 crop.
 export function BannerItem({ banner }: { banner: Banner }) {
   const { t, locale } = useT()
   const copy = banner.copy?.[locale]
@@ -43,19 +42,11 @@ export function BannerItem({ banner }: { banner: Banner }) {
     <a
       ref={link}
       href={href}
-      aria-label={copy ? undefined : t("nav.view_advertisement")}
+      aria-label={copy?.heading ?? t("nav.view_advertisement")}
       onClick={() => mutate({ type: "banner_click", targetId: banner.id })}
-      className={cn(
-        "group relative block min-h-11 overflow-hidden",
-        copy
-          ? "bg-deep text-deep-foreground motion-fade active:opacity-90"
-          : "bg-muted",
-        "rounded-xl"
-      )}
+      className="group relative block min-h-11 overflow-hidden rounded-xl bg-muted motion-fade active:opacity-90"
     >
-      {copy ? (
-        <BannerCopy banner={banner} copy={copy} src={banner.imageUrl[locale]} />
-      ) : !missing ? (
+      {!missing ? (
         <img
           ref={image}
           src={mediaSrc(banner.imageUrl[locale], 1280)}
@@ -67,12 +58,18 @@ export function BannerItem({ banner }: { banner: Banner }) {
           decoding="async"
           alt=""
           onError={() => setMissing(true)}
+          style={{ objectPosition: `center ${banner.focus}%` }}
           className="aspect-[6/1] w-full object-cover"
         />
       ) : (
         <span className="flex aspect-[6/1] min-h-11 items-center justify-center p-4 text-ui text-muted-foreground">
           {t("nav.advertisement")}
         </span>
+      )}
+      {banner.sponsored && (
+        <Badge variant="signal" className="absolute end-2 top-2">
+          {t("nav.ad_badge")}
+        </Badge>
       )}
     </a>
   )

@@ -109,7 +109,7 @@ export function HeroCarousel({
       onBlur={(e) => {
         if (!e.currentTarget.contains(e.relatedTarget)) setFocused(false)
       }}
-      className="relative touch-pan-y overflow-hidden rounded-xl select-none md:rounded-xl"
+      className="relative mx-[calc(50%-50vw)] touch-pan-y overflow-hidden select-none"
     >
       <div
         aria-live={paused ? "polite" : "off"}

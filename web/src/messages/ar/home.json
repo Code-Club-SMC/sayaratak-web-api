@@ -34,5 +34,7 @@
   "home.post_band_currency": "جنيه سوداني فقط",
   "home.explore_marketplace": "تصفح السوق بالكامل",
   "home.section_error": "تعذر تحميل هذا القسم.",
-  "home.section_error_hint": "تحقق من اتصالك ثم حاول مرة أخرى."
+  "home.section_error_hint": "تحقق من اتصالك ثم حاول مرة أخرى.",
+  "home.hero_title": "سوق السودان للسيارات وخدماتها",
+  "home.hero_tagline": "بيع وشراء وتأجير المركبات، وقطع الغيار والورش الموثوقة — وكل الأسعار بالجنيه السوداني."
 }

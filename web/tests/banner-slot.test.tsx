@@ -78,12 +78,12 @@ it("delays the loading skeleton and replaces it with the banner", async () => {
   ).toBeTruthy()
 })
 
-it("shows real text in the page language and an Ad chip only on a paid banner", async () => {
+it("names the image-only banner after its heading and shows an Ad chip only on a paid banner", async () => {
   await renderShell(<BannerSlot placement="home_middle" />)
   const link = await screen.findByRole("link", {
     name: /Move more with the right truck/,
   })
-  expect(link.textContent).toContain("See trucks")
+  expect(link.textContent).not.toContain("See trucks")
   expect(screen.getByText("Ad")).toBeTruthy()
   expect(link.querySelector("img")?.getAttribute("alt")).toBe("")
 })

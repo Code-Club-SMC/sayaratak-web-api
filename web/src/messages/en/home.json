@@ -34,5 +34,7 @@
   "home.post_band_currency": "Whole SDG only",
   "home.explore_marketplace": "Explore the marketplace",
   "home.section_error": "This section did not load.",
-  "home.section_error_hint": "Check your connection and try again."
+  "home.section_error_hint": "Check your connection and try again.",
+  "home.hero_title": "Sudan's marketplace for cars and auto services",
+  "home.hero_tagline": "Buy, sell and rent vehicles, find spare parts and trusted workshops — all in Sudanese pounds."
 }

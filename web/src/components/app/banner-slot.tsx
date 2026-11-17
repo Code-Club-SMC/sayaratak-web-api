@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query"
+import type { ReactNode } from "react"
 
 import { useT } from "@/lib/i18n/use-t"
 import { useDelayedFlag } from "@/lib/use-delayed-flag"
@@ -17,10 +18,12 @@ export function BannerSlot({
   placement,
   ad,
   variant = "strip",
+  fallback,
 }: {
   placement: Banner["placement"]
   ad?: AdPageId
   variant?: "strip" | "hero"
+  fallback?: ReactNode
 }) {
   const { t } = useT()
   const house = useQuery(bannersQuery(placement))
@@ -58,7 +61,7 @@ export function BannerSlot({
         }}
       />
     )
-  if (!data.length) return null
+  if (!data.length) return fallback ?? null
   if (variant === "hero") return <HeroBanners banners={data} />
   return (
     <aside aria-label={t("nav.advertisement")} className="space-y-4">

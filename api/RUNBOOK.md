@@ -365,3 +365,21 @@ The lock is released at commit before SMTP delivery. Queueing still runs off the
 over-cap requests keep their existing quiet responses. This needs no schema migration, provider
 change or new setting. Other recipients use separate lock keys; hash collisions can only serialize
 their reservations, not share their allowances. Delivery retries keep the existing outbox behavior.
+
+## 10. Admin seed dataset operations
+
+The platform includes an admin-controlled seeding workflow to populate a versioned 200-listing, 30-business, 460-image preview dataset.
+
+### Enabling the seed capability
+
+Seeding requires setting `ADMIN_SEED_ENABLED=true` in the API environment, alongside configured Cloudinary and R2 storage. When disabled or when storage keys are absent, `/api/v1/admin/seed` reports the disabled capability or missing requirements, and mutation endpoints return 403.
+
+### Seeding lifecycle operations
+
+1. **Prepare**: The admin clicks "Prepare dataset" or invokes `POST /api/v1/admin/seed/prepare`. This generates the immutable dataset row and registers 460 expected asset records.
+2. **Prompts**: Download the prompt JSON pack via `GET /api/v1/admin/seed/manifest` or the admin UI.
+3. **Upload archives**: Upload flat ZIP archives via `POST /api/v1/admin/seed/archives`. The server validates image dimensions (1200x900 to 4096x3072), mime types (JPEG/PNG/WebP), and checksums.
+4. **Execution**: Once all 460 assets are accepted, start execution via `POST /api/v1/admin/seed/start`. The process installs records in atomic batches of at most 25.
+5. **Recovery**: If a worker process fails or is killed, the operation remains recorded as `failed` with its completed count intact. Calling `POST /api/v1/admin/seed/retry` returns the operation to `queued` and execution resumes from the committed checkpoint.
+6. **Safe Removal**: Invoking `POST /api/v1/admin/seed/remove` locks the dataset, hides records immediately from public queries, and removes unreferenced records in transactional passes. Records with real user activity (favorites, reviews, threads) are preserved as retained dependencies.
+

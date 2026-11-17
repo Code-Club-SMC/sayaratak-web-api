@@ -89,3 +89,13 @@ Manual browser walkthrough after Task 5's isolated servers are approved:
 3. Under local trusted HTTPS, inspect the cookie in browser storage: `__Secure-sy.session_token`, host-only, HttpOnly, Secure, Lax, `/`. Sign out, reload and confirm it expires and the account is signed out.
 4. Open a local private receipt as its owner/admin, then as another user. Only owner/admin succeeds; others receive 404. Public Cloudinary URLs stay unchanged.
 5. Do not run reset/OTP helpers against Render or claim these steps passed without the Task 5 browser evidence. Real Google/email and free-tier wake-up remain live-gated.
+
+## 9. Admin seed dataset and preview isolation
+
+The real API provides an admin-managed seeding workflow (`/admin/settings` -> Demo dataset).
+
+1. **Preview notice**: When the site has active demo data or when the currently rendered page contains preview items, the public shell displays a single passive `<SeedNotice />` ("Demo data. Contact and payments are unavailable for these listings.").
+2. **Public interaction suppression**: Seeded listings and businesses have `interactionMode: "preview"`. Contact actions (phone calls, WhatsApp), favorites, reviews, and promotion purchases are disabled for preview targets.
+3. **SEO safety**: Preview detail pages include `<meta name="robots" content="noindex" />` and structured data (JSON-LD) is suppressed.
+4. **Site state invalidation**: The site query uses `staleTime: 0` and refetches on navigation and window focus to reflect newly installed or removed demo datasets.
+

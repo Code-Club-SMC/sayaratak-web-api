@@ -1,58 +1,53 @@
 # Admin-managed dataset
 
-The approved dataset contains 200 listings, 30 businesses and 460 images. It is separate from the development/test database seed. No generated content is installed by exporting prompts.
+The approved dataset contains 200 listings, 30 businesses (dealerships, workshops, mechanics) and 460 images. It is separate from the development/test database seed and operates through a versioned, durable, and recoverable administrative lifecycle.
 
-## Export the image prompts
+## 1. Export the image prompts
 
-From the repository root:
+From the repository root or via the authenticated Admin UI:
 
 ```bash
 bun run --cwd api seed:prompts /tmp/opencode/sayaratak-image-prompts.json
 ```
 
-The output path must not exist. Export reads no database, runtime secrets or credentials and works with `bun --no-env-file scripts/seed-prompt-pack.ts <new-path>` from `api/`.
+Or download directly from `GET /api/v1/admin/seed/manifest` after preparation.
 
-The JSON contains all records, one complete prompt per image, exact accepted filenames and pairing instructions. Generate the first image of each record before the second. Supply the first image to your model as a reference when generating the second.
+The prompt pack contains 230 records, one complete prompt per image, exact accepted filenames and pairing instructions. Supply the first image to your model as a reference when generating the second.
 
-## Image checklist
+## 2. Image generation checklist
 
-- Each pair must depict the same vehicle, component or fictional business. Check model generation, body proportions, color, doors, wheels, lighting and setting.
+- Each pair must depict the same vehicle, component or fictional business. Check body proportions, color, doors, wheels, lighting and setting.
 - Images are fictional. Do not copy a real person's identity, existing business, contact details, registration plates or endorsement.
-- Recommended output: 1600×1200, landscape 4:3. Accepted sizes range from 1200×900 to 4096×3072.
-- Use JPEG, PNG or WebP, at most 2 MiB per image. Use exactly one listed filename per logical image.
-- Return flat ZIPs containing only the requested images. No nested directories or extra files.
-- Each ZIP is at most 25 MiB compressed, 100 MiB expanded and 50 images. The dataset requires at least ten batches; split further to meet the byte limits.
-- Review every generated image manually. Prompt wording cannot guarantee an accurate or consistent output.
+- Output requirements: 1600×1200 recommended landscape 4:3. Accepted dimensions: 1200×900 to 4096×3072.
+- Formats: JPEG, PNG or WebP, at most 2 MiB per image. Use exactly one listed filename per logical image.
+- Packaging: Flat ZIPs containing only requested images. No nested directories or extra files.
+- Byte limits: At most 25 MiB compressed, 100 MiB expanded, and at most 50 images per ZIP archive.
 
-## Availability
+## 3. Administrative lifecycle API
 
-Tasks 1 and 2 provide the catalog/export and admin preparation/status boundary. Image intake, storage, installation, removal and browser controls are later tasks; they must not be simulated by successful stub endpoints.
+All endpoints require the authenticated admin cookie session with verified two-factor email OTP. Bearer tokens and unverified sessions are rejected with 401/403.
 
-The final public experience requires one small readable bilingual inline notice, disabled synthetic interactions, noindex for seeded detail pages and provenance-based removal preserving real data. No production seed execution or deployment is authorized by this document.
+| Endpoint | Method | Purpose |
+| --- | --- | --- |
+| `/api/v1/admin/seed` | GET | Reports capability status, manifest digest, asset counts (accepted, rejected, missing), and active operation. |
+| `/api/v1/admin/seed/prepare` | POST | Prepares the immutable dataset manifest, 460 expected asset records, and system audit event. Idempotent. |
+| `/api/v1/admin/seed/manifest` | GET | Downloads the authenticated prompt JSON pack matching the prepared manifest digest. |
+| `/api/v1/admin/seed/archives` | POST | Streams and validates a flat ZIP archive, decodes images with Sharp, stores provider intents, and checks progress. |
+| `/api/v1/admin/seed/start` | POST | Starts the seed execution, committing in batches of at most 25 records. Returns 202 with `SeedOperation`. |
+| `/api/v1/admin/seed/retry` | POST | Retries an interrupted or failed install operation from its last committed checkpoint without resetting counters. |
+| `/api/v1/admin/seed/remove` | POST | Initiates transactional removal of owned seed records and media while preserving any item touched by real user activity. |
 
-## Preparation API
+## 4. Public contract & preview isolation
 
-All three endpoints require the existing admin cookie session after its email-code step. Bearer tokens cannot operate admin routes. Responses are not cacheable.
+- Seeded listings and businesses are tagged with `seedDatasetId` and expose `interactionMode: "preview"`.
+- Phone and WhatsApp contact actions are withheld: public responses never return phone numbers or links for preview items.
+- Favorites, reviews, inquiries, reports, and paid promotion checkout are disabled for preview targets.
+- Search and listings detail pages render exactly one compact, passive `<SeedNotice />` ("Demo data. Contact and payments are unavailable for these listings.").
+- Preview detail pages include `<meta name="robots" content="noindex" />` and omit all Schema.org structured data (Product, Vehicle, LocalBusiness).
 
-| Endpoint | Behavior |
-| --- | --- |
-| `GET /api/v1/admin/seed` | Reports capability names, the catalog digest, persisted preparation, real operation progress and missing-image counts. No credentials or synthetic owner descriptors are returned. |
-| `POST /api/v1/admin/seed/prepare` | Accepts exactly `{}`. Creates one immutable catalog snapshot, 460 expected image rows and one audit event transactionally. Does not create users, businesses, listings or images. Repeated/concurrent calls return the same preparation. |
-| `GET /api/v1/admin/seed/manifest` | Downloads the persisted prompt pack, validating its stored digest first. Requires preparation. |
+## 5. Failure recovery & safe removal
 
-`ADMIN_SEED_ENABLED` defaults to false. Status remains readable to authorized admins when disabled; preparation/download return 403. Outside isolated test mode, Cloudinary and all four R2 settings must also be configured. Missing names are reported in capability status, never secret values. No provider configuration or fake-disk fallback is performed automatically.
-
-The additive migration must be applied before running code that reads the new columns. Only `postgres-test` has been migrated as part of Task 2 verification. Do not deploy the new code against an unmigrated development or hosted database. Apply migrations to another target only after target verification and explicit authorization.
-
-## Task 2 acceptance walkthrough
-
-Use an isolated local/test database with the migration applied, not the live marketplace:
-
-1. Finish admin sign-in and its email-code step. Request status and confirm disabled capability is explained when the flag is off.
-2. With explicitly enabled isolated test configuration, request preparation with an empty object. Confirm state is `preparing`, operation is null and all 460 images are missing.
-3. Repeat preparation from a second request. Confirm the dataset ID/digest and image count do not change.
-4. Download the manifest and verify 230 records, 460 individual prompts and reference-image filenames.
-5. Verify ordinary users, challenge-only sessions and admin bearer requests cannot access this feature.
-6. Confirm public record/account counts remain unchanged. No seed button or new public notice should appear yet; those belong to Task 7.
-
-The CLI prompt exporter remains usable without enabling this API or configuring providers.
+- **Worker interruption**: If an install worker terminates mid-run, `POST /admin/seed/retry` resumes from the last committed pass (`operation.completed`) rather than resetting or duplicating records.
+- **Idempotency**: Repeated `start`, `retry`, or `remove` calls lock the dataset row and return the existing active operation without spawning duplicates.
+- **Dependency protection**: When `POST /admin/seed/remove` is called, 13 dependency-owning domains are inspected. Any seed record linked to real user favorites, reviews, messages, or payments is retained in the database to prevent foreign key corruption. Unreferenced seed records and media are safely removed.
+- **Orphan media cleanup**: Unaccepted or superseded image uploads are queued for deletion via the background outbox (`retryHostDeletes`).

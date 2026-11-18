@@ -4,6 +4,7 @@ import {
   pruneOldHours,
   rollUpOldDays,
 } from "~/modules/analytics/analytics.rollup.service"
+import { pruneOldSearches } from "~/modules/analytics/analytics.search.service"
 import { pruneRead } from "~/modules/notifications/notifications.cleanup.service"
 import { pruneOutbox } from "~/modules/notifications/notifications.outbox.service"
 import { pruneKeys } from "~/shared/http/idempotency.prune"
@@ -24,6 +25,7 @@ export const pruneJob = defineJob({
       pruneRead,
       rollUpOldDays,
       pruneOldHours,
+      pruneOldSearches,
     ])
       deleted += await prune()
     return deleted

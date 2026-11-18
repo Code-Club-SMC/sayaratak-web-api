@@ -112,6 +112,15 @@ export function hasModelOf(
     .then((rows) => rows.length > 0)
 }
 
+export function hasModel(ex: Executor, id: string) {
+  return ex
+    .select({ id: models.id })
+    .from(models)
+    .where(eq(models.id, id))
+    .limit(1)
+    .then((rows) => rows.length > 0)
+}
+
 export function hasMake(ex: Executor, id: string) {
   return ex
     .select({ id: makes.id })

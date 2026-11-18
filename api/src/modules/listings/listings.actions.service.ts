@@ -9,7 +9,11 @@ import * as content from "~/modules/content/content.service"
 import * as uploads from "~/modules/uploads/uploads.media.service"
 
 import * as q from "./listings.queries"
-import { checkCanEdit, newFreeListingId } from "./listings.rules.service"
+import {
+  checkCanEdit,
+  newFreeListingId,
+  statusSet,
+} from "./listings.rules.service"
 import { toOneListing } from "./listings.view.service"
 
 const DAY_MS = 86_400_000
@@ -33,10 +37,10 @@ export function setListingStatus(
   change: { id: string; status: Listing["status"] }
 ) {
   return transaction(async (tx) => {
-    await editable(tx, { user, id: change.id })
+    const before = await editable(tx, { user, id: change.id })
     const row = await q.updateListing(tx, {
       id: change.id,
-      set: { status: change.status, updatedAt: clock.now() },
+      set: { ...statusSet(before, change.status), updatedAt: clock.now() },
     })
     return toOneListing(tx, row, user)
   })
@@ -78,6 +82,8 @@ export function duplicateListing(user: SessionUser, id: string) {
       moderation: "draft",
       status: "available",
       rejectionReason: null,
+      soldAt: null,
+      decidedAt: null,
       bumpedAt: null,
       expiredNotifiedAt: null,
       createdAt: now,

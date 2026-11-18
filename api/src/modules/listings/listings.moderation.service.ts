@@ -13,6 +13,7 @@ import { notify } from "~/modules/notifications/notifications.service"
 import * as savedSearches from "~/modules/saved-searches/saved-searches.service"
 
 import * as q from "./listings.queries"
+import { statusSet } from "./listings.rules.service"
 import type { ListingRow } from "./listings.view.service"
 
 export type ModerationAction = "approve" | "reject" | "remove" | "restore"
@@ -99,7 +100,7 @@ export async function setStatus(
   if (!row) fail.notFound()
   const saved = await q.updateListing(tx, {
     id: row.id,
-    set: { status: change.status, updatedAt: clock.now() },
+    set: { ...statusSet(row, change.status), updatedAt: clock.now() },
   })
   await recordAudit(tx, actor, {
     action: "listing.update",
@@ -139,17 +140,24 @@ async function move(
 }
 
 // Mock: approving or restoring clears the rejection note and stamps the change; a removal
-// changes only the state.
+// changes only the state. Every action stamps `decidedAt` (step 11.7-r4).
 function setOf(action: ModerationAction, reason: string | undefined) {
-  if (action === "remove") return { moderation: "removed" as const }
-  const updatedAt = clock.now()
+  const decidedAt = clock.now()
+  if (action === "remove") return { moderation: "removed" as const, decidedAt }
+  const updatedAt = decidedAt
   if (action === "reject")
     return {
       moderation: "rejected" as const,
       rejectionReason: reason,
       updatedAt,
+      decidedAt,
     }
-  return { moderation: "approved" as const, rejectionReason: null, updatedAt }
+  return {
+    moderation: "approved" as const,
+    rejectionReason: null,
+    updatedAt,
+    decidedAt,
+  }
 }
 
 // The owner hears about an approval or a rejection; an approval is a new match for saved searches.

@@ -127,3 +127,17 @@ export async function newFreeListingId(ex: Executor) {
   }
   throw new Error("no free listing id after 5 tries")
 }
+
+const CLOSED = new Set<ListingRow["status"]>(["sold", "rented"])
+
+/**
+ * The status with its `soldAt` (owner, step 11.7-r4): stamped when it becomes
+ * sold or rented, kept while it stays closed, cleared when it reopens.
+ */
+export function statusSet(
+  row: Pick<ListingRow, "status" | "soldAt">,
+  status: ListingRow["status"]
+) {
+  if (!CLOSED.has(status)) return { status, soldAt: null }
+  return { status, soldAt: CLOSED.has(row.status) ? row.soldAt : clock.now() }
+}

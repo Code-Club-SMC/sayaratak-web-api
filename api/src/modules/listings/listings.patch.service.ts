@@ -47,6 +47,7 @@ export async function saveChanges(tx: Transaction, change: Change) {
   const changed = reviewed(row, media.before) !== reviewed(next, media.after)
   next.moderation =
     moderation ?? (await movedModeration(tx, { user, row, changed }))
+  next.decidedAt = decidedAtOf(row, moderation)
   if (submit && REOPENED.has(row.moderation)) {
     await checkOwnerLimit(tx, row)
     next.moderation = await publishState(tx, user, true)
@@ -56,6 +57,13 @@ export async function saveChanges(tx: Transaction, change: Change) {
   if (saved.moderation === "approved" && row.moderation !== "approved")
     await savedSearches.onListingApproved(tx, saved)
   return saved
+}
+
+// An admin setting the review state by hand decides it (step 11.7-r4).
+function decidedAtOf(row: ListingRow, moderation: PatchBody["moderation"]) {
+  return moderation && moderation !== row.moderation
+    ? clock.now()
+    : row.decidedAt
 }
 
 async function nextColumns(

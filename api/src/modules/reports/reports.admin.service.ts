@@ -1,6 +1,7 @@
 import type { Executor, Transaction } from "~/shared/db/tx"
 import { fail } from "~/shared/http/errors"
 import { pageParams } from "~/shared/http/page"
+import { clock } from "~/shared/time/clock"
 import { recordAudit } from "~/modules/audit/audit.service"
 import type { Actor } from "~/modules/audit/audit.types"
 
@@ -71,6 +72,7 @@ export async function dismissReport(
     id: change.id,
     status: "dismissed",
     note: change.note,
+    decidedAt: clock.now(),
   })
   await recordAudit(tx, actor, {
     action: "report.dismiss",
@@ -97,14 +99,17 @@ export async function actionReport(
   }
 ) {
   const { report } = change
+  const decidedAt = clock.now()
   await admin.decide(tx, {
     id: report.id,
     status: "actioned",
     note: change.note,
+    decidedAt,
   })
   const others = await admin.actionOpenOfListing(tx, {
     listingId: report.listingId,
     note: change.note,
+    decidedAt,
   })
   await recordAudit(tx, actor, {
     action: "report.action",

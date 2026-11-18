@@ -39,8 +39,32 @@ export type UserRow = Omit<User, "hasPassword"> & {
   locale: Locale
   prefs: NotificationPrefs
 }
-// `bumpedAt` is when a bump last put the listing back at the top of the newest.
-export type ListingRow = Listing & { ownerUserId: string; bumpedAt?: string }
+// `bumpedAt` is when a bump last put the listing back at the top of the newest. Step 11.7-r4:
+// `soldAt` is when it last became sold or rented, `decidedAt` when an admin last moderated it.
+export type ListingRow = Listing & {
+  ownerUserId: string
+  bumpedAt?: string
+  soldAt?: string
+  decidedAt?: string
+}
+// Step 11.7-r4: when an admin closed the report or decided the request.
+export type ReportRow = Report & { decidedAt?: string }
+export type VerificationRow = VerificationRequest & { decidedAt?: string }
+// Step 11.7-r4: page-1 public searches per Khartoum day and filter set; "" is an absent filter.
+export type SearchRow = {
+  day: string
+  kind: string
+  intent: string
+  type: string
+  make: string
+  model: string
+  city: string
+  partCategory: string
+  hasText: boolean
+  searches: number
+  zeroResults: number
+  results: number
+}
 export type ThreadRow = {
   id: string
   subjectType: "listing" | "dealership" | "workshop" | "mechanic"
@@ -121,8 +145,8 @@ export type Db = {
   payments: Payment[]
   promotions: Promotion[]
   promotionPrices: PromotionPriceRow[]
-  reports: Report[]
-  verifications: VerificationRequest[]
+  reports: ReportRow[]
+  verifications: VerificationRow[]
   banners: Banner[]
   adPages: AdPageRow[]
   campaigns: CampaignRow[]
@@ -131,6 +155,7 @@ export type Db = {
   settings: Settings
   drafts: DraftRow[]
   events: EventRow[]
+  searches: SearchRow[]
   contacts: ContactRow[]
   broadcasts: BroadcastRow[]
   uploads: Map<string, UploadRow>

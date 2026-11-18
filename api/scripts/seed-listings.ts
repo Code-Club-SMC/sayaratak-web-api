@@ -68,6 +68,8 @@ function listingRow(
       name(row.modelId),
     ]),
     bumpedAt: row.bumpedAt ? new Date(row.bumpedAt) : null,
+    soldAt: row.soldAt ? new Date(row.soldAt) : null,
+    decidedAt: row.decidedAt ? new Date(row.decidedAt) : null,
     expiresAt: new Date(row.expiresAt),
     createdAt: new Date(row.createdAt),
     updatedAt: new Date(row.updatedAt),

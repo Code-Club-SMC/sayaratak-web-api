@@ -11,7 +11,8 @@ import { db, find, newId, paginate } from "./db"
 import { fail, pageParams, type Ctx } from "./http"
 import type { Plan, Promotion } from "@sayaratak/shared/schemas/billing"
 import { notificationHref } from "./seed/util"
-import type { ListingRow, UserRow } from "./types"
+import type { SearchLogKey } from "@sayaratak/shared/search/log"
+import type { ListingRow, SearchRow, UserRow } from "./types"
 import { userSchema } from "@sayaratak/shared/schemas/user"
 
 export const publicUser = (u: UserRow) =>
@@ -209,6 +210,20 @@ export function activatePromotion(p: Promotion) {
   })
 }
 
+// Step 11.7-r4 (API `statusSet`): sold or rented stamps `soldAt` once, reopening clears it.
+export function setListingStatus(
+  row: ListingRow,
+  status: ListingRow["status"]
+) {
+  const closed = (s: string) => s === "sold" || s === "rented"
+  row.soldAt = closed(status)
+    ? closed(row.status)
+      ? row.soldAt
+      : nowIso()
+    : undefined
+  row.status = status
+}
+
 export function canEditListing(user: UserRow, listing: ListingRow) {
   if (user.role !== "admin" && listing.ownerUserId !== user.id)
     throw fail(403, "forbidden")
@@ -234,3 +249,26 @@ export function listPage<T>(
 }
 export const byNewest = <T extends { createdAt: string }>(a: T, b: T) =>
   b.createdAt.localeCompare(a.createdAt)
+
+// Step 11.7-r4 (API `recordSearch`): one public search in today's row for its filter set.
+export function recordSearch(key: SearchLogKey, total: number) {
+  const day = dayKey()
+  const same = (r: SearchRow) =>
+    r.day === day &&
+    (Object.keys(key) as (keyof SearchLogKey)[]).every((k) => r[k] === key[k])
+  const row = db.searches.find(same)
+  const zero = total === 0 ? 1 : 0
+  if (!row)
+    db.searches.push({
+      day,
+      ...key,
+      searches: 1,
+      zeroResults: zero,
+      results: total,
+    })
+  else {
+    row.searches += 1
+    row.zeroResults += zero
+    row.results += total
+  }
+}

@@ -138,10 +138,15 @@ export function updateDecision(
     id: string
     status: "approved" | "rejected"
     rejectionReason: string | null
+    decidedAt: Date
   }
 ) {
   return tx
     .update(verificationRequests)
-    .set({ status: change.status, rejectionReason: change.rejectionReason })
+    .set({
+      status: change.status,
+      rejectionReason: change.rejectionReason,
+      decidedAt: change.decidedAt,
+    })
     .where(eq(verificationRequests.id, change.id))
 }

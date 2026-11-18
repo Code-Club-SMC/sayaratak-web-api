@@ -137,6 +137,7 @@ export function buildSeed({ empty = false }: { empty?: boolean } = {}): Db {
             ...listings.slice(0, 40).map((l) => l.id),
           ]),
         ]),
+    searches: [],
     contacts: [],
     broadcasts: [],
     uploads: seedReceipts(payments, settings.bankakAccount.name),

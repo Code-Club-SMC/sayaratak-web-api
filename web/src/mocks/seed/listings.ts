@@ -364,6 +364,12 @@ export function seedListings(ctx: Ctx) {
       stats: { views: 0, favorites: 0, phoneClicks: 0, whatsappClicks: 0 },
       createdAt: ago(created),
       updatedAt: ago(Math.max(0, created - int(0, 2 * DAY))),
+      // Step 11.7-r4. Derived without the random source so the rest of the seed stays the same.
+      soldAt: sold ? ago(created / 3) : undefined,
+      decidedAt:
+        approved || moderation === "rejected"
+          ? ago(created - Math.min(created / 2, 6 * HOUR))
+          : undefined,
       expiresAt: ahead(30 * DAY - created),
     }
     if (makeName && !row.description.ar) row.description = makeName.name

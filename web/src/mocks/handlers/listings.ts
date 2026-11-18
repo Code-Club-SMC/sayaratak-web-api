@@ -20,6 +20,7 @@ import {
 } from "@sayaratak/shared/schemas/listing"
 import { taxonomySchema } from "@sayaratak/shared/schemas/taxonomy"
 import { makeListingSlug, parseListingId } from "@sayaratak/shared/lib/slug"
+import { searchLogKey } from "@sayaratak/shared/search/log"
 import { bilingualName, both } from "@/mocks/seed/util"
 
 import { db, find, insert, newListingId, paginate, remove } from "../db"
@@ -39,6 +40,8 @@ import {
   listingLimit,
   listingUsage,
   nowIso,
+  recordSearch,
+  setListingStatus,
   extrasOf,
 } from "../lib"
 import { periodOf } from "../period"
@@ -81,6 +84,11 @@ route("GET", "/listings", (c) => {
   )
   const { pageSize } = pageParams(c.query, 24)
   const result = paginate(rows, params.page, pageSize)
+  const logged = searchLogKey(params, {
+    limit: c.query.get("limit") ?? undefined,
+    exclude: exclude ?? undefined,
+  })
+  if (logged) recordSearch(logged, rows.length)
   return listingPageSchema.parse({
     ...result,
     items: result.items.map((l) => shown(l, c.user)),
@@ -263,7 +271,10 @@ route("PATCH", "/listings/:id", async (c) => {
   if (description !== undefined) row.description = both(description)
   if (patch.title || patch.cityId)
     row.slug = makeListingSlug(row.title, row.cityId, row.id)
-  if (moderation) row.moderation = moderation
+  if (moderation) {
+    if (moderation !== row.moderation) row.decidedAt = nowIso()
+    row.moderation = moderation
+  }
   // Changing what a buyer judges the listing by sends an approved one back to review, unless the owner is auto-approved. Price and status never do.
   else if (
     row.moderation === "approved" &&
@@ -295,7 +306,7 @@ route("POST", "/listings/:id/status", async (c) => {
   const user = needUser(c)
   const row = listingById(c.params.id ?? "")
   canEditListing(user, row)
-  row.status = (await c.body(listingStatusInputSchema)).status
+  setListingStatus(row, (await c.body(listingStatusInputSchema)).status)
   row.updatedAt = nowIso()
   return owned(row)
 })

@@ -120,6 +120,7 @@ route("POST", "/admin/reports/:id/dismiss", async (c) => {
   if (!row) throw fail(404, "not_found")
   row.status = "dismissed"
   row.resolutionNote = (await c.body(noteInputSchema)).note
+  row.decidedAt = nowIso()
   return adminReportSchema.parse(reportRow(row))
 })
 // Removes the listing and tells its owner, or (with `ban`) bans the owner and tells nobody. Every open report on the listing closes with the same note.
@@ -136,6 +137,7 @@ route("POST", "/admin/reports/:id/action", async (c) => {
     setBan(seller, ban)
   } else if (listing) {
     listing.moderation = "removed"
+    listing.decidedAt = nowIso()
     notify(
       listing.ownerUserId,
       "listing_rejected",
@@ -147,6 +149,7 @@ route("POST", "/admin/reports/:id/action", async (c) => {
     if (r.listingId === row.listingId && (r === row || r.status === "open")) {
       r.status = "actioned"
       r.resolutionNote = note
+      r.decidedAt = nowIso()
     }
   return adminReportSchema.parse(reportRow(row))
 })

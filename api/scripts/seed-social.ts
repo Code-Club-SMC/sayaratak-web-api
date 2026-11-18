@@ -46,7 +46,11 @@ export async function seedSocial(ex: Executor, data: Seed) {
   )
   await insert(
     reports,
-    data.reports.map((r) => ({ ...r, createdAt: new Date(r.createdAt) }))
+    data.reports.map((r) => ({
+      ...r,
+      createdAt: new Date(r.createdAt),
+      decidedAt: r.decidedAt ? new Date(r.decidedAt) : null,
+    }))
   )
   await seedVerifications(ex, data)
 }
@@ -128,6 +132,7 @@ async function seedVerifications(ex: Executor, data: Seed) {
       data.verifications.map(({ documents: _, ...v }) => ({
         ...v,
         createdAt: new Date(v.createdAt),
+        decidedAt: v.decidedAt ? new Date(v.decidedAt) : null,
       }))
     )
     .onConflictDoNothing()

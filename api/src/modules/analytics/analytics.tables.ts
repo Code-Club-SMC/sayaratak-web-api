@@ -1,6 +1,8 @@
 import { eventTypeSchema } from "@sayaratak/shared/schemas/api"
 import { sql } from "drizzle-orm"
 import {
+  bigint,
+  boolean,
   check,
   date,
   index,
@@ -69,5 +71,43 @@ export const eventsMonthly = pgTable(
   (table) => [
     primaryKey({ columns: [table.targetId, table.month, table.type] }),
     check("events_monthly_count_positive", sql`${table.count} > 0`),
+  ]
+)
+
+// Owner, step 11.7-r4: page-1 public searches per Khartoum day and filter set, with no user id
+// and never the typed text (`hasText` only). An absent filter is "" so the key has no nulls.
+// Kept 13 months like the daily events, then deleted by `prune`.
+export const searchesDaily = pgTable(
+  "searches_daily",
+  {
+    day: date({ mode: "string" }).notNull(),
+    kind: text().notNull(),
+    intent: text().notNull(),
+    type: text().notNull(),
+    make: text().notNull(),
+    model: text().notNull(),
+    city: text().notNull(),
+    partCategory: text().notNull(),
+    hasText: boolean().notNull(),
+    searches: integer().notNull(),
+    zeroResults: integer().notNull(),
+    results: bigint({ mode: "number" }).notNull(),
+  },
+  (table) => [
+    primaryKey({
+      name: "searches_daily_pk",
+      columns: [
+        table.day,
+        table.kind,
+        table.intent,
+        table.type,
+        table.make,
+        table.model,
+        table.city,
+        table.partCategory,
+        table.hasText,
+      ],
+    }),
+    check("searches_daily_searches_positive", sql`${table.searches} > 0`),
   ]
 )

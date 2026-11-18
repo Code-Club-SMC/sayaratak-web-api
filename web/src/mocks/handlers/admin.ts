@@ -30,6 +30,7 @@ import {
   findBusiness,
   listPage,
   nowIso,
+  setListingStatus,
   notify,
   publicUser,
   textOf,
@@ -235,6 +236,7 @@ const apply = (
   if (action === "approve" || action === "restore") approveListing(row)
   else if (action === "reject") rejectListing(row, reason || "—")
   else row.moderation = "removed"
+  row.decidedAt = nowIso()
 }
 
 // `type` is "vehicle", a vehicle type or "part"; `sellerKind` is individual, dealership or verified.
@@ -327,8 +329,9 @@ route("GET", "/admin/listings", (c) => {
 route("PATCH", "/admin/listings/:id", async (c) => {
   admin(c)
   const row = listingOf(c.params.id ?? "")
-  const patch = await c.body(adminListingPatchSchema)
+  const { status, ...patch } = await c.body(adminListingPatchSchema)
   Object.assign(row, patch, { updatedAt: nowIso() })
+  if (status) setListingStatus(row, status)
   return listingSchema.parse(row)
 })
 
@@ -430,6 +433,7 @@ route("POST", "/admin/verifications/:id/approve", (c) => {
   admin(c)
   const row = verificationOf(c.params.id ?? "")
   row.status = "approved"
+  row.decidedAt = nowIso()
   const target = findBusiness(row.targetId)
   if (target) target.verified = true
   // Listings copy their dealership's badge when posted, so the copies follow.
@@ -453,6 +457,7 @@ route("POST", "/admin/verifications/:id/reject", async (c) => {
   const { reason } = await c.body(rejectInputSchema)
   row.status = "rejected"
   row.rejectionReason = reason
+  row.decidedAt = nowIso()
   notify(
     row.ownerId,
     "verification_result",

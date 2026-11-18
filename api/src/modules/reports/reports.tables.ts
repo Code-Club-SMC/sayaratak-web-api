@@ -1,5 +1,5 @@
 import { reportSchema } from "@sayaratak/shared/schemas/admin"
-import { index, pgEnum, pgTable, text } from "drizzle-orm/pg-core"
+import { index, pgEnum, pgTable, text, timestamp } from "drizzle-orm/pg-core"
 
 import { user } from "~/modules/auth/auth.tables"
 import { listings } from "~/modules/listings/listings.tables"
@@ -25,6 +25,8 @@ export const reports = pgTable(
     details: text(),
     status: reportStatus().default("open").notNull(),
     resolutionNote: text(),
+    // Step 11.7-r4: when an admin dismissed, actioned, approved or rejected it.
+    decidedAt: timestamp({ withTimezone: true }),
     createdAt: createdAt(),
   },
   (table) => [

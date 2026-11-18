@@ -87,6 +87,8 @@ const runtimeOnly = new Set([
   schema.devices,
   schema.fileDeletions,
   schema.eventsMonthly,
+  // Searches start empty in the mock seed too (step 11.7-r4).
+  schema.searchesDaily,
   // Public-preview preparation is runtime admin state, never part of the development seed.
   schema.seedDatasets,
   schema.seedOperations,
@@ -122,6 +124,8 @@ describe("db:seed", () => {
       ...runtimeOnly,
       // Checked by the event total above.
       schema.events,
+      // Copied from the mock's last 7 days next to the daily rows (step 11.7-r2).
+      schema.eventsHourly,
       // Uploads come from many seed rows; `shared/files/demo.test.ts` checks the private ones.
       schema.uploads,
     ])

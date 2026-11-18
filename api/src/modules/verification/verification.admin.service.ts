@@ -2,6 +2,7 @@ import type { Executor, Transaction } from "~/shared/db/tx"
 import { fail } from "~/shared/http/errors"
 import { pageParams } from "~/shared/http/page"
 import { both } from "~/shared/text/bilingual"
+import { clock } from "~/shared/time/clock"
 import { recordAudit } from "~/modules/audit/audit.service"
 import type { Actor } from "~/modules/audit/audit.types"
 import { markVerified } from "~/modules/businesses/businesses.review.service"
@@ -52,7 +53,12 @@ export async function approveRequest(
   id: string
 ) {
   const row = await lockPending(tx, id)
-  await q.updateDecision(tx, { id, status: "approved", rejectionReason: null })
+  await q.updateDecision(tx, {
+    id,
+    status: "approved",
+    rejectionReason: null,
+    decidedAt: clock.now(),
+  })
   await markVerified(tx, { kind: row.targetType, id: row.targetId })
   await recordAudit(tx, actor, {
     action: "verification.approve",
@@ -84,6 +90,7 @@ export async function rejectRequest(
     id: change.id,
     status: "rejected",
     rejectionReason: change.reason,
+    decidedAt: clock.now(),
   })
   await recordAudit(tx, actor, {
     action: "verification.reject",

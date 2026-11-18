@@ -108,6 +108,20 @@ export async function checkPicks(ex: Executor, picks: Picks) {
   if (Object.keys(fields).length > 0) fail.validation(fields)
 }
 
+/** Every search filter id names a row; an empty one ("") passes (search log, step 11.7-r4). */
+export async function knowsFilters(
+  ex: Executor,
+  f: { make: string; model: string; city: string; partCategory: string }
+) {
+  const checks = await Promise.all([
+    !f.make || q.hasMake(ex, f.make),
+    !f.model || q.hasModel(ex, f.model),
+    !f.city || q.hasCity(ex, f.city),
+    !f.partCategory || q.hasPartCategory(ex, f.partCategory),
+  ])
+  return checks.every(Boolean)
+}
+
 /** "<ar> <en>" of each make or model id, for the listing search text. */
 export async function getNames(ex: Executor, ids: (string | null)[]) {
   const rows = await q.listMakeAndModelNames(

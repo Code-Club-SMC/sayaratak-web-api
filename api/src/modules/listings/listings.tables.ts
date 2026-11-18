@@ -96,6 +96,10 @@ export const listings = pgTable(
     // Title, both description slots and make and model names in both languages, lowercased.
     // Written by the service on every save: the names live in other tables.
     searchText: text().notNull(),
+    // Step 11.7-r4: when the status last became sold or rented; null while available or reserved.
+    soldAt: at(),
+    // Step 11.7-r4: when an admin last approved, rejected, removed or restored it.
+    decidedAt: at(),
     // When a bump last put the listing back at the top of the newest.
     bumpedAt: at(),
     expiresAt: at().notNull(),

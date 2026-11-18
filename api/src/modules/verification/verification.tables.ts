@@ -6,6 +6,7 @@ import {
   pgEnum,
   pgTable,
   text,
+  timestamp,
   uniqueIndex,
   unique,
 } from "drizzle-orm/pg-core"
@@ -33,6 +34,8 @@ export const verificationRequests = pgTable(
     note: text(),
     status: verificationStatus().default("pending").notNull(),
     rejectionReason: text(),
+    // Step 11.7-r4: when an admin dismissed, actioned, approved or rejected it.
+    decidedAt: timestamp({ withTimezone: true }),
     createdAt: createdAt(),
   },
   (table) => [

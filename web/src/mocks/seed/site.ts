@@ -7,7 +7,14 @@ import type {
 } from "@sayaratak/shared/schemas/admin"
 import type { EventType } from "@sayaratak/shared/schemas/api"
 import { spread } from "../event-hours"
-import type { EventRow, ListingRow, SitePageRow, UserRow } from "../types"
+import type {
+  EventRow,
+  ListingRow,
+  ReportRow,
+  SitePageRow,
+  UserRow,
+  VerificationRow,
+} from "../types"
 import { DAY, HOUR, ago, ahead, chance, int } from "./util"
 
 export const settings: Settings = {
@@ -262,7 +269,7 @@ export const banners = (): Banner[] =>
 export function seedReports(
   listings: ListingRow[],
   users: UserRow[]
-): Report[] {
+): ReportRow[] {
   const approved = listings.filter((l) => l.moderation === "approved")
   const reporters = users.filter((u) => u.role === "user")
   const reasons: Report["reason"][] = [
@@ -283,6 +290,7 @@ export function seedReports(
     status: i < 4 ? "open" : i === 4 ? "dismissed" : "actioned",
     createdAt: ago((i + 1) * 5 * HOUR),
     resolutionNote: i >= 4 ? "تمت المراجعة" : undefined,
+    decidedAt: i >= 4 ? ago((i + 1) * 5 * HOUR - 2 * HOUR) : undefined,
   }))
 }
 
@@ -300,7 +308,7 @@ export function seedVerifications(
     type: VerificationRequest["targetType"]
     verified: boolean
   }[]
-): VerificationRequest[] {
+): VerificationRow[] {
   const open = (type: VerificationRequest["targetType"], n: number) =>
     targets.filter((t) => t.type === type && !t.verified)[n]
   const picks = [
@@ -341,6 +349,10 @@ export function seedVerifications(
             rejectionReason:
               status === "rejected" ? "المستند غير واضح" : undefined,
             createdAt: ago((i + 1) * 9 * HOUR),
+            decidedAt:
+              status === "pending"
+                ? undefined
+                : ago((i + 1) * 9 * HOUR - 3 * HOUR),
           },
         ]
       : []

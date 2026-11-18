@@ -79,22 +79,31 @@ export function decide(
     id: string
     status: "dismissed" | "actioned"
     note: string | undefined
+    decidedAt: Date
   }
 ) {
   return tx
     .update(reports)
-    .set({ status: find.status, resolutionNote: find.note ?? null })
+    .set({
+      status: find.status,
+      resolutionNote: find.note ?? null,
+      decidedAt: find.decidedAt,
+    })
     .where(eq(reports.id, find.id))
 }
 
 /** Closes every open report on the listing as actioned, with the same note. Returns how many closed. */
 export async function actionOpenOfListing(
   tx: Transaction,
-  find: { listingId: string; note: string | undefined }
+  find: { listingId: string; note: string | undefined; decidedAt: Date }
 ) {
   const closed = await tx
     .update(reports)
-    .set({ status: "actioned", resolutionNote: find.note ?? null })
+    .set({
+      status: "actioned",
+      resolutionNote: find.note ?? null,
+      decidedAt: find.decidedAt,
+    })
     .where(
       and(eq(reports.listingId, find.listingId), eq(reports.status, "open"))
     )

@@ -1,7 +1,9 @@
+import { searchLogKey } from "@sayaratak/shared/search/log"
 import type { SearchParams } from "@sayaratak/shared/search/schemas"
 
 import { db } from "~/shared/db/client"
 import type { Executor } from "~/shared/db/tx"
+import { recordSearch } from "~/modules/analytics/analytics.search.service"
 import * as auth from "~/modules/auth/auth.service"
 import type { SessionUser } from "~/modules/auth/auth.types"
 import * as businesses from "~/modules/businesses/businesses.service"
@@ -60,6 +62,8 @@ export async function searchListings(search: Search) {
         }),
     counted,
   ])
+  const logged = searchLogKey(params, search)
+  if (logged) await recordSearch(logged, page.total)
   return {
     items: await toListings(db, page.rows, search.viewer),
     total: page.total,

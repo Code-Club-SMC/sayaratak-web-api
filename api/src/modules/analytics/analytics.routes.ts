@@ -6,6 +6,10 @@ import {
   listingsReportQuerySchema,
   listingsReportSchema,
 } from "@sayaratak/shared/schemas/reports"
+import { demandReportSchema } from "@sayaratak/shared/schemas/reports-demand"
+import { promotionsReportSchema } from "@sayaratak/shared/schemas/reports-promotions"
+import { repliesReportSchema } from "@sayaratak/shared/schemas/reports-replies"
+import { reviewsReportSchema } from "@sayaratak/shared/schemas/reports-reviews"
 import { analyticsSchema } from "@sayaratak/shared/schemas/responses"
 import { Hono } from "hono"
 
@@ -15,6 +19,12 @@ import { spec } from "~/shared/openapi/registry"
 import { requireUser } from "~/modules/auth/auth.middleware"
 
 import { getMyAnalytics } from "./analytics.me.service"
+import {
+  getDemandReport,
+  getRepliesReport,
+  getReviewsReport,
+} from "./analytics.activity-reports.service"
+import { getPromotionsReport } from "./analytics.promotions-report.service"
 import { getListingsReport } from "./analytics.reports.service"
 import { getListingAnalytics, recordEvent } from "./analytics.service"
 
@@ -93,3 +103,45 @@ analyticsRoutes.get(
     return c.json(report)
   }
 )
+
+// Step 11.7-r6: the other report tabs, each for a preset or custom period.
+const reports = [
+  [
+    "promotions",
+    "Each promotion of the account's listings that ran in the period, against the same length before it (a bump counts 3 days): views, contacts, extra contacts and cost per extra contact; and the paid banner campaigns with views, clicks and click rate per bucket",
+    promotionsReportSchema,
+    getPromotionsReport,
+  ],
+  [
+    "demand",
+    "Share of market views per make and model in the account's city (all Sudan without a city or under 50 live listings) against the share of the account's live stock; under 5 market listings fold into Other",
+    demandReportSchema,
+    getDemandReport,
+  ],
+  [
+    "replies",
+    "Buyer threads started in the period: median minutes to the first reply, share answered within 24 hours, reply speed bands; and the threads waiting for a reply now",
+    repliesReportSchema,
+    getRepliesReport,
+  ],
+  [
+    "reviews",
+    "Visible reviews of the account's business: average stars per bucket, star breakdown, reply rate and median reply hours for the period and the compare window, and the all-time average",
+    reviewsReportSchema,
+    getReviewsReport,
+  ],
+] as const
+
+for (const [name, summary, schema, read] of reports)
+  analyticsRoutes.get(
+    `/me/reports/${name}`,
+    spec({
+      summary,
+      access: "user",
+      responses: { 200: schema },
+      errors: ["unauthenticated", "banned"],
+    }),
+    requireUser,
+    validate.query(rangeQuery),
+    async (c) => c.json(await read(c.get("user"), c.req.valid("query")))
+  )

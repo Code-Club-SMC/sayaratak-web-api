@@ -135,3 +135,16 @@ export function flagShown(ex: Executor, id: string) {
     .set({ status: "flagged" })
     .where(and(eq(reviews.id, id), eq(reviews.status, "visible")))
 }
+
+/** Stars, time and reply time of the visible reviews of a target, oldest first. */
+export function listVisibleOf(ex: Executor, targetId: string) {
+  return ex
+    .select({
+      rating: reviews.rating,
+      createdAt: reviews.createdAt,
+      replyAt: reviews.replyAt,
+    })
+    .from(reviews)
+    .where(and(eq(reviews.targetId, targetId), eq(reviews.status, "visible")))
+    .orderBy(reviews.createdAt, reviews.id)
+}

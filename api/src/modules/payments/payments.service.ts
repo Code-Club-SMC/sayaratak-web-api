@@ -84,3 +84,9 @@ export function searchPayments(
 export function listPlanIdsPaidFor(ex: Executor) {
   return q.listPlanIdsPaidFor(ex)
 }
+
+/** SDG of each of these payments that was approved, keyed by payment id. */
+export async function getApprovedAmounts(ex: Executor, ids: string[]) {
+  const rows = await q.listApprovedAmounts(ex, ids)
+  return new Map(rows.map((row) => [row.id, row.amount]))
+}

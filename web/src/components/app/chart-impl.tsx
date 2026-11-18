@@ -38,7 +38,7 @@ export function ChartImpl({
   stacked?: boolean
   label: (day: string) => string
   // The compare window's total per bucket, drawn as one dashed muted line.
-  compare?: { label: string; values: number[] }
+  compare?: { label: string; values: (number | null)[] }
 }) {
   const { locale } = useT()
   const config: ChartConfig = {
@@ -53,7 +53,7 @@ export function ChartImpl({
     }),
   }
   const rows = compare
-    ? data.map((row, i) => ({ ...row, compare: compare.values[i] ?? 0 }))
+    ? data.map((row, i) => ({ ...row, compare: compare.values[i] ?? null }))
     : data
   return (
     <ChartContainer config={config} className="aspect-auto h-64 w-full">
@@ -108,6 +108,7 @@ export function ChartImpl({
             stroke="var(--color-compare)"
             strokeDasharray="4 4"
             dot={false}
+            connectNulls
             isAnimationActive={false}
           />
         )}

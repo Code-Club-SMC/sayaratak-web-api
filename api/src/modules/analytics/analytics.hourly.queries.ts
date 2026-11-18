@@ -1,3 +1,4 @@
+import type { EventType } from "@sayaratak/shared/schemas/api"
 import { and, between, inArray, min, or, type SQL, sql, sum } from "drizzle-orm"
 
 import type { Executor } from "~/shared/db/tx"
@@ -36,7 +37,12 @@ export function bumpHourly(
  */
 export function listHourlyCounts(
   ex: Executor,
-  input: { targetIds: string[] | null; ranges: string[][]; perHour: boolean }
+  input: {
+    targetIds: string[] | null
+    ranges: string[][]
+    perHour: boolean
+    types?: readonly EventType[]
+  }
 ) {
   const key = input.perHour
     ? sql<string>`to_char(${eventsHourly.day}, 'YYYY-MM-DD') || 'T' || lpad(${eventsHourly.hour}::text, 2, '0') || ':00'`
@@ -51,7 +57,7 @@ export function listHourlyCounts(
     .where(
       and(
         inHours(input.ranges),
-        inArray(eventsHourly.type, [...PAGE_TYPES]),
+        inArray(eventsHourly.type, [...(input.types ?? PAGE_TYPES)]),
         input.targetIds
           ? inArray(eventsHourly.targetId, input.targetIds)
           : undefined

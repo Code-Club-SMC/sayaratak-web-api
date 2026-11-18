@@ -8,7 +8,11 @@ import {
 } from "@/components/ui/table"
 import { formatNumber } from "@/lib/format"
 import { useT } from "@/lib/i18n/use-t"
+import type { Locale } from "@sayaratak/shared/schemas/locale"
 import type { ChartRow, ChartSeries } from "./chart-card"
+
+const cellText = (value: number | string | null | undefined, locale: Locale) =>
+  value === null ? "—" : formatNumber(Number(value ?? 0), locale)
 
 // The chart's numbers as a table: one row per bucket, one column per series, and the compare total when there is one.
 export function ChartTable({
@@ -20,7 +24,7 @@ export function ChartTable({
   data: ChartRow[]
   series: ChartSeries[]
   label: (day: string) => string
-  compare?: { label: string; values: number[] }
+  compare?: { label: string; values: (number | null)[] }
 }) {
   const { t, locale } = useT()
   return (
@@ -45,12 +49,12 @@ export function ChartTable({
               <TableCell>{label(row.day)}</TableCell>
               {series.map((s) => (
                 <TableCell key={s.key} className="text-end num">
-                  {formatNumber(Number(row[s.key] ?? 0), locale)}
+                  {cellText(row[s.key], locale)}
                 </TableCell>
               ))}
               {compare && (
                 <TableCell className="text-end text-muted-foreground num">
-                  {formatNumber(compare.values[i] ?? 0, locale)}
+                  {cellText(compare.values[i], locale)}
                 </TableCell>
               )}
             </TableRow>

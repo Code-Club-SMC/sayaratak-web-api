@@ -202,3 +202,13 @@ async function getReviewOfOwner(user: SessionUser, id: string) {
   if (target?.ownerUserId !== user.id) fail.forbidden()
   return row
 }
+
+/** The visible reviews of a business as the Reviews report reads them (step 11.7-r6). */
+export async function listReportReviews(ex: Executor, targetId: string) {
+  const rows = await q.listVisibleOf(ex, targetId)
+  return rows.map((row) => ({
+    rating: row.rating,
+    createdAt: row.createdAt.toISOString(),
+    replyAt: row.replyAt?.toISOString() ?? null,
+  }))
+}

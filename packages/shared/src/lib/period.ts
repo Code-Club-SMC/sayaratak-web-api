@@ -19,6 +19,17 @@ export const addDays = (day: string, n: number) =>
 /** The instant of a Khartoum wall-clock minute. Khartoum is UTC+2 all year (no daylight saving since 2017). */
 export const instantOf = (minute: string) => Date.parse(`${minute}:00+02:00`)
 
+/** The Khartoum wall-clock minute of an ISO instant: `"2026-11-01T06:30:00Z"` gives `"2026-11-01T08:30"`. */
+export const minuteOf = (iso: string) => minuteAt(Date.parse(iso) + 2 * HOUR_MS)
+
+/** The Khartoum minute `days` (may be fractional) after a minute. */
+export const addMinutesDays = (minute: string, days: number) =>
+  minuteAt(ms(minute) + days * DAY_MS)
+
+/** Days (fractional) from one minute to another. */
+export const daysBetweenMinutes = (from: string, to: string) =>
+  (ms(to) - ms(from)) / DAY_MS
+
 /** The first day still counted per day. Example: any day in November 2026 gives `"2025-11-01"`. */
 export function firstDailyDay(today: string) {
   const year = Number(today.slice(0, 4))
@@ -202,3 +213,23 @@ export const alignTo = (values: number[], length: number) =>
 /** The compare window's bucket starts cut or padded to `length`; a padded bucket repeats the last start (it holds zeros). */
 export const alignStarts = (starts: string[], length: number) =>
   Array.from({ length }, (_, i) => starts[i] ?? starts[starts.length - 1] ?? "")
+
+/** Report buckets: their starts, the last key they hold (the last start for hours, the last day otherwise) and whether keys are hours. */
+export type Buckets = { starts: string[]; end: string; hourly: boolean }
+
+/** Adds `[ISO instant, value]` pairs into the buckets by Khartoum day (or hour). The caller keeps only instants inside the window. */
+export const sumTimed = (b: Buckets, pairs: [string, number][]) =>
+  sumInto(
+    b.starts,
+    b.end,
+    pairs.map(([iso, value]): [string, number] => {
+      const minute = minuteOf(iso)
+      return [b.hourly ? floorHour(minute) : minute.slice(0, 10), value]
+    })
+  )
+
+/** Whether an ISO instant falls inside the Khartoum minutes `[from, to)`. */
+export const within = (iso: string, from: string, to: string) => {
+  const t = Date.parse(iso)
+  return t >= instantOf(from) && t < instantOf(to)
+}

@@ -103,3 +103,18 @@ export async function listReportListings(ex: Executor, ownerUserId: string) {
     }
   })
 }
+
+/** Approved vehicle listings with a make (the market of the Demand report), with whether each is live at `now`. */
+export async function listDemandListings(ex: Executor, now: Date) {
+  const rows = await statsQ.listDemandRows(ex)
+  return rows.map((row) => ({
+    id: row.id,
+    ownerUserId: row.ownerUserId,
+    makeId: row.makeId ?? "",
+    modelId: row.modelId,
+    cityId: row.cityId,
+    live:
+      (row.status === "available" || row.status === "reserved") &&
+      row.expiresAt > now,
+  }))
+}

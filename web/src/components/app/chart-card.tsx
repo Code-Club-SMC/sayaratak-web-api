@@ -12,7 +12,8 @@ import { ChartTable } from "./chart-table"
 import { EmptyState } from "./empty-state"
 
 export type ChartSeries = { key: string; label: string }
-export type ChartRow = { day: string } & Record<string, number | string>
+// `null`: nothing to measure in that bucket (an average with no items); the chart leaves a gap and the table a dash.
+export type ChartRow = { day: string } & Record<string, number | string | null>
 
 export type ChartCardProps = {
   title: string
@@ -36,7 +37,9 @@ const Impl = lazy(() =>
 )
 
 const sumOf = (row: ChartRow | undefined, series: ChartSeries[]) =>
-  series.reduce((total, s) => total + Number(row?.[s.key] ?? 0), 0)
+  series.every((s) => row?.[s.key] === null)
+    ? null
+    : series.reduce((total, s) => total + Number(row?.[s.key] ?? 0), 0)
 
 // Shared by AreaChartCard and BarChartCard: title, loading skeleton, error with retry, empty line; on report pages also the chart/table switch and CSV.
 export function ChartCard({
@@ -78,8 +81,10 @@ export function ChartCard({
       ],
       ...data.map((row, i) => [
         row.day,
-        ...series.map((s) => Number(row[s.key] ?? 0)),
-        ...(compare ? [compare.values[i] ?? 0] : []),
+        ...series.map((s) =>
+          row[s.key] === null ? "" : Number(row[s.key] ?? 0)
+        ),
+        ...(compare ? [compare.values[i] ?? ""] : []),
       ]),
     ])
   return (

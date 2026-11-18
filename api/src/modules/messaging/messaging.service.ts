@@ -48,3 +48,32 @@ export function countReceivedPerWeekdayHour(
 ) {
   return q.listReceivedPerWeekdayHour(ex, userId, days)
 }
+
+/**
+ * The user's threads with their messages oldest first, `mine` marking the
+ * user's own, as the Responsiveness report reads them (step 11.7-r6).
+ */
+export async function listThreadsForReport(ex: Executor, userId: string) {
+  const rows = await q.listMessagesOfThreads(ex, userId)
+  const threads = new Map<
+    string,
+    {
+      id: string
+      subjectTitle: { ar: string; en: string }
+      messages: { mine: boolean; createdAt: string }[]
+    }
+  >()
+  for (const row of rows) {
+    const thread = threads.get(row.threadId) ?? {
+      id: row.threadId,
+      subjectTitle: row.subjectTitle,
+      messages: [],
+    }
+    thread.messages.push({
+      mine: row.senderId === userId,
+      createdAt: row.createdAt.toISOString(),
+    })
+    threads.set(row.threadId, thread)
+  }
+  return [...threads.values()].sort((a, b) => (a.id < b.id ? -1 : 1))
+}

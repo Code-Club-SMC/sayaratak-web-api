@@ -1,4 +1,4 @@
-import { and, count, eq, inArray, isNull, ne } from "drizzle-orm"
+import { and, asc, count, eq, inArray, isNull, ne } from "drizzle-orm"
 
 import type { Executor } from "~/shared/db/tx"
 import {
@@ -75,6 +75,21 @@ export function listReceivedPerListing(
       )
     )
     .groupBy(threads.subjectId)
+}
+
+/** Every message of the user's threads with its thread's subject title, oldest first. */
+export function listMessagesOfThreads(ex: Executor, userId: string) {
+  return ex
+    .select({
+      threadId: messages.threadId,
+      subjectTitle: threads.subjectTitle,
+      senderId: messages.senderId,
+      createdAt: messages.createdAt,
+    })
+    .from(messages)
+    .innerJoin(threads, eq(threads.id, messages.threadId))
+    .where(inArray(messages.threadId, threadIdsOf(ex, userId)))
+    .orderBy(asc(messages.createdAt), asc(messages.id))
 }
 
 function receivedBy(ex: Executor, userId: string | null) {

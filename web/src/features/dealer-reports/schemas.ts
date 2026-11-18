@@ -2,8 +2,15 @@ import { z } from "zod"
 
 import { listingsReportQuerySchema } from "@sayaratak/shared/schemas/reports"
 
-// The dealer's Reports page (step 11.7-r5): the tab, the period and the Listings filter, sort and page live in the URL.
-export const reportsTabs = ["performance", "listings"] as const
+// The dealer's Reports page (steps 11.7-r5, r6): the tab, the period and the Listings filter, sort and page live in the URL.
+export const reportsTabs = [
+  "performance",
+  "listings",
+  "promotions",
+  "demand",
+  "replies",
+  "reviews",
+] as const
 export const reportsSearchSchema = listingsReportQuerySchema.extend({
   tab: z.enum(reportsTabs).catch("performance"),
 })

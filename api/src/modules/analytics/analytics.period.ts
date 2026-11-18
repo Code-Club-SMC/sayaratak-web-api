@@ -3,12 +3,14 @@ import {
   alignTo,
   bucketsOf,
   daysOf,
+  firstDailyDay,
   firstHourlyDay,
   hoursOf,
   resolvePeriod,
   slicesOf,
   sumInto,
 } from "@sayaratak/shared/lib/period"
+import type { EventType } from "@sayaratak/shared/schemas/api"
 import type { Period, PeriodQuery } from "@sayaratak/shared/schemas/period"
 
 import { db } from "~/shared/db/client"
@@ -112,7 +114,7 @@ export async function countsPerDay(
 export async function countsPerTarget(
   targetIds: string[],
   w: Window,
-  period: Period
+  period: Pick<Period, "rolledUp">
 ): Promise<Map<string, Counts>> {
   if (targetIds.length === 0) return new Map()
   const slices = slicesOf(w)
@@ -123,14 +125,67 @@ export async function countsPerTarget(
       : [],
     period.rolledUp ? q.listTargetMonthlyCounts(db, targetIds, w) : [],
   ])
-  const rows = parts.flat()
-  return new Map(
-    targetIds.map((id) => [
-      id,
-      sumCounts(rows.filter((row) => row.targetId === id)),
-    ])
-  )
+  const byTarget = new Map<string, (typeof parts)[number]>()
+  for (const row of parts.flat())
+    byTarget.set(row.targetId, [...(byTarget.get(row.targetId) ?? []), row])
+  return new Map(targetIds.map((id) => [id, sumCounts(byTarget.get(id) ?? [])]))
 }
+
+/**
+ * A window over any Khartoum minutes `[from, to)` with one bucket, for counts
+ * that do not follow the report period (a promotion's stretches, step 11.7-r6).
+ */
+export function windowAt(from: string, to: string, today: string) {
+  const { first, last } = daysOf(from, to)
+  const w: Window = {
+    first,
+    last,
+    from,
+    to,
+    starts: [first],
+    hourly: false,
+    today,
+  }
+  return { w, rolledUp: first < firstDailyDay(today) }
+}
+
+/** Banner views and clicks of one campaign per bucket of the window, read like `countsPerDay`. */
+export async function bannerSeries(id: string, w: Window, period: Period) {
+  const slices = slicesOf(w)
+  const [daily, hours, months] = await Promise.all([
+    slices.days
+      ? q.listDailyBannerCounts(db, { targetId: id, days: slices.days })
+      : [],
+    slices.hours.length
+      ? hourly.listHourlyCounts(db, {
+          targetIds: [id],
+          ranges: slices.hours,
+          perHour: w.hourly,
+          types: ["banner_view", "banner_click"],
+        })
+      : [],
+    period.rolledUp
+      ? q.listMonthlyBannerCounts(db, { targetId: id, days: w })
+      : [],
+  ])
+  const rows = [
+    ...daily,
+    ...hours,
+    ...months.map((r) => ({ ...r, day: latestDay(r.month, w.first) })),
+  ]
+  const end = w.hourly ? (w.starts.at(-1) ?? "") : w.last
+  const series = (type: EventType) =>
+    sumInto(
+      w.starts,
+      end,
+      rows.flatMap((r): [string, number][] =>
+        r.type === type ? [[r.day, r.count]] : []
+      )
+    )
+  return { impressions: series("banner_view"), clicks: series("banner_click") }
+}
+
+const latestDay = (a: string, b: string) => (a < b ? b : a)
 
 /**
  * The first day hourly counters exist for: 89 days before today, or the first

@@ -129,3 +129,24 @@ describe("GET /me/reports/listings matches the mock", () => {
     await expectParity("/api/v1/me/reports/listings")
   })
 })
+
+describe("step 11.7-r6 reports match the mock", () => {
+  test("promotions, demand, replies and reviews, each role and period", async () => {
+    for (const name of ["promotions", "demand", "replies", "reviews"])
+      for (const as of ["user", "dealership", "workshop"] as const)
+        for (const query of [
+          "",
+          "?range=7d",
+          "?range=90d&compare=year",
+          "?from=2020-01-01T00:00&to=2020-01-02T00:00",
+        ])
+          await expectParity(`/api/v1/me/reports/${name}${query}`, {
+            init: { headers: sessions[as] },
+          })
+  })
+
+  test("signed out", async () => {
+    for (const name of ["promotions", "demand", "replies", "reviews"])
+      await expectParity(`/api/v1/me/reports/${name}`)
+  })
+})

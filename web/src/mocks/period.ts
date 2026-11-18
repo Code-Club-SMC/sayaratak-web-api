@@ -9,22 +9,21 @@ import {
   hourKey,
   hoursOf,
   instantOf,
+  minuteOf,
   resolvePeriod,
   slicesOf,
   sumInto,
 } from "@sayaratak/shared/lib/period"
-import { periodQuerySchema } from "@sayaratak/shared/schemas/period"
+import {
+  type Granularity,
+  periodQuerySchema,
+} from "@sayaratak/shared/schemas/period"
 import type { EventType } from "@sayaratak/shared/schemas/api"
 import { db } from "./db"
 import { firstDayWithHours, hoursOf as hoursOfRow } from "./event-hours"
 import { dayKey } from "./lib"
 
-const HOUR_MS = 3_600_000
 type EventKey = keyof (typeof db.events)[number]["counts"]
-
-// The Khartoum minute of an ISO timestamp (UTC+2, no daylight saving).
-const minuteOf = (iso: string) =>
-  new Date(Date.parse(iso) + 2 * HOUR_MS).toISOString().slice(0, 16)
 
 // Event rows inside the hour ranges, as [day or hour key, count] pairs.
 function hourPairs(
@@ -47,6 +46,67 @@ function hourPairs(
   return pairs
 }
 
+/** One window over Khartoum minutes `[from, to)`: its buckets, its timestamp test and its event counts. */
+export function windowOf(
+  from: string,
+  to: string,
+  opts: { today: string; hourly: boolean; granularity: Granularity }
+) {
+  const { today, hourly } = opts
+  const { first, last } = daysOf(from, to)
+  const starts = hourly
+    ? hoursOf(from, to)
+    : bucketsOf(first, last, opts.granularity)
+  const end = hourly ? (starts.at(-1) ?? "") : last
+  const slices = slicesOf({ from, to, today, hourly })
+  const start = instantOf(from)
+  const stop = instantOf(to)
+  const has = (iso: string) => {
+    const t = Date.parse(iso)
+    return t >= start && t < stop
+  }
+  return {
+    starts,
+    has,
+    from,
+    to,
+    last,
+    /** Event counts of the matching targets, in total and per bucket. */
+    events: (match: (targetId: string) => boolean, key: EventKey) => {
+      const days = slices.days
+      const daily = days
+        ? db.events
+            .filter(
+              (e) =>
+                match(e.targetId) && e.day >= days.first && e.day <= days.last
+            )
+            .map((e): [string, number] => [e.day, e.counts[key]])
+        : []
+      const series = sumInto(starts, end, [
+        ...daily,
+        ...hourPairs(match, key, slices.hours, hourly),
+      ])
+      return { total: series.reduce((a, b) => a + b, 0), series }
+    },
+    /** Rows with a timestamp inside the window, valued per bucket by their Khartoum day (or hour). */
+    timed: <T>(items: T[], at: (r: T) => string, value: (r: T) => number) =>
+      sumInto(
+        starts,
+        end,
+        items
+          .filter((r) => has(at(r)))
+          .map((r): [string, number] => {
+            const minute = minuteOf(at(r))
+            return [hourly ? floorHour(minute) : minute.slice(0, 10), value(r)]
+          })
+      ),
+  }
+}
+
+/** A window over any minutes with day buckets, for counts that do not follow the report period (step 11.7-r6). */
+export const windowAt = (from: string, to: string) =>
+  windowOf(from, to, { today: dayKey(), hourly: false, granularity: "day" })
+
 // The period of a report query and both of its windows. Whole days read the day rows, partial days inside the 90 days kept per hour and hour buckets read the hours; timestamps count by the exact minutes. Matches the api (steps 11.7-r1, r2).
 export function periodOf(query: URLSearchParams) {
   const today = dayKey()
@@ -55,59 +115,8 @@ export function periodOf(query: URLSearchParams) {
     today
   )
   const hourly = period.granularity === "hour"
-  const window = (from: string, to: string) => {
-    const { first, last } = daysOf(from, to)
-    const starts = hourly
-      ? hoursOf(from, to)
-      : bucketsOf(first, last, period.granularity)
-    const end = hourly ? (starts.at(-1) ?? "") : last
-    const slices = slicesOf({ from, to, today, hourly })
-    const start = instantOf(from)
-    const stop = instantOf(to)
-    const has = (iso: string) => {
-      const t = Date.parse(iso)
-      return t >= start && t < stop
-    }
-    return {
-      starts,
-      has,
-      from,
-      to,
-      last,
-      /** Event counts of the matching targets, in total and per bucket. */
-      events: (match: (targetId: string) => boolean, key: EventKey) => {
-        const days = slices.days
-        const daily = days
-          ? db.events
-              .filter(
-                (e) =>
-                  match(e.targetId) && e.day >= days.first && e.day <= days.last
-              )
-              .map((e): [string, number] => [e.day, e.counts[key]])
-          : []
-        const series = sumInto(starts, end, [
-          ...daily,
-          ...hourPairs(match, key, slices.hours, hourly),
-        ])
-        return { total: series.reduce((a, b) => a + b, 0), series }
-      },
-      /** Rows with a timestamp inside the window, valued per bucket by their Khartoum day (or hour). */
-      timed: <T>(items: T[], at: (r: T) => string, value: (r: T) => number) =>
-        sumInto(
-          starts,
-          end,
-          items
-            .filter((r) => has(at(r)))
-            .map((r): [string, number] => {
-              const minute = minuteOf(at(r))
-              return [
-                hourly ? floorHour(minute) : minute.slice(0, 10),
-                value(r),
-              ]
-            })
-        ),
-    }
-  }
+  const window = (from: string, to: string) =>
+    windowOf(from, to, { today, hourly, granularity: period.granularity })
   const current = window(period.from, period.to)
   const compare = window(period.compareFrom, period.compareTo)
   return {

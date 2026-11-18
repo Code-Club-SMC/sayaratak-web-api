@@ -20,6 +20,7 @@ export function StatCard({
   empty,
   suffix,
   note,
+  display,
 }: {
   label: string
   // `null`: nothing to measure yet; the card shows a dash and `empty`.
@@ -36,6 +37,8 @@ export function StatCard({
   suffix?: string
   // One muted line under the number.
   note?: string
+  // Text shown instead of the formatted number, such as a duration ("5 hours").
+  display?: string
 }) {
   const { t, locale } = useT()
   const change =
@@ -59,14 +62,15 @@ export function StatCard({
       ) : (
         <p className="flex flex-wrap items-baseline gap-x-2">
           <span className="text-title font-semibold num">
-            {suffix ? (
-              <bdi dir="ltr">
-                {formatNumber(value, locale)}
-                {suffix}
-              </bdi>
-            ) : (
-              formatNumber(value, locale)
-            )}
+            {display ??
+              (suffix ? (
+                <bdi dir="ltr">
+                  {formatNumber(value, locale)}
+                  {suffix}
+                </bdi>
+              ) : (
+                formatNumber(value, locale)
+              ))}
           </span>
           {detail && (
             <span className="text-ui text-muted-foreground num">{detail}</span>

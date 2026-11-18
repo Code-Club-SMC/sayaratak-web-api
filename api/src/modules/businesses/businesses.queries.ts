@@ -17,10 +17,10 @@ export async function getRefOfOwner(ex: Executor, ownerUserId: string) {
   const found = await Promise.all(
     tables.map(([kind, table]) =>
       ex
-        .select({ id: table.id })
+        .select({ id: table.id, cityId: table.cityId })
         .from(table)
         .where(eq(table.ownerUserId, ownerUserId))
-        .then(([row]) => (row ? { kind, id: row.id } : undefined))
+        .then(([row]) => (row ? { kind, ...row } : undefined))
     )
   )
   return found.find(Boolean)

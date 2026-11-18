@@ -1,3 +1,4 @@
+import type { EventType } from "@sayaratak/shared/schemas/api"
 import { and, between, eq, inArray, sql, sum } from "drizzle-orm"
 
 import type { Executor } from "~/shared/db/tx"
@@ -34,7 +35,9 @@ export function bumpEvent(
     })
 }
 
-/** Page counters per day and type for these targets (`null`: all of them) inside the days. */
+type EventTypes = readonly EventType[]
+
+/** Page counters (or `types`) per day and type for these targets (`null`: all of them) inside the days. */
 export function listDailyCounts(
   ex: Executor,
   targetIds: string[] | null,
@@ -60,6 +63,44 @@ export function listMonthlyCounts(
   targetIds: string[] | null,
   days: DayRange
 ) {
+  return monthly(ex, { targetIds, days, types: PAGE_TYPES })
+}
+
+const BANNER_TYPES = ["banner_view", "banner_click"] as const
+
+/** Banner views and clicks of one campaign per day and type inside the days. */
+export function listDailyBannerCounts(
+  ex: Executor,
+  input: { targetId: string; days: DayRange }
+) {
+  return ex
+    .select({
+      day: events.day,
+      type: events.type,
+      count: sum(events.count).mapWith(Number),
+    })
+    .from(events)
+    .where(pageEvents([input.targetId], input.days, BANNER_TYPES))
+    .groupBy(events.day, events.type)
+}
+
+/** Rolled-up banner views and clicks of one campaign per month for the months the days touch. */
+export function listMonthlyBannerCounts(
+  ex: Executor,
+  input: { targetId: string; days: DayRange }
+) {
+  return monthly(ex, {
+    targetIds: [input.targetId],
+    days: input.days,
+    types: BANNER_TYPES,
+  })
+}
+
+function monthly(
+  ex: Executor,
+  input: { targetIds: string[] | null; days: DayRange; types: EventTypes }
+) {
+  const { targetIds, days, types } = input
   return ex
     .select({
       month: eventsMonthly.month,
@@ -70,7 +111,7 @@ export function listMonthlyCounts(
     .where(
       and(
         between(eventsMonthly.month, `${days.first.slice(0, 7)}-01`, days.last),
-        inArray(eventsMonthly.type, [...PAGE_TYPES]),
+        inArray(eventsMonthly.type, [...types]),
         targetIds ? inArray(eventsMonthly.targetId, targetIds) : undefined
       )
     )
@@ -94,10 +135,14 @@ export function listTargetCounts(
     .groupBy(events.targetId, events.type)
 }
 
-function pageEvents(targetIds: string[] | null, days: DayRange) {
+function pageEvents(
+  targetIds: string[] | null,
+  days: DayRange,
+  types: EventTypes = PAGE_TYPES
+) {
   return and(
     between(events.day, days.first, days.last),
-    inArray(events.type, [...PAGE_TYPES]),
+    inArray(events.type, [...types]),
     targetIds ? inArray(events.targetId, targetIds) : undefined
   )
 }

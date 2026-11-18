@@ -79,6 +79,8 @@ export const keys = {
   analytics: (period: Params) => ["analytics", period] as const,
   reports: {
     listings: (q: Params) => ["reports", "listings", q] as const,
+    // Step 11.7-r6: promotions, demand, replies, reviews.
+    tab: (name: string, q: Params) => ["reports", name, q] as const,
   },
   admin: {
     all: ["admin"] as const,

@@ -30,7 +30,8 @@ export type ListingsReportInput = {
   messages: number
 }
 
-const median = (values: number[]) => {
+/** The middle value (mean of the two middle ones for an even count); null when empty. */
+export const median = (values: number[]) => {
   if (values.length === 0) return null
   const sorted = [...values].sort((a, b) => a - b)
   const mid = sorted.length >> 1

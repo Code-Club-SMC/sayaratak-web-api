@@ -171,3 +171,12 @@ export function listPlanIdsPaidFor(ex: Executor) {
     .where(eq(payments.itemType, "plan"))
     .then((rows) => rows.map((row) => row.itemId))
 }
+
+/** The amounts of these payments that were approved. */
+export function listApprovedAmounts(ex: Executor, ids: string[]) {
+  if (ids.length === 0) return Promise.resolve([])
+  return ex
+    .select({ id: payments.id, amount: payments.amount })
+    .from(payments)
+    .where(and(inArray(payments.id, ids), eq(payments.status, "approved")))
+}

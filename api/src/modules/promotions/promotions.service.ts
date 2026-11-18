@@ -129,3 +129,10 @@ export async function getPromotions(ex: Executor, ids: string[]) {
   const rows = await admin.listByIds(ex, ids)
   return new Map(rows.map((row) => [row.id, row]))
 }
+
+/** The promotions of these listings that have started (any but unpaid), with the price of their type and length. */
+export async function listStartedOf(ex: Executor, listingIds: string[]) {
+  if (listingIds.length === 0) return []
+  const rows = await q.listOfListings(ex, listingIds)
+  return rows.filter((row) => row.promotion.status !== "pending_payment")
+}

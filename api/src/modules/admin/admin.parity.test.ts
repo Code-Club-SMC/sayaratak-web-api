@@ -17,10 +17,10 @@ beforeAll(async () => {
 // totals, and how many points each series has. The day-by-day numbers are tested with fixed
 // times in admin.stats.test.ts.
 function withoutDayNumbers(body: unknown) {
-  const { range, totals, series } = adminStatsSchema.parse(body)
+  const { period, totals, series } = adminStatsSchema.parse(body)
   const { revenue: _revenue, ...counts } = totals
   return {
-    range,
+    period,
     counts,
     points: Object.fromEntries(
       Object.entries(series).map(([name, points]) => [name, points.length])

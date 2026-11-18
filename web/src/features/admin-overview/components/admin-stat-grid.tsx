@@ -5,7 +5,7 @@ import { StatCard } from "@/components/app/stat-card"
 import { useT } from "@/lib/i18n/use-t"
 import type { AdminStats } from "@sayaratak/shared/schemas/responses"
 
-// Two rows of four site totals, each a link to the screen that lists what it counts. Only revenue follows the period; the rest are counts of now.
+// Two rows of four site totals, each a link to the screen that lists what it counts. Only revenue follows the period (with its change and trend); the rest are counts of now.
 export function AdminStatGrid({
   stats,
 }: {
@@ -73,6 +73,9 @@ export function AdminStatGrid({
       <StatCard
         label={t("admin.overview_revenue")}
         value={totals?.revenue}
+        previous={stats.data?.previousRevenue}
+        compare={stats.data?.period.compare}
+        spark={stats.data?.series.revenue.map((p) => p.value)}
         link={{
           to: "/$locale/admin/payments",
           params,

@@ -1,15 +1,12 @@
-import type {
-  EventType,
-  ListingAnalytics,
-  Range,
-} from "@sayaratak/shared/schemas/api"
+import type { EventType, ListingAnalytics } from "@sayaratak/shared/schemas/api"
+import type { PeriodQuery } from "@sayaratak/shared/schemas/period"
 import type { eventInputSchema } from "@sayaratak/shared/schemas/inputs"
 import type { z } from "zod"
 
 import { db } from "~/shared/db/client"
 import { type Transaction, transaction } from "~/shared/db/tx"
 import { clock } from "~/shared/time/clock"
-import { dayOf, daysBefore, daysUpTo } from "~/shared/time/khartoum"
+import { dayOf } from "~/shared/time/khartoum"
 import * as ads from "~/modules/ads/ads.service"
 import type { SessionUser } from "~/modules/auth/auth.types"
 import * as businesses from "~/modules/businesses/businesses.service"
@@ -17,31 +14,17 @@ import * as listings from "~/modules/listings/listings.stats.service"
 import { isPreviewListing } from "~/modules/listings/listings.seed.service"
 import { isPreviewBusiness } from "~/modules/businesses/businesses.seed.service"
 
-import { groupByDay, NO_COUNTS, sumDays } from "./analytics.mapper"
+import {
+  bucket,
+  countsPerDay,
+  pick,
+  total,
+  type Window,
+  windowsOf,
+} from "./analytics.period"
 import * as q from "./analytics.queries"
 
 type EventInput = z.output<typeof eventInputSchema>
-
-const LENGTHS = { "7d": 7, "30d": 30, "90d": 90 } as const
-
-/**
- * The current window of whole Khartoum days (today and the days before it)
- * and the window of the same length just before it, for the change on each
- * stat card. Example: `30d` on 2026-11-01 is 2026-10-03 to 2026-11-01, and
- * the previous one 2026-09-03 to 2026-10-02.
- */
-export function windowsOf(range: Range) {
-  const length = LENGTHS[range]
-  const today = dayOf(clock.now())
-  return {
-    length,
-    current: { first: daysBefore(today, length - 1), last: today },
-    previous: {
-      first: daysBefore(today, 2 * length - 1),
-      last: daysBefore(today, length),
-    },
-  }
-}
 
 /**
  * Counts one view or click on a listing, business, banner or campaign, in the
@@ -64,36 +47,48 @@ export async function deleteEventsOf(tx: Transaction, targetId: string) {
   await q.deleteOfTarget(tx, targetId)
 }
 
-/** One listing's counters per day and in total, for its owner or an admin. */
+/** One listing's counters per bucket and in total for the period, for its owner or an admin. */
 export async function getListingAnalytics(
   user: SessionUser,
-  target: { id: string; range: Range }
+  target: { id: string; query: PeriodQuery }
 ): Promise<ListingAnalytics> {
   const favorites = await listings.getFavoritesOfEditable(db, {
     user,
     id: target.id,
   })
-  const { length, current } = windowsOf(target.range)
-  const byDay = groupByDay(await q.listDailyCounts(db, [target.id], current))
-  const total = sumDays(byDay, current)
+  const { period, current, compare, align, compareStarts } = windowsOf(
+    target.query
+  )
+  const read = async (w: Window, fit: (v: number[]) => number[]) => {
+    const byDay = await countsPerDay([target.id], w, period)
+    const [views, phoneClicks, whatsappClicks, shares] = (
+      ["views", "phoneClicks", "whatsappClicks", "shares"] as const
+    ).map((key) => fit(bucket(w, pick(byDay, key))))
+    return { views, phoneClicks, whatsappClicks, shares }
+  }
+  const series = (r: Awaited<ReturnType<typeof read>>, starts: string[]) =>
+    starts.map((day, i) => ({
+      day,
+      views: r.views?.[i] ?? 0,
+      phoneClicks: r.phoneClicks?.[i] ?? 0,
+      whatsappClicks: r.whatsappClicks?.[i] ?? 0,
+    }))
+  const same = (v: number[]) => v
+  const [now, before] = await Promise.all([
+    read(current, same),
+    read(compare, align),
+  ])
   return {
-    range: target.range,
+    period,
     totals: {
-      views: total.views,
-      phoneClicks: total.phoneClicks,
-      whatsappClicks: total.whatsappClicks,
-      shares: total.shares,
+      views: total(now.views ?? []),
+      phoneClicks: total(now.phoneClicks ?? []),
+      whatsappClicks: total(now.whatsappClicks ?? []),
+      shares: total(now.shares ?? []),
       favorites,
     },
-    series: daysUpTo(current.last, length).map((day) => {
-      const counts = byDay.get(day) ?? NO_COUNTS
-      return {
-        day,
-        views: counts.views,
-        phoneClicks: counts.phoneClicks,
-        whatsappClicks: counts.whatsappClicks,
-      }
-    }),
+    series: series(now, current.starts),
+    previousSeries: series(before, compareStarts),
     top: [],
   }
 }

@@ -4,7 +4,10 @@ import { beforeEach, describe, expect, it, vi } from "vitest"
 
 import { ContactActions } from "@/components/app/contact-actions"
 import { AnalyticsPage } from "@/features/analytics/components/analytics-page"
-import { analyticsSearchSchema } from "@/features/analytics/schemas"
+import {
+  analyticsSearchSchema,
+  reportSearchSchema,
+} from "@/features/analytics/schemas"
 import { MechanicProfilePage } from "@/features/directory/components/mechanic-profile-page"
 import { WorkshopProfilePage } from "@/features/directory/components/workshop-profile-page"
 import { mechanicProfileSearchSchema } from "@/features/directory/mechanic-schemas"
@@ -70,6 +73,64 @@ describe("search params", () => {
     expect(analyticsSearchSchema.parse({ range: "7d" })).toEqual({
       range: "7d",
     })
+  })
+})
+
+describe("report period (step 11.7-r1)", () => {
+  it("custom minutes and compare live in the URL; broken ones fall back", () => {
+    expect(
+      reportSearchSchema.parse({
+        from: "2026-11-01T08:00",
+        to: "2026-11-01T17:00",
+        compare: "year",
+      })
+    ).toEqual({
+      range: "30d",
+      from: "2026-11-01T08:00",
+      to: "2026-11-01T17:00",
+      compare: "year",
+    })
+    expect(reportSearchSchema.parse({ from: "today" })).toMatchObject({
+      from: undefined,
+      compare: "previous",
+    })
+  })
+
+  const openPage = (search = "") =>
+    renderShell(<AnalyticsPage role="dealership" />, {
+      role: "dealership",
+      path: `/en/dealer/analytics${search}`,
+    })
+
+  it("comparing with last year writes compare=year and relabels the change", async () => {
+    const { router } = await openPage()
+    await pick(
+      await screen.findByRole("combobox", { name: "Compare with" }),
+      "Same period last year"
+    )
+    await waitFor(() =>
+      expect(router.state.location.search).toMatchObject({ compare: "year" })
+    )
+  })
+
+  it("a custom range with times shows its dates and the whole-day note", async () => {
+    await openPage(`?from=${day(1)}T08:00&to=${day(0)}T10:00`)
+    expect(await screen.findByText(/counted per whole day/)).toBeTruthy()
+    // The end shows as sent: `to` is exclusive, only midnight reads as 23:59 of the day before.
+    expect(
+      screen.getByRole("button", { name: /8:00 AM.*10:00 AM/ })
+    ).toBeTruthy()
+  })
+
+  it("a chart switches to a table of its buckets with the compare column", async () => {
+    await openPage("?range=7d")
+    const views = await screen.findByRole("region", {
+      name: "Listing views over time",
+    })
+    fireEvent.click(await within(views).findByRole("button", { name: "Table" }))
+    const table = within(views).getByRole("table")
+    expect(within(table).getAllByRole("row")).toHaveLength(8)
+    expect(within(table).getByText("Previous period")).toBeTruthy()
   })
 })
 

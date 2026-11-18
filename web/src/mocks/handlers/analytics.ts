@@ -4,7 +4,8 @@ import { eventInputSchema } from "@sayaratak/shared/schemas/inputs"
 
 import { db, find, insert } from "../db"
 import { needUser, route } from "../http"
-import { DAY_MS, businessOf, dayKey, eventSeries, rangeDays } from "../lib"
+import { businessOf, dayKey } from "../lib"
+import { periodOf, total } from "../period"
 
 const stat = {
   view: "views",
@@ -47,13 +48,10 @@ route("POST", "/events", async (c) => {
   return okSchema.parse({ ok: true })
 })
 
-const sum = (rows: { [k: string]: number }[], key: string) =>
-  rows.reduce((total, row) => total + (row[key] ?? 0), 0)
-
-// Role scoped: sellers see their listings, business owners their profile, admins everything. `previous` is the period of the same length just before, for the change on each stat card.
+// Role scoped: sellers see their listings, business owners their profile, admins everything. `previous` and `previousDaily` are the compare window (the period before, or a year earlier).
 route("GET", "/me/analytics", (c) => {
   const user = needUser(c)
-  const days = rangeDays(c.query)
+  const { period, current, compare, align, compareStarts } = periodOf(c.query)
   const all = user.role === "admin"
   const listings = all
     ? db.listings
@@ -67,77 +65,56 @@ route("GET", "/me/analytics", (c) => {
       .filter((t) => all || t.participantIds.includes(user.id))
       .map((t) => t.id)
   )
-  const since = (n: number) => Date.now() - n * DAY_MS
-  // Whole days, the way the daily series counts them: a window of `n` days is today and the `n - 1` days before, so totals and chart add up. `from` and `to` count days back (0 is today) and both ends are included.
-  const span = (from: number, to: number) => ({
-    first: dayKey(since(from - 1)),
-    last: dayKey(since(to)),
-  })
-  const within = (iso: string, from: number, to: number) => {
-    const { first, last } = span(from, to)
-    const day = dayKey(Date.parse(iso))
-    return day >= first && day <= last
-  }
+  const received = db.messages.filter(
+    (m) => threads.has(m.threadId) && (all || m.senderId !== user.id)
+  )
   const targets = new Set(biz?.row ? [biz.row.id] : [])
-  const period = (from: number, to: number) => ({
-    messages: db.messages.filter(
-      (m) =>
-        threads.has(m.threadId) &&
-        (all || m.senderId !== user.id) &&
-        within(m.createdAt, from, to)
-    ).length,
-    favorites: db.favorites.filter(
-      (f) => mine(f.listingId) && within(f.createdAt, from, to)
-    ).length,
-    newReviews: db.reviews.filter(
-      (r) => (all || targets.has(r.targetId)) && within(r.createdAt, from, to)
-    ).length,
-  })
-  // Event rows are per target and day; the window covers the days from `from` back to `to` back, both included.
-  const events = (from: number, to: number) => {
-    const { first, last } = span(from, to)
-    return db.events.filter(
-      (e) => mine(e.targetId) && e.day >= first && e.day <= last
-    )
-  }
-  const totals = (from: number, to: number) => {
-    const rows = events(from, to)
-    const count = (key: "view" | "phone_click" | "whatsapp_click") =>
-      rows.reduce((total, e) => total + e.counts[key], 0)
+  const one = () => 1
+  const read = (w: typeof current) => {
+    const views = w.events(mine, "view")
+    const calls = w.events(mine, "phone_click")
+    const whatsapp = w.events(mine, "whatsapp_click")
+    const messages = w.timed(received, (m) => m.createdAt, one)
     return {
-      views: count("view"),
-      calls: count("phone_click"),
-      whatsapp: count("whatsapp_click"),
-      ...period(from, to),
+      totals: {
+        views: views.total,
+        calls: calls.total,
+        whatsapp: whatsapp.total,
+        messages: total(messages),
+        favorites: db.favorites.filter(
+          (f) => mine(f.listingId) && w.has(f.createdAt)
+        ).length,
+        newReviews: db.reviews.filter(
+          (r) => (all || targets.has(r.targetId)) && w.has(r.createdAt)
+        ).length,
+      },
+      series: { views, calls, whatsapp, messages },
     }
   }
-  const daily = eventSeries(mine, days).map((d) => ({
-    date: d.day,
-    views: d.views,
-    calls: d.phoneClicks,
-    whatsapp: d.whatsappClicks,
-    messages: db.messages.filter(
-      (m) =>
-        threads.has(m.threadId) &&
-        (all || m.senderId !== user.id) &&
-        dayKey(Date.parse(m.createdAt)) === d.day
-    ).length,
-  }))
+  const now = read(current)
+  const before = read(compare)
+  const buckets = (
+    r: ReturnType<typeof read>,
+    starts: string[],
+    fit: (v: number[]) => number[] = (v) => v
+  ) => {
+    const views = fit(r.series.views.series)
+    const calls = fit(r.series.calls.series)
+    const whatsapp = fit(r.series.whatsapp.series)
+    const messages = fit(r.series.messages)
+    return starts.map((date, i) => ({
+      date,
+      views: views[i] ?? 0,
+      calls: calls[i] ?? 0,
+      whatsapp: whatsapp[i] ?? 0,
+      messages: messages[i] ?? 0,
+    }))
+  }
   const topListings =
     user.role === "dealership"
       ? listings
           .map((l) => {
-            const rows = events(days, 0).filter((e) => e.targetId === l.id)
-            const views = sum(
-              rows.map((e) => ({ v: e.counts.view })),
-              "v"
-            )
-            const contacts = sum(
-              rows.map((e) => ({
-                v: e.counts.phone_click + e.counts.whatsapp_click,
-              })),
-              "v"
-            )
+            const only = (id: string) => id === l.id
             const cover = l.media[0]
             return {
               id: l.id,
@@ -146,18 +123,21 @@ route("GET", "/me/analytics", (c) => {
               coverUrl:
                 (cover?.type === "video" ? cover.posterUrl : cover?.url) ??
                 null,
-              views,
-              contacts,
+              views: current.events(only, "view").total,
+              contacts:
+                current.events(only, "phone_click").total +
+                current.events(only, "whatsapp_click").total,
             }
           })
           .sort((a, b) => b.views - a.views)
           .slice(0, 10)
       : []
   return analyticsSchema.parse({
-    range: `${days}d`,
-    totals: totals(days, 0),
-    previous: totals(days * 2, days),
-    daily,
+    period,
+    totals: now.totals,
+    previous: before.totals,
+    daily: buckets(now, current.starts),
+    previousDaily: buckets(before, compareStarts, align),
     topListings,
   })
 })

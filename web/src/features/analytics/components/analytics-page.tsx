@@ -1,20 +1,20 @@
 import { useQuery } from "@tanstack/react-query"
-import { useNavigate, useSearch } from "@tanstack/react-router"
 
 import { AreaChartCard } from "@/components/app/area-chart-card"
 import { BarChartCard } from "@/components/app/bar-chart-card"
-import { DateRangeSelect } from "@/components/app/date-range-select"
 import { PageHeader } from "@/components/app/page-header"
+import { PeriodControl } from "@/components/app/period-control"
+import { PeriodNote } from "@/components/app/period-note"
 import { SectionError } from "@/components/app/section-error"
 import { usePageTitle } from "@/features/dashboard/components/page-title"
 import { useT } from "@/lib/i18n/use-t"
-import type { Range } from "@sayaratak/shared/schemas/api"
+import { usePeriodSearch } from "../hooks"
 import { analyticsQuery } from "../queries"
-import { analyticsSearchSchema } from "../schemas"
+import { dayRows, reportChart } from "../chart-props"
 import { StatRow } from "./stat-row"
 import { TopListingsTable } from "./top-listings-table"
 
-// Counts from the public pages for a period: five cards with the change against the period before, views over time, contacts per day, and (dealerships) the ten listings with the most views. The period lives in the URL.
+// Counts from the public pages for a period (preset or custom range with times): five cards with the change against the compare window, views over time, contacts per bucket, and (dealerships) the ten listings with the most views. The period lives in the URL.
 export function AnalyticsPage({
   role,
 }: {
@@ -23,27 +23,24 @@ export function AnalyticsPage({
   const { t } = useT()
   const title = t("dashboard.nav_analytics")
   usePageTitle(title)
-  const { range } = analyticsSearchSchema.parse(useSearch({ strict: false }))
-  const navigate = useNavigate()
-  const { data, isPending, isError, refetch } = useQuery(analyticsQuery(range))
-  const days = data?.daily.map(({ date, ...counts }) => ({
-    day: date,
-    ...counts,
-  }))
-  const chart = { data: days, loading: isPending }
-  const setRange = (next: Range) =>
-    void navigate({
-      to: ".",
-      search: next === "30d" ? {} : { range: next },
-      replace: true,
-      resetScroll: false,
-      viewTransition: false,
-    })
+  const { query, setQuery } = usePeriodSearch()
+  const { data, isPending, isError, refetch } = useQuery(analyticsQuery(query))
+  const chart = {
+    ...reportChart({
+      t,
+      period: data?.period,
+      rows: dayRows(data?.daily),
+      previous: dayRows(data?.previousDaily),
+      events: true,
+    }),
+    loading: isPending,
+  }
   return (
     <div className="flex flex-col gap-6">
       <PageHeader title={title}>
-        <DateRangeSelect value={range} onChange={setRange} />
+        <PeriodControl value={query} onChange={setQuery} />
       </PageHeader>
+      <PeriodNote period={data?.period} />
       {isError ? (
         <SectionError
           message={t("analytics.load_error")}
@@ -59,6 +56,7 @@ export function AnalyticsPage({
                 : "analytics.chart_profile_views"
             )}
             series={[{ key: "views", label: t("analytics.series_views") }]}
+            csvName={t("analytics.chart_views")}
             {...chart}
           />
           <BarChartCard

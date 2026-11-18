@@ -41,10 +41,21 @@ export function monthColumn(column: PgColumn | SQL) {
   return sql<string>`to_char(${column} at time zone ${SQL_ZONE}, 'YYYY-MM')`
 }
 
-/** Matches timestamps inside the Khartoum days `first` to `last`, both included. */
+/**
+ * Matches timestamps inside the Khartoum days `first` to `last`, both included,
+ * or, when the range carries them, from the Khartoum minute `from` up to (not
+ * including) `to` (a custom report period, step 11.7-r1).
+ */
 export function withinDays(column: PgColumn | SQL, days: DayRange): SQL {
+  if (days.from && days.to)
+    return sql`${column} >= (${days.from}::timestamp at time zone ${SQL_ZONE}) and ${column} < (${days.to}::timestamp at time zone ${SQL_ZONE})`
   return sql`${column} >= (${days.first}::date::timestamp at time zone ${SQL_ZONE}) and ${column} < ((${days.last}::date + 1)::timestamp at time zone ${SQL_ZONE})`
 }
 
-/** Whole Khartoum days, both ends included. */
-export type DayRange = { first: string; last: string }
+/** Whole Khartoum days, both ends included; `from`/`to` (Khartoum minutes, `to` exclusive) narrow timestamp matches. */
+export type DayRange = {
+  first: string
+  last: string
+  from?: string
+  to?: string
+}

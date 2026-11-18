@@ -1,9 +1,9 @@
-import { okSchema, rangeSchema } from "@sayaratak/shared/schemas/api"
+import { okSchema } from "@sayaratak/shared/schemas/api"
 import { listingAnalyticsSchema } from "@sayaratak/shared/schemas/api"
 import { eventInputSchema } from "@sayaratak/shared/schemas/inputs"
+import { periodQuerySchema } from "@sayaratak/shared/schemas/period"
 import { analyticsSchema } from "@sayaratak/shared/schemas/responses"
 import { Hono } from "hono"
-import { z } from "zod"
 
 import { rateLimit } from "~/shared/http/rate-limit"
 import { validate } from "~/shared/http/validate"
@@ -13,8 +13,8 @@ import { requireUser } from "~/modules/auth/auth.middleware"
 import { getMyAnalytics } from "./analytics.me.service"
 import { getListingAnalytics, recordEvent } from "./analytics.service"
 
-// An unknown or missing `range` reads as 30 days, as the mock.
-const rangeQuery = z.object({ range: rangeSchema })
+// An unknown or missing `range` reads as 30 days, as the mock; valid `from`/`to` (Khartoum minutes) win over it.
+const rangeQuery = periodQuerySchema
 
 export const analyticsRoutes = new Hono()
 
@@ -39,7 +39,7 @@ analyticsRoutes.get(
   "/me/analytics",
   spec({
     summary:
-      "Dashboard numbers for the last 7, 30 or 90 whole Khartoum days: a seller's listings, a business owner's profile, everything for an admin; `previous` is the period just before",
+      "Dashboard numbers for the last 7, 30 or 90 whole Khartoum days or a custom `from`/`to`: a seller's listings, a business owner's profile, everything for an admin; `previous` is the period just before or (`compare=year`) a year earlier",
     access: "user",
     responses: { 200: analyticsSchema },
     errors: ["unauthenticated", "banned"],
@@ -47,10 +47,7 @@ analyticsRoutes.get(
   requireUser,
   validate.query(rangeQuery),
   async (c) => {
-    const analytics = await getMyAnalytics(
-      c.get("user"),
-      c.req.valid("query").range
-    )
+    const analytics = await getMyAnalytics(c.get("user"), c.req.valid("query"))
     return c.json(analytics)
   }
 )
@@ -59,7 +56,7 @@ analyticsRoutes.get(
   "/listings/:id/analytics",
   spec({
     summary:
-      "One listing's views, calls, WhatsApp taps and shares per day and in total (owner or admin)",
+      "One listing's views, calls, WhatsApp taps and shares per bucket and in total for a preset or custom period (owner or admin)",
     access: "user",
     responses: { 200: listingAnalyticsSchema },
     errors: ["unauthenticated", "banned", "forbidden", "not_found"],
@@ -69,7 +66,7 @@ analyticsRoutes.get(
   async (c) => {
     const analytics = await getListingAnalytics(c.get("user"), {
       id: c.req.param("id"),
-      range: c.req.valid("query").range,
+      query: c.req.valid("query"),
     })
     return c.json(analytics)
   }

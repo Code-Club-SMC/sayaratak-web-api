@@ -9,9 +9,9 @@ import {
 import { bilingualSchema, geoSchema, idSchema, pageOf } from "./fields"
 import { localeSchema } from "./locale"
 import { interactionModeSchema } from "./interaction"
+import { periodSchema } from "./period"
 
 // Response shapes that are not an entity (A7, "Other response shapes").
-const range = z.enum(["7d", "30d", "90d"])
 const dayPoint = z.object({ date: z.string(), value: z.number() })
 
 const totalsSchema = z.object({
@@ -22,19 +22,23 @@ const totalsSchema = z.object({
   favorites: z.number().int(),
   newReviews: z.number().int(),
 })
+// One bucket of a report series; `date` is the bucket's first day (see `period.granularity`).
+const bucketSchema = z.object({
+  date: z.string(),
+  views: z.number().int(),
+  calls: z.number().int(),
+  whatsapp: z.number().int(),
+  messages: z.number().int(),
+})
+
 export const analyticsSchema = z.object({
-  range,
+  period: periodSchema,
   totals: totalsSchema,
-  previous: totalsSchema, // previous period of the same length, for the "change" on each StatCard
-  daily: z.array(
-    z.object({
-      date: z.string(),
-      views: z.number().int(),
-      calls: z.number().int(),
-      whatsapp: z.number().int(),
-      messages: z.number().int(),
-    })
-  ),
+  previous: totalsSchema, // the compare window (period before, or a year earlier), for the "change" on each StatCard
+  // Per day for presets; per week or month for long custom ranges.
+  daily: z.array(bucketSchema),
+  // The compare window bucketed the same way, cut or zero-padded to `daily`'s length; `date` is its own first day.
+  previousDaily: z.array(bucketSchema),
   // Dealerships only, otherwise []; up to 10.
   topListings: z.array(
     z.object({
@@ -50,7 +54,7 @@ export const analyticsSchema = z.object({
 export type Analytics = z.infer<typeof analyticsSchema>
 
 export const adminStatsSchema = z.object({
-  range,
+  period: periodSchema,
   totals: z.object({
     users: z.number().int(),
     listings: z.number().int(),
@@ -66,6 +70,13 @@ export const adminStatsSchema = z.object({
     newUsers: z.array(dayPoint),
     revenue: z.array(dayPoint),
   }),
+  // The compare window, bucketed and aligned like `series`; `previousRevenue` is its total.
+  previousSeries: z.object({
+    newListings: z.array(dayPoint),
+    newUsers: z.array(dayPoint),
+    revenue: z.array(dayPoint),
+  }),
+  previousRevenue: z.number().int(),
 })
 export type AdminStats = z.infer<typeof adminStatsSchema>
 

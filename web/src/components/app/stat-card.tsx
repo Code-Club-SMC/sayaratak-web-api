@@ -3,12 +3,17 @@ import { Link, type LinkProps } from "@tanstack/react-router"
 import { useT } from "@/lib/i18n/use-t"
 import { formatNumber } from "@/lib/format"
 import { Skeleton } from "@/components/ui/skeleton"
+import type { Compare } from "@sayaratak/shared/schemas/period"
+import { Sparkline } from "./sparkline"
 
-// `previous` is the same measure for the period before, so the change reads against equal-length periods. Without it, or when it is 0, no change is shown. `detail` sits beside the number ("of 20", "12 reviews"); `link` turns the whole card into a link to the page that explains the number.
+// `previous` is the same measure for the compare window (`compare`: the period before, default, or a year earlier); the card shows the change, and report cards (with `spark`) the previous value too. Without it no change is shown, and when it is 0 only the value. `unavailable` says the change cannot be worked out (old counters kept per month only). `spark` draws the trend under the number. `detail` sits beside the number ("of 20", "12 reviews"); `link` turns the whole card into a link to the page that explains the number.
 export function StatCard({
   label,
   value,
   previous,
+  compare = "previous",
+  unavailable,
+  spark,
   loading,
   detail,
   link,
@@ -16,6 +21,9 @@ export function StatCard({
   label: string
   value?: number
   previous?: number
+  compare?: Compare
+  unavailable?: boolean
+  spark?: number[]
   loading?: boolean
   detail?: string
   link?: LinkProps
@@ -40,17 +48,36 @@ export function StatCard({
           )}
         </p>
       )}
-      {change !== undefined && !loading && (
-        <p
-          className={`text-caption num ${change < 0 ? "text-destructive" : "text-success"}`}
-        >
-          <bdi dir="ltr">
-            {change > 0 ? "+" : ""}
-            {formatNumber(change, locale)}%
-          </bdi>{" "}
-          <span className="text-muted-foreground">
-            {t("dashboard.vs_previous")}
-          </span>
+      {spark && !loading && <Sparkline values={spark} />}
+      {unavailable && !loading ? (
+        <p className="text-caption text-muted-foreground">
+          {t("dashboard.change_unavailable")}
+        </p>
+      ) : (
+        change !== undefined &&
+        !loading && (
+          <p
+            className={`text-caption num ${change < 0 ? "text-destructive" : "text-success"}`}
+          >
+            <bdi dir="ltr">
+              {change > 0 ? "+" : ""}
+              {formatNumber(change, locale)}%
+            </bdi>{" "}
+            <span className="text-muted-foreground">
+              {t(
+                compare === "year"
+                  ? "dashboard.vs_year"
+                  : "dashboard.vs_previous"
+              )}
+            </span>
+          </p>
+        )
+      )}
+      {spark && previous !== undefined && !unavailable && !loading && (
+        <p className="text-caption text-muted-foreground num">
+          {t("dashboard.previous_value", {
+            value: formatNumber(previous, locale),
+          })}
         </p>
       )}
     </>

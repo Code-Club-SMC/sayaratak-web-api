@@ -30,7 +30,19 @@ const stats: Record<Role, { key: Key; label: string }[]> = {
   ],
 }
 
-// Five cards, each with its change against the period just before.
+// Counted per day on the public pages, so a comparison reaching the months kept as totals leaves them out.
+const EVENT_KEYS = new Set<Key>(["views", "calls", "whatsapp"])
+// The totals that also have a per-bucket series, for the trend line.
+const SERIES: Partial<
+  Record<Key, keyof Omit<Analytics["daily"][number], "date">>
+> = {
+  views: "views",
+  calls: "calls",
+  whatsapp: "whatsapp",
+  messages: "messages",
+}
+
+// Five cards, each with its change against the compare window, its previous value and, where a series exists, its trend.
 export function StatRow({
   role,
   data,
@@ -41,17 +53,25 @@ export function StatRow({
   loading?: boolean
 }) {
   const { t } = useT()
+  const notCompared = data ? !data.period.eventsCompared : false
   return (
     <div className="grid grid-cols-2 gap-4 md:grid-cols-3 xl:grid-cols-5">
-      {stats[role].map(({ key, label }) => (
-        <StatCard
-          key={key}
-          label={t(label)}
-          value={data?.totals[key]}
-          previous={data?.previous[key]}
-          loading={loading}
-        />
-      ))}
+      {stats[role].map(({ key, label }) => {
+        const unavailable = notCompared && EVENT_KEYS.has(key)
+        const series = SERIES[key]
+        return (
+          <StatCard
+            key={key}
+            label={t(label)}
+            value={data?.totals[key]}
+            previous={unavailable ? undefined : data?.previous[key]}
+            compare={data?.period.compare}
+            unavailable={unavailable}
+            spark={series && data?.daily.map((d) => d[series])}
+            loading={loading}
+          />
+        )
+      })}
     </div>
   )
 }

@@ -28,9 +28,10 @@ import {
   broadcastSchema,
   okSchema,
   taxonomyRowSchema,
-  type Range,
   type taxonomyTypeSchema,
 } from "@sayaratak/shared/schemas/api"
+import type { PeriodQuery } from "@sayaratak/shared/schemas/period"
+import { presetQuery } from "@/features/analytics/schemas"
 import {
   paymentSchema,
   promotionPriceSchema,
@@ -85,8 +86,8 @@ const adminPlain = <TSchema extends z.ZodType>(
   })
 
 export const adminQueries = {
-  stats: (range: Range = "30d") =>
-    adminPlain("stats", "/admin/stats", adminStatsSchema, { range }),
+  stats: (period: PeriodQuery = presetQuery("30d")) =>
+    adminPlain("stats", "/admin/stats", adminStatsSchema, period),
   activity: adminPlain("activity", "/admin/activity", activitySchema),
   search: (q: string) =>
     adminPlain("search", "/admin/search", adminSearchSchema, { q }),

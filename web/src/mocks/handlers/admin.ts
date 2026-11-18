@@ -27,15 +27,14 @@ import { fail, needRole, route, type Ctx } from "../http"
 import {
   DAY_MS,
   byNewest,
-  dayKey,
   findBusiness,
   listPage,
   nowIso,
   notify,
   publicUser,
-  rangeDays,
   textOf,
 } from "../lib"
+import { periodOf, total } from "../period"
 import { matches } from "../search"
 import type { ListingRow, UserRow } from "../types"
 
@@ -46,30 +45,32 @@ const listingOf = (id: string) => {
   return row
 }
 
-// KPI totals and the three daily series over the range (revenue is approved payments, by review day).
+// KPI totals and the three series over the period (revenue is approved payments, by review time), plus the compare window aligned to them.
 route("GET", "/admin/stats", (c) => {
   admin(c)
-  const days = rangeDays(c.query)
-  const since = Date.now() - days * DAY_MS
-  const inRange = (iso: string) => Date.parse(iso) >= since
+  const { period, current, compare, align, compareStarts } = periodOf(c.query)
   const approved = db.payments.filter((p) => p.status === "approved")
-  const perDay = <T>(
-    rows: T[],
-    at: (r: T) => string,
-    value: (r: T) => number
-  ) =>
-    Array.from({ length: days }, (_, i) => {
-      const date = dayKey(Date.now() - (days - 1 - i) * DAY_MS)
-      return {
-        date,
-        value: rows
-          .filter((r) => dayKey(Date.parse(at(r))) === date)
-          .reduce((sum, r) => sum + value(r), 0),
-      }
-    })
+  const decided = (p: (typeof approved)[number]) => p.reviewedAt ?? p.createdAt
+  const read = (w: typeof current) => ({
+    newListings: w.timed(
+      db.listings,
+      (l) => l.createdAt,
+      () => 1
+    ),
+    newUsers: w.timed(
+      db.users,
+      (u) => u.createdAt,
+      () => 1
+    ),
+    revenue: w.timed(approved, decided, (p) => p.amount),
+  })
+  const points = (values: number[], starts: string[]) =>
+    starts.map((date, i) => ({ date, value: values[i] ?? 0 }))
+  const now = read(current)
+  const before = read(compare)
   const live = db.listings.filter((l) => l.moderation === "approved")
   return adminStatsSchema.parse({
-    range: `${days}d`,
+    period,
     totals: {
       users: db.users.length,
       listings: live.length,
@@ -79,27 +80,19 @@ route("GET", "/admin/stats", (c) => {
       mechanics: db.mechanics.length,
       activeSubscriptions: db.subscriptions.filter((s) => s.status === "active")
         .length,
-      revenue: approved
-        .filter((p) => inRange(p.reviewedAt ?? p.createdAt))
-        .reduce((sum, p) => sum + p.amount, 0),
+      revenue: total(now.revenue),
     },
     series: {
-      newListings: perDay(
-        db.listings,
-        (l) => l.createdAt,
-        () => 1
-      ),
-      newUsers: perDay(
-        db.users,
-        (u) => u.createdAt,
-        () => 1
-      ),
-      revenue: perDay(
-        approved,
-        (p) => p.reviewedAt ?? p.createdAt,
-        (p) => p.amount
-      ),
+      newListings: points(now.newListings, current.starts),
+      newUsers: points(now.newUsers, current.starts),
+      revenue: points(now.revenue, current.starts),
     },
+    previousSeries: {
+      newListings: points(align(before.newListings), compareStarts),
+      newUsers: points(align(before.newUsers), compareStarts),
+      revenue: points(align(before.revenue), compareStarts),
+    },
+    previousRevenue: total(before.revenue),
   })
 })
 

@@ -37,6 +37,14 @@ const dateFull = dateFormat({
 const timeOnly = dateFormat({ ...dateBase, hour: "numeric", minute: "2-digit" })
 const monthYear = dateFormat({ ...dateBase, month: "long", year: "numeric" })
 const dayMonth = dateFormat({ ...dateBase, day: "numeric", month: "short" })
+const dayMonthTime = dateFormat({
+  ...dateBase,
+  day: "numeric",
+  month: "short",
+  hour: "numeric",
+  minute: "2-digit",
+})
+const monthShort = dateFormat({ ...dateBase, month: "short", year: "numeric" })
 const weekday = dateFormat({ weekday: "long", timeZone: "UTC" })
 const relative = perLocale(
   (locale) => new Intl.RelativeTimeFormat(locale, { ...base, numeric: "auto" })
@@ -87,6 +95,20 @@ export const formatWeekday = (day: number, locale: Locale) =>
 // Day and month only, for chart axes.
 export const formatShortDate = (iso: string, locale: Locale) =>
   dayMonth(locale).format(new Date(iso))
+
+// "1 Nov, 08:00" for a Khartoum wall-clock minute ("2026-11-01T08:00"); Khartoum is UTC+2 all year.
+export const formatMinute = (minute: string, locale: Locale) =>
+  dayMonthTime(locale).format(new Date(`${minute}:00+02:00`))
+
+// A report bucket's first day: "1 Nov" for days and weeks, "Nov 2026" for months.
+export const formatBucket = (
+  day: string,
+  granularity: "day" | "week" | "month",
+  locale: Locale
+) =>
+  granularity === "month"
+    ? monthShort(locale).format(new Date(`${day}T12:00:00Z`))
+    : formatShortDate(day, locale)
 
 export const initials = (name: string) =>
   name

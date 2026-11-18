@@ -35,14 +35,13 @@ import {
 import {
   DAY_MS,
   canEditListing,
-  eventSeries,
   listingById,
   listingLimit,
   listingUsage,
   nowIso,
-  rangeDays,
   extrasOf,
 } from "../lib"
+import { periodOf } from "../period"
 import { facets, isPublic, matches, sortListings } from "../search"
 import type { ListingRow, UserRow } from "../types"
 
@@ -408,20 +407,40 @@ route("GET", "/listings/:id/analytics", (c) => {
   const user = needUser(c)
   const row = listingById(c.params.id ?? "")
   canEditListing(user, row)
-  const days = rangeDays(c.query)
-  const series = eventSeries((id) => id === row.id, days)
-  const sum = (key: "views" | "phoneClicks" | "whatsappClicks" | "shares") =>
-    series.reduce((s, d) => s + d[key], 0)
+  const { period, current, compare, align, compareStarts } = periodOf(c.query)
+  const only = (id: string) => id === row.id
+  const read = (w: typeof current, fit: (v: number[]) => number[]) => ({
+    views: w.events(only, "view"),
+    phoneClicks: w.events(only, "phone_click"),
+    whatsappClicks: w.events(only, "whatsapp_click"),
+    shares: w.events(only, "share"),
+    fit,
+  })
+  const series = (r: ReturnType<typeof read>, starts: string[]) => {
+    const [views, phoneClicks, whatsappClicks] = [
+      r.views,
+      r.phoneClicks,
+      r.whatsappClicks,
+    ].map((k) => r.fit(k.series))
+    return starts.map((day, i) => ({
+      day,
+      views: views?.[i] ?? 0,
+      phoneClicks: phoneClicks?.[i] ?? 0,
+      whatsappClicks: whatsappClicks?.[i] ?? 0,
+    }))
+  }
+  const now = read(current, (v) => v)
   return listingAnalyticsSchema.parse({
-    range: `${days}d`,
+    period,
     totals: {
-      views: sum("views"),
-      phoneClicks: sum("phoneClicks"),
-      whatsappClicks: sum("whatsappClicks"),
-      shares: sum("shares"),
+      views: now.views.total,
+      phoneClicks: now.phoneClicks.total,
+      whatsappClicks: now.whatsappClicks.total,
+      shares: now.shares.total,
       favorites: row.stats.favorites,
     },
-    series,
+    series: series(now, current.starts),
+    previousSeries: series(read(compare, align), compareStarts),
     top: [],
   })
 })

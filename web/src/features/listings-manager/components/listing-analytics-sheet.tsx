@@ -3,7 +3,8 @@ import { useQuery } from "@tanstack/react-query"
 
 import { AreaChartCard } from "@/components/app/area-chart-card"
 import { BarChartCard } from "@/components/app/bar-chart-card"
-import { DateRangeSelect } from "@/components/app/date-range-select"
+import { PeriodControl } from "@/components/app/period-control"
+import { PeriodNote } from "@/components/app/period-note"
 import {
   Sheet,
   SheetContent,
@@ -13,7 +14,9 @@ import {
 import { listingQueries } from "@/features/listings/queries"
 import { formatNumber } from "@/lib/format"
 import { useT } from "@/lib/i18n/use-t"
-import type { Range } from "@sayaratak/shared/schemas/api"
+import { reportChart } from "@/features/analytics/chart-props"
+import { presetQuery } from "@/features/analytics/schemas"
+import type { PeriodQuery } from "@sayaratak/shared/schemas/period"
 import type { Listing } from "@sayaratak/shared/schemas/listing"
 
 // Views, contacts and totals of one listing, for a period.
@@ -25,12 +28,19 @@ export function ListingAnalyticsSheet({
   onClose: () => void
 }) {
   const { t, locale } = useT()
-  const [range, setRange] = useState<Range>("30d")
+  const [period, setPeriod] = useState<PeriodQuery>(presetQuery("30d"))
   const { data, isPending, isError, refetch } = useQuery(
-    listingQueries.analytics(listing.id, range)
+    listingQueries.analytics(listing.id, period)
   )
   const totals = data?.totals
   const chart = {
+    ...reportChart({
+      t,
+      period: data?.period,
+      rows: data?.series,
+      previous: data?.previousSeries,
+      events: true,
+    }),
     loading: isPending,
     error: isError,
     onRetry: () => void refetch(),
@@ -44,11 +54,11 @@ export function ListingAnalyticsSheet({
             <bdi>{listing.title}</bdi>
           </p>
         </SheetHeader>
-        <DateRangeSelect value={range} onChange={setRange} />
+        <PeriodControl value={period} onChange={setPeriod} />
+        <PeriodNote period={data?.period} />
         <AreaChartCard
           title={t("manager.chart_views")}
           series={[{ key: "views", label: t("manager.col_views") }]}
-          data={data?.series}
           {...chart}
         />
         <BarChartCard
@@ -57,7 +67,6 @@ export function ListingAnalyticsSheet({
             { key: "phoneClicks", label: t("manager.metric_calls") },
             { key: "whatsappClicks", label: t("manager.metric_whatsapp") },
           ]}
-          data={data?.series}
           {...chart}
         />
         {totals && (

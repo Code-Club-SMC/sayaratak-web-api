@@ -1,15 +1,15 @@
 import {
   Area,
-  AreaChart,
   Bar,
-  BarChart,
   CartesianGrid,
+  ComposedChart,
+  Line,
   XAxis,
   YAxis,
 } from "recharts"
 
 import { useT } from "@/lib/i18n/use-t"
-import { formatNumber, formatShortDate } from "@/lib/format"
+import { formatNumber } from "@/lib/format"
 import {
   ChartContainer,
   ChartLegend,
@@ -29,30 +29,42 @@ export function ChartImpl({
   data,
   series,
   stacked,
+  label,
+  compare,
 }: {
   kind: "area" | "bar"
   data: ChartRow[]
   series: ChartSeries[]
   stacked?: boolean
+  label: (day: string) => string
+  // The compare window's total per bucket, drawn as one dashed muted line.
+  compare?: { label: string; values: number[] }
 }) {
   const { locale } = useT()
-  const config: ChartConfig = Object.fromEntries(
-    series.map((s, i) => [
-      s.key,
-      { label: s.label, color: `var(--chart-${colors[i % colors.length]})` },
-    ])
-  )
-  const Chart = kind === "area" ? AreaChart : BarChart
+  const config: ChartConfig = {
+    ...Object.fromEntries(
+      series.map((s, i) => [
+        s.key,
+        { label: s.label, color: `var(--chart-${colors[i % colors.length]})` },
+      ])
+    ),
+    ...(compare && {
+      compare: { label: compare.label, color: "var(--muted-foreground)" },
+    }),
+  }
+  const rows = compare
+    ? data.map((row, i) => ({ ...row, compare: compare.values[i] ?? 0 }))
+    : data
   return (
     <ChartContainer config={config} className="aspect-auto h-64 w-full">
-      <Chart data={data} accessibilityLayer>
+      <ComposedChart data={rows} accessibilityLayer>
         <CartesianGrid vertical={false} />
         <XAxis
           dataKey="day"
           tickLine={false}
           axisLine={false}
           minTickGap={24}
-          tickFormatter={(v: string) => formatShortDate(v, locale)}
+          tickFormatter={(v: string) => label(v)}
         />
         <YAxis
           // Fits the widest tick, so six-figure SDG amounts are not cut off.
@@ -63,9 +75,7 @@ export function ChartImpl({
         />
         <ChartTooltip
           content={
-            <ChartTooltipContent
-              labelFormatter={(v) => formatShortDate(String(v), locale)}
-            />
+            <ChartTooltipContent labelFormatter={(v) => label(String(v))} />
           }
         />
         <ChartLegend content={<ChartLegendContent />} />
@@ -91,7 +101,17 @@ export function ChartImpl({
             />
           )
         )}
-      </Chart>
+        {compare && (
+          <Line
+            dataKey="compare"
+            type="monotone"
+            stroke="var(--color-compare)"
+            strokeDasharray="4 4"
+            dot={false}
+            isAnimationActive={false}
+          />
+        )}
+      </ComposedChart>
     </ChartContainer>
   )
 }

@@ -1,6 +1,6 @@
 import { afterEach, expect, it, vi } from "vitest"
 
-import { downloadCsv } from "@/features/listings-manager/export-csv"
+import { downloadCsv } from "@/lib/csv"
 
 afterEach(() => vi.restoreAllMocks())
 

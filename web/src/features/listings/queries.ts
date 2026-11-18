@@ -15,12 +15,9 @@ import {
   useApiMutation,
 } from "@/lib/api/mutation"
 import { keys } from "@/lib/api/query-keys"
-import {
-  listingAnalyticsSchema,
-  okSchema,
-  type Range,
-} from "@sayaratak/shared/schemas/api"
+import { listingAnalyticsSchema, okSchema } from "@sayaratak/shared/schemas/api"
 import { pageOf } from "@sayaratak/shared/schemas/fields"
+import type { PeriodQuery } from "@sayaratak/shared/schemas/period"
 import type {
   listingCreateSchema,
   listingPatchSchema,
@@ -99,12 +96,12 @@ export const listingQueries = {
       staleTime: 30_000,
       placeholderData: keepPreviousData,
     }),
-  analytics: (id: string, range: Range = "30d") =>
+  analytics: (id: string, period: PeriodQuery) =>
     queryOptions({
-      queryKey: keys.listings.analytics(id, range),
+      queryKey: keys.listings.analytics(id, period),
       queryFn: ({ signal }) =>
         apiFetch(`/listings/${id}/analytics`, {
-          query: { range },
+          query: period,
           schema: listingAnalyticsSchema,
           signal,
         }),

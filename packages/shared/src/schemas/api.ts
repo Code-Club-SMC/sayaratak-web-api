@@ -1,6 +1,7 @@
 import { z } from "zod"
 
 import { bilingualSchema } from "./fields"
+import { periodSchema } from "./period"
 
 export const eventTypeSchema = z.enum([
   "view",
@@ -27,8 +28,7 @@ export const okSchema = z.object({ ok: z.literal(true) })
 export const codeSentSchema = z.object({ ok: z.literal(true) })
 export const resetTokenSchema = z.object({ token: z.string() })
 export const draftSchema = z.object({ data: z.record(z.string(), z.unknown()) })
-export const rangeSchema = z.enum(["7d", "30d", "90d"]).catch("30d")
-export type Range = z.infer<typeof rangeSchema>
+export { rangeSchema, type Range } from "./period"
 
 export const uploadSchema = z.object({
   id: z.string(),
@@ -52,7 +52,7 @@ export type Counts = z.infer<typeof countsSchema>
 
 // One listing, for its analytics sheet (8.2). The account-wide shape is `analyticsSchema` in responses.ts.
 export const listingAnalyticsSchema = z.object({
-  range: z.enum(["7d", "30d", "90d"]),
+  period: periodSchema,
   totals: z.object({
     views: z.number(),
     phoneClicks: z.number(),
@@ -61,6 +61,15 @@ export const listingAnalyticsSchema = z.object({
     favorites: z.number(),
   }),
   series: z.array(
+    z.object({
+      day: z.string(),
+      views: z.number(),
+      phoneClicks: z.number(),
+      whatsappClicks: z.number(),
+    })
+  ),
+  // The compare window, bucketed and aligned like `series`.
+  previousSeries: z.array(
     z.object({
       day: z.string(),
       views: z.number(),

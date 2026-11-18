@@ -45,6 +45,32 @@ export function listDailyCounts(
     .groupBy(events.day, events.type)
 }
 
+/**
+ * Rolled-up page counters per month and type for these targets (`null`: all),
+ * for the months the days touch. Whole months: a month row holds every day of it.
+ */
+export function listMonthlyCounts(
+  ex: Executor,
+  targetIds: string[] | null,
+  days: DayRange
+) {
+  return ex
+    .select({
+      month: eventsMonthly.month,
+      type: eventsMonthly.type,
+      count: sum(eventsMonthly.count).mapWith(Number),
+    })
+    .from(eventsMonthly)
+    .where(
+      and(
+        between(eventsMonthly.month, `${days.first.slice(0, 7)}-01`, days.last),
+        inArray(eventsMonthly.type, [...PAGE_TYPES]),
+        targetIds ? inArray(eventsMonthly.targetId, targetIds) : undefined
+      )
+    )
+    .groupBy(eventsMonthly.month, eventsMonthly.type)
+}
+
 /** Page counters per target and type for these targets inside the days. */
 export function listTargetCounts(
   ex: Executor,

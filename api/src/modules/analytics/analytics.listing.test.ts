@@ -49,7 +49,7 @@ describe("GET /listings/:id/analytics", () => {
       await get(`/listings/${id}/analytics?range=7d`, as.user),
       listingAnalyticsSchema
     )
-    expect(body.range).toBe("7d")
+    expect(body.period.from).toBe("2026-10-26T00:00")
     expect(body.series).toHaveLength(7)
     expect(body.series.at(-1)?.day).toBe("2026-11-01")
     expect(body.totals.views).toBe(
@@ -79,7 +79,7 @@ describe("GET /listings/:id/analytics", () => {
       await get(`/listings/${id}/analytics?range=weird`, as.user),
       listingAnalyticsSchema
     )
-    expect(body.range).toBe("30d")
+    expect(body.period.custom).toBe(false)
     expect(body.series).toHaveLength(30)
   })
 })

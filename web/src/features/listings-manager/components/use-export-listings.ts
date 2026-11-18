@@ -4,7 +4,7 @@ import { toast } from "@/components/ui/toast"
 import { listingQueries } from "@/features/listings/queries"
 import { errorText } from "@/lib/api/error-text"
 import { useT } from "@/lib/i18n/use-t"
-import { downloadCsv } from "../export-csv"
+import { downloadCsv } from "@/lib/csv"
 
 // Every listing of the account (up to 500), one row each, as a file Excel opens.
 export function useExportListings() {

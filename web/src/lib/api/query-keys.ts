@@ -17,8 +17,8 @@ export const keys = {
     detail: (slug: string) => ["listings", "detail", slug] as const,
     similar: (id: string) => ["listings", "similar", id] as const,
     mine: (f: Params) => ["listings", "mine", f] as const,
-    analytics: (id: string, range: string) =>
-      ["listings", "analytics", id, range] as const,
+    analytics: (id: string, period: Params) =>
+      ["listings", "analytics", id, period] as const,
   },
   favorites: {
     all: ["favorites"] as const,
@@ -76,7 +76,7 @@ export const keys = {
     targets: ["ads", "targets"] as const,
     mine: ["ads", "mine"] as const,
   },
-  analytics: (range: string) => ["analytics", range] as const,
+  analytics: (period: Params) => ["analytics", period] as const,
   admin: {
     all: ["admin"] as const,
     list: (name: string, f?: Params) => ["admin", name, f] as const,

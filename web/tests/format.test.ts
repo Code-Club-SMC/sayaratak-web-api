@@ -2,7 +2,9 @@ import { expect, it } from "vitest"
 
 import { normalizeDigits } from "@sayaratak/shared/lib/digits"
 import {
+  formatBucket,
   formatDate,
+  formatMinute,
   formatMileage,
   formatNumber,
   formatPrice,
@@ -70,4 +72,11 @@ it("resolves plural keys for 0, 1, 2, 5, 11 and 100", () => {
 
 it("clamps", () => {
   expect([clamp(5, 0, 3), clamp(-1, 0, 3), clamp(2, 0, 3)]).toEqual([3, 0, 2])
+})
+
+it("report labels: a Khartoum minute, and buckets by width", () => {
+  expect(formatMinute("2026-11-01T08:05", "en")).toBe("Nov 1, 8:05 AM")
+  expect(formatBucket("2026-11-01", "day", "en")).toBe("Nov 1")
+  expect(formatBucket("2026-11-01", "week", "en")).toBe("Nov 1")
+  expect(formatBucket("2026-11-01", "month", "en")).toBe("Nov 2026")
 })

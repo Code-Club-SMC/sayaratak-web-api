@@ -5,6 +5,7 @@ import { buttonVariants } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 import { formatNumber } from "@/lib/format"
 import { useT } from "@/lib/i18n/use-t"
+import { presetQuery } from "@/features/analytics/schemas"
 import type { Range } from "@sayaratak/shared/schemas/api"
 import type { Analytics } from "@sayaratak/shared/schemas/responses"
 
@@ -50,7 +51,7 @@ export function FunnelCard({
         <Link
           to="/$locale/dealer/analytics"
           params={{ locale }}
-          search={{ range }}
+          search={presetQuery(range)}
           className={buttonVariants({ variant: "ghost" })}
         >
           {t("dashboard.dealer_see_analytics")}

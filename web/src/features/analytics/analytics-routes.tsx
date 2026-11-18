@@ -4,9 +4,9 @@ import { dashboardPage } from "@/features/dashboard/overview-route"
 import { withProps } from "@/lib/lazy-page"
 import { dashboardPath } from "@/lib/navigation"
 import {
-  analyticsSearchDefaults,
-  analyticsSearchSchema,
-  type AnalyticsSearch,
+  reportSearchDefaults,
+  reportSearchSchema,
+  type ReportSearch,
 } from "./schemas"
 
 const AnalyticsPage = lazyRouteComponent(
@@ -18,9 +18,9 @@ const AnalyticsPage = lazyRouteComponent(
 export const analyticsRoute = (
   role: "dealership" | "workshop" | "mechanic"
 ) => ({
-  validateSearch: analyticsSearchSchema,
+  validateSearch: reportSearchSchema,
   search: {
-    middlewares: [stripSearchParams<AnalyticsSearch>(analyticsSearchDefaults)],
+    middlewares: [stripSearchParams<ReportSearch>(reportSearchDefaults)],
   },
   ...dashboardPage(
     `${dashboardPath(role)}/analytics`,

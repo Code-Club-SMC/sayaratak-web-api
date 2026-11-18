@@ -1,11 +1,10 @@
-import { rangeSchema } from "@sayaratak/shared/schemas/api"
+import { periodQuerySchema } from "@sayaratak/shared/schemas/period"
 import {
   activitySchema,
   adminSearchSchema,
   adminStatsSchema,
 } from "@sayaratak/shared/schemas/responses"
 import { Hono } from "hono"
-import { z } from "zod"
 
 import { validate } from "~/shared/http/validate"
 import { spec } from "~/shared/openapi/registry"
@@ -15,8 +14,8 @@ import { getActivity } from "./admin.activity.service"
 import { searchAdmin } from "./admin.search.service"
 import { getStats } from "./admin.stats.service"
 
-// An unknown or missing `range` reads as 30 days, as the mock.
-const rangeQuery = z.object({ range: rangeSchema })
+// An unknown or missing `range` reads as 30 days, as the mock; valid `from`/`to` (Khartoum minutes) win over it.
+const rangeQuery = periodQuerySchema
 
 const ADMIN_ERRORS = ["unauthenticated", "banned", "forbidden"] as const
 
@@ -26,14 +25,14 @@ adminRoutes.get(
   "/admin/stats",
   spec({
     summary:
-      "Dashboard totals and daily series for the last 7, 30 or 90 Khartoum days",
+      "Dashboard totals and series for the last 7, 30 or 90 Khartoum days or a custom `from`/`to`, with the compare window (`compare=previous` or `year`)",
     access: "user",
     responses: { 200: adminStatsSchema },
     errors: [...ADMIN_ERRORS],
   }),
   requireRole("admin"),
   validate.query(rangeQuery),
-  async (c) => c.json(await getStats(c.req.valid("query").range))
+  async (c) => c.json(await getStats(c.req.valid("query")))
 )
 
 adminRoutes.get(

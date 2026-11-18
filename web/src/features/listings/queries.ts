@@ -18,6 +18,7 @@ import { keys } from "@/lib/api/query-keys"
 import { listingAnalyticsSchema, okSchema } from "@sayaratak/shared/schemas/api"
 import { pageOf } from "@sayaratak/shared/schemas/fields"
 import type { PeriodQuery } from "@sayaratak/shared/schemas/period"
+import { pricePositionSchema } from "@sayaratak/shared/schemas/reports-price"
 import type {
   listingCreateSchema,
   listingPatchSchema,
@@ -105,6 +106,17 @@ export const listingQueries = {
           schema: listingAnalyticsSchema,
           signal,
         }),
+    }),
+  // Step 11.7-r7: the listing's price against the same car now.
+  price: (id: string) =>
+    queryOptions({
+      queryKey: keys.listings.price(id),
+      queryFn: ({ signal }) =>
+        apiFetch(`/listings/${id}/price`, {
+          schema: pricePositionSchema,
+          signal,
+        }),
+      staleTime: 60_000,
     }),
 }
 

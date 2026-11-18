@@ -1,3 +1,4 @@
+import type { PriceListing } from "@sayaratak/shared/lib/price-position"
 import type { EventType } from "@sayaratak/shared/schemas/api"
 
 import { fail } from "~/shared/http/errors"
@@ -117,4 +118,44 @@ export async function listDemandListings(ex: Executor, now: Date) {
       (row.status === "available" || row.status === "reserved") &&
       row.expiresAt > now,
   }))
+}
+
+type PriceRow = Omit<PriceListing, "ownerUserId" | "expiresAt" | "soldAt"> & {
+  ownerUserId: string | null
+  expiresAt: Date
+  soldAt: Date | null
+}
+const toPriceListing = (row: PriceRow): PriceListing => ({
+  id: row.id,
+  ownerUserId: row.ownerUserId ?? "",
+  kind: row.kind,
+  intent: row.intent,
+  condition: row.condition,
+  makeId: row.makeId,
+  modelId: row.modelId,
+  year: row.year,
+  rentPeriod: row.rentPeriod,
+  price: row.price,
+  status: row.status,
+  expiresAt: row.expiresAt.toISOString(),
+  soldAt: row.soldAt?.toISOString() ?? null,
+})
+
+/** Approved listings as the price position compares them (step 11.7-r7). */
+export async function listPriceListings(ex: Executor) {
+  return (await statsQ.listPriceRows(ex)).map(toPriceListing)
+}
+
+/**
+ * A listing the user may edit (owner or admin), in any state, as the price
+ * position reads it. 404 `not_found`, 403 `forbidden`.
+ */
+export async function getPriceListingOfEditable(
+  ex: Executor,
+  target: { user: SessionUser; id: string }
+) {
+  const row = await q.getListing(ex, target.id)
+  if (!row) fail.notFound()
+  checkCanEdit(target.user, row)
+  return toPriceListing(row)
 }

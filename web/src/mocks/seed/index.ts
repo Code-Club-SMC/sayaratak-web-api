@@ -16,6 +16,7 @@ import {
 } from "./commerce"
 import { adPages, campaigns } from "./ads"
 import { seedListings } from "./listings"
+import { priceCluster } from "./price-cluster"
 import { seedPeople } from "./people"
 import {
   backups,
@@ -84,7 +85,7 @@ export function buildSeed({ empty = false }: { empty?: boolean } = {}): Db {
       .filter((l) => l.ownerUserId === "u-omar" || l.ownerUserId === "u-dealer")
       .map((l) => l.id)
   )
-  return {
+  const seed = {
     taxonomy,
     countries: structuredClone(countries),
     users,
@@ -145,4 +146,7 @@ export function buildSeed({ empty = false }: { empty?: boolean } = {}): Db {
     codes: new Map(),
     resetTokens: new Map(),
   }
+  // Appended last so no other table sees them and the rest of the seed stays the same (step 11.7-r7).
+  listings.push(...priceCluster(listings, users))
+  return seed
 }

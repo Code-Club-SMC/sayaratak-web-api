@@ -36,3 +36,30 @@ export function listDemandRows(ex: Executor) {
     )
     .orderBy(asc(listings.id))
 }
+
+const priceColumns = {
+  id: listings.id,
+  ownerUserId: listings.ownerUserId,
+  kind: listings.kind,
+  intent: listings.intent,
+  condition: listings.condition,
+  makeId: listings.makeId,
+  modelId: listings.modelId,
+  year: listings.year,
+  rentPeriod: listings.rentPeriod,
+  price: listings.price,
+  status: listings.status,
+  expiresAt: listings.expiresAt,
+  soldAt: listings.soldAt,
+}
+
+/** Approved listings with what the price position compares (step 11.7-r7), in id order. */
+export function listPriceRows(ex: Executor) {
+  return ex
+    .select(priceColumns)
+    .from(listings)
+    .where(
+      and(eq(listings.moderation, "approved"), eq(listings.seedHidden, false))
+    )
+    .orderBy(asc(listings.id))
+}

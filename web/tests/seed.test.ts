@@ -38,8 +38,12 @@ const count = <T>(rows: T[], f: (r: T) => boolean) => rows.filter(f).length
 
 describe("seed counts (A9)", () => {
   it("listings", () => {
-    expect(db.listings).toHaveLength(320)
-    const approved = db.listings.filter((l) => l.moderation === "approved")
+    // A9's 320, then the step 11.7-r7 price cluster: 6 approved copies of 5 demo listings.
+    expect(db.listings).toHaveLength(350)
+    const cluster = db.listings.slice(320)
+    expect(count(cluster, (l) => l.moderation === "approved")).toBe(30)
+    const base = db.listings.slice(0, 320)
+    const approved = base.filter((l) => l.moderation === "approved")
     expect(
       count(approved, (l) => l.vehicleType === "car" && l.intent === "sale")
     ).toBe(140)
@@ -55,7 +59,7 @@ describe("seed counts (A9)", () => {
       )
     ).toBe(25)
     expect(count(approved, (l) => l.kind === "part")).toBe(40)
-    expect(db.listings.length - approved.length).toBe(20)
+    expect(base.length - approved.length).toBe(20)
   })
   it("people and content", () => {
     expect(db.dealerships).toHaveLength(12)

@@ -1,11 +1,13 @@
 import { z } from "zod"
 
 import { listingsReportQuerySchema } from "@sayaratak/shared/schemas/reports"
+import { priceFilterSchema } from "@sayaratak/shared/schemas/reports-price"
 
-// The dealer's Reports page (steps 11.7-r5, r6): the tab, the period and the Listings filter, sort and page live in the URL.
+// The dealer's Reports page (steps 11.7-r5 to r7): the tab, the period, the Listings filter and sort, the Price band and the page live in the URL.
 export const reportsTabs = [
   "performance",
   "listings",
+  "price",
   "promotions",
   "demand",
   "replies",
@@ -13,6 +15,7 @@ export const reportsTabs = [
 ] as const
 export const reportsSearchSchema = listingsReportQuerySchema.extend({
   tab: z.enum(reportsTabs).catch("performance"),
+  band: priceFilterSchema.catch("all"),
 })
 export type ReportsSearch = z.infer<typeof reportsSearchSchema>
 export const reportsSearchDefaults = {
@@ -20,6 +23,7 @@ export const reportsSearchDefaults = {
   range: "30d",
   compare: "previous",
   filter: "all",
+  band: "all",
   sort: "views_desc",
   page: 1,
 } as const

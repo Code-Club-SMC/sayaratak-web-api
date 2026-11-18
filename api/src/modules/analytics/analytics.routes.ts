@@ -7,6 +7,11 @@ import {
   listingsReportSchema,
 } from "@sayaratak/shared/schemas/reports"
 import { demandReportSchema } from "@sayaratak/shared/schemas/reports-demand"
+import {
+  pricePositionSchema,
+  priceReportQuerySchema,
+  priceReportSchema,
+} from "@sayaratak/shared/schemas/reports-price"
 import { promotionsReportSchema } from "@sayaratak/shared/schemas/reports-promotions"
 import { repliesReportSchema } from "@sayaratak/shared/schemas/reports-replies"
 import { reviewsReportSchema } from "@sayaratak/shared/schemas/reports-reviews"
@@ -24,6 +29,7 @@ import {
   getRepliesReport,
   getReviewsReport,
 } from "./analytics.activity-reports.service"
+import { getListingPrice, getPriceReport } from "./analytics.price.service"
 import { getPromotionsReport } from "./analytics.promotions-report.service"
 import { getListingsReport } from "./analytics.reports.service"
 import { getListingAnalytics, recordEvent } from "./analytics.service"
@@ -145,3 +151,31 @@ for (const [name, summary, schema, read] of reports)
     validate.query(rangeQuery),
     async (c) => c.json(await read(c.get("user"), c.req.valid("query")))
   )
+
+// Step 11.7-r7: price position, a snapshot of now (no period).
+analyticsRoutes.get(
+  "/me/reports/price",
+  spec({
+    summary:
+      "The account's live listings against the median price of the same car now (make, model, year within 1, sale or rent, new or used, rent period; live or sold in the last 90 days, all Sudan): below, around or above market (10%), hidden under 5 comparables; filtered by band and paged (20)",
+    access: "user",
+    responses: { 200: priceReportSchema },
+    errors: ["unauthenticated", "banned"],
+  }),
+  requireUser,
+  validate.query(priceReportQuerySchema),
+  async (c) => c.json(await getPriceReport(c.get("user"), c.req.valid("query")))
+)
+
+analyticsRoutes.get(
+  "/listings/:id/price",
+  spec({
+    summary:
+      "One listing's price against the median price of the same car now, as the Price report places it (owner or admin, any state)",
+    access: "user",
+    responses: { 200: pricePositionSchema },
+    errors: ["unauthenticated", "banned", "forbidden", "not_found"],
+  }),
+  requireUser,
+  async (c) => c.json(await getListingPrice(c.get("user"), c.req.param("id")))
+)

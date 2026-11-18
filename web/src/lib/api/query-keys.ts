@@ -19,6 +19,7 @@ export const keys = {
     mine: (f: Params) => ["listings", "mine", f] as const,
     analytics: (id: string, period: Params) =>
       ["listings", "analytics", id, period] as const,
+    price: (id: string) => ["listings", "price", id] as const,
   },
   favorites: {
     all: ["favorites"] as const,
@@ -79,7 +80,7 @@ export const keys = {
   analytics: (period: Params) => ["analytics", period] as const,
   reports: {
     listings: (q: Params) => ["reports", "listings", q] as const,
-    // Step 11.7-r6: promotions, demand, replies, reviews.
+    // Step 11.7-r6: promotions, demand, replies, reviews; r7: price.
     tab: (name: string, q: Params) => ["reports", name, q] as const,
   },
   admin: {

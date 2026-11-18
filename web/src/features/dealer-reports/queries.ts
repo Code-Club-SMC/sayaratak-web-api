@@ -9,6 +9,10 @@ import {
   type ListingsReportQuery,
 } from "@sayaratak/shared/schemas/reports"
 import { demandReportSchema } from "@sayaratak/shared/schemas/reports-demand"
+import {
+  priceReportSchema,
+  type PriceReportQuery,
+} from "@sayaratak/shared/schemas/reports-price"
 import { promotionsReportSchema } from "@sayaratak/shared/schemas/reports-promotions"
 import { repliesReportSchema } from "@sayaratak/shared/schemas/reports-replies"
 import { reviewsReportSchema } from "@sayaratak/shared/schemas/reports-reviews"
@@ -27,11 +31,11 @@ export const listingsReportQuery = (query: ListingsReportQuery) =>
     placeholderData: keepPreviousData,
   })
 
-// One of the step 11.7-r6 tabs for a period.
+// One of the step 11.7-r6 tabs for a period, or the r7 Price tab for its band and page.
 const tabQuery = <TSchema extends z.ZodType>(
   name: string,
   schema: TSchema,
-  query: PeriodQuery
+  query: PeriodQuery | PriceReportQuery
 ) =>
   queryOptions({
     queryKey: keys.reports.tab(name, query),
@@ -49,3 +53,5 @@ export const repliesReportQuery = (query: PeriodQuery) =>
   tabQuery("replies", repliesReportSchema, query)
 export const reviewsReportQuery = (query: PeriodQuery) =>
   tabQuery("reviews", reviewsReportSchema, query)
+export const priceReportQuery = (query: PriceReportQuery) =>
+  tabQuery("price", priceReportSchema, query)

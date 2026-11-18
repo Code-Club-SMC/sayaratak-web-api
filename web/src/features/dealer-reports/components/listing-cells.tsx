@@ -5,10 +5,18 @@ import { StatusBadge } from "@/components/app/status-badge"
 import { Badge } from "@/components/ui/badge"
 import { formatNumber } from "@/lib/format"
 import { useT } from "@/lib/i18n/use-t"
-import type { ListingsReportRow } from "@sayaratak/shared/schemas/reports"
+import type {
+  ListingFlag,
+  ListingsReportRow,
+} from "@sayaratak/shared/schemas/reports"
+
+// What the title cell needs; the Price tab has no flags.
+type TitleRow = Pick<ListingsReportRow, "coverUrl" | "slug" | "title"> & {
+  flags?: ListingFlag[]
+}
 
 // Cover and title linking to the public page, with the row's weak-listing flags under it.
-export function ListingTitleCell({ row }: { row: ListingsReportRow }) {
+export function ListingTitleCell({ row }: { row: TitleRow }) {
   const { locale } = useT()
   return (
     <div className="flex min-w-0 items-center gap-3">
@@ -43,9 +51,9 @@ export function ListingStateBadge({ row }: { row: ListingsReportRow }) {
   )
 }
 
-function ListingFlags({ row }: { row: ListingsReportRow }) {
+function ListingFlags({ row }: { row: TitleRow }) {
   const { t } = useT()
-  if (row.flags.length === 0) return null
+  if (!row.flags?.length) return null
   return (
     <ul className="flex flex-wrap gap-1">
       {row.flags.map((flag) => (

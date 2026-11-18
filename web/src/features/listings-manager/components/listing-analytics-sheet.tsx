@@ -18,8 +18,9 @@ import { reportChart } from "@/features/analytics/chart-props"
 import { presetQuery } from "@/features/analytics/schemas"
 import type { PeriodQuery } from "@sayaratak/shared/schemas/period"
 import type { Listing } from "@sayaratak/shared/schemas/listing"
+import { PricePositionCard } from "./price-position-card"
 
-// Views, contacts and totals of one listing, for a period.
+// Where the price sits against the market now, then views, contacts and totals of one listing for a period.
 export function ListingAnalyticsSheet({
   listing,
   onClose,
@@ -54,6 +55,7 @@ export function ListingAnalyticsSheet({
             <bdi>{listing.title}</bdi>
           </p>
         </SheetHeader>
+        <PricePositionCard id={listing.id} />
         <PeriodControl value={period} onChange={setPeriod} />
         <PeriodNote period={data?.period} hourlySince={data?.hourlySince} />
         <AreaChartCard

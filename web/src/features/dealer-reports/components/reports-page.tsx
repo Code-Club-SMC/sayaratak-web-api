@@ -11,11 +11,12 @@ import { useT } from "@/lib/i18n/use-t"
 import { reportsSearchSchema, reportsTabs } from "../schemas"
 import { DemandReport } from "./demand-report"
 import { ListingsReport } from "./listings-report"
+import { PriceReport } from "./price-report"
 import { PromotionsReport } from "./promotions-report"
 import { RepliesReport } from "./replies-report"
 import { ReviewsReport } from "./reviews-report"
 
-// The dealer's Reports (steps 11.7-r5, r6): one period control over six tabs. Tab, period, filter, sort and page live in the URL.
+// The dealer's Reports (steps 11.7-r5 to r7): one period control over seven tabs (Price ignores it). Tab, period, filter, sort and page live in the URL.
 export function ReportsPage() {
   const { t } = useT()
   const title = t("dashboard.nav_business_reports")
@@ -45,6 +46,8 @@ export function ReportsPage() {
                 next !== "performance"
                   ? reportsTabs.find((tab) => tab === next)
                   : undefined,
+              // The page belongs to the tab it was picked on.
+              page: undefined,
             }),
             replace: true,
             resetScroll: false,
@@ -52,7 +55,7 @@ export function ReportsPage() {
           })
         }
       >
-        {/* Six tabs do not fit a phone row: the row scrolls sideways and keeps the active tab in view (owner, step 11.7-r6). */}
+        {/* Seven tabs do not fit a phone row: the row scrolls sideways and keeps the active tab in view (owner, step 11.7-r6). */}
         <div ref={row} className="overflow-x-auto">
           <TabsList aria-label={t("reports.tabs_label")} className="min-w-max">
             {reportsTabs.map((tab) => (
@@ -67,6 +70,9 @@ export function ReportsPage() {
         </TabsContent>
         <TabsContent value="listings" className="pt-2">
           <ListingsReport search={search} />
+        </TabsContent>
+        <TabsContent value="price" className="pt-2">
+          <PriceReport search={search} />
         </TabsContent>
         <TabsContent value="promotions" className="pt-2">
           <PromotionsReport query={query} />

@@ -17,9 +17,13 @@ export function StatCard({
   loading,
   detail,
   link,
+  empty,
+  suffix,
+  note,
 }: {
   label: string
-  value?: number
+  // `null`: nothing to measure yet; the card shows a dash and `empty`.
+  value?: number | null
   previous?: number
   compare?: Compare
   unavailable?: boolean
@@ -27,10 +31,15 @@ export function StatCard({
   loading?: boolean
   detail?: string
   link?: LinkProps
+  empty?: string
+  // A unit after the number, such as "%".
+  suffix?: string
+  // One muted line under the number.
+  note?: string
 }) {
   const { t, locale } = useT()
   const change =
-    value !== undefined && previous
+    value != null && previous
       ? Math.round(((value - previous) / previous) * 100) || 0 // `|| 0` turns -0 into 0, so a tiny drop reads "0%", not "-0%"
       : undefined
   const body = (
@@ -38,15 +47,34 @@ export function StatCard({
       <p className="text-caption text-muted-foreground">{label}</p>
       {loading || value === undefined ? (
         <Skeleton className="h-8 w-24" aria-hidden="true" />
+      ) : value === null ? (
+        <>
+          <p className="text-title font-semibold" aria-hidden="true">
+            —
+          </p>
+          {empty && (
+            <p className="text-caption text-muted-foreground">{empty}</p>
+          )}
+        </>
       ) : (
         <p className="flex flex-wrap items-baseline gap-x-2">
           <span className="text-title font-semibold num">
-            {formatNumber(value, locale)}
+            {suffix ? (
+              <bdi dir="ltr">
+                {formatNumber(value, locale)}
+                {suffix}
+              </bdi>
+            ) : (
+              formatNumber(value, locale)
+            )}
           </span>
           {detail && (
             <span className="text-ui text-muted-foreground num">{detail}</span>
           )}
         </p>
+      )}
+      {note && !loading && (
+        <p className="text-caption text-muted-foreground">{note}</p>
       )}
       {spark && !loading && <Sparkline values={spark} />}
       {unavailable && !loading ? (

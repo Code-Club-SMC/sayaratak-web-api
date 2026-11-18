@@ -60,6 +60,28 @@ export function listHourlyCounts(
     .groupBy(key, eventsHourly.type)
 }
 
+/** Hourly page counters per target and type inside the hour ranges. */
+export function listTargetHourlyCounts(
+  ex: Executor,
+  input: { targetIds: string[]; ranges: string[][] }
+) {
+  return ex
+    .select({
+      targetId: eventsHourly.targetId,
+      type: eventsHourly.type,
+      count: sum(eventsHourly.count).mapWith(Number),
+    })
+    .from(eventsHourly)
+    .where(
+      and(
+        inHours(input.ranges),
+        inArray(eventsHourly.type, [...PAGE_TYPES]),
+        inArray(eventsHourly.targetId, input.targetIds)
+      )
+    )
+    .groupBy(eventsHourly.targetId, eventsHourly.type)
+}
+
 /** Call and WhatsApp taps per weekday (0 is Sunday) and hour for these targets inside the hour range. */
 export function listContactWeekdayHours(
   ex: Executor,

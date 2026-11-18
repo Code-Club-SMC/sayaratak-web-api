@@ -2,6 +2,10 @@ import { okSchema } from "@sayaratak/shared/schemas/api"
 import { listingAnalyticsSchema } from "@sayaratak/shared/schemas/api"
 import { eventInputSchema } from "@sayaratak/shared/schemas/inputs"
 import { periodQuerySchema } from "@sayaratak/shared/schemas/period"
+import {
+  listingsReportQuerySchema,
+  listingsReportSchema,
+} from "@sayaratak/shared/schemas/reports"
 import { analyticsSchema } from "@sayaratak/shared/schemas/responses"
 import { Hono } from "hono"
 
@@ -11,6 +15,7 @@ import { spec } from "~/shared/openapi/registry"
 import { requireUser } from "~/modules/auth/auth.middleware"
 
 import { getMyAnalytics } from "./analytics.me.service"
+import { getListingsReport } from "./analytics.reports.service"
 import { getListingAnalytics, recordEvent } from "./analytics.service"
 
 // An unknown or missing `range` reads as 30 days, as the mock; valid `from`/`to` (Khartoum minutes) win over it.
@@ -69,5 +74,22 @@ analyticsRoutes.get(
       query: c.req.valid("query"),
     })
     return c.json(analytics)
+  }
+)
+
+analyticsRoutes.get(
+  "/me/reports/listings",
+  spec({
+    summary:
+      "The account's approved listings for a preset or custom period: views, calls, WhatsApp taps and messages per listing, contact rate, weak-listing flags, stock age, expiring in 7 days and days to sell; filtered, sorted and paged (20)",
+    access: "user",
+    responses: { 200: listingsReportSchema },
+    errors: ["unauthenticated", "banned"],
+  }),
+  requireUser,
+  validate.query(listingsReportQuerySchema),
+  async (c) => {
+    const report = await getListingsReport(c.get("user"), c.req.valid("query"))
+    return c.json(report)
   }
 )

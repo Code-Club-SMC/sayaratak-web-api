@@ -188,12 +188,12 @@ describe("command menu", () => {
     })
     fireEvent.keyDown(window, { key: "k", ctrlKey: true })
     const input = await screen.findByPlaceholderText("Search pages and actions")
-    fireEvent.change(input, { target: { value: "analytics" } })
+    fireEvent.change(input, { target: { value: "reports" } })
     const dialog = screen.getByRole("dialog")
     expect(within(dialog).queryByText("Inventory")).toBeNull()
-    fireEvent.click(within(dialog).getByText("Analytics"))
+    fireEvent.click(within(dialog).getByText("Reports"))
     await waitFor(() =>
-      expect(router.history.location.pathname).toBe("/en/dealer/analytics")
+      expect(router.history.location.pathname).toBe("/en/dealer/reports")
     )
   })
 

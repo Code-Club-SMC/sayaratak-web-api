@@ -30,6 +30,16 @@ export async function countReceivedPerDay(
   return new Map(rows.map((row) => [row.day, row.count]))
 }
 
+/** Messages from others in the user's listing threads, per listing. */
+export async function countReceivedPerListing(
+  ex: Executor,
+  userId: string,
+  days: DayRange
+) {
+  const rows = await q.listReceivedPerListing(ex, userId, days)
+  return new Map(rows.map((row) => [row.listingId, row.count]))
+}
+
 /** Messages from others in the user's threads per Khartoum weekday (0 is Sunday) and hour. */
 export function countReceivedPerWeekdayHour(
   ex: Executor,

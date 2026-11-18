@@ -4,6 +4,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest"
 
 import { ContactActions } from "@/components/app/contact-actions"
 import { AnalyticsPage } from "@/features/analytics/components/analytics-page"
+import { ReportsPage } from "@/features/dealer-reports/components/reports-page"
 import {
   analyticsSearchSchema,
   reportSearchSchema,
@@ -42,11 +43,9 @@ const counts = (c: Partial<Record<string, number>>) => ({
   banner_view: 0,
   ...c,
 })
-// The top listings table; the contact heatmap is a table too.
-const topTable = async () =>
-  within(
-    await screen.findByRole("region", { name: "Top listings" })
-  ).findByRole("table")
+// The Listings tab table; the contact heatmap is a table too.
+const topTable = () =>
+  screen.findByRole("table", { name: "Listings performance" })
 // Replaces the events of some targets with the given rows: `[target, days back, counts]`.
 const setEvents = (
   ids: string[],
@@ -102,9 +101,9 @@ describe("report period (step 11.7-r1)", () => {
   })
 
   const openPage = (search = "") =>
-    renderShell(<AnalyticsPage role="dealership" />, {
+    renderShell(<ReportsPage />, {
       role: "dealership",
-      path: `/en/dealer/analytics${search}`,
+      path: `/en/dealer/reports${search}`,
     })
 
   it("comparing with last year writes compare=year and relabels the change", async () => {
@@ -171,16 +170,16 @@ describe("dealership analytics", () => {
         [a!.id, 20, { view: 5 }],
       ]
     )
-    return renderShell(<AnalyticsPage role="dealership" />, {
+    return renderShell(<ReportsPage />, {
       role: "dealership",
-      path: `/en/dealer/analytics${search}`,
+      path: `/en/dealer/reports${search}`,
     })
   }
 
   it("shows the five dealership cards with numbers from today's events", async () => {
     await open()
     expect(
-      screen.getByRole("heading", { level: 1, name: "Analytics" })
+      screen.getByRole("heading", { level: 1, name: "Reports" })
     ).toBeTruthy()
     // 20 + 10 + 5 views in 30 days; today counts.
     await waitFor(async () =>
@@ -217,30 +216,43 @@ describe("dealership analytics", () => {
     )
   })
 
-  it("lists the top listings by views with their conversion", async () => {
-    await open()
+  it("the Listings tab lists listings by views with their contact rate", async () => {
+    db.messages = []
+    await open("?tab=listings")
     const table = await topTable()
-    const rows = within(table).getAllByRole("row").slice(1)
-    expect(rows.length).toBeLessThanOrEqual(10)
     const [a, b] = dealerListings()
+    await waitFor(() =>
+      expect(within(table).getAllByRole("row")[1]?.textContent).toContain(
+        a!.title
+      )
+    )
+    const rows = within(table).getAllByRole("row").slice(1)
+    expect(rows.length).toBeLessThanOrEqual(20)
     const first = within(rows[0]!)
     // 20 + 5 views, 5 calls and clicks: 20 percent.
-    expect(first.getByRole("link", { name: a!.title })).toBeTruthy()
     const cells = first.getAllByRole("cell").map((c) => c.textContent)
-    expect(cells[0]).toContain(a!.title)
-    // Below md the same numbers sit under the title.
-    expect(cells[0]).toContain("25 views, 5 contacts, 20% conversion")
-    expect(cells.slice(1, 4)).toEqual(["25", "5", "20%"])
-    // Edit opens the listing in the dealer editor.
-    expect(
-      first.getByRole("link", { name: `Edit ${a!.title}` }).getAttribute("href")
-    ).toBe(`/en/dealer/inventory/${a!.id}/edit`)
+    expect(cells.slice(3, 6)).toEqual(["25", "5", "20%"])
     expect(within(rows[1]!).getByRole("link", { name: b!.title })).toBeTruthy()
-    // A listing nobody opened has no conversion.
+    // A listing nobody opened has no rate.
     const unseen = rows.find(
-      (r) => within(r).getAllByRole("cell")[1]?.textContent === "0"
+      (r) => within(r).getAllByRole("cell")[3]?.textContent === "0"
     )
     expect(within(unseen!).getByLabelText("No views yet")).toBeTruthy()
+  })
+
+  it("sorting and filtering write the address", async () => {
+    const { router } = await open("?tab=listings")
+    const table = await topTable()
+    fireEvent.click(within(table).getByRole("button", { name: "Days live" }))
+    await waitFor(() =>
+      expect(router.state.location.search).toMatchObject({ sort: "days_asc" })
+    )
+    fireEvent.click(screen.getByRole("radio", { name: /^Few photos/ }))
+    await waitFor(() =>
+      expect(router.state.location.search).toMatchObject({
+        filter: "few_photos",
+      })
+    )
   })
 
   it("a call and a WhatsApp tap on a public listing raise its contacts", async () => {
@@ -264,17 +276,24 @@ describe("dealership analytics", () => {
       )
     )
     visit.unmount()
-    await renderShell(<AnalyticsPage role="dealership" />, {
+    db.messages = []
+    await renderShell(<ReportsPage />, {
       role: "dealership",
-      path: "/en/dealer/analytics",
+      path: "/en/dealer/reports?tab=listings",
     })
     const table = await topTable()
+    await waitFor(() =>
+      expect(
+        within(within(table).getAllByRole("row")[1]!).getByRole("link", {
+          name: a!.title,
+        })
+      ).toBeTruthy()
+    )
     const row = within(table).getAllByRole("row")[1]!
-    expect(within(row).getByRole("link", { name: a!.title })).toBeTruthy()
     expect(
       within(row)
         .getAllByRole("cell")
-        .slice(1, 4)
+        .slice(3, 6)
         .map((c) => c.textContent)
     ).toEqual(["10", "2", "20%"])
   })
@@ -287,7 +306,7 @@ describe("dealership analytics", () => {
     ).toBeTruthy()
     document.cookie = "mock_fail=; Path=/; Max-Age=0"
     fireEvent.click(screen.getByRole("button", { name: "Try again" }))
-    expect(await topTable()).toBeTruthy()
+    expect(await card("Listing views")).toBeTruthy()
   })
 })
 

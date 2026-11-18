@@ -77,6 +77,7 @@ import { Route as LocaleDealerMessagesRouteImport } from './routes/$locale/deale
 import { Route as LocaleDealerNotificationsRouteImport } from './routes/$locale/dealer/notifications'
 import { Route as LocaleDealerProfileRouteImport } from './routes/$locale/dealer/profile'
 import { Route as LocaleDealerPromotionsRouteImport } from './routes/$locale/dealer/promotions'
+import { Route as LocaleDealerReportsRouteImport } from './routes/$locale/dealer/reports'
 import { Route as LocaleDealerReviewsRouteImport } from './routes/$locale/dealer/reviews'
 import { Route as LocaleDealerSettingsRouteImport } from './routes/$locale/dealer/settings'
 import { Route as LocaleDealerVerificationRouteImport } from './routes/$locale/dealer/verification'
@@ -474,6 +475,11 @@ const LocaleDealerPromotionsRoute = LocaleDealerPromotionsRouteImport.update({
   path: '/promotions',
   getParentRoute: () => LocaleDealerRouteRoute,
 } as any)
+const LocaleDealerReportsRoute = LocaleDealerReportsRouteImport.update({
+  id: '/reports',
+  path: '/reports',
+  getParentRoute: () => LocaleDealerRouteRoute,
+} as any)
 const LocaleDealerReviewsRoute = LocaleDealerReviewsRouteImport.update({
   id: '/reviews',
   path: '/reviews',
@@ -822,6 +828,7 @@ export interface FileRoutesByFullPath {
   '/$locale/dealer/notifications': typeof LocaleDealerNotificationsRoute
   '/$locale/dealer/profile': typeof LocaleDealerProfileRoute
   '/$locale/dealer/promotions': typeof LocaleDealerPromotionsRoute
+  '/$locale/dealer/reports': typeof LocaleDealerReportsRoute
   '/$locale/dealer/reviews': typeof LocaleDealerReviewsRoute
   '/$locale/dealer/settings': typeof LocaleDealerSettingsRoute
   '/$locale/dealer/verification': typeof LocaleDealerVerificationRoute
@@ -937,6 +944,7 @@ export interface FileRoutesByTo {
   '/$locale/dealer/notifications': typeof LocaleDealerNotificationsRoute
   '/$locale/dealer/profile': typeof LocaleDealerProfileRoute
   '/$locale/dealer/promotions': typeof LocaleDealerPromotionsRoute
+  '/$locale/dealer/reports': typeof LocaleDealerReportsRoute
   '/$locale/dealer/reviews': typeof LocaleDealerReviewsRoute
   '/$locale/dealer/settings': typeof LocaleDealerSettingsRoute
   '/$locale/dealer/verification': typeof LocaleDealerVerificationRoute
@@ -1059,6 +1067,7 @@ export interface FileRoutesById {
   '/$locale/dealer/notifications': typeof LocaleDealerNotificationsRoute
   '/$locale/dealer/profile': typeof LocaleDealerProfileRoute
   '/$locale/dealer/promotions': typeof LocaleDealerPromotionsRoute
+  '/$locale/dealer/reports': typeof LocaleDealerReportsRoute
   '/$locale/dealer/reviews': typeof LocaleDealerReviewsRoute
   '/$locale/dealer/settings': typeof LocaleDealerSettingsRoute
   '/$locale/dealer/verification': typeof LocaleDealerVerificationRoute
@@ -1182,6 +1191,7 @@ export interface FileRouteTypes {
     | '/$locale/dealer/notifications'
     | '/$locale/dealer/profile'
     | '/$locale/dealer/promotions'
+    | '/$locale/dealer/reports'
     | '/$locale/dealer/reviews'
     | '/$locale/dealer/settings'
     | '/$locale/dealer/verification'
@@ -1297,6 +1307,7 @@ export interface FileRouteTypes {
     | '/$locale/dealer/notifications'
     | '/$locale/dealer/profile'
     | '/$locale/dealer/promotions'
+    | '/$locale/dealer/reports'
     | '/$locale/dealer/reviews'
     | '/$locale/dealer/settings'
     | '/$locale/dealer/verification'
@@ -1418,6 +1429,7 @@ export interface FileRouteTypes {
     | '/$locale/dealer/notifications'
     | '/$locale/dealer/profile'
     | '/$locale/dealer/promotions'
+    | '/$locale/dealer/reports'
     | '/$locale/dealer/reviews'
     | '/$locale/dealer/settings'
     | '/$locale/dealer/verification'
@@ -1962,6 +1974,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LocaleDealerPromotionsRouteImport
       parentRoute: typeof LocaleDealerRouteRoute
     }
+    '/$locale/dealer/reports': {
+      id: '/$locale/dealer/reports'
+      path: '/reports'
+      fullPath: '/$locale/dealer/reports'
+      preLoaderRoute: typeof LocaleDealerReportsRouteImport
+      parentRoute: typeof LocaleDealerRouteRoute
+    }
     '/$locale/dealer/reviews': {
       id: '/$locale/dealer/reviews'
       path: '/reviews'
@@ -2492,6 +2511,7 @@ interface LocaleDealerRouteRouteChildren {
   LocaleDealerNotificationsRoute: typeof LocaleDealerNotificationsRoute
   LocaleDealerProfileRoute: typeof LocaleDealerProfileRoute
   LocaleDealerPromotionsRoute: typeof LocaleDealerPromotionsRoute
+  LocaleDealerReportsRoute: typeof LocaleDealerReportsRoute
   LocaleDealerReviewsRoute: typeof LocaleDealerReviewsRoute
   LocaleDealerSettingsRoute: typeof LocaleDealerSettingsRoute
   LocaleDealerVerificationRoute: typeof LocaleDealerVerificationRoute
@@ -2510,6 +2530,7 @@ const LocaleDealerRouteRouteChildren: LocaleDealerRouteRouteChildren = {
   LocaleDealerNotificationsRoute: LocaleDealerNotificationsRoute,
   LocaleDealerProfileRoute: LocaleDealerProfileRoute,
   LocaleDealerPromotionsRoute: LocaleDealerPromotionsRoute,
+  LocaleDealerReportsRoute: LocaleDealerReportsRoute,
   LocaleDealerReviewsRoute: LocaleDealerReviewsRoute,
   LocaleDealerSettingsRoute: LocaleDealerSettingsRoute,
   LocaleDealerVerificationRoute: LocaleDealerVerificationRoute,

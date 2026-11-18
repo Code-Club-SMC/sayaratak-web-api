@@ -57,6 +57,26 @@ export function listReceivedPerWeekdayHour(
     .groupBy(weekday, hour)
 }
 
+/** Messages others sent per listing thread subject, for the user's listings, inside `days`. */
+export function listReceivedPerListing(
+  ex: Executor,
+  userId: string,
+  days: DayRange
+) {
+  return ex
+    .select({ listingId: threads.subjectId, count: count() })
+    .from(messages)
+    .innerJoin(threads, eq(threads.id, messages.threadId))
+    .where(
+      and(
+        eq(threads.subjectType, "listing"),
+        withinDays(messages.createdAt, days),
+        receivedBy(ex, userId)
+      )
+    )
+    .groupBy(threads.subjectId)
+}
+
 function receivedBy(ex: Executor, userId: string | null) {
   return userId
     ? and(

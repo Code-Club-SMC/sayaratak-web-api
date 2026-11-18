@@ -15,7 +15,7 @@ import { db } from "~/shared/db/client"
 import { clock } from "~/shared/time/clock"
 import { dayOf } from "~/shared/time/khartoum"
 
-import { type Counts, groupByDay } from "./analytics.mapper"
+import { type Counts, groupByDay, sumCounts } from "./analytics.mapper"
 import * as hourly from "./analytics.hourly.queries"
 import * as q from "./analytics.queries"
 
@@ -103,6 +103,33 @@ export async function countsPerDay(
       day: month < w.first ? w.first : month,
     })),
   ])
+}
+
+/**
+ * Page counters per target in the window, read like `countsPerDay`: whole
+ * days from the day rows, partial days from the hours, months when rolled up.
+ */
+export async function countsPerTarget(
+  targetIds: string[],
+  w: Window,
+  period: Period
+): Promise<Map<string, Counts>> {
+  if (targetIds.length === 0) return new Map()
+  const slices = slicesOf(w)
+  const parts = await Promise.all([
+    slices.days ? q.listTargetCounts(db, targetIds, slices.days) : [],
+    slices.hours.length
+      ? hourly.listTargetHourlyCounts(db, { targetIds, ranges: slices.hours })
+      : [],
+    period.rolledUp ? q.listTargetMonthlyCounts(db, targetIds, w) : [],
+  ])
+  const rows = parts.flat()
+  return new Map(
+    targetIds.map((id) => [
+      id,
+      sumCounts(rows.filter((row) => row.targetId === id)),
+    ])
+  )
 }
 
 /**

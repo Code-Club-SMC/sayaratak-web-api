@@ -79,10 +79,14 @@ const group = (key: string, items: NavItem[]): NavGroup => ({
 })
 
 // Business roles share the Work, Growth, Business and Account groups; only the Work items differ.
-const business = (work: NavItem[], growth: NavItem[] = []): NavGroup[] => [
+// Dealerships open Reports instead of Analytics (step 11.7-r5); workshops and mechanics follow in r8.
+const business = (
+  work: NavItem[],
+  growth: NavItem[] = [analytics]
+): NavGroup[] => [
   { items: [overview] },
   group("work", work),
-  group("growth", [analytics, ...growth, ads, reviews]),
+  group("growth", [...growth, ads, reviews]),
   group("business", [profile, verification, billing]),
   group("account", [notifications, settings]),
 ]
@@ -103,7 +107,10 @@ export const navConfig: Record<Role, NavGroup[]> = {
       item("inventory", "/inventory", CarIcon),
       item("messages", "/messages", MessageSquareIcon, "unreadMessages"),
     ],
-    [item("promotions", "/promotions", MegaphoneIcon)]
+    [
+      item("business_reports", "/reports", BarChart3Icon),
+      item("promotions", "/promotions", MegaphoneIcon),
+    ]
   ),
   workshop: business([
     inquiries,

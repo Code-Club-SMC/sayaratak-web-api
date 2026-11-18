@@ -74,3 +74,32 @@ export async function listCards(ex: Executor, ids: string[]) {
     }
   })
 }
+
+/**
+ * The owner's approved listings as the Listings report reads them (step
+ * 11.7-r5): cover, image count, approval time (creation time when none was
+ * stamped), end date and sold time.
+ */
+export async function listReportListings(ex: Executor, ownerUserId: string) {
+  const ids = await q.listIdsOf(ex, ownerUserId)
+  const rows = (await listByIds(ex, ids)).filter(
+    (row) => row.moderation === "approved"
+  )
+  const found = await toListings(ex, rows, null)
+  return found.map((listing, i) => {
+    const row = rows[i]
+    const cover = listing.media[0]
+    return {
+      id: listing.id,
+      slug: listing.slug,
+      title: listing.title,
+      coverUrl:
+        (cover?.type === "video" ? cover.posterUrl : cover?.url) ?? null,
+      status: listing.status,
+      photos: listing.media.filter((m) => m.type === "image").length,
+      liveSince: (row?.decidedAt ?? row?.createdAt ?? new Date()).toISOString(),
+      expiresAt: listing.expiresAt,
+      soldAt: row?.soldAt?.toISOString() ?? null,
+    }
+  })
+}

@@ -77,6 +77,9 @@ export const keys = {
     mine: ["ads", "mine"] as const,
   },
   analytics: (period: Params) => ["analytics", period] as const,
+  reports: {
+    listings: (q: Params) => ["reports", "listings", q] as const,
+  },
   admin: {
     all: ["admin"] as const,
     list: (name: string, f?: Params) => ["admin", name, f] as const,

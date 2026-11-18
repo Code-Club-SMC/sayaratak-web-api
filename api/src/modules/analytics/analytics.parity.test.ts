@@ -105,3 +105,27 @@ describe("GET /listings/:id/analytics matches the mock", () => {
     await expectParity("/api/v1/me/analytics")
   })
 })
+
+describe("GET /me/reports/listings matches the mock", () => {
+  test("a seller and a dealership, per range, filter, sort and page", async () => {
+    for (const as of ["user", "dealership", "workshop"] as const)
+      for (const query of [
+        "",
+        "?range=7d",
+        "?range=90d&compare=year",
+        "?filter=few_photos&sort=days_asc",
+        "?filter=stale&sort=expires_asc",
+        "?filter=expiring",
+        "?sort=rate_desc&page=2",
+        "?filter=nonsense&sort=nonsense&page=0",
+      ])
+        await expectParity(`/api/v1/me/reports/listings${query}`, {
+          init: { headers: sessions[as] },
+          ignore: withoutMessages,
+        })
+  })
+
+  test("signed out", async () => {
+    await expectParity("/api/v1/me/reports/listings")
+  })
+})

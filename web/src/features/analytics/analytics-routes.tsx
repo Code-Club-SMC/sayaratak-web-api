@@ -14,10 +14,8 @@ const AnalyticsPage = lazyRouteComponent(
   "AnalyticsPage"
 )
 
-// Route options of `<dashboard>/analytics`, the same for the three business roles.
-export const analyticsRoute = (
-  role: "dealership" | "workshop" | "mechanic"
-) => ({
+// Route options of `<dashboard>/analytics` for workshops and mechanics (dealerships moved to Reports, step 11.7-r5).
+export const analyticsRoute = (role: "workshop" | "mechanic") => ({
   validateSearch: reportSearchSchema,
   search: {
     middlewares: [stripSearchParams<ReportSearch>(reportSearchDefaults)],

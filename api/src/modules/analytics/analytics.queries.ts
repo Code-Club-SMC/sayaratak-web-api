@@ -101,3 +101,26 @@ function pageEvents(targetIds: string[] | null, days: DayRange) {
     targetIds ? inArray(events.targetId, targetIds) : undefined
   )
 }
+
+/** Rolled-up page counters per target and type for the months the days touch. */
+export function listTargetMonthlyCounts(
+  ex: Executor,
+  targetIds: string[],
+  days: DayRange
+) {
+  return ex
+    .select({
+      targetId: eventsMonthly.targetId,
+      type: eventsMonthly.type,
+      count: sum(eventsMonthly.count).mapWith(Number),
+    })
+    .from(eventsMonthly)
+    .where(
+      and(
+        between(eventsMonthly.month, `${days.first.slice(0, 7)}-01`, days.last),
+        inArray(eventsMonthly.type, [...PAGE_TYPES]),
+        inArray(eventsMonthly.targetId, targetIds)
+      )
+    )
+    .groupBy(eventsMonthly.targetId, eventsMonthly.type)
+}

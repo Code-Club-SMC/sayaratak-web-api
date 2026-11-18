@@ -16,6 +16,8 @@ export function usePeriodSearch() {
         from: next.from,
         to: next.to,
         compare: next.compare === "previous" ? undefined : next.compare,
+        // A paged report starts over on a new period.
+        page: undefined,
       }),
       replace: true,
       resetScroll: false,

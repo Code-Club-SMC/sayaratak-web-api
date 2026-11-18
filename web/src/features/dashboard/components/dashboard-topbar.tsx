@@ -1,6 +1,5 @@
 import { useT } from "@/lib/i18n/use-t"
 import type { User } from "@sayaratak/shared/schemas/user"
-import { AccountMenu } from "@/components/app/account-menu"
 import { LanguageSwitcher } from "@/components/app/language-switcher"
 import { NotificationBell } from "@/components/app/notification-bell"
 import { SidebarTrigger } from "@/components/ui/sidebar"
@@ -17,7 +16,6 @@ export function DashboardTopbar({ role }: { role: User["role"] }) {
       <CommandMenu role={role} />
       <LanguageSwitcher />
       <NotificationBell />
-      <AccountMenu />
     </header>
   )
 }

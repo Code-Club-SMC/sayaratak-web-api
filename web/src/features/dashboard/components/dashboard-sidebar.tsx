@@ -13,7 +13,6 @@ import {
   SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
-  SidebarSeparator,
 } from "@/components/ui/sidebar"
 import { SidebarPlanCard } from "@/features/billing/components/sidebar-plan-card"
 import { countsQuery } from "@/features/notifications/counts-query"
@@ -39,15 +38,18 @@ export function DashboardSidebar({ me }: { me: User }) {
       label={t("dashboard.menu")}
       className="[view-transition-name:dashboard-sidebar]"
     >
-      <SidebarHeader className="px-4 py-4 group-data-[collapsible=icon]:h-14 group-data-[collapsible=icon]:p-0">
+      <SidebarHeader className="px-4 py-4 group-data-[collapsible=icon]:h-14 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:p-0">
         <div className="flex items-center justify-center group-data-[collapsible=icon]:hidden">
           <BrandLogo />
         </div>
+        <div className="hidden items-center justify-center group-data-[collapsible=icon]:flex">
+          <BrandLogo compact />
+        </div>
       </SidebarHeader>
       <SidebarContent>
-        <nav aria-label={t("dashboard.menu")} className="flex flex-col gap-2">
+        <nav aria-label={t("dashboard.menu")} className="flex flex-col">
           {navConfig[me.role].map((group, i) => (
-            <SidebarGroup key={i} className="not-first:mt-4">
+            <SidebarGroup key={i} className="py-1">
               {group.key && (
                 <SidebarGroupLabel>{t(group.key)}</SidebarGroupLabel>
               )}
@@ -72,12 +74,7 @@ export function DashboardSidebar({ me }: { me: User }) {
           ))}
         </nav>
       </SidebarContent>
-      {me.role !== "admin" && (
-        <>
-          <SidebarPlanCard me={me} />
-          <SidebarSeparator className="group-data-[collapsible=icon]:hidden" />
-        </>
-      )}
+      {me.role !== "admin" && <SidebarPlanCard me={me} />}
       <SidebarUser me={me} />
     </Sidebar>
   )

@@ -141,8 +141,42 @@ describe("dashboard shell", () => {
       role: "user",
       path: "/en/account",
     })
-    fireEvent.click(screen.getByRole("button", { name: "Sign out" }))
+    const user = db.users.find((u) => u.role === "user" && u.onboardingDone)
+    fireEvent.click(
+      screen.getByRole("button", { name: new RegExp(user!.fullName) })
+    )
+    fireEvent.click(await screen.findByRole("menuitem", { name: "Sign out" }))
     await waitFor(() => expect(router.history.location.pathname).toBe("/en"))
+  })
+
+  it("groups the business nav and shows the business in the account card", async () => {
+    await renderShell(<DashboardLayout />, {
+      role: "dealership",
+      path: "/en/dealer",
+    })
+    for (const label of ["Work", "Growth", "Business", "Account"])
+      expect(screen.getByText(label)).toBeTruthy()
+    const owner = db.users.find(
+      (u) => u.role === "dealership" && u.onboardingDone
+    )
+    const business = db.dealerships.find((d) => d.ownerId === owner?.id)
+    const card = await screen.findByRole("button", {
+      name: new RegExp(business!.name.en),
+    })
+    fireEvent.click(card)
+    expect(
+      (
+        await screen.findByRole("menuitem", { name: "View public site" })
+      ).getAttribute("href")
+    ).toBe("/en")
+    expect(screen.queryByRole("button", { name: "Account" })).toBeNull()
+  })
+
+  it("no role repeats an icon in its nav", () => {
+    for (const groups of Object.values(navConfig)) {
+      const icons = groups.flatMap((g) => g.items.map((i) => i.icon))
+      expect(new Set(icons).size).toBe(icons.length)
+    }
   })
 })
 

@@ -22,6 +22,7 @@ import {
   MegaphoneIcon,
   MessageSquareIcon,
   PresentationIcon,
+  ReceiptIcon,
   SendIcon,
   SettingsIcon,
   ShieldCheckIcon,
@@ -77,74 +78,39 @@ const group = (key: string, items: NavItem[]): NavGroup => ({
   items,
 })
 
+// Business roles share the Work, Growth, Business and Account groups; only the Work items differ.
+const business = (work: NavItem[], growth: NavItem[] = []): NavGroup[] => [
+  { items: [overview] },
+  group("work", work),
+  group("growth", [analytics, ...growth, ads, reviews]),
+  group("business", [profile, verification, billing]),
+  group("account", [notifications, settings]),
+]
+
 export const navConfig: Record<Role, NavGroup[]> = {
   user: [
-    {
-      items: [
-        overview,
-        item("listings", "/listings", CarIcon),
-        item("favorites", "/favorites", HeartIcon),
-        item("saved_searches", "/saved-searches", BookmarkIcon),
-        item("messages", "/messages", MessageSquareIcon, "unreadMessages"),
-        notifications,
-        billing,
-        settings,
-      ],
-    },
+    { items: [overview] },
+    group("buying", [
+      item("favorites", "/favorites", HeartIcon),
+      item("saved_searches", "/saved-searches", BookmarkIcon),
+      item("messages", "/messages", MessageSquareIcon, "unreadMessages"),
+    ]),
+    group("selling", [item("listings", "/listings", CarIcon), billing]),
+    group("account", [notifications, settings]),
   ],
-  dealership: [
-    {
-      items: [
-        overview,
-        item("inventory", "/inventory", CarIcon),
-        item("messages", "/messages", MessageSquareIcon, "unreadMessages"),
-        analytics,
-        item("promotions", "/promotions", MegaphoneIcon),
-        reviews,
-        profile,
-        verification,
-        ads,
-        billing,
-        notifications,
-        settings,
-      ],
-    },
-  ],
-  workshop: [
-    {
-      items: [
-        overview,
-        profile,
-        item("services", "/services", WrenchIcon),
-        item("photos", "/photos", ImageIcon),
-        inquiries,
-        reviews,
-        analytics,
-        verification,
-        ads,
-        billing,
-        notifications,
-        settings,
-      ],
-    },
-  ],
-  mechanic: [
-    {
-      items: [
-        overview,
-        profile,
-        item("portfolio", "/portfolio", ImagesIcon),
-        inquiries,
-        reviews,
-        analytics,
-        verification,
-        ads,
-        billing,
-        notifications,
-        settings,
-      ],
-    },
-  ],
+  dealership: business(
+    [
+      item("inventory", "/inventory", CarIcon),
+      item("messages", "/messages", MessageSquareIcon, "unreadMessages"),
+    ],
+    [item("promotions", "/promotions", MegaphoneIcon)]
+  ),
+  workshop: business([
+    inquiries,
+    item("services", "/services", WrenchIcon),
+    item("photos", "/photos", ImageIcon),
+  ]),
+  mechanic: business([inquiries, item("portfolio", "/portfolio", ImagesIcon)]),
   admin: [
     { items: [overview] },
     group("moderation", [
@@ -175,7 +141,7 @@ export const navConfig: Record<Role, NavGroup[]> = {
       item("plans", "/plans", LayersIcon),
       item("promotions", "/promotions", MegaphoneIcon),
       item("ad_campaigns", "/ads", PresentationIcon),
-      item("ad_prices", "/ad-prices", TagsIcon),
+      item("ad_prices", "/ad-prices", ReceiptIcon),
     ]),
     group("catalog", [
       item("categories", "/categories", TagsIcon),
@@ -196,7 +162,3 @@ export const navConfig: Record<Role, NavGroup[]> = {
 }
 
 export const navHref = (role: Role, path: string) => dashboardPath(role) + path
-
-// The user card in the sidebar footer: admin has an account page, the others their settings.
-export const accountPath = (role: Role) =>
-  role === "admin" ? "/admin/account" : navHref(role, "/settings")

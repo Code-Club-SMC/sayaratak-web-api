@@ -107,14 +107,11 @@ describe("SidebarPlanCard", () => {
     await openCard()
     expect(await screen.findByText("Not paid")).toBeTruthy()
     expect(
-      screen.getByText("You are on Starter until the payment is approved.")
-    ).toBeTruthy()
-    expect(
-      screen.getByRole("link", { name: "Pay now" }).getAttribute("href")
+      screen.getByRole("link", { name: /Growth.*Pay now/ }).getAttribute("href")
     ).toBe("/en/dealer/billing/checkout?item=plan%3Aplan-dealer-growth")
   })
 
-  it("an upgrade under review keeps the current plan, adds a note and links to the history", async () => {
+  it("an upgrade under review keeps the current plan and links to the history", async () => {
     pickGrowth()
     dealer().chosenPlanId = undefined
     db.payments.push({
@@ -126,17 +123,13 @@ describe("SidebarPlanCard", () => {
       status: "pending_review",
     })
     await openCard()
-    expect(
-      await screen.findByText(/Your payment for Growth is under review/)
-    ).toBeTruthy()
-    expect(screen.getByText("Starter")).toBeTruthy()
-    expect(screen.getByText("Active")).toBeTruthy()
-    expect(
-      screen.getByRole("link", { name: "View payment" }).getAttribute("href")
-    ).toBe("/en/dealer/billing?tab=history")
+    const link = await screen.findByRole("link", {
+      name: /Starter.*Under review.*View payment/,
+    })
+    expect(link.getAttribute("href")).toBe("/en/dealer/billing?tab=history")
   })
 
-  it("a renewal under review keeps the active plan and adds a note", async () => {
+  it("a renewal under review keeps the active plan and its days left", async () => {
     const row = dealer()
     row.chosenPlanId = undefined
     const active = db.subscriptions.find(
@@ -152,20 +145,15 @@ describe("SidebarPlanCard", () => {
     })
     await openCard()
     expect(
-      await screen.findByText("Your renewal payment is under review.")
+      await screen.findByRole("link", { name: /Ends .*Manage plan/ })
     ).toBeTruthy()
-    expect(screen.getByText("Active")).toBeTruthy()
-    expect(screen.getByRole("link", { name: "Manage plan" })).toBeTruthy()
   })
 
-  it("the free plan shows its usage and an Upgrade link", async () => {
+  it("the free plan links to Upgrade", async () => {
     pickGrowth()
     dealer().chosenPlanId = undefined
     await openCard()
-    expect(await screen.findByText("Starter")).toBeTruthy()
-    expect(screen.getByRole("meter", { name: "Vehicles" })).toBeTruthy()
-    expect(
-      screen.getByRole("link", { name: "Upgrade" }).getAttribute("href")
-    ).toBe("/en/dealer/billing")
+    const link = await screen.findByRole("link", { name: /Starter.*Upgrade/ })
+    expect(link.getAttribute("href")).toBe("/en/dealer/billing")
   })
 })

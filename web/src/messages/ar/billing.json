@@ -228,7 +228,6 @@
   "billing.promos_pay_now": "ادفع الآن",
   "billing.promos_payment_rejected": "رُفض آخر دفع",
   "billing.sidebar_unpaid": "غير مدفوعة",
-  "billing.sidebar_unpaid_note": "أنت على باقة {{free}} حتى تتم الموافقة على الدفع.",
   "billing.sidebar_view_payment": "عرض الدفعة",
   "billing.review_renewal": "دفعة التجديد قيد المراجعة.",
   "billing.sidebar_upgrade": "ترقية",

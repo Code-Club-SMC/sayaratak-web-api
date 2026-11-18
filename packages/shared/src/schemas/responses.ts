@@ -22,7 +22,7 @@ const totalsSchema = z.object({
   favorites: z.number().int(),
   newReviews: z.number().int(),
 })
-// One bucket of a report series; `date` is the bucket's first day (see `period.granularity`).
+// One bucket of a report series; `date` is the bucket's first day, or its first minute for hour buckets (see `period.granularity`).
 const bucketSchema = z.object({
   date: z.string(),
   views: z.number().int(),
@@ -39,6 +39,10 @@ export const analyticsSchema = z.object({
   daily: z.array(bucketSchema),
   // The compare window bucketed the same way, cut or zero-padded to `daily`'s length; `date` is its own first day.
   previousDaily: z.array(bucketSchema),
+  // The first Khartoum day hourly view, call and WhatsApp counts exist for: 89 days before today, or the first day any were recorded if later (step 11.7-r2).
+  hourlySince: z.string(),
+  // Calls, WhatsApp taps and messages received in the period from `hourlySince`, per Khartoum weekday and hour: index `weekday * 24 + hour`, weekday 0 is Sunday.
+  contactHours: z.array(z.number().int()).length(168),
   // Dealerships only, otherwise []; up to 10.
   topListings: z.array(
     z.object({

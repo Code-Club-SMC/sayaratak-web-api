@@ -5,7 +5,8 @@ import { eventInputSchema } from "@sayaratak/shared/schemas/inputs"
 import { db, find, insert } from "../db"
 import { needUser, route } from "../http"
 import { businessOf, dayKey } from "../lib"
-import { periodOf, total } from "../period"
+import { bumpHour, khartoumHour } from "../event-hours"
+import { contactHours, periodOf, total } from "../period"
 
 const stat = {
   view: "views",
@@ -45,13 +46,15 @@ route("POST", "/events", async (c) => {
       },
     })
   row.counts[type] += 1
+  bumpHour(row, type, khartoumHour())
   return okSchema.parse({ ok: true })
 })
 
 // Role scoped: sellers see their listings, business owners their profile, admins everything. `previous` and `previousDaily` are the compare window (the period before, or a year earlier).
 route("GET", "/me/analytics", (c) => {
   const user = needUser(c)
-  const { period, current, compare, align, compareStarts } = periodOf(c.query)
+  const { period, current, compare, align, compareStarts, hourlySince } =
+    periodOf(c.query)
   const all = user.role === "admin"
   const listings = all
     ? db.listings
@@ -134,6 +137,13 @@ route("GET", "/me/analytics", (c) => {
       : []
   return analyticsSchema.parse({
     period,
+    hourlySince,
+    contactHours: contactHours({
+      w: current,
+      since: hourlySince,
+      match: mine,
+      messages: received,
+    }),
     totals: now.totals,
     previous: before.totals,
     daily: buckets(now, current.starts),

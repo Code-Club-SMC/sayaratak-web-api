@@ -3,6 +3,8 @@ import { expect, it } from "vitest"
 import { normalizeDigits } from "@sayaratak/shared/lib/digits"
 import {
   formatBucket,
+  formatHour,
+  formatWeekdayShort,
   formatDate,
   formatMinute,
   formatMileage,
@@ -79,4 +81,7 @@ it("report labels: a Khartoum minute, and buckets by width", () => {
   expect(formatBucket("2026-11-01", "day", "en")).toBe("Nov 1")
   expect(formatBucket("2026-11-01", "week", "en")).toBe("Nov 1")
   expect(formatBucket("2026-11-01", "month", "en")).toBe("Nov 2026")
+  expect(formatBucket("2026-11-01T08:00", "hour", "en")).toMatch(/Nov 1.*8:00/)
+  expect(formatHour(8)).toBe("08:00")
+  expect(formatWeekdayShort(0, "en")).toBe("Sun")
 })

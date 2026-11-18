@@ -1,7 +1,7 @@
 import { and, asc, desc, eq, ilike, inArray, or, sql } from "drizzle-orm"
 
 import type { Executor } from "~/shared/db/tx"
-import { type DayRange, dayColumn, withinDays } from "~/shared/time/khartoum"
+import { bucketColumn, type DayRange, withinDays } from "~/shared/time/khartoum"
 
 import {
   type NewPaymentRow,
@@ -113,10 +113,10 @@ export function listPromotionStatuses(ex: Executor, promotionIds: string[]) {
     .orderBy(payments.itemId, desc(payments.createdAt))
 }
 
-/** Money of approved payments per Khartoum day inside `days`, counted on the day the admin decided (the send day if none). */
+/** Money of approved payments per Khartoum day (or hour, see `DayRange.hourly`) inside `days`, counted on the day the admin decided (the send day if none). */
 export function listApprovedPerDay(ex: Executor, days: DayRange) {
   const decidedAt = sql`coalesce(${payments.reviewedAt}, ${payments.createdAt})`
-  const day = dayColumn(decidedAt)
+  const day = bucketColumn(decidedAt, days)
   return ex
     .select({
       day,

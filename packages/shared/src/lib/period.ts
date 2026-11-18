@@ -2,9 +2,14 @@ import type { Granularity, Period, PeriodQuery } from "../schemas/period"
 
 // Wall-clock minutes are read as if they were UTC, so the arithmetic below never meets a zone.
 const DAY_MS = 86_400_000
+const HOUR_MS = 3_600_000
 const LENGTHS = { "7d": 7, "30d": 30, "90d": 90 } as const
 // Owner, 9.3 (O3): view and click counters stay per day for this month and the 12 before it.
 const MONTHS_KEPT = 13
+// Owner, step 11.7-r2: view and click counters are also kept per hour for 90 days.
+const HOURLY_DAYS = 90
+// Hour buckets for windows of up to 2 days.
+const HOURLY_SPAN_MS = 2 * DAY_MS
 
 const ms = (minute: string) => Date.parse(`${minute}:00Z`)
 const minuteAt = (t: number) => new Date(t).toISOString().slice(0, 16)
@@ -23,6 +28,70 @@ export function firstDailyDay(today: string) {
   return `${Math.floor(first / 12)}-${mm}-01`
 }
 
+/** The first day still counted per hour. Example: `"2026-11-18"` gives `"2026-08-21"` (90 days with today). */
+export const firstHourlyDay = (today: string) => addDays(today, 1 - HOURLY_DAYS)
+
+/** The start of the hour a minute falls in: `"2026-11-01T08:30"` gives `"2026-11-01T08:00"`. */
+export const floorHour = (minute: string) => `${minute.slice(0, 13)}:00`
+
+/** The first hour start at or after a minute: `"2026-11-01T08:30"` gives `"2026-11-01T09:00"`. */
+export const ceilHour = (minute: string) =>
+  minute.endsWith(":00") ? minute : minuteAt(ms(floorHour(minute)) + HOUR_MS)
+
+/** The hour key of a Khartoum day and hour: `("2026-11-01", 8)` gives `"2026-11-01T08:00"`. */
+export const hourKey = (day: string, hour: number) =>
+  `${day}T${String(hour).padStart(2, "0")}:00`
+
+/** The start of each hour a window touches (`to` is exclusive). */
+export function hoursOf(from: string, to: string) {
+  const starts: string[] = []
+  const end = ms(ceilHour(to))
+  for (let t = ms(floorHour(from)); t < end; t += HOUR_MS)
+    starts.push(minuteAt(t))
+  return starts
+}
+
+/**
+ * Which counter rows a window reads (step 11.7-r2). `hours`: hour ranges
+ * (start included, end excluded) read per hour; `days`: whole days read per
+ * day. Partial start and end days inside the 90 days kept per hour are read
+ * per hour, older ones as whole days. `hourly`: read everything per hour
+ * (hour buckets).
+ */
+export function slicesOf(input: {
+  from: string
+  to: string
+  today: string
+  hourly: boolean
+}) {
+  const fromH = floorHour(input.from)
+  const toH = ceilHour(input.to)
+  if (input.hourly) return { days: null, hours: [[fromH, toH]] }
+  const kept = firstHourlyDay(input.today)
+  const a = fromH.slice(0, 10)
+  const b = minuteAt(ms(toH) - HOUR_MS).slice(0, 10)
+  const firstPart = !fromH.endsWith("T00:00") && a >= kept
+  const lastPart = !toH.endsWith("T00:00") && b >= kept
+  if (a === b && (firstPart || lastPart))
+    return { days: null, hours: [[fromH, toH]] }
+  const hours: string[][] = []
+  if (firstPart) hours.push([fromH, `${addDays(a, 1)}T00:00`])
+  if (lastPart) hours.push([`${b}T00:00`, toH])
+  const first = firstPart ? addDays(a, 1) : a
+  const last = lastPart ? addDays(b, -1) : b
+  return { days: first <= last ? { first, last } : null, hours }
+}
+
+// A partial start or end day older than the hours kept, so it counts whole.
+const touchesOldPartDay = (from: string, to: string, today: string) => {
+  const kept = firstHourlyDay(today)
+  const toH = ceilHour(to)
+  return (
+    (!floorHour(from).endsWith("T00:00") && from.slice(0, 10) < kept) ||
+    (!toH.endsWith("T00:00") && minuteAt(ms(toH) - HOUR_MS).slice(0, 10) < kept)
+  )
+}
+
 // The same minute a year earlier; 29 February becomes the 28th.
 const yearBefore = (minute: string) =>
   `${Number(minute.slice(0, 4)) - 1}${minute.slice(4).replace("-02-29", "-02-28")}`
@@ -35,9 +104,9 @@ export const daysOf = (from: string, to: string) => ({
 
 /**
  * Resolves the query against `today` (a Khartoum day). Presets are whole days
- * ending today. Buckets: up to 92 days per day, up to 366 per week, longer per
- * month, and per month whenever the current window reaches the rolled-up
- * months.
+ * ending today. Buckets: per hour up to 2 days inside the 90 days kept per
+ * hour, up to 92 days per day, up to 366 per week, longer per month, and per
+ * month whenever the current window reaches the rolled-up months.
  */
 export function resolvePeriod(query: PeriodQuery, today: string): Period {
   const { from: f, to: t, compare } = query
@@ -52,8 +121,16 @@ export function resolvePeriod(query: PeriodQuery, today: string): Period {
   const kept = firstDailyDay(today)
   const rolledUp = first < kept
   const length = (Date.parse(last) - Date.parse(first)) / DAY_MS + 1
+  const hourly =
+    ms(to) - ms(from) <= HOURLY_SPAN_MS && first >= firstHourlyDay(today)
   const granularity: Granularity =
-    rolledUp || length > 366 ? "month" : length > 92 ? "week" : "day"
+    rolledUp || length > 366
+      ? "month"
+      : length > 92
+        ? "week"
+        : hourly
+          ? "hour"
+          : "day"
   return {
     from,
     to,
@@ -63,7 +140,15 @@ export function resolvePeriod(query: PeriodQuery, today: string): Period {
     granularity,
     custom,
     rolledUp,
-    eventsCompared: rolledUp || compareFrom.slice(0, 10) >= kept,
+    // Hour buckets compare per hour, so a compare window older than the hours kept has nothing to compare.
+    eventsCompared:
+      granularity === "hour"
+        ? compareFrom.slice(0, 10) >= firstHourlyDay(today)
+        : rolledUp || compareFrom.slice(0, 10) >= kept,
+    wholeDays:
+      granularity !== "hour" &&
+      (touchesOldPartDay(from, to, today) ||
+        touchesOldPartDay(compareFrom, compareTo, today)),
   }
 }
 
@@ -94,7 +179,7 @@ export function bucketsOf(
   return starts
 }
 
-/** Adds `[day, value]` pairs into the buckets; days before the first start or after `last` are dropped. */
+/** Adds `[day, value]` pairs into the buckets; days before the first start or after `last` are dropped. Hour buckets take `[hour key, value]` pairs and the last hour key. */
 export function sumInto(
   starts: string[],
   last: string,

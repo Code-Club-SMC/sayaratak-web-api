@@ -1,7 +1,12 @@
 import { and, count, eq, inArray, isNull, ne } from "drizzle-orm"
 
 import type { Executor } from "~/shared/db/tx"
-import { type DayRange, dayColumn, withinDays } from "~/shared/time/khartoum"
+import {
+  bucketColumn,
+  type DayRange,
+  weekdayHourColumns,
+  withinDays,
+} from "~/shared/time/khartoum"
 
 import { messages, threadParticipants, threads } from "./messaging.tables"
 
@@ -22,7 +27,7 @@ export function countUnread(ex: Executor, userId: string) {
 }
 
 /**
- * Messages per Khartoum day that other people sent in the user's threads;
+ * Messages per Khartoum day (or hour) that other people sent in the user's threads;
  * `userId` null counts every message of every thread (the admin's view).
  */
 export function listReceivedPerDay(
@@ -30,22 +35,35 @@ export function listReceivedPerDay(
   userId: string | null,
   days: DayRange
 ) {
-  const day = dayColumn(messages.createdAt)
+  const day = bucketColumn(messages.createdAt, days)
   return ex
     .select({ day, count: count() })
     .from(messages)
-    .where(
-      and(
-        withinDays(messages.createdAt, days),
-        userId
-          ? and(
-              inArray(messages.threadId, threadIdsOf(ex, userId)),
-              ne(messages.senderId, userId)
-            )
-          : undefined
-      )
-    )
+    .where(and(withinDays(messages.createdAt, days), receivedBy(ex, userId)))
     .groupBy(day)
+}
+
+/** Messages others sent in the user's threads (`null`: every thread) per Khartoum weekday and hour inside `days`. */
+export function listReceivedPerWeekdayHour(
+  ex: Executor,
+  userId: string | null,
+  days: DayRange
+) {
+  const { weekday, hour } = weekdayHourColumns(messages.createdAt)
+  return ex
+    .select({ weekday, hour, count: count() })
+    .from(messages)
+    .where(and(withinDays(messages.createdAt, days), receivedBy(ex, userId)))
+    .groupBy(weekday, hour)
+}
+
+function receivedBy(ex: Executor, userId: string | null) {
+  return userId
+    ? and(
+        inArray(messages.threadId, threadIdsOf(ex, userId)),
+        ne(messages.senderId, userId)
+      )
+    : undefined
 }
 
 function threadIdsOf(ex: Executor, userId: string) {

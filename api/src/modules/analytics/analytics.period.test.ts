@@ -56,7 +56,12 @@ describe("report periods", () => {
     const query = "?from=2026-10-31T08:00&to=2026-10-31T10:00"
     const before = await mine(as.user, query)
     expect(before.period.custom).toBe(true)
-    expect(before.daily.map((d) => d.date)).toEqual(["2026-10-31"])
+    // Two hours: hour buckets (step 11.7-r2).
+    expect(before.period.granularity).toBe("hour")
+    expect(before.daily.map((d) => d.date)).toEqual([
+      "2026-10-31T08:00",
+      "2026-10-31T09:00",
+    ])
     // 05:59 UTC is 07:59 in Khartoum (outside), 06:30 UTC is 08:30 (inside).
     for (const [id, at] of [
       ["m-early", "2026-10-31T05:59:00Z"],
@@ -71,6 +76,7 @@ describe("report periods", () => {
       })
     const after = await mine(as.user, query)
     expect(after.totals.messages).toBe(before.totals.messages + 1)
+    expect(after.daily[0]?.messages).toBe((before.daily[0]?.messages ?? 0) + 1)
   })
 
   test("compare=year reads the same dates a year earlier, lined up", async () => {

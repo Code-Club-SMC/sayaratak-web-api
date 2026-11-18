@@ -13,7 +13,7 @@ import {
 } from "drizzle-orm"
 
 import type { Executor } from "~/shared/db/tx"
-import { type DayRange, dayColumn, withinDays } from "~/shared/time/khartoum"
+import { bucketColumn, type DayRange, withinDays } from "~/shared/time/khartoum"
 
 import { LIVE_MODERATION, LIVE_STATUS } from "./listings.queries"
 import { listings } from "./listings.tables"
@@ -31,9 +31,9 @@ export function countApprovedVehicles(ex: Executor) {
   )
 }
 
-/** Listings of any state, drafts too, created per Khartoum day inside `days`. */
+/** Listings of any state, drafts too, created per Khartoum day (or hour) inside `days`. */
 export function listCreatedPerDay(ex: Executor, days: DayRange) {
-  const day = dayColumn(listings.createdAt)
+  const day = bucketColumn(listings.createdAt, days)
   return ex
     .select({ day, count: count() })
     .from(listings)

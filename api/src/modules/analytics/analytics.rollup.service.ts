@@ -1,7 +1,10 @@
+import { firstHourlyDay } from "@sayaratak/shared/lib/period"
+
+import { db } from "~/shared/db/client"
 import { transaction } from "~/shared/db/tx"
 import { BATCH_SIZE, drain } from "~/shared/jobs/batches"
 import { clock } from "~/shared/time/clock"
-import { monthOf } from "~/shared/time/khartoum"
+import { dayOf, monthOf } from "~/shared/time/khartoum"
 
 import * as q from "./analytics.rollup.queries"
 
@@ -23,6 +26,19 @@ export function rollUpOldDays(size = BATCH_SIZE) {
         await q.addMonthly(tx, sumPerMonth(old))
         return old.length
       }),
+    size
+  )
+}
+
+/**
+ * Deletes hourly counters older than the 90 days kept per hour (owner, step
+ * 11.7-r2). The daily rows already hold the same counts, so nothing is added
+ * anywhere. Answers how many hourly rows it deleted.
+ */
+export function pruneOldHours(size = BATCH_SIZE) {
+  const beforeDay = firstHourlyDay(dayOf(clock.now()))
+  return drain(
+    (limit) => q.deleteOldHours(db, { beforeDay, size: limit }),
     size
   )
 }

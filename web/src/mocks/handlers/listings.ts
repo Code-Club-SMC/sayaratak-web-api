@@ -407,7 +407,8 @@ route("GET", "/listings/:id/analytics", (c) => {
   const user = needUser(c)
   const row = listingById(c.params.id ?? "")
   canEditListing(user, row)
-  const { period, current, compare, align, compareStarts } = periodOf(c.query)
+  const { period, current, compare, align, compareStarts, hourlySince } =
+    periodOf(c.query)
   const only = (id: string) => id === row.id
   const read = (w: typeof current, fit: (v: number[]) => number[]) => ({
     views: w.events(only, "view"),
@@ -432,6 +433,7 @@ route("GET", "/listings/:id/analytics", (c) => {
   const now = read(current, (v) => v)
   return listingAnalyticsSchema.parse({
     period,
+    hourlySince,
     totals: {
       views: now.views.total,
       phoneClicks: now.phoneClicks.total,

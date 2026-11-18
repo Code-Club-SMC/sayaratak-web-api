@@ -6,6 +6,7 @@ import type {
   VerificationRequest,
 } from "@sayaratak/shared/schemas/admin"
 import type { EventType } from "@sayaratak/shared/schemas/api"
+import { spread } from "../event-hours"
 import type { EventRow, ListingRow, SitePageRow, UserRow } from "../types"
 import { DAY, HOUR, ago, ahead, chance, int } from "./util"
 
@@ -347,6 +348,8 @@ export function seedVerifications(
 }
 
 // Daily counts for ninety days so every analytics chart has a real series.
+const HOURLY_SEED_DAYS = 7
+
 export function seedEvents(targetIds: string[]): EventRow[] {
   const rows: EventRow[] = []
   const zero = (): Record<EventType, number> => ({
@@ -365,17 +368,27 @@ export function seedEvents(targetIds: string[]): EventRow[] {
         0,
         base + int(-3, 8) + (chance(0.1) ? int(10, 30) : 0)
       )
+      const counts = {
+        ...zero(),
+        view: views,
+        phone_click: Math.round(views * 0.12),
+        whatsapp_click: Math.round(views * 0.1),
+        share: Math.round(views * 0.03),
+      }
       rows.push({
         id: `ev-${targetId}-${day}`,
         day,
         targetId,
-        counts: {
-          ...zero(),
-          view: views,
-          phone_click: Math.round(views * 0.12),
-          whatsapp_click: Math.round(views * 0.1),
-          share: Math.round(views * 0.03),
-        },
+        counts,
+        // Hourly counts only for the last days, so the api seed stays small and the "hourly counts from" note shows on longer periods (step 11.7-r2).
+        ...(d < HOURLY_SEED_DAYS && {
+          hours: {
+            view: spread(counts.view),
+            phone_click: spread(counts.phone_click),
+            whatsapp_click: spread(counts.whatsapp_click),
+            share: spread(counts.share),
+          },
+        }),
       })
     }
   }

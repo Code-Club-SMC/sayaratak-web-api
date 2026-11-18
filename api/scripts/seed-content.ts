@@ -3,7 +3,7 @@ import { sql } from "drizzle-orm"
 import type { PgTable } from "drizzle-orm/pg-core"
 
 import { backups } from "~/modules/admin-backups/admin-backups.tables"
-import { events } from "~/modules/analytics/analytics.tables"
+import { events, eventsHourly } from "~/modules/analytics/analytics.tables"
 import { settings, sitePages } from "~/modules/content/content.tables"
 import type { Executor } from "~/shared/db/tx"
 
@@ -13,7 +13,7 @@ type Seed = ReturnType<typeof buildSeed>
 
 const BYTES_PER_MB = 1024 * 1024
 
-/** Settings, site pages, backups and event counters. */
+/** Settings, site pages, backups and event counters (daily and hourly). */
 export async function seedContent(ex: Executor, data: Seed) {
   await seedSite(ex, data)
   // Demo backups have no dump behind their key; restoring one fails with the object missing.
@@ -76,6 +76,26 @@ async function seedEvents(ex: Executor, data: Seed) {
     `{${counters.map((c) => c[key]).join(",")}}`
   await ex.execute(
     sql`insert into ${events} select * from unnest(${column("day")}::date[], ${column("targetId")}::text[], ${column("type")}::event_type[], ${column("count")}::int[]) where not exists (select from ${events})`
+  )
+  await seedHours(ex, data)
+}
+
+// The mock's hourly counts (its last 7 days, step 11.7-r2), one row per hour with a count.
+async function seedHours(ex: Executor, data: Seed) {
+  const rows = data.events.flatMap((e) =>
+    eventTypeSchema.options.flatMap((type) =>
+      (e.hours?.[type] ?? []).flatMap((count, hour) =>
+        count > 0
+          ? [{ day: e.day, hour, targetId: e.targetId, type, count }]
+          : []
+      )
+    )
+  )
+  if (!rows.length) return
+  const column = <K extends keyof (typeof rows)[number]>(key: K) =>
+    `{${rows.map((r) => r[key]).join(",")}}`
+  await ex.execute(
+    sql`insert into ${eventsHourly} select * from unnest(${column("day")}::date[], ${column("hour")}::smallint[], ${column("targetId")}::text[], ${column("type")}::event_type[], ${column("count")}::int[]) where not exists (select from ${eventsHourly})`
   )
 }
 

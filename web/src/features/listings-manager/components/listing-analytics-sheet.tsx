@@ -55,7 +55,7 @@ export function ListingAnalyticsSheet({
           </p>
         </SheetHeader>
         <PeriodControl value={period} onChange={setPeriod} />
-        <PeriodNote period={data?.period} />
+        <PeriodNote period={data?.period} hourlySince={data?.hourlySince} />
         <AreaChartCard
           title={t("manager.chart_views")}
           series={[{ key: "views", label: t("manager.col_views") }]}

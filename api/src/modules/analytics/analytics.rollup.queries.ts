@@ -2,7 +2,7 @@ import { sql } from "drizzle-orm"
 
 import type { Executor } from "~/shared/db/tx"
 
-import { events, eventsMonthly } from "./analytics.tables"
+import { events, eventsHourly, eventsMonthly } from "./analytics.tables"
 
 type OldDay = {
   target_id: string
@@ -35,4 +35,15 @@ export async function addMonthly(ex: Executor, rows: MonthlyCount[]) {
       target: [eventsMonthly.targetId, eventsMonthly.month, eventsMonthly.type],
       set: { count: sql`${eventsMonthly.count} + excluded.count` },
     })
+}
+
+/** Deletes up to `size` hourly rows before `beforeDay` and answers how many it deleted. */
+export async function deleteOldHours(
+  ex: Executor,
+  batch: { beforeDay: string; size: number }
+) {
+  const rows = await ex.execute<{ day: string }>(
+    sql`delete from ${eventsHourly} where ctid in (select ctid from ${eventsHourly} where ${eventsHourly.day} < ${batch.beforeDay} limit ${batch.size} for update skip locked) returning day`
+  )
+  return rows.length
 }

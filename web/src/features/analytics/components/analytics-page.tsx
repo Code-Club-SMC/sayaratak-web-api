@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query"
 
 import { AreaChartCard } from "@/components/app/area-chart-card"
 import { BarChartCard } from "@/components/app/bar-chart-card"
+import { ContactHeatmap } from "@/components/app/contact-heatmap"
 import { PageHeader } from "@/components/app/page-header"
 import { PeriodControl } from "@/components/app/period-control"
 import { PeriodNote } from "@/components/app/period-note"
@@ -14,7 +15,7 @@ import { dayRows, reportChart } from "../chart-props"
 import { StatRow } from "./stat-row"
 import { TopListingsTable } from "./top-listings-table"
 
-// Counts from the public pages for a period (preset or custom range with times): five cards with the change against the compare window, views over time, contacts per bucket, and (dealerships) the ten listings with the most views. The period lives in the URL.
+// Counts from the public pages for a period (preset or custom range with times): five cards with the change against the compare window, views over time, contacts per bucket, the weekday x hour contact heatmap, and (dealerships) the ten listings with the most views. The period lives in the URL.
 export function AnalyticsPage({
   role,
 }: {
@@ -40,7 +41,7 @@ export function AnalyticsPage({
       <PageHeader title={title}>
         <PeriodControl value={query} onChange={setQuery} />
       </PageHeader>
-      <PeriodNote period={data?.period} />
+      <PeriodNote period={data?.period} hourlySince={data?.hourlySince} />
       {isError ? (
         <SectionError
           message={t("analytics.load_error")}
@@ -68,6 +69,12 @@ export function AnalyticsPage({
             ]}
             stacked
             {...chart}
+          />
+          <ContactHeatmap
+            cells={data?.contactHours}
+            since={data?.hourlySince}
+            from={data?.period.from}
+            loading={isPending}
           />
           {role === "dealership" && (
             <TopListingsTable rows={data?.topListings} loading={isPending} />

@@ -1,3 +1,4 @@
+import { ceilHour, floorHour } from "@sayaratak/shared/lib/period"
 import type { Period, PeriodQuery } from "@sayaratak/shared/schemas/period"
 import type { Analytics } from "@sayaratak/shared/schemas/responses"
 
@@ -13,11 +14,13 @@ import { sumCounts } from "./analytics.mapper"
 import {
   bucket,
   countsPerDay,
+  hourlySinceOf,
   pick,
   total,
   type Window,
   windowsOf,
 } from "./analytics.period"
+import * as hourly from "./analytics.hourly.queries"
 import * as q from "./analytics.queries"
 
 const TOP_COUNT = 10
@@ -35,9 +38,16 @@ export async function getMyAnalytics(
   const { period, current, compare, align, compareStarts } = windowsOf(query)
   const scope = await scopeOf(user)
   const read = (w: Window) => readWindow({ user, scope, w, period })
-  const [now, before] = await Promise.all([read(current), read(compare)])
+  const hourlySince = await hourlySinceOf(current.today)
+  const [now, before, contactHours] = await Promise.all([
+    read(current),
+    read(compare),
+    contactHoursOf({ user, scope, w: current, since: hourlySince }),
+  ])
   return {
     period,
+    hourlySince,
+    contactHours,
     totals: now.totals,
     previous: before.totals,
     daily: bucketsOf(now.series, current.starts),
@@ -78,6 +88,42 @@ async function readWindow(input: {
       newReviews,
     },
   }
+}
+
+/**
+ * Calls, WhatsApp taps and messages received per Khartoum weekday and hour,
+ * from `since` (hourly counters are kept 90 days) to the end of the window.
+ */
+async function contactHoursOf(input: {
+  user: SessionUser
+  scope: Scope
+  w: Window
+  since: string
+}) {
+  const { user, scope, w } = input
+  const cells: number[] = Array.from({ length: 168 }, () => 0)
+  const sinceMinute = `${input.since}T00:00`
+  // biome-ignore lint/complexity/useMathMinMax: ISO minute strings, not numbers
+  const from = w.from > sinceMinute ? w.from : sinceMinute
+  if (from >= w.to) return cells
+  const [taps, received] = await Promise.all([
+    scope.targets?.length === 0
+      ? []
+      : hourly.listContactWeekdayHours(db, {
+          targetIds: scope.targets,
+          range: [floorHour(from), ceilHour(w.to)],
+        }),
+    messaging.countReceivedPerWeekdayHour(db, scope.admin ? null : user.id, {
+      first: from.slice(0, 10),
+      last: w.last,
+      from,
+      to: w.to,
+    }),
+  ])
+  for (const row of [...taps, ...received])
+    cells[row.weekday * 24 + row.hour] =
+      (cells[row.weekday * 24 + row.hour] ?? 0) + row.count
+  return cells
 }
 
 type Series = Awaited<ReturnType<typeof readWindow>>["series"]

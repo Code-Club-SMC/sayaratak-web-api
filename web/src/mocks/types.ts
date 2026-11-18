@@ -68,6 +68,8 @@ export type EventRow = {
   day: string
   targetId: string
   counts: Record<EventType, number>
+  // Per Khartoum hour (24 values) per type, step 11.7-r2; missing means no hourly counts for that day (the seed writes them for its last 7 days, see `event-hours.ts`).
+  hours?: Partial<Record<EventType, number[]>>
 }
 export type ContactRow = {
   id: string

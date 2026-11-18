@@ -46,6 +46,7 @@ const dayMonthTime = dateFormat({
 })
 const monthShort = dateFormat({ ...dateBase, month: "short", year: "numeric" })
 const weekday = dateFormat({ weekday: "long", timeZone: "UTC" })
+const weekdayShort = dateFormat({ weekday: "short", timeZone: "UTC" })
 const relative = perLocale(
   (locale) => new Intl.RelativeTimeFormat(locale, { ...base, numeric: "auto" })
 )
@@ -92,6 +93,10 @@ export const formatMileage = (km: number, locale: Locale) =>
 export const formatWeekday = (day: number, locale: Locale) =>
   weekday(locale).format(Date.UTC(2023, 0, 1 + day))
 
+// Short day name ("Sun") for a weekday number (0 = Sunday).
+export const formatWeekdayShort = (day: number, locale: Locale) =>
+  weekdayShort(locale).format(Date.UTC(2023, 0, 1 + day))
+
 // Day and month only, for chart axes.
 export const formatShortDate = (iso: string, locale: Locale) =>
   dayMonth(locale).format(new Date(iso))
@@ -100,15 +105,21 @@ export const formatShortDate = (iso: string, locale: Locale) =>
 export const formatMinute = (minute: string, locale: Locale) =>
   dayMonthTime(locale).format(new Date(`${minute}:00+02:00`))
 
-// A report bucket's first day: "1 Nov" for days and weeks, "Nov 2026" for months.
+// A report bucket's first day: "1 Nov, 08:00" for hours (the key is a minute), "1 Nov" for days and weeks, "Nov 2026" for months.
 export const formatBucket = (
   day: string,
-  granularity: "day" | "week" | "month",
+  granularity: "hour" | "day" | "week" | "month",
   locale: Locale
 ) =>
-  granularity === "month"
-    ? monthShort(locale).format(new Date(`${day}T12:00:00Z`))
-    : formatShortDate(day, locale)
+  granularity === "hour"
+    ? formatMinute(day, locale)
+    : granularity === "month"
+      ? monthShort(locale).format(new Date(`${day}T12:00:00Z`))
+      : formatShortDate(day, locale)
+
+// "08:00" for an hour of the day (0 to 23), Latin digits in both languages.
+export const formatHour = (hour: number) =>
+  `${String(hour).padStart(2, "0")}:00`
 
 export const initials = (name: string) =>
   name

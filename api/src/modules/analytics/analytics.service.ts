@@ -6,7 +6,7 @@ import type { z } from "zod"
 import { db } from "~/shared/db/client"
 import { type Transaction, transaction } from "~/shared/db/tx"
 import { clock } from "~/shared/time/clock"
-import { dayOf } from "~/shared/time/khartoum"
+import { dayOf, hourOf } from "~/shared/time/khartoum"
 import * as ads from "~/modules/ads/ads.service"
 import type { SessionUser } from "~/modules/auth/auth.types"
 import * as businesses from "~/modules/businesses/businesses.service"
@@ -17,28 +17,29 @@ import { isPreviewBusiness } from "~/modules/businesses/businesses.seed.service"
 import {
   bucket,
   countsPerDay,
+  hourlySinceOf,
   pick,
   total,
   type Window,
   windowsOf,
 } from "./analytics.period"
+import * as hourly from "./analytics.hourly.queries"
 import * as q from "./analytics.queries"
 
 type EventInput = z.output<typeof eventInputSchema>
 
 /**
  * Counts one view or click on a listing, business, banner or campaign, in the
- * target's own counter and in the day's event row. An id that names none of
+ * target's own counter and in the day's and the hour's event rows. An id that names none of
  * them is ignored, so a stranger cannot grow the table with made-up ids.
  */
 export async function recordEvent(event: EventInput) {
   await transaction(async (tx) => {
     if (!(await countOnTarget(tx, event))) return
-    await q.bumpEvent(tx, {
-      day: dayOf(clock.now()),
-      targetId: event.targetId,
-      type: event.type,
-    })
+    const now = clock.now()
+    const row = { day: dayOf(now), targetId: event.targetId, type: event.type }
+    await q.bumpEvent(tx, row)
+    await hourly.bumpHourly(tx, { ...row, hour: hourOf(now) })
   })
 }
 
@@ -74,12 +75,14 @@ export async function getListingAnalytics(
       whatsappClicks: r.whatsappClicks?.[i] ?? 0,
     }))
   const same = (v: number[]) => v
-  const [now, before] = await Promise.all([
+  const [now, before, hourlySince] = await Promise.all([
     read(current, same),
     read(compare, align),
+    hourlySinceOf(current.today),
   ])
   return {
     period,
+    hourlySince,
     totals: {
       views: total(now.views ?? []),
       phoneClicks: total(now.phoneClicks ?? []),

@@ -27057,6 +27057,7 @@
                         "granularity": {
                           "type": "string",
                           "enum": [
+                            "hour",
                             "day",
                             "week",
                             "month"
@@ -27070,6 +27071,9 @@
                         },
                         "eventsCompared": {
                           "type": "boolean"
+                        },
+                        "wholeDays": {
+                          "type": "boolean"
                         }
                       },
                       "required": [
@@ -27081,7 +27085,8 @@
                         "granularity",
                         "custom",
                         "rolledUp",
-                        "eventsCompared"
+                        "eventsCompared",
+                        "wholeDays"
                       ]
                     },
                     "totals": {
@@ -27246,6 +27251,19 @@
                         ]
                       }
                     },
+                    "hourlySince": {
+                      "type": "string"
+                    },
+                    "contactHours": {
+                      "minItems": 168,
+                      "maxItems": 168,
+                      "type": "array",
+                      "items": {
+                        "type": "integer",
+                        "minimum": -9007199254740991,
+                        "maximum": 9007199254740991
+                      }
+                    },
                     "topListings": {
                       "type": "array",
                       "items": {
@@ -27295,6 +27313,8 @@
                     "previous",
                     "daily",
                     "previousDaily",
+                    "hourlySince",
+                    "contactHours",
                     "topListings"
                   ]
                 }
@@ -27519,6 +27539,7 @@
                         "granularity": {
                           "type": "string",
                           "enum": [
+                            "hour",
                             "day",
                             "week",
                             "month"
@@ -27532,6 +27553,9 @@
                         },
                         "eventsCompared": {
                           "type": "boolean"
+                        },
+                        "wholeDays": {
+                          "type": "boolean"
                         }
                       },
                       "required": [
@@ -27543,8 +27567,12 @@
                         "granularity",
                         "custom",
                         "rolledUp",
-                        "eventsCompared"
+                        "eventsCompared",
+                        "wholeDays"
                       ]
+                    },
+                    "hourlySince": {
+                      "type": "string"
                     },
                     "totals": {
                       "type": "object",
@@ -27650,6 +27678,7 @@
                   },
                   "required": [
                     "period",
+                    "hourlySince",
                     "totals",
                     "series",
                     "previousSeries",
@@ -38757,6 +38786,7 @@
                         "granularity": {
                           "type": "string",
                           "enum": [
+                            "hour",
                             "day",
                             "week",
                             "month"
@@ -38770,6 +38800,9 @@
                         },
                         "eventsCompared": {
                           "type": "boolean"
+                        },
+                        "wholeDays": {
+                          "type": "boolean"
                         }
                       },
                       "required": [
@@ -38781,7 +38814,8 @@
                         "granularity",
                         "custom",
                         "rolledUp",
-                        "eventsCompared"
+                        "eventsCompared",
+                        "wholeDays"
                       ]
                     },
                     "totals": {

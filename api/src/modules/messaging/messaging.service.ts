@@ -17,8 +17,9 @@ export function countUnreadMessages(ex: Executor, userId: string) {
 }
 
 /**
- * Messages from others in the user's threads per Khartoum day, as `day` to
- * count; days without one are left out. `userId` null counts all of them.
+ * Messages from others in the user's threads per Khartoum day (or hour), as
+ * bucket key to count; buckets without one are left out. `userId` null counts
+ * all of them.
  */
 export async function countReceivedPerDay(
   ex: Executor,
@@ -27,4 +28,13 @@ export async function countReceivedPerDay(
 ) {
   const rows = await q.listReceivedPerDay(ex, userId, days)
   return new Map(rows.map((row) => [row.day, row.count]))
+}
+
+/** Messages from others in the user's threads per Khartoum weekday (0 is Sunday) and hour. */
+export function countReceivedPerWeekdayHour(
+  ex: Executor,
+  userId: string | null,
+  days: DayRange
+) {
+  return q.listReceivedPerWeekdayHour(ex, userId, days)
 }

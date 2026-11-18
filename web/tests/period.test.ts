@@ -4,10 +4,14 @@ import {
   alignStarts,
   alignTo,
   bucketsOf,
+  ceilHour,
   daysOf,
   firstDailyDay,
+  firstHourlyDay,
+  hoursOf,
   instantOf,
   resolvePeriod,
+  slicesOf,
   sumInto,
 } from "@sayaratak/shared/lib/period"
 import {
@@ -29,7 +33,7 @@ describe("periodQuerySchema", () => {
       compare: "previous",
     })
     expect(compareSchema.options).toEqual(["previous", "year"])
-    expect(granularitySchema.options).toEqual(["day", "week", "month"])
+    expect(granularitySchema.options).toEqual(["hour", "day", "week", "month"])
   })
 })
 
@@ -128,5 +132,73 @@ describe("buckets", () => {
     expect(new Date(instantOf("2026-11-01T08:00")).toISOString()).toBe(
       "2026-11-01T06:00:00.000Z"
     )
+  })
+})
+
+describe("hourly counters (step 11.7-r2)", () => {
+  const hourly = (from: string, to: string) =>
+    resolvePeriod(parse({ from, to }), TODAY)
+
+  test("up to 2 days inside the 90 kept per hour has hour buckets", () => {
+    expect(hourly("2026-10-30T08:00", "2026-11-01T08:00").granularity).toBe(
+      "hour"
+    )
+    expect(hourly("2026-10-30T08:00", "2026-11-01T09:00").granularity).toBe(
+      "day"
+    )
+    // Older than 90 days: no hours to read, so days.
+    expect(hourly("2026-07-01T08:00", "2026-07-01T10:00").granularity).toBe(
+      "day"
+    )
+    expect(hoursOf("2026-11-01T08:30", "2026-11-01T10:15")).toEqual([
+      "2026-11-01T08:00",
+      "2026-11-01T09:00",
+      "2026-11-01T10:00",
+    ])
+    expect(ceilHour("2026-11-01T23:30")).toBe("2026-11-02T00:00")
+    expect(firstHourlyDay("2026-11-18")).toBe("2026-08-21")
+  })
+
+  test("partial days read hours, whole days read days, old partial days count whole", () => {
+    expect(
+      slicesOf({
+        from: "2026-10-28T08:00",
+        to: "2026-10-31T10:30",
+        today: TODAY,
+        hourly: false,
+      })
+    ).toEqual({
+      days: { first: "2026-10-29", last: "2026-10-30" },
+      hours: [
+        ["2026-10-28T08:00", "2026-10-29T00:00"],
+        ["2026-10-31T00:00", "2026-10-31T11:00"],
+      ],
+    })
+    expect(
+      slicesOf({
+        from: "2026-06-01T08:00",
+        to: "2026-10-31T10:00",
+        today: TODAY,
+        hourly: false,
+      })
+    ).toEqual({
+      days: { first: "2026-06-01", last: "2026-10-30" },
+      hours: [["2026-10-31T00:00", "2026-10-31T10:00"]],
+    })
+    expect(hourly("2026-06-01T08:00", "2026-10-31T00:00").wholeDays).toBe(true)
+    expect(hourly("2026-10-01T08:00", "2026-10-31T00:00").wholeDays).toBe(false)
+  })
+
+  test("hour buckets do not compare with a year earlier (no hours kept)", () => {
+    const p = resolvePeriod(
+      parse({
+        from: "2026-10-31T08:00",
+        to: "2026-10-31T12:00",
+        compare: "year",
+      }),
+      TODAY
+    )
+    expect(p.granularity).toBe("hour")
+    expect(p.eventsCompared).toBe(false)
   })
 })

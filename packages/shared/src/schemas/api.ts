@@ -53,6 +53,8 @@ export type Counts = z.infer<typeof countsSchema>
 // One listing, for its analytics sheet (8.2). The account-wide shape is `analyticsSchema` in responses.ts.
 export const listingAnalyticsSchema = z.object({
   period: periodSchema,
+  // The first Khartoum day hourly counts exist for (see `analyticsSchema.hourlySince`).
+  hourlySince: z.string(),
   totals: z.object({
     views: z.number(),
     phoneClicks: z.number(),

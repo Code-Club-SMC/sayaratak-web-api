@@ -7,8 +7,8 @@ export type Range = z.infer<typeof rangeSchema>
 // A Khartoum wall-clock minute, "2026-11-01T08:00".
 const minute = z.string().regex(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/)
 
-// Hour buckets arrive with hourly counters (step 11.7-r2).
-export const granularitySchema = z.enum(["day", "week", "month"])
+// Hour buckets for periods of up to 2 days inside the 90 days kept per hour (step 11.7-r2); their keys are minutes ("2026-11-01T08:00").
+export const granularitySchema = z.enum(["hour", "day", "week", "month"])
 export type Granularity = z.infer<typeof granularitySchema>
 
 // What the figures are compared with: the period just before, or the same dates a year earlier.
@@ -24,7 +24,7 @@ export const periodQuerySchema = z.object({
 })
 export type PeriodQuery = z.infer<typeof periodQuerySchema>
 
-// The resolved period a report answers for. `to` and `compareTo` are exclusive. `rolledUp`: part of the current window is older than the 13 months kept per day, so view and click counters there exist per month only and the buckets are months. `eventsCompared` false: only the compare window reaches those months, so its view, call and WhatsApp numbers are left out of the comparison (owner, 2026-11-18); timestamped counts still compare.
+// The resolved period a report answers for. `to` and `compareTo` are exclusive. `rolledUp`: part of the current window is older than the 13 months kept per day, so view and click counters there exist per month only and the buckets are months. `eventsCompared` false: only the compare window reaches those months (or, with hour buckets, is older than the 90 days kept per hour), so its view, call and WhatsApp numbers are left out of the comparison (owner, 2026-11-18); timestamped counts still compare.
 export const periodSchema = z.object({
   from: minute,
   to: minute,
@@ -35,5 +35,7 @@ export const periodSchema = z.object({
   custom: z.boolean(),
   rolledUp: z.boolean(),
   eventsCompared: z.boolean(),
+  // A start or end day of the window is older than the 90 days kept per hour, so view, call and WhatsApp counts take that whole day (step 11.7-r2).
+  wholeDays: z.boolean(),
 })
 export type Period = z.infer<typeof periodSchema>

@@ -42,6 +42,11 @@ const counts = (c: Partial<Record<string, number>>) => ({
   banner_view: 0,
   ...c,
 })
+// The top listings table; the contact heatmap is a table too.
+const topTable = async () =>
+  within(
+    await screen.findByRole("region", { name: "Top listings" })
+  ).findByRole("table")
 // Replaces the events of some targets with the given rows: `[target, days back, counts]`.
 const setEvents = (
   ids: string[],
@@ -113,13 +118,34 @@ describe("report period (step 11.7-r1)", () => {
     )
   })
 
-  it("a custom range with times shows its dates and the whole-day note", async () => {
-    await openPage(`?from=${day(1)}T08:00&to=${day(0)}T10:00`)
-    expect(await screen.findByText(/counted per whole day/)).toBeTruthy()
+  it("a custom range with times shows its dates and the whole-hour note", async () => {
+    await openPage(`?from=${day(1)}T08:30&to=${day(0)}T10:00`)
+    expect(await screen.findByText(/counted per whole hour/)).toBeTruthy()
     // The end shows as sent: `to` is exclusive, only midnight reads as 23:59 of the day before.
     expect(
-      screen.getByRole("button", { name: /8:00 AM.*10:00 AM/ })
+      screen.getByRole("button", { name: /8:30 AM.*10:00 AM/ })
     ).toBeTruthy()
+  })
+
+  it("a range of up to 2 days shows hour buckets (step 11.7-r2)", async () => {
+    await openPage(`?from=${day(0)}T08:00&to=${day(0)}T11:00`)
+    const views = await screen.findByRole("region", {
+      name: "Listing views over time",
+    })
+    fireEvent.click(await within(views).findByRole("button", { name: "Table" }))
+    const rows = within(within(views).getByRole("table")).getAllByRole("row")
+    // Header plus 08:00, 09:00 and 10:00.
+    expect(rows).toHaveLength(4)
+    expect(rows[1]!.textContent).toMatch(/8:00/)
+  })
+
+  it("the contact heatmap names the busiest weekday and hour", async () => {
+    const [a] = dealerListings()
+    setEvents([a!.id], [[a!.id, 0, { phone_click: 24 }]])
+    await openPage("?range=7d")
+    const heat = await screen.findByRole("region", { name: "Contact times" })
+    expect(await within(heat).findByText(/^Busiest: /)).toBeTruthy()
+    expect(within(heat).getAllByRole("row")).toHaveLength(8)
   })
 
   it("a chart switches to a table of its buckets with the compare column", async () => {
@@ -193,7 +219,7 @@ describe("dealership analytics", () => {
 
   it("lists the top listings by views with their conversion", async () => {
     await open()
-    const table = await screen.findByRole("table")
+    const table = await topTable()
     const rows = within(table).getAllByRole("row").slice(1)
     expect(rows.length).toBeLessThanOrEqual(10)
     const [a, b] = dealerListings()
@@ -242,7 +268,7 @@ describe("dealership analytics", () => {
       role: "dealership",
       path: "/en/dealer/analytics",
     })
-    const table = await screen.findByRole("table")
+    const table = await topTable()
     const row = within(table).getAllByRole("row")[1]!
     expect(within(row).getByRole("link", { name: a!.title })).toBeTruthy()
     expect(
@@ -261,7 +287,7 @@ describe("dealership analytics", () => {
     ).toBeTruthy()
     document.cookie = "mock_fail=; Path=/; Max-Age=0"
     fireEvent.click(screen.getByRole("button", { name: "Try again" }))
-    expect(await screen.findByRole("table")).toBeTruthy()
+    expect(await topTable()).toBeTruthy()
   })
 })
 
@@ -282,7 +308,6 @@ describe("workshop and mechanic analytics", () => {
     for (const name of ["Calls", "WhatsApp clicks", "Messages", "New reviews"])
       expect(screen.getByText(name)).toBeTruthy()
     expect(screen.queryByText("Favorites")).toBeNull()
-    expect(screen.queryByRole("table")).toBeNull()
     expect(screen.queryByText("Top listings")).toBeNull()
   })
 

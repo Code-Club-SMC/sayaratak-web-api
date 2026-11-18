@@ -10,10 +10,20 @@ const SQL_ZONE = sql.raw(`'${ZONE}'`)
 const DAY_MS = 86_400_000
 
 const dayFormat = new Intl.DateTimeFormat("en-CA", { timeZone: ZONE })
+const hourFormat = new Intl.DateTimeFormat("en-GB", {
+  timeZone: ZONE,
+  hour: "2-digit",
+  hourCycle: "h23",
+})
 
 /** The Khartoum calendar day of an instant. Example: 22:30 UTC on 2026-11-01 is `"2026-11-02"`. */
 export function dayOf(at: Date) {
   return dayFormat.format(at)
+}
+
+/** The Khartoum hour of an instant, 0 to 23. Example: 22:30 UTC is `0` (00:30 the next day). */
+export function hourOf(at: Date) {
+  return Number(hourFormat.format(at))
 }
 
 /** The day `count` days before `day` (`"2026-11-02"`, 2 gives `"2026-10-31"`). */
@@ -29,6 +39,24 @@ export function daysUpTo(last: string, length: number) {
 /** The Khartoum day of a timestamp column or expression, as text (`"2026-11-02"`). */
 export function dayColumn(column: PgColumn | SQL) {
   return sql<string>`to_char(${column} at time zone ${SQL_ZONE}, 'YYYY-MM-DD')`
+}
+
+/**
+ * The report bucket key of a timestamp: its Khartoum day (`"2026-11-02"`), or
+ * its Khartoum hour (`"2026-11-02T08:00"`) when the range has hour buckets.
+ */
+export function bucketColumn(column: PgColumn | SQL, days: DayRange) {
+  return days.hourly
+    ? sql<string>`to_char(${column} at time zone ${SQL_ZONE}, 'YYYY-MM-DD"T"HH24:00')`
+    : dayColumn(column)
+}
+
+/** The Khartoum weekday (0 is Sunday) and hour of a timestamp column, for the weekday x hour heatmap. */
+export function weekdayHourColumns(column: PgColumn | SQL) {
+  return {
+    weekday: sql<number>`extract(dow from ${column} at time zone ${SQL_ZONE})::int`,
+    hour: sql<number>`extract(hour from ${column} at time zone ${SQL_ZONE})::int`,
+  }
 }
 
 /** The Khartoum calendar month of an instant, `"2026-11"`: the first seven letters of its day. */
@@ -52,10 +80,11 @@ export function withinDays(column: PgColumn | SQL, days: DayRange): SQL {
   return sql`${column} >= (${days.first}::date::timestamp at time zone ${SQL_ZONE}) and ${column} < ((${days.last}::date + 1)::timestamp at time zone ${SQL_ZONE})`
 }
 
-/** Whole Khartoum days, both ends included; `from`/`to` (Khartoum minutes, `to` exclusive) narrow timestamp matches. */
+/** Whole Khartoum days, both ends included; `from`/`to` (Khartoum minutes, `to` exclusive) narrow timestamp matches; `hourly`: buckets are hours. */
 export type DayRange = {
   first: string
   last: string
   from?: string
   to?: string
+  hourly?: boolean
 }

@@ -3,13 +3,19 @@ import { and, between, eq, inArray, sql, sum } from "drizzle-orm"
 import type { Executor } from "~/shared/db/tx"
 import type { DayRange } from "~/shared/time/khartoum"
 
-import { events, eventsMonthly } from "./analytics.tables"
+import { events, eventsHourly, eventsMonthly } from "./analytics.tables"
 
 // The counters of a listing or business page. Banner types are left out.
-const PAGE_TYPES = ["view", "phone_click", "whatsapp_click", "share"] as const
+export const PAGE_TYPES = [
+  "view",
+  "phone_click",
+  "whatsapp_click",
+  "share",
+] as const
 
-/** Removes a target's counters, the daily rows and the months they were rolled into. */
+/** Removes a target's counters: hourly, daily and the months they were rolled into. */
 export async function deleteOfTarget(ex: Executor, targetId: string) {
+  await ex.delete(eventsHourly).where(eq(eventsHourly.targetId, targetId))
   await ex.delete(events).where(eq(events.targetId, targetId))
   await ex.delete(eventsMonthly).where(eq(eventsMonthly.targetId, targetId))
 }

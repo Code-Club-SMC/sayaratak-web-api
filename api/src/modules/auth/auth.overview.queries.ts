@@ -1,7 +1,7 @@
 import { and, asc, count, eq, ilike, inArray, lte, or, sql } from "drizzle-orm"
 
 import type { Executor } from "~/shared/db/tx"
-import { type DayRange, dayColumn, withinDays } from "~/shared/time/khartoum"
+import { bucketColumn, type DayRange, withinDays } from "~/shared/time/khartoum"
 
 import { user } from "./auth.tables"
 
@@ -9,9 +9,9 @@ export function countUsers(ex: Executor) {
   return ex.$count(user)
 }
 
-/** New accounts per Khartoum day inside `days`; days with none are missing. */
+/** New accounts per Khartoum day (or hour) inside `days`; buckets with none are missing. */
 export function listCreatedPerDay(ex: Executor, days: DayRange) {
-  const day = dayColumn(user.createdAt)
+  const day = bucketColumn(user.createdAt, days)
   return ex
     .select({ day, count: count() })
     .from(user)

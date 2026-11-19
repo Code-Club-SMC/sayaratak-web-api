@@ -49,6 +49,8 @@ const TUPLES: ReadonlyArray<readonly [string, string, string, string]> = [
   ["reports", "reporter_id", "user", "id"],
   ["reviews", "author_id", "user", "id"],
   ["saved_searches", "user_id", "user", "id"],
+  // Step 11.7-r10: signed-in days; cascade with the account, never protect it.
+  ["user_activity", "user_id", "user", "id"],
   ["seed_datasets", "created_by", "user", "id"],
   ["seed_operations", "actor_id", "user", "id"],
   ["session", "user_id", "user", "id"],

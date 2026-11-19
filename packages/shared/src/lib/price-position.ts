@@ -54,7 +54,7 @@ const keyOf = (l: PriceListing) =>
     : null
 
 // Linear interpolation between the closest ranks of a sorted list.
-const quantile = (sorted: number[], q: number) => {
+export const quantile = (sorted: number[], q: number) => {
   const at = (sorted.length - 1) * q
   const lo = Math.floor(at)
   const a = sorted[lo] ?? 0

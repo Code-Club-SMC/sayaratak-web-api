@@ -47,7 +47,11 @@ const ageBucket = (days: number) =>
   days <= 15 ? 0 : days <= 30 ? 1 : days <= 60 ? 2 : days <= 90 ? 3 : 4
 
 // Median whole days from approval to sold, for listings sold or rented inside [from, to).
-function daysToSell(rows: ListingsReportInput[], from: string, to: string) {
+export function daysToSell(
+  rows: Pick<ListingsReportInput, "soldAt" | "liveSince">[],
+  from: string,
+  to: string
+) {
   const start = instantOf(from)
   const stop = instantOf(to)
   const days = rows.flatMap((r) => {

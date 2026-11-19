@@ -45,6 +45,8 @@ export const OWNED: Owned[] = [
     ids: listing,
     body: {},
   },
+  // Step 11.7-r7 route, swept since r10 (it was missing from these lists).
+  { route: "GET /listings/:id/price", who: "dealer", ids: listing, body: {} },
   {
     route: "PATCH /saved-searches/:id",
     who: "dealer",

@@ -1,5 +1,8 @@
 import { ZodError } from "zod"
 
+import { minuteOf } from "@sayaratak/shared/lib/period"
+import { deviceOf } from "@sayaratak/shared/lib/users-report"
+
 import "./handlers"
 import { db } from "./db"
 import {
@@ -45,6 +48,22 @@ function latency(req: Request) {
     : 150 + Math.random() * 300
 }
 
+// Step 11.7-r10: a signed-in request marks its account active today on its device, as the api's session middleware (which skips auth routes).
+function markActive(user: Ctx["user"], req: Request, path: string) {
+  if (!user || user.banned || path.startsWith("/auth/")) return
+  const day = minuteOf(new Date().toISOString()).slice(0, 10)
+  const device = deviceOf(
+    req.headers.get("x-platform"),
+    req.headers.get("user-agent")
+  )
+  if (
+    !db.activity.some(
+      (a) => a.day === day && a.userId === user.id && a.device === device
+    )
+  )
+    db.activity.push({ day, userId: user.id, device })
+}
+
 export async function handleMock(
   req: Request,
   path?: string
@@ -82,6 +101,7 @@ export async function handleMock(
       },
       form: () => req.formData(),
     }
+    markActive(ctx.user, req, pathname)
     try {
       const result = await r.handler(ctx)
       return result instanceof Response

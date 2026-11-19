@@ -197,6 +197,13 @@
       "when": 1794989329579,
       "tag": "0027_r4_data_capture",
       "breakpoints": true
+    },
+    {
+      "idx": 28,
+      "version": "7",
+      "when": 1795072630314,
+      "tag": "0028_r10_user_activity",
+      "breakpoints": true
     }
   ]
 }

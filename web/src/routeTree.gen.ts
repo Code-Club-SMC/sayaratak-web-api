@@ -50,6 +50,7 @@ import { Route as LocaleAdminBannersRouteImport } from './routes/$locale/admin/b
 import { Route as LocaleAdminBroadcastsRouteImport } from './routes/$locale/admin/broadcasts'
 import { Route as LocaleAdminCategoriesRouteImport } from './routes/$locale/admin/categories'
 import { Route as LocaleAdminDealershipsRouteImport } from './routes/$locale/admin/dealerships'
+import { Route as LocaleAdminInsightsRouteImport } from './routes/$locale/admin/insights'
 import { Route as LocaleAdminListingsRouteImport } from './routes/$locale/admin/listings'
 import { Route as LocaleAdminLocationsRouteImport } from './routes/$locale/admin/locations'
 import { Route as LocaleAdminMakesRouteImport } from './routes/$locale/admin/makes'
@@ -338,6 +339,11 @@ const LocaleAdminCategoriesRoute = LocaleAdminCategoriesRouteImport.update({
 const LocaleAdminDealershipsRoute = LocaleAdminDealershipsRouteImport.update({
   id: '/dealerships',
   path: '/dealerships',
+  getParentRoute: () => LocaleAdminRouteRoute,
+} as any)
+const LocaleAdminInsightsRoute = LocaleAdminInsightsRouteImport.update({
+  id: '/insights',
+  path: '/insights',
   getParentRoute: () => LocaleAdminRouteRoute,
 } as any)
 const LocaleAdminListingsRoute = LocaleAdminListingsRouteImport.update({
@@ -821,6 +827,7 @@ export interface FileRoutesByFullPath {
   '/$locale/admin/broadcasts': typeof LocaleAdminBroadcastsRoute
   '/$locale/admin/categories': typeof LocaleAdminCategoriesRoute
   '/$locale/admin/dealerships': typeof LocaleAdminDealershipsRoute
+  '/$locale/admin/insights': typeof LocaleAdminInsightsRoute
   '/$locale/admin/listings': typeof LocaleAdminListingsRoute
   '/$locale/admin/locations': typeof LocaleAdminLocationsRoute
   '/$locale/admin/makes': typeof LocaleAdminMakesRoute
@@ -940,6 +947,7 @@ export interface FileRoutesByTo {
   '/$locale/admin/broadcasts': typeof LocaleAdminBroadcastsRoute
   '/$locale/admin/categories': typeof LocaleAdminCategoriesRoute
   '/$locale/admin/dealerships': typeof LocaleAdminDealershipsRoute
+  '/$locale/admin/insights': typeof LocaleAdminInsightsRoute
   '/$locale/admin/listings': typeof LocaleAdminListingsRoute
   '/$locale/admin/locations': typeof LocaleAdminLocationsRoute
   '/$locale/admin/makes': typeof LocaleAdminMakesRoute
@@ -1066,6 +1074,7 @@ export interface FileRoutesById {
   '/$locale/admin/broadcasts': typeof LocaleAdminBroadcastsRoute
   '/$locale/admin/categories': typeof LocaleAdminCategoriesRoute
   '/$locale/admin/dealerships': typeof LocaleAdminDealershipsRoute
+  '/$locale/admin/insights': typeof LocaleAdminInsightsRoute
   '/$locale/admin/listings': typeof LocaleAdminListingsRoute
   '/$locale/admin/locations': typeof LocaleAdminLocationsRoute
   '/$locale/admin/makes': typeof LocaleAdminMakesRoute
@@ -1193,6 +1202,7 @@ export interface FileRouteTypes {
     | '/$locale/admin/broadcasts'
     | '/$locale/admin/categories'
     | '/$locale/admin/dealerships'
+    | '/$locale/admin/insights'
     | '/$locale/admin/listings'
     | '/$locale/admin/locations'
     | '/$locale/admin/makes'
@@ -1312,6 +1322,7 @@ export interface FileRouteTypes {
     | '/$locale/admin/broadcasts'
     | '/$locale/admin/categories'
     | '/$locale/admin/dealerships'
+    | '/$locale/admin/insights'
     | '/$locale/admin/listings'
     | '/$locale/admin/locations'
     | '/$locale/admin/makes'
@@ -1437,6 +1448,7 @@ export interface FileRouteTypes {
     | '/$locale/admin/broadcasts'
     | '/$locale/admin/categories'
     | '/$locale/admin/dealerships'
+    | '/$locale/admin/insights'
     | '/$locale/admin/listings'
     | '/$locale/admin/locations'
     | '/$locale/admin/makes'
@@ -1819,6 +1831,13 @@ declare module '@tanstack/react-router' {
       path: '/dealerships'
       fullPath: '/$locale/admin/dealerships'
       preLoaderRoute: typeof LocaleAdminDealershipsRouteImport
+      parentRoute: typeof LocaleAdminRouteRoute
+    }
+    '/$locale/admin/insights': {
+      id: '/$locale/admin/insights'
+      path: '/insights'
+      fullPath: '/$locale/admin/insights'
+      preLoaderRoute: typeof LocaleAdminInsightsRouteImport
       parentRoute: typeof LocaleAdminRouteRoute
     }
     '/$locale/admin/listings': {
@@ -2492,6 +2511,7 @@ interface LocaleAdminRouteRouteChildren {
   LocaleAdminBroadcastsRoute: typeof LocaleAdminBroadcastsRoute
   LocaleAdminCategoriesRoute: typeof LocaleAdminCategoriesRoute
   LocaleAdminDealershipsRoute: typeof LocaleAdminDealershipsRoute
+  LocaleAdminInsightsRoute: typeof LocaleAdminInsightsRoute
   LocaleAdminListingsRoute: typeof LocaleAdminListingsRoute
   LocaleAdminLocationsRoute: typeof LocaleAdminLocationsRoute
   LocaleAdminMakesRoute: typeof LocaleAdminMakesRoute
@@ -2521,6 +2541,7 @@ const LocaleAdminRouteRouteChildren: LocaleAdminRouteRouteChildren = {
   LocaleAdminBroadcastsRoute: LocaleAdminBroadcastsRoute,
   LocaleAdminCategoriesRoute: LocaleAdminCategoriesRoute,
   LocaleAdminDealershipsRoute: LocaleAdminDealershipsRoute,
+  LocaleAdminInsightsRoute: LocaleAdminInsightsRoute,
   LocaleAdminListingsRoute: LocaleAdminListingsRoute,
   LocaleAdminLocationsRoute: LocaleAdminLocationsRoute,
   LocaleAdminMakesRoute: LocaleAdminMakesRoute,

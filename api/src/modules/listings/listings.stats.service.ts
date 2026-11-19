@@ -159,3 +159,22 @@ export async function getPriceListingOfEditable(
   checkCanEdit(target.user, row)
   return toPriceListing(row)
 }
+
+/** Every listing that left draft as the admin Marketplace tab reads it (step 11.7-r10), without its first contact. */
+export async function listMarketListings(ex: Executor) {
+  const rows = await statsQ.listMarketRows(ex)
+  return rows.flatMap((row) =>
+    row.moderation === "draft"
+      ? []
+      : [
+          {
+            ...toPriceListing(row),
+            vehicleType: row.vehicleType,
+            cityId: row.cityId,
+            moderation: row.moderation,
+            createdAt: row.createdAt.toISOString(),
+            decidedAt: row.decidedAt?.toISOString() ?? null,
+          },
+        ]
+  )
+}

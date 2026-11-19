@@ -32,13 +32,21 @@ import type { Review } from "@sayaratak/shared/schemas/review"
 import type { SavedSearch } from "@sayaratak/shared/schemas/saved-search"
 import type { Taxonomy } from "@sayaratak/shared/schemas/taxonomy"
 import type { User } from "@sayaratak/shared/schemas/user"
+import type {
+  Device,
+  SignupMethod,
+} from "@sayaratak/shared/schemas/reports-insights"
 
 // Rows are the API shapes plus the few server-only columns; handlers parse through the schemas, which drops the extras.
 export type UserRow = Omit<User, "hasPassword"> & {
   password: string | null
   locale: Locale
   prefs: NotificationPrefs
+  // Step 11.7-r10: set by a social sign-up; absent is email and password.
+  signupMethod?: SignupMethod
 }
+// Step 11.7-r10: a signed-in account seen on a Khartoum day with a device.
+export type ActivityRow = { day: string; userId: string; device: Device }
 // `bumpedAt` is when a bump last put the listing back at the top of the newest. Step 11.7-r4:
 // `soldAt` is when it last became sold or rented, `decidedAt` when an admin last moderated it.
 export type ListingRow = Listing & {
@@ -156,6 +164,7 @@ export type Db = {
   drafts: DraftRow[]
   events: EventRow[]
   searches: SearchRow[]
+  activity: ActivityRow[]
   contacts: ContactRow[]
   broadcasts: BroadcastRow[]
   uploads: Map<string, UploadRow>

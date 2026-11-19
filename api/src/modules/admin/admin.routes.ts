@@ -4,6 +4,10 @@ import {
   adminSearchSchema,
   adminStatsSchema,
 } from "@sayaratak/shared/schemas/responses"
+import {
+  marketplaceReportSchema,
+  usersReportSchema,
+} from "@sayaratak/shared/schemas/reports-insights"
 import { Hono } from "hono"
 
 import { validate } from "~/shared/http/validate"
@@ -11,6 +15,10 @@ import { spec } from "~/shared/openapi/registry"
 import { requireRole } from "~/modules/auth/auth.middleware"
 
 import { getActivity } from "./admin.activity.service"
+import {
+  getMarketplaceReport,
+  getUsersReport,
+} from "./admin.insights.service"
 import { searchAdmin } from "./admin.search.service"
 import { getStats } from "./admin.stats.service"
 
@@ -58,4 +66,33 @@ adminRoutes.get(
   }),
   requireRole("admin"),
   async (c) => c.json(await searchAdmin(c.req.query("q")))
+)
+
+// Step 11.7-r10: the admin Insights tabs read for a period.
+adminRoutes.get(
+  "/admin/insights/marketplace",
+  spec({
+    summary:
+      "Admin Insights Marketplace tab: live stock, listings created and sold against the compare window, share contacted in their first 7 days, median days to sell and hours to review, lifecycle of the period's listings, splits by type, intent and city, and the typical (middle) price per sale make, model and new/used (live or sold in 90 days, 5+ listings, top 50)",
+    access: "user",
+    responses: { 200: marketplaceReportSchema },
+    errors: [...ADMIN_ERRORS],
+  }),
+  requireRole("admin"),
+  validate.query(rangeQuery),
+  async (c) => c.json(await getMarketplaceReport(c.req.valid("query")))
+)
+
+adminRoutes.get(
+  "/admin/insights/users",
+  spec({
+    summary:
+      "Admin Insights Users tab: accounts, sign-ups by bucket, role and method, average daily, 7-day and 30-day active accounts (signed in, recorded from deploy), device mix of active accounts and account languages",
+    access: "user",
+    responses: { 200: usersReportSchema },
+    errors: [...ADMIN_ERRORS],
+  }),
+  requireRole("admin"),
+  validate.query(rangeQuery),
+  async (c) => c.json(await getUsersReport(c.req.valid("query")))
 )

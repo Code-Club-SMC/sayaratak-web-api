@@ -3,7 +3,11 @@ import { sql } from "drizzle-orm"
 import type { PgTable } from "drizzle-orm/pg-core"
 
 import { backups } from "~/modules/admin-backups/admin-backups.tables"
-import { events, eventsHourly } from "~/modules/analytics/analytics.tables"
+import {
+  events,
+  eventsHourly,
+  userActivity,
+} from "~/modules/analytics/analytics.tables"
 import { settings, sitePages } from "~/modules/content/content.tables"
 import type { Executor } from "~/shared/db/tx"
 
@@ -13,7 +17,7 @@ type Seed = ReturnType<typeof buildSeed>
 
 const BYTES_PER_MB = 1024 * 1024
 
-/** Settings, site pages, backups and event counters (daily and hourly). */
+/** Settings, site pages, backups, event counters (daily and hourly) and signed-in days. */
 export async function seedContent(ex: Executor, data: Seed) {
   await seedSite(ex, data)
   // Demo backups have no dump behind their key; restoring one fails with the object missing.
@@ -30,6 +34,18 @@ export async function seedContent(ex: Executor, data: Seed) {
     }))
   )
   await seedEvents(ex, data)
+  await seedActivity(ex, data)
+}
+
+// Step 11.7-r10: the mock's signed-in days, one unnest like the event counters.
+async function seedActivity(ex: Executor, data: Seed) {
+  const rows = data.activity
+  if (!rows.length) return
+  const column = <K extends keyof (typeof rows)[number]>(key: K) =>
+    `{${rows.map((r) => r[key]).join(",")}}`
+  await ex.execute(
+    sql`insert into ${userActivity} select * from unnest(${column("day")}::date[], ${column("userId")}::text[], ${column("device")}::activity_device[]) where not exists (select from ${userActivity})`
+  )
 }
 
 /** The settings row and the site pages: reference data that production bootstrap writes too. */

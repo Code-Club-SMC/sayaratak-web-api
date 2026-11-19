@@ -10,7 +10,7 @@ import { matches } from "../search"
 
 // Step 11.7-r9: the personal Spending and Alerts tabs. The rules are the shared builders', as in the api; this file only gathers their inputs.
 
-function windowsOf(query: URLSearchParams) {
+export function windowsOf(query: URLSearchParams) {
   const { period, current, compare } = periodOf(query)
   const hourly = period.granularity === "hour"
   const bucketsOf = (w: typeof current) => ({

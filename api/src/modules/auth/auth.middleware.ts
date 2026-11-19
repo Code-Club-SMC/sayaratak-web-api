@@ -2,6 +2,7 @@ import type { Role } from "@sayaratak/shared/schemas/fields"
 import type { MiddlewareHandler } from "hono"
 
 import { fail } from "~/shared/http/errors"
+import { markActive } from "~/modules/analytics/analytics.active.service"
 
 import { refusesAdminRoute } from "./auth.admin.service"
 import { isBannedNow, loadViewer } from "./auth.service"
@@ -30,7 +31,17 @@ export const session: MiddlewareHandler = async (c, next) => {
   )
     fail.forbidden()
   c.set("viewer", viewer)
+  // Step 11.7-r10: runs next to the request, awaited so a test sees the row.
+  const seen =
+    viewer && !isBannedNow(viewer)
+      ? markActive({
+          userId: viewer.id,
+          platform: c.get("platform"),
+          userAgent: c.req.header("user-agent"),
+        })
+      : undefined
   await next()
+  await seen
   for (const cookie of headers.getSetCookie()) {
     c.res.headers.append("set-cookie", cookie)
   }

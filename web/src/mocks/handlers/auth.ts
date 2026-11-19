@@ -140,6 +140,7 @@ route("POST", "/auth/oauth/:provider", async (c) => {
       fullName: accountId,
       email,
       password: null,
+      signupMethod: c.params.provider,
       verifiedPhone: false,
       verifiedEmail: true,
       banned: false,

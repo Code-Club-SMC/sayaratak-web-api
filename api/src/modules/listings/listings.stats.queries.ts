@@ -1,4 +1,4 @@
-import { and, asc, eq, inArray, isNotNull, sql } from "drizzle-orm"
+import { and, asc, eq, inArray, isNotNull, ne, sql } from "drizzle-orm"
 
 import type { Executor } from "~/shared/db/tx"
 
@@ -60,6 +60,24 @@ export function listPriceRows(ex: Executor) {
     .from(listings)
     .where(
       and(eq(listings.moderation, "approved"), eq(listings.seedHidden, false))
+    )
+    .orderBy(asc(listings.id))
+}
+
+/** Every listing that left draft, with what the admin Marketplace tab reads (step 11.7-r10), in id order. */
+export function listMarketRows(ex: Executor) {
+  return ex
+    .select({
+      ...priceColumns,
+      vehicleType: listings.vehicleType,
+      cityId: listings.cityId,
+      moderation: listings.moderation,
+      createdAt: listings.createdAt,
+      decidedAt: listings.decidedAt,
+    })
+    .from(listings)
+    .where(
+      and(ne(listings.moderation, "draft"), eq(listings.seedHidden, false))
     )
     .orderBy(asc(listings.id))
 }

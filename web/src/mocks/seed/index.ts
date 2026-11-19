@@ -27,6 +27,7 @@ import {
   seedVerifications,
   settings,
 } from "./site"
+import { seedActivity } from "./presence"
 import { seedReceipts } from "./receipts"
 import { countries, seedTaxonomy } from "./taxonomy"
 import { clock } from "./util"
@@ -139,6 +140,7 @@ export function buildSeed({ empty = false }: { empty?: boolean } = {}): Db {
           ]),
         ]),
     searches: [],
+    activity: empty ? [] : seedActivity(users, clock.now),
     contacts: [],
     broadcasts: [],
     uploads: seedReceipts(payments, settings.bankakAccount.name),

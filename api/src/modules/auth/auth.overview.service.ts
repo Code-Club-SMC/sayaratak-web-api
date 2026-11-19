@@ -1,3 +1,7 @@
+import type { UserInput } from "@sayaratak/shared/lib/users-report"
+import { localeSchema } from "@sayaratak/shared/schemas/locale"
+import { signupMethodSchema } from "@sayaratak/shared/schemas/reports-insights"
+
 import type { Executor } from "~/shared/db/tx"
 import { containing } from "~/shared/text/like"
 import { clock } from "~/shared/time/clock"
@@ -40,4 +44,16 @@ export function listAnnouncementTargets(
   page?: { after?: string; createdBy: Date; size: number }
 ) {
   return q.listAnnouncementTargets(ex, { roles, now: clock.now(), page })
+}
+
+/** Every account as the admin Users tab reads it (step 11.7-r10); a password account or none reads as email. */
+export async function listUsersForReport(ex: Executor): Promise<UserInput[]> {
+  const rows = await q.listForReport(ex)
+  return rows.map((row) => ({
+    id: row.id,
+    role: row.role,
+    locale: localeSchema.catch("ar").parse(row.locale),
+    createdAt: row.createdAt.toISOString(),
+    method: signupMethodSchema.catch("email").parse(row.provider),
+  }))
 }

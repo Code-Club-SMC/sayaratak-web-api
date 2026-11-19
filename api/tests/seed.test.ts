@@ -72,6 +72,7 @@ const expected = new Map<PgTable, number>([
   [schema.backups, count(seeded.backups)],
   [schema.contacts, count(seeded.contacts)],
   [schema.broadcasts, count(seeded.broadcasts)],
+  [schema.userActivity, count(seeded.activity)],
 ])
 
 // Tables the mock has no rows for: runtime state (sessions, codes, throttles, keys, audit, mail).

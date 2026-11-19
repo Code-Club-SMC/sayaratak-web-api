@@ -1,4 +1,5 @@
 import { eventTypeSchema } from "@sayaratak/shared/schemas/api"
+import { deviceSchema } from "@sayaratak/shared/schemas/reports-insights"
 import { sql } from "drizzle-orm"
 import {
   bigint,
@@ -13,6 +14,8 @@ import {
   smallint,
   text,
 } from "drizzle-orm/pg-core"
+
+import { user } from "~/modules/auth/auth.tables"
 
 export const eventType = pgEnum("event_type", eventTypeSchema.enum)
 
@@ -109,5 +112,26 @@ export const searchesDaily = pgTable(
       ],
     }),
     check("searches_daily_searches_positive", sql`${table.searches} > 0`),
+  ]
+)
+
+export const activityDevice = pgEnum("activity_device", deviceSchema.enum)
+
+// Owner, step 11.7-r10: one row per signed-in account, Khartoum day and device, written on the
+// first request of that day (`insert ... on conflict do nothing`). Feeds active users and the
+// device mix of the admin Users tab. Kept 13 months like the daily events, then deleted by `prune`.
+export const userActivity = pgTable(
+  "user_activity",
+  {
+    day: date({ mode: "string" }).notNull(),
+    userId: text()
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    device: activityDevice().notNull(),
+  },
+  (table) => [
+    primaryKey({ columns: [table.day, table.userId, table.device] }),
+    // Deleting an account removes its rows.
+    index().on(table.userId),
   ]
 )

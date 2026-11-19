@@ -113,3 +113,8 @@ export async function listThreadsOfUsers(ex: Executor, userIds: string[]) {
     ])
   )
 }
+
+/** First day each sender wrote in each listing thread since `sinceDay` (step 11.7-r10). */
+export function listFirstListingMessageDays(ex: Executor, sinceDay: string) {
+  return q.listFirstListingMessageDays(ex, sinceDay)
+}

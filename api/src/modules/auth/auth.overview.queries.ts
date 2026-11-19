@@ -3,7 +3,7 @@ import { and, asc, count, eq, ilike, inArray, lte, or, sql } from "drizzle-orm"
 import type { Executor } from "~/shared/db/tx"
 import { bucketColumn, type DayRange, withinDays } from "~/shared/time/khartoum"
 
-import { user } from "./auth.tables"
+import { account, user } from "./auth.tables"
 
 export function countUsers(ex: Executor) {
   return ex.$count(user)
@@ -84,4 +84,19 @@ export function listAnnouncementTargets(
     )
     .orderBy(asc(sql`length(${user.id})`), asc(user.id))
   return page ? query.limit(page.size) : query
+}
+
+/** Every account with what the admin Users tab reads (step 11.7-r10); `provider` is its first sign-in method. */
+export function listForReport(ex: Executor) {
+  return ex
+    .select({
+      id: user.id,
+      role: user.role,
+      locale: user.locale,
+      createdAt: user.createdAt,
+      provider: sql<
+        string | null
+      >`(select ${account.providerId} from ${account} where ${account.userId} = ${user.id} order by ${account.createdAt} limit 1)`,
+    })
+    .from(user)
 }

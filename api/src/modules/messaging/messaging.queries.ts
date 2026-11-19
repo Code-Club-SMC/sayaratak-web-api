@@ -1,7 +1,8 @@
-import { and, asc, count, eq, inArray, isNull, ne } from "drizzle-orm"
+import { and, asc, count, eq, inArray, isNull, ne, sql } from "drizzle-orm"
 
 import type { Executor } from "~/shared/db/tx"
 import {
+  dayColumn,
   bucketColumn,
   type DayRange,
   weekdayHourColumns,
@@ -124,4 +125,21 @@ function threadIdsOf(ex: Executor, userId: string) {
     .select({ id: threadParticipants.threadId })
     .from(threadParticipants)
     .where(eq(threadParticipants.userId, userId))
+}
+
+/** First Khartoum day each sender wrote in each listing thread since `sinceDay` (step 11.7-r10). */
+export function listFirstListingMessageDays(ex: Executor, sinceDay: string) {
+  const day = dayColumn(messages.createdAt)
+  return ex
+    .select({
+      listingId: threads.subjectId,
+      senderId: messages.senderId,
+      day: sql<string>`min(${day})`,
+    })
+    .from(messages)
+    .innerJoin(threads, eq(threads.id, messages.threadId))
+    .where(
+      and(eq(threads.subjectType, "listing"), sql`${day} >= ${sinceDay}`)
+    )
+    .groupBy(threads.subjectId, messages.senderId)
 }

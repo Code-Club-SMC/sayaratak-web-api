@@ -1,0 +1,100 @@
+import {
+  buildMarketplaceReport,
+  type MarketInput,
+} from "@sayaratak/shared/lib/marketplace-report"
+import { minuteOf } from "@sayaratak/shared/lib/period"
+import {
+  activityDaysOf,
+  buildUsersReport,
+} from "@sayaratak/shared/lib/users-report"
+import {
+  marketplaceReportSchema,
+  usersReportSchema,
+} from "@sayaratak/shared/schemas/reports-insights"
+
+import { db } from "../db"
+import { needRole, route } from "../http"
+import { windowsOf } from "./reports-account"
+
+// Step 11.7-r10: the admin Insights tabs. The rules are the shared builders', as in the api; this file only gathers their inputs.
+
+const earlier = (a: string | undefined, b: string) => (a && a < b ? a : b)
+
+// First day of a call or WhatsApp click, or a message from someone other than the owner, per listing.
+function firstContacts() {
+  const first = new Map<string, string>()
+  for (const e of db.events)
+    if (e.counts.phone_click || e.counts.whatsapp_click)
+      first.set(e.targetId, earlier(first.get(e.targetId), e.day))
+  const owners = new Map(db.listings.map((l) => [l.id, l.ownerUserId]))
+  const listingOf = new Map(
+    db.threads
+      .filter((t) => t.subjectType === "listing")
+      .map((t) => [t.id, t.subjectId])
+  )
+  for (const m of db.messages) {
+    const id = listingOf.get(m.threadId)
+    if (id && owners.get(id) !== m.senderId)
+      first.set(id, earlier(first.get(id), minuteOf(m.createdAt).slice(0, 10)))
+  }
+  return first
+}
+
+route("GET", "/admin/insights/marketplace", (c) => {
+  needRole(c, "admin")
+  const first = firstContacts()
+  const listings = db.listings.flatMap((l): MarketInput[] =>
+    l.moderation === "draft"
+      ? []
+      : [
+          {
+            id: l.id,
+            ownerUserId: l.ownerUserId,
+            kind: l.kind,
+            intent: l.intent,
+            condition: l.condition,
+            makeId: l.makeId,
+            modelId: l.modelId,
+            year: l.year,
+            rentPeriod: l.rentPeriod,
+            price: l.price,
+            status: l.status,
+            expiresAt: l.expiresAt,
+            soldAt: l.soldAt ?? null,
+            vehicleType: l.vehicleType,
+            cityId: l.cityId,
+            moderation: l.moderation,
+            createdAt: l.createdAt,
+            decidedAt: l.decidedAt ?? null,
+            firstContactDay: first.get(l.id) ?? null,
+          },
+        ]
+  )
+  return marketplaceReportSchema.parse(
+    buildMarketplaceReport({
+      ...windowsOf(c.query),
+      listings,
+      now: Date.now(),
+    })
+  )
+})
+
+route("GET", "/admin/insights/users", (c) => {
+  needRole(c, "admin")
+  const windows = windowsOf(c.query)
+  const { first, last } = activityDaysOf(windows.period)
+  return usersReportSchema.parse(
+    buildUsersReport({
+      ...windows,
+      users: db.users.map((u) => ({
+        id: u.id,
+        role: u.role,
+        locale: u.locale,
+        createdAt: u.createdAt,
+        method: u.signupMethod ?? "email",
+      })),
+      activity: db.activity.filter((a) => a.day >= first && a.day <= last),
+      activeSince: db.activity.map((a) => a.day).sort()[0] ?? null,
+    })
+  )
+})

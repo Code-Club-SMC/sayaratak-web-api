@@ -120,7 +120,8 @@ export const navConfig: Record<Role, NavGroup[]> = {
   ]),
   mechanic: business([inquiries, item("portfolio", "/portfolio", ImagesIcon)]),
   admin: [
-    { items: [overview] },
+    // Step 11.7-r10: Insights is the admin's reports page; "Reports" under Moderation stays the abuse reports.
+    { items: [overview, item("insights", "/insights", BarChart3Icon)] },
     group("moderation", [
       item(
         "review_queue",

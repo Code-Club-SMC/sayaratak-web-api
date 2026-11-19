@@ -1,5 +1,5 @@
 import type { EventType } from "@sayaratak/shared/schemas/api"
-import { and, between, eq, inArray, sql, sum } from "drizzle-orm"
+import { and, between, eq, inArray, min, sql, sum } from "drizzle-orm"
 
 import type { Executor } from "~/shared/db/tx"
 import type { DayRange } from "~/shared/time/khartoum"
@@ -168,4 +168,18 @@ export function listTargetMonthlyCounts(
       )
     )
     .groupBy(eventsMonthly.targetId, eventsMonthly.type)
+}
+
+/** First day each target got a call or WhatsApp click since `sinceDay` (step 11.7-r10). */
+export function listFirstClickDays(ex: Executor, sinceDay: string) {
+  return ex
+    .select({ targetId: events.targetId, day: min(events.day) })
+    .from(events)
+    .where(
+      and(
+        inArray(events.type, ["phone_click", "whatsapp_click"]),
+        sql`${events.day} >= ${sinceDay}`
+      )
+    )
+    .groupBy(events.targetId)
 }

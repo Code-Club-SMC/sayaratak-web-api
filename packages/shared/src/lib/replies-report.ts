@@ -53,6 +53,14 @@ function statsOf(started: Started[], now: number) {
   }
 }
 
+/** The share of buyer threads started in [from, to) answered within 24 h (whole percent), null without a decided thread; the city rank reads it per peer (step 11.7-r8). */
+export const replyRateOf = (
+  threads: ThreadInput[],
+  from: string,
+  to: string,
+  now: number
+) => statsOf(startedIn(threads, from, to), now).replyRate
+
 const speedOf = (s: Started) => {
   if (s.reply === null) return "none"
   const hours = (s.reply - s.at) / 3_600_000

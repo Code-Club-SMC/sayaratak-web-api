@@ -77,3 +77,39 @@ export async function listThreadsForReport(ex: Executor, userId: string) {
   }
   return [...threads.values()].sort((a, b) => (a.id < b.id ? -1 : 1))
 }
+
+/**
+ * The threads of each of these users as `listThreadsForReport` shapes them
+ * (without subject titles), keyed by user id; the city rank reads them
+ * (step 11.7-r8). Users without a thread are left out.
+ */
+export async function listThreadsOfUsers(ex: Executor, userIds: string[]) {
+  if (userIds.length === 0) return new Map()
+  const rows = await q.listMessagesOfUsersThreads(ex, userIds)
+  const byUser = new Map<
+    string,
+    Map<string, { mine: boolean; createdAt: string }[]>
+  >()
+  for (const row of rows) {
+    const threads = byUser.get(row.userId) ?? new Map()
+    const list = threads.get(row.threadId) ?? []
+    list.push({
+      mine: row.senderId === row.userId,
+      createdAt: row.createdAt.toISOString(),
+    })
+    threads.set(row.threadId, list)
+    byUser.set(row.userId, threads)
+  }
+  return new Map(
+    [...byUser].map(([userId, threads]) => [
+      userId,
+      [...threads]
+        .sort(([a], [b]) => (a < b ? -1 : 1))
+        .map(([id, messages]) => ({
+          id,
+          subjectTitle: { ar: "", en: "" },
+          messages,
+        })),
+    ])
+  )
+}

@@ -13,6 +13,7 @@ import {
   priceReportSchema,
   type PriceReportQuery,
 } from "@sayaratak/shared/schemas/reports-price"
+import { rankReportSchema } from "@sayaratak/shared/schemas/reports-rank"
 import { promotionsReportSchema } from "@sayaratak/shared/schemas/reports-promotions"
 import { repliesReportSchema } from "@sayaratak/shared/schemas/reports-replies"
 import { reviewsReportSchema } from "@sayaratak/shared/schemas/reports-reviews"
@@ -55,3 +56,5 @@ export const reviewsReportQuery = (query: PeriodQuery) =>
   tabQuery("reviews", reviewsReportSchema, query)
 export const priceReportQuery = (query: PriceReportQuery) =>
   tabQuery("price", priceReportSchema, query)
+export const rankReportQuery = (query: PeriodQuery) =>
+  tabQuery("rank", rankReportSchema, query)

@@ -12,8 +12,16 @@ import { repliesReportQuery } from "../queries"
 import { UnansweredCard } from "./unanswered-card"
 
 // How fast buyers get an answer: threads they started in the period, the typical first-reply time, the share answered within 24 hours, speed bands and the threads waiting now (step 11.7-r6).
-export function RepliesReport({ query }: { query: PeriodQuery }) {
+// `customers`: workshops and mechanics hear from customers, not buyers (step 11.7-r8).
+export function RepliesReport({
+  query,
+  customers,
+}: {
+  query: PeriodQuery
+  customers?: boolean
+}) {
   const { t, locale } = useT()
+  const who = customers ? "_customer" : ""
   const report = useQuery(repliesReportQuery(query))
   const { data, isPending } = report
   if (report.isError && !data)
@@ -45,14 +53,14 @@ export function RepliesReport({ query }: { query: PeriodQuery }) {
           label={t("reports.stat_reply_rate")}
           value={now ? now.replyRate : undefined}
           suffix="%"
-          empty={t("reports.no_threads")}
+          empty={t(`reports.no_threads${who}`)}
           note={previous(
             before?.replyRate != null ? `${before.replyRate}%` : undefined
           )}
           loading={isPending}
         />
         <StatCard
-          label={t("reports.stat_threads")}
+          label={t(`reports.stat_threads${who}`)}
           value={now?.threads}
           note={previous(
             before ? formatNumber(before.threads, locale) : undefined
@@ -61,7 +69,7 @@ export function RepliesReport({ query }: { query: PeriodQuery }) {
         />
       </div>
       <p className="text-caption text-muted-foreground">
-        {t("reports.replies_note")}
+        {t(`reports.replies_note${who}`)}
       </p>
       <BarListCard
         title={t("reports.speed_title")}

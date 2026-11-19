@@ -12,6 +12,7 @@ import {
   priceReportQuerySchema,
   priceReportSchema,
 } from "@sayaratak/shared/schemas/reports-price"
+import { rankReportSchema } from "@sayaratak/shared/schemas/reports-rank"
 import { promotionsReportSchema } from "@sayaratak/shared/schemas/reports-promotions"
 import { repliesReportSchema } from "@sayaratak/shared/schemas/reports-replies"
 import { reviewsReportSchema } from "@sayaratak/shared/schemas/reports-reviews"
@@ -30,6 +31,7 @@ import {
   getReviewsReport,
 } from "./analytics.activity-reports.service"
 import { getListingPrice, getPriceReport } from "./analytics.price.service"
+import { getRankReport } from "./analytics.rank.service"
 import { getPromotionsReport } from "./analytics.promotions-report.service"
 import { getListingsReport } from "./analytics.reports.service"
 import { getListingAnalytics, recordEvent } from "./analytics.service"
@@ -135,6 +137,12 @@ const reports = [
     "Visible reviews of the account's business: average stars per bucket, star breakdown, reply rate and median reply hours for the period and the compare window, and the all-time average",
     reviewsReportSchema,
     getReviewsReport,
+  ],
+  [
+    "rank",
+    "Where the account's business stands among listed businesses of its kind in its city (all Sudan under 5 there) for views, contacts, rating (3+ reviews) and 24 h reply rate: the share of the other ranked peers it beats, shown with 5+ ranked; aggregate only",
+    rankReportSchema,
+    getRankReport,
   ],
 ] as const
 

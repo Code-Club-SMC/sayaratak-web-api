@@ -92,6 +92,24 @@ export function listMessagesOfThreads(ex: Executor, userId: string) {
     .orderBy(asc(messages.createdAt), asc(messages.id))
 }
 
+/** Every message of these users' threads, once per participant user, oldest first (city rank, step 11.7-r8). */
+export function listMessagesOfUsersThreads(ex: Executor, userIds: string[]) {
+  return ex
+    .select({
+      userId: threadParticipants.userId,
+      threadId: messages.threadId,
+      senderId: messages.senderId,
+      createdAt: messages.createdAt,
+    })
+    .from(messages)
+    .innerJoin(
+      threadParticipants,
+      eq(threadParticipants.threadId, messages.threadId)
+    )
+    .where(inArray(threadParticipants.userId, userIds))
+    .orderBy(asc(messages.createdAt), asc(messages.id))
+}
+
 function receivedBy(ex: Executor, userId: string | null) {
   return userId
     ? and(

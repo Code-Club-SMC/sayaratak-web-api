@@ -1,7 +1,11 @@
-import { createFileRoute } from "@tanstack/react-router"
+import { createFileRoute, redirect } from "@tanstack/react-router"
 
-import { analyticsRoute } from "@/features/analytics/analytics-routes"
-
-export const Route = createFileRoute("/$locale/workshop/analytics")(
-  analyticsRoute("workshop")
-)
+// Analytics became the Performance tab of Reports (step 11.7-r8); old links keep their period.
+export const Route = createFileRoute("/$locale/workshop/analytics")({
+  beforeLoad: ({ params, location }) => {
+    throw redirect({
+      href: `/${params.locale}/workshop/reports${location.searchStr}`,
+      replace: true,
+    })
+  },
+})

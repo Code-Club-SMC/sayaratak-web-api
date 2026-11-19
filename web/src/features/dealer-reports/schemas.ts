@@ -3,16 +3,34 @@ import { z } from "zod"
 import { listingsReportQuerySchema } from "@sayaratak/shared/schemas/reports"
 import { priceFilterSchema } from "@sayaratak/shared/schemas/reports-price"
 
-// The dealer's Reports page (steps 11.7-r5 to r7): the tab, the period, the Listings filter and sort, the Price band and the page live in the URL.
+// The business Reports page (steps 11.7-r5 to r8): the tab, the period, the Listings filter and sort, the Price band and the page live in the URL.
 export const reportsTabs = [
   "performance",
   "listings",
   "price",
   "promotions",
   "demand",
+  "ads",
   "replies",
   "reviews",
+  "rank",
 ] as const
+export type ReportsTab = (typeof reportsTabs)[number]
+export type ReportsRole = "dealership" | "workshop" | "mechanic"
+
+// Workshops and mechanics have no listings: their tabs are Performance, Ads (banner campaigns), Replies, Reviews and Rank (step 11.7-r8).
+export const tabsOf = (role: ReportsRole): readonly ReportsTab[] =>
+  role === "dealership"
+    ? [
+        "performance",
+        "listings",
+        "price",
+        "promotions",
+        "demand",
+        "replies",
+        "reviews",
+      ]
+    : ["performance", "ads", "replies", "reviews", "rank"]
 export const reportsSearchSchema = listingsReportQuerySchema.extend({
   tab: z.enum(reportsTabs).catch("performance"),
   band: priceFilterSchema.catch("all"),

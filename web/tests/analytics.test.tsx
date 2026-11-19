@@ -3,7 +3,6 @@ import { fireEvent, screen, waitFor, within } from "@testing-library/react"
 import { beforeEach, describe, expect, it, vi } from "vitest"
 
 import { ContactActions } from "@/components/app/contact-actions"
-import { AnalyticsPage } from "@/features/analytics/components/analytics-page"
 import { ReportsPage } from "@/features/dealer-reports/components/reports-page"
 import {
   analyticsSearchSchema,
@@ -101,7 +100,7 @@ describe("report period (step 11.7-r1)", () => {
   })
 
   const openPage = (search = "") =>
-    renderShell(<ReportsPage />, {
+    renderShell(<ReportsPage role="dealership" />, {
       role: "dealership",
       path: `/en/dealer/reports${search}`,
     })
@@ -170,7 +169,7 @@ describe("dealership analytics", () => {
         [a!.id, 20, { view: 5 }],
       ]
     )
-    return renderShell(<ReportsPage />, {
+    return renderShell(<ReportsPage role="dealership" />, {
       role: "dealership",
       path: `/en/dealer/reports${search}`,
     })
@@ -277,7 +276,7 @@ describe("dealership analytics", () => {
     )
     visit.unmount()
     db.messages = []
-    await renderShell(<ReportsPage />, {
+    await renderShell(<ReportsPage role="dealership" />, {
       role: "dealership",
       path: "/en/dealer/reports?tab=listings",
     })
@@ -317,9 +316,9 @@ describe("workshop and mechanic analytics", () => {
     )!
     const shop = db.workshops.find((w) => w.ownerId === owner.id)!
     setEvents([shop.id], [[shop.id, 0, { view: 4, phone_click: 1 }]])
-    await renderShell(<AnalyticsPage role="workshop" />, {
+    await renderShell(<ReportsPage role="workshop" />, {
       role: "workshop",
-      path: "/en/workshop/analytics",
+      path: "/en/workshop/reports",
     })
     await waitFor(async () =>
       expect((await card("Profile views")).textContent).toContain("4")
@@ -382,9 +381,9 @@ describe("workshop and mechanic analytics", () => {
       ).toMatchObject({ phone_click: 1, whatsapp_click: 1 })
     )
     visit.unmount()
-    await renderShell(<AnalyticsPage role="workshop" />, {
+    await renderShell(<ReportsPage role="workshop" />, {
       role: "workshop",
-      path: "/en/workshop/analytics",
+      path: "/en/workshop/reports",
     })
     await waitFor(async () =>
       expect((await card("Calls")).textContent).toContain("1")
@@ -417,9 +416,9 @@ describe("workshop and mechanic analytics", () => {
       ).toMatchObject({ view: 1, phone_click: 1, whatsapp_click: 1 })
     )
     visit.unmount()
-    await renderShell(<AnalyticsPage role="mechanic" />, {
+    await renderShell(<ReportsPage role="mechanic" />, {
       role: "mechanic",
-      path: "/en/mechanic/analytics",
+      path: "/en/mechanic/reports",
     })
     await waitFor(async () =>
       expect((await card("Calls")).textContent).toContain("1")

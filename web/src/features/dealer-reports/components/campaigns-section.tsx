@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, type ReactNode } from "react"
 import { ImageIcon } from "lucide-react"
 
 import { BarChartCard } from "@/components/app/bar-chart-card"
@@ -19,10 +19,13 @@ export function CampaignsSection({
   rows,
   period,
   loading,
+  emptyAction,
 }: {
   rows?: CampaignReportRow[]
   period?: Period
   loading?: boolean
+  // Shown in the empty state, such as a link to start a campaign.
+  emptyAction?: ReactNode
 }) {
   const { t, locale } = useT()
   const [picked, setPicked] = useState<string | null>(null)
@@ -135,6 +138,7 @@ export function CampaignsSection({
           <EmptyState
             icon={ImageIcon}
             title={t("reports.campaigns_empty")}
+            action={emptyAction}
             level={3}
             className="py-6"
           />

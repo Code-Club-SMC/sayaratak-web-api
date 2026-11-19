@@ -68,7 +68,7 @@ const billing = item("billing", "/billing", CreditCardIcon)
 const ads = item("ads", "/ads", PresentationIcon)
 const settings = item("settings", "/settings", SettingsIcon)
 const reviews = item("reviews", "/reviews", StarIcon)
-const analytics = item("analytics", "/analytics", BarChart3Icon)
+const reports = item("business_reports", "/reports", BarChart3Icon)
 const verification = item("verification", "/verification", BadgeCheckIcon)
 const profile = item("profile", "/profile", UserRoundIcon)
 const inquiries = item("inquiries", "/inquiries", InboxIcon, "unreadMessages")
@@ -79,10 +79,10 @@ const group = (key: string, items: NavItem[]): NavGroup => ({
 })
 
 // Business roles share the Work, Growth, Business and Account groups; only the Work items differ.
-// Dealerships open Reports instead of Analytics (step 11.7-r5); workshops and mechanics follow in r8.
+// Every business role opens Reports (steps 11.7-r5 and r8).
 const business = (
   work: NavItem[],
-  growth: NavItem[] = [analytics]
+  growth: NavItem[] = [reports]
 ): NavGroup[] => [
   { items: [overview] },
   group("work", work),
@@ -107,10 +107,7 @@ export const navConfig: Record<Role, NavGroup[]> = {
       item("inventory", "/inventory", CarIcon),
       item("messages", "/messages", MessageSquareIcon, "unreadMessages"),
     ],
-    [
-      item("business_reports", "/reports", BarChart3Icon),
-      item("promotions", "/promotions", MegaphoneIcon),
-    ]
+    [reports, item("promotions", "/promotions", MegaphoneIcon)]
   ),
   workshop: business([
     inquiries,

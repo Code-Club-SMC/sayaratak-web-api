@@ -30174,6 +30174,333 @@
         }
       }
     },
+    "/api/v1/me/reports/rank": {
+      "get": {
+        "operationId": "getMeReportsRank",
+        "summary": "Where the account's business stands among listed businesses of its kind in its city (all Sudan under 5 there) for views, contacts, rating (3+ reviews) and 24 h reply rate: the share of the other ranked peers it beats, shown with 5+ ranked; aggregate only",
+        "security": [
+          {
+            "session": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "range",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "default": "30d",
+              "type": "string",
+              "enum": [
+                "7d",
+                "30d",
+                "90d"
+              ]
+            }
+          },
+          {
+            "name": "from",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}$"
+            }
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}$"
+            }
+          },
+          {
+            "name": "compare",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "default": "previous",
+              "type": "string",
+              "enum": [
+                "previous",
+                "year"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "period": {
+                      "type": "object",
+                      "properties": {
+                        "from": {
+                          "type": "string",
+                          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}$"
+                        },
+                        "to": {
+                          "type": "string",
+                          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}$"
+                        },
+                        "compareFrom": {
+                          "type": "string",
+                          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}$"
+                        },
+                        "compareTo": {
+                          "type": "string",
+                          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}$"
+                        },
+                        "compare": {
+                          "type": "string",
+                          "enum": [
+                            "previous",
+                            "year"
+                          ]
+                        },
+                        "granularity": {
+                          "type": "string",
+                          "enum": [
+                            "hour",
+                            "day",
+                            "week",
+                            "month"
+                          ]
+                        },
+                        "custom": {
+                          "type": "boolean"
+                        },
+                        "rolledUp": {
+                          "type": "boolean"
+                        },
+                        "eventsCompared": {
+                          "type": "boolean"
+                        },
+                        "wholeDays": {
+                          "type": "boolean"
+                        }
+                      },
+                      "required": [
+                        "from",
+                        "to",
+                        "compareFrom",
+                        "compareTo",
+                        "compare",
+                        "granularity",
+                        "custom",
+                        "rolledUp",
+                        "eventsCompared",
+                        "wholeDays"
+                      ]
+                    },
+                    "scope": {
+                      "type": "string",
+                      "enum": [
+                        "city",
+                        "country"
+                      ]
+                    },
+                    "cityId": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "peers": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    },
+                    "metrics": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "key": {
+                            "type": "string",
+                            "enum": [
+                              "views",
+                              "contacts",
+                              "rating",
+                              "replyRate"
+                            ]
+                          },
+                          "state": {
+                            "type": "string",
+                            "enum": [
+                              "ok",
+                              "few",
+                              "none"
+                            ]
+                          },
+                          "value": {
+                            "type": [
+                              "number",
+                              "null"
+                            ]
+                          },
+                          "ranked": {
+                            "type": "integer",
+                            "minimum": -9007199254740991,
+                            "maximum": 9007199254740991
+                          },
+                          "percentile": {
+                            "anyOf": [
+                              {
+                                "type": "integer",
+                                "minimum": -9007199254740991,
+                                "maximum": 9007199254740991
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          }
+                        },
+                        "required": [
+                          "key",
+                          "state",
+                          "value",
+                          "ranked",
+                          "percentile"
+                        ]
+                      }
+                    }
+                  },
+                  "required": [
+                    "period",
+                    "scope",
+                    "cityId",
+                    "peers",
+                    "metrics"
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "unauthenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "const": "unauthenticated"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "fields": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    "retryAfter": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "banned",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "const": "banned"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "fields": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    "retryAfter": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ]
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "validation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "const": "validation"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "fields": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    "retryAfter": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/me/reports/price": {
       "get": {
         "operationId": "getMeReportsPrice",

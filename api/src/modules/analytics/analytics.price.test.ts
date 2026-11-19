@@ -1,5 +1,6 @@
 import { beforeAll, describe, expect, test } from "bun:test"
 import {
+  type PricePosition,
   pricePositionSchema,
   priceReportSchema,
 } from "@sayaratak/shared/schemas/reports-price"
@@ -24,6 +25,24 @@ beforeAll(async () => {
 const get = (path: string, who?: SignedIn) =>
   req(path, who ? { headers: { cookie: who.cookie } } : {})
 
+const bandOf = (gap: number) => {
+  if (gap < -10) return "below"
+  return gap > 10 ? "above" : "around"
+}
+
+// One row's position: no band unless ok; ok rows have 5+ comparables, ordered quartiles and the band of their gap.
+function checkPosition(p: PricePosition) {
+  if (p.state !== "ok") {
+    expect(p.band).toBeNull()
+    if (p.state === "few") expect(p.comparables).toBeLessThan(5)
+    return
+  }
+  expect(p.comparables).toBeGreaterThanOrEqual(5)
+  expect(p.low ?? 0).toBeLessThanOrEqual(p.median ?? 0)
+  expect(p.median ?? 0).toBeLessThanOrEqual(p.high ?? 0)
+  expect(p.band).toBe(bandOf(p.gapPct ?? 0))
+}
+
 describe("step 11.7-r7 price position", () => {
   test("the Price report: summary adds up, bands follow the gap, filter and page", async () => {
     const body = await expectSchema(
@@ -35,18 +54,7 @@ describe("step 11.7-r7 price position", () => {
     // The seed price cluster gives the demo dealer one listing in each band.
     for (const n of [below, around, above]) expect(n).toBeGreaterThan(0)
     expect(body.rows.total).toBe(live)
-    for (const { position: p } of body.rows.items) {
-      if (p.state !== "ok") {
-        expect(p.band).toBeNull()
-        if (p.state === "few") expect(p.comparables).toBeLessThan(5)
-        continue
-      }
-      expect(p.comparables).toBeGreaterThanOrEqual(5)
-      expect(p.low ?? 0).toBeLessThanOrEqual(p.median ?? 0)
-      expect(p.median ?? 0).toBeLessThanOrEqual(p.high ?? 0)
-      const gap = p.gapPct ?? 0
-      expect(p.band).toBe(gap < -10 ? "below" : gap > 10 ? "above" : "around")
-    }
+    for (const { position } of body.rows.items) checkPosition(position)
     const unknownOnly = await expectSchema(
       await get("/me/reports/price?band=unknown", dealer),
       priceReportSchema

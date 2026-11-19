@@ -8,7 +8,9 @@ import * as taxonomy from "~/modules/taxonomy/taxonomy.service"
 import * as uploads from "~/modules/uploads/uploads.media.service"
 
 import { toMapPoint } from "./businesses.mapper"
+import type { BusinessKind } from "./businesses.types"
 import * as q from "./businesses.queries"
+import * as rank from "./businesses.rank.queries"
 
 export type BusinessLayer = "dealerships" | "workshops" | "mechanics"
 
@@ -20,6 +22,19 @@ export function getBusinessIdOf(ex: Executor, ownerUserId: string) {
 /** The id and city of the one business profile the user owns, if any. */
 export function getBusinessRefOf(ex: Executor, ownerUserId: string) {
   return q.getRefOfOwner(ex, ownerUserId)
+}
+
+/** Listed businesses of the asker's kind plus the asker's own, for the city rank (step 11.7-r8). */
+export async function listRankPeers(
+  ex: Executor,
+  self: { kind: BusinessKind; id: string }
+) {
+  const hiddenOwnerIds = await auth.listBannedIds(ex)
+  return rank.listRankPeers(ex, {
+    kind: self.kind,
+    selfId: self.id,
+    hiddenOwnerIds,
+  })
 }
 
 /** Whether the id names a dealership, workshop or mechanic profile. */

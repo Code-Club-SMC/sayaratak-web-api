@@ -88,6 +88,7 @@ import { Route as LocaleMechanicInquiriesRouteImport } from './routes/$locale/me
 import { Route as LocaleMechanicNotificationsRouteImport } from './routes/$locale/mechanic/notifications'
 import { Route as LocaleMechanicPortfolioRouteImport } from './routes/$locale/mechanic/portfolio'
 import { Route as LocaleMechanicProfileRouteImport } from './routes/$locale/mechanic/profile'
+import { Route as LocaleMechanicReportsRouteImport } from './routes/$locale/mechanic/reports'
 import { Route as LocaleMechanicReviewsRouteImport } from './routes/$locale/mechanic/reviews'
 import { Route as LocaleMechanicSettingsRouteImport } from './routes/$locale/mechanic/settings'
 import { Route as LocaleMechanicVerificationRouteImport } from './routes/$locale/mechanic/verification'
@@ -100,6 +101,7 @@ import { Route as LocaleWorkshopInquiriesRouteImport } from './routes/$locale/wo
 import { Route as LocaleWorkshopNotificationsRouteImport } from './routes/$locale/workshop/notifications'
 import { Route as LocaleWorkshopPhotosRouteImport } from './routes/$locale/workshop/photos'
 import { Route as LocaleWorkshopProfileRouteImport } from './routes/$locale/workshop/profile'
+import { Route as LocaleWorkshopReportsRouteImport } from './routes/$locale/workshop/reports'
 import { Route as LocaleWorkshopReviewsRouteImport } from './routes/$locale/workshop/reviews'
 import { Route as LocaleWorkshopServicesRouteImport } from './routes/$locale/workshop/services'
 import { Route as LocaleWorkshopSettingsRouteImport } from './routes/$locale/workshop/settings'
@@ -532,6 +534,11 @@ const LocaleMechanicProfileRoute = LocaleMechanicProfileRouteImport.update({
   path: '/profile',
   getParentRoute: () => LocaleMechanicRouteRoute,
 } as any)
+const LocaleMechanicReportsRoute = LocaleMechanicReportsRouteImport.update({
+  id: '/reports',
+  path: '/reports',
+  getParentRoute: () => LocaleMechanicRouteRoute,
+} as any)
 const LocaleMechanicReviewsRoute = LocaleMechanicReviewsRouteImport.update({
   id: '/reviews',
   path: '/reviews',
@@ -592,6 +599,11 @@ const LocaleWorkshopPhotosRoute = LocaleWorkshopPhotosRouteImport.update({
 const LocaleWorkshopProfileRoute = LocaleWorkshopProfileRouteImport.update({
   id: '/profile',
   path: '/profile',
+  getParentRoute: () => LocaleWorkshopRouteRoute,
+} as any)
+const LocaleWorkshopReportsRoute = LocaleWorkshopReportsRouteImport.update({
+  id: '/reports',
+  path: '/reports',
   getParentRoute: () => LocaleWorkshopRouteRoute,
 } as any)
 const LocaleWorkshopReviewsRoute = LocaleWorkshopReviewsRouteImport.update({
@@ -838,6 +850,7 @@ export interface FileRoutesByFullPath {
   '/$locale/mechanic/notifications': typeof LocaleMechanicNotificationsRoute
   '/$locale/mechanic/portfolio': typeof LocaleMechanicPortfolioRoute
   '/$locale/mechanic/profile': typeof LocaleMechanicProfileRoute
+  '/$locale/mechanic/reports': typeof LocaleMechanicReportsRoute
   '/$locale/mechanic/reviews': typeof LocaleMechanicReviewsRoute
   '/$locale/mechanic/settings': typeof LocaleMechanicSettingsRoute
   '/$locale/mechanic/verification': typeof LocaleMechanicVerificationRoute
@@ -848,6 +861,7 @@ export interface FileRoutesByFullPath {
   '/$locale/workshop/notifications': typeof LocaleWorkshopNotificationsRoute
   '/$locale/workshop/photos': typeof LocaleWorkshopPhotosRoute
   '/$locale/workshop/profile': typeof LocaleWorkshopProfileRoute
+  '/$locale/workshop/reports': typeof LocaleWorkshopReportsRoute
   '/$locale/workshop/reviews': typeof LocaleWorkshopReviewsRoute
   '/$locale/workshop/services': typeof LocaleWorkshopServicesRoute
   '/$locale/workshop/settings': typeof LocaleWorkshopSettingsRoute
@@ -954,6 +968,7 @@ export interface FileRoutesByTo {
   '/$locale/mechanic/notifications': typeof LocaleMechanicNotificationsRoute
   '/$locale/mechanic/portfolio': typeof LocaleMechanicPortfolioRoute
   '/$locale/mechanic/profile': typeof LocaleMechanicProfileRoute
+  '/$locale/mechanic/reports': typeof LocaleMechanicReportsRoute
   '/$locale/mechanic/reviews': typeof LocaleMechanicReviewsRoute
   '/$locale/mechanic/settings': typeof LocaleMechanicSettingsRoute
   '/$locale/mechanic/verification': typeof LocaleMechanicVerificationRoute
@@ -964,6 +979,7 @@ export interface FileRoutesByTo {
   '/$locale/workshop/notifications': typeof LocaleWorkshopNotificationsRoute
   '/$locale/workshop/photos': typeof LocaleWorkshopPhotosRoute
   '/$locale/workshop/profile': typeof LocaleWorkshopProfileRoute
+  '/$locale/workshop/reports': typeof LocaleWorkshopReportsRoute
   '/$locale/workshop/reviews': typeof LocaleWorkshopReviewsRoute
   '/$locale/workshop/services': typeof LocaleWorkshopServicesRoute
   '/$locale/workshop/settings': typeof LocaleWorkshopSettingsRoute
@@ -1077,6 +1093,7 @@ export interface FileRoutesById {
   '/$locale/mechanic/notifications': typeof LocaleMechanicNotificationsRoute
   '/$locale/mechanic/portfolio': typeof LocaleMechanicPortfolioRoute
   '/$locale/mechanic/profile': typeof LocaleMechanicProfileRoute
+  '/$locale/mechanic/reports': typeof LocaleMechanicReportsRoute
   '/$locale/mechanic/reviews': typeof LocaleMechanicReviewsRoute
   '/$locale/mechanic/settings': typeof LocaleMechanicSettingsRoute
   '/$locale/mechanic/verification': typeof LocaleMechanicVerificationRoute
@@ -1087,6 +1104,7 @@ export interface FileRoutesById {
   '/$locale/workshop/notifications': typeof LocaleWorkshopNotificationsRoute
   '/$locale/workshop/photos': typeof LocaleWorkshopPhotosRoute
   '/$locale/workshop/profile': typeof LocaleWorkshopProfileRoute
+  '/$locale/workshop/reports': typeof LocaleWorkshopReportsRoute
   '/$locale/workshop/reviews': typeof LocaleWorkshopReviewsRoute
   '/$locale/workshop/services': typeof LocaleWorkshopServicesRoute
   '/$locale/workshop/settings': typeof LocaleWorkshopSettingsRoute
@@ -1201,6 +1219,7 @@ export interface FileRouteTypes {
     | '/$locale/mechanic/notifications'
     | '/$locale/mechanic/portfolio'
     | '/$locale/mechanic/profile'
+    | '/$locale/mechanic/reports'
     | '/$locale/mechanic/reviews'
     | '/$locale/mechanic/settings'
     | '/$locale/mechanic/verification'
@@ -1211,6 +1230,7 @@ export interface FileRouteTypes {
     | '/$locale/workshop/notifications'
     | '/$locale/workshop/photos'
     | '/$locale/workshop/profile'
+    | '/$locale/workshop/reports'
     | '/$locale/workshop/reviews'
     | '/$locale/workshop/services'
     | '/$locale/workshop/settings'
@@ -1317,6 +1337,7 @@ export interface FileRouteTypes {
     | '/$locale/mechanic/notifications'
     | '/$locale/mechanic/portfolio'
     | '/$locale/mechanic/profile'
+    | '/$locale/mechanic/reports'
     | '/$locale/mechanic/reviews'
     | '/$locale/mechanic/settings'
     | '/$locale/mechanic/verification'
@@ -1327,6 +1348,7 @@ export interface FileRouteTypes {
     | '/$locale/workshop/notifications'
     | '/$locale/workshop/photos'
     | '/$locale/workshop/profile'
+    | '/$locale/workshop/reports'
     | '/$locale/workshop/reviews'
     | '/$locale/workshop/services'
     | '/$locale/workshop/settings'
@@ -1439,6 +1461,7 @@ export interface FileRouteTypes {
     | '/$locale/mechanic/notifications'
     | '/$locale/mechanic/portfolio'
     | '/$locale/mechanic/profile'
+    | '/$locale/mechanic/reports'
     | '/$locale/mechanic/reviews'
     | '/$locale/mechanic/settings'
     | '/$locale/mechanic/verification'
@@ -1449,6 +1472,7 @@ export interface FileRouteTypes {
     | '/$locale/workshop/notifications'
     | '/$locale/workshop/photos'
     | '/$locale/workshop/profile'
+    | '/$locale/workshop/reports'
     | '/$locale/workshop/reviews'
     | '/$locale/workshop/services'
     | '/$locale/workshop/settings'
@@ -2051,6 +2075,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LocaleMechanicProfileRouteImport
       parentRoute: typeof LocaleMechanicRouteRoute
     }
+    '/$locale/mechanic/reports': {
+      id: '/$locale/mechanic/reports'
+      path: '/reports'
+      fullPath: '/$locale/mechanic/reports'
+      preLoaderRoute: typeof LocaleMechanicReportsRouteImport
+      parentRoute: typeof LocaleMechanicRouteRoute
+    }
     '/$locale/mechanic/reviews': {
       id: '/$locale/mechanic/reviews'
       path: '/reviews'
@@ -2133,6 +2164,13 @@ declare module '@tanstack/react-router' {
       path: '/profile'
       fullPath: '/$locale/workshop/profile'
       preLoaderRoute: typeof LocaleWorkshopProfileRouteImport
+      parentRoute: typeof LocaleWorkshopRouteRoute
+    }
+    '/$locale/workshop/reports': {
+      id: '/$locale/workshop/reports'
+      path: '/reports'
+      fullPath: '/$locale/workshop/reports'
+      preLoaderRoute: typeof LocaleWorkshopReportsRouteImport
       parentRoute: typeof LocaleWorkshopRouteRoute
     }
     '/$locale/workshop/reviews': {
@@ -2552,6 +2590,7 @@ interface LocaleMechanicRouteRouteChildren {
   LocaleMechanicNotificationsRoute: typeof LocaleMechanicNotificationsRoute
   LocaleMechanicPortfolioRoute: typeof LocaleMechanicPortfolioRoute
   LocaleMechanicProfileRoute: typeof LocaleMechanicProfileRoute
+  LocaleMechanicReportsRoute: typeof LocaleMechanicReportsRoute
   LocaleMechanicReviewsRoute: typeof LocaleMechanicReviewsRoute
   LocaleMechanicSettingsRoute: typeof LocaleMechanicSettingsRoute
   LocaleMechanicVerificationRoute: typeof LocaleMechanicVerificationRoute
@@ -2569,6 +2608,7 @@ const LocaleMechanicRouteRouteChildren: LocaleMechanicRouteRouteChildren = {
   LocaleMechanicNotificationsRoute: LocaleMechanicNotificationsRoute,
   LocaleMechanicPortfolioRoute: LocaleMechanicPortfolioRoute,
   LocaleMechanicProfileRoute: LocaleMechanicProfileRoute,
+  LocaleMechanicReportsRoute: LocaleMechanicReportsRoute,
   LocaleMechanicReviewsRoute: LocaleMechanicReviewsRoute,
   LocaleMechanicSettingsRoute: LocaleMechanicSettingsRoute,
   LocaleMechanicVerificationRoute: LocaleMechanicVerificationRoute,
@@ -2589,6 +2629,7 @@ interface LocaleWorkshopRouteRouteChildren {
   LocaleWorkshopNotificationsRoute: typeof LocaleWorkshopNotificationsRoute
   LocaleWorkshopPhotosRoute: typeof LocaleWorkshopPhotosRoute
   LocaleWorkshopProfileRoute: typeof LocaleWorkshopProfileRoute
+  LocaleWorkshopReportsRoute: typeof LocaleWorkshopReportsRoute
   LocaleWorkshopReviewsRoute: typeof LocaleWorkshopReviewsRoute
   LocaleWorkshopServicesRoute: typeof LocaleWorkshopServicesRoute
   LocaleWorkshopSettingsRoute: typeof LocaleWorkshopSettingsRoute
@@ -2607,6 +2648,7 @@ const LocaleWorkshopRouteRouteChildren: LocaleWorkshopRouteRouteChildren = {
   LocaleWorkshopNotificationsRoute: LocaleWorkshopNotificationsRoute,
   LocaleWorkshopPhotosRoute: LocaleWorkshopPhotosRoute,
   LocaleWorkshopProfileRoute: LocaleWorkshopProfileRoute,
+  LocaleWorkshopReportsRoute: LocaleWorkshopReportsRoute,
   LocaleWorkshopReviewsRoute: LocaleWorkshopReviewsRoute,
   LocaleWorkshopServicesRoute: LocaleWorkshopServicesRoute,
   LocaleWorkshopSettingsRoute: LocaleWorkshopSettingsRoute,

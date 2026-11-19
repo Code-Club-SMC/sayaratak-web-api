@@ -184,11 +184,10 @@ route("GET", "/me/reports/demand", (c) => {
   )
 })
 
-route("GET", "/me/reports/replies", (c) => {
-  const user = needUser(c)
-  const { period } = periodOf(c.query)
-  const threads = db.threads
-    .filter((t) => t.participantIds.includes(user.id))
+// The user's threads with their messages oldest first, `mine` marking the user's own (Responsiveness report and city rank).
+export const threadsOf = (userId: string) =>
+  db.threads
+    .filter((t) => t.participantIds.includes(userId))
     .sort((a, b) => (a.id < b.id ? -1 : 1))
     .flatMap((t) => {
       const messages = db.messages
@@ -198,13 +197,17 @@ route("GET", "/me/reports/replies", (c) => {
             Date.parse(a.createdAt) - Date.parse(b.createdAt) ||
             (a.id < b.id ? -1 : 1)
         )
-        .map((m) => ({ mine: m.senderId === user.id, createdAt: m.createdAt }))
+        .map((m) => ({ mine: m.senderId === userId, createdAt: m.createdAt }))
       return messages.length
         ? [{ id: t.id, subjectTitle: t.subjectTitle, messages }]
         : []
     })
+
+route("GET", "/me/reports/replies", (c) => {
+  const user = needUser(c)
+  const { period } = periodOf(c.query)
   return repliesReportSchema.parse(
-    buildRepliesReport({ period, threads, now: Date.now() })
+    buildRepliesReport({ period, threads: threadsOf(user.id), now: Date.now() })
   )
 })
 

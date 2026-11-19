@@ -37,9 +37,9 @@ describe("WorkshopOverviewPage", () => {
   it("links every number to the page that explains it, keeping the range", async () => {
     await open("/en/workshop?range=7d")
     const hrefs = {
-      "Profile views": "/en/workshop/analytics?range=7d",
-      Calls: "/en/workshop/analytics?range=7d",
-      "WhatsApp clicks": "/en/workshop/analytics?range=7d",
+      "Profile views": "/en/workshop/reports?range=7d",
+      Calls: "/en/workshop/reports?range=7d",
+      "WhatsApp clicks": "/en/workshop/reports?range=7d",
       "Unread inquiries": "/en/workshop/inquiries",
       Rating: "/en/workshop/reviews",
     }

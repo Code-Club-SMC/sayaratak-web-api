@@ -10,12 +10,12 @@ import type { Analytics } from "@sayaratak/shared/schemas/responses"
 
 const paths = {
   workshop: {
-    analytics: "/$locale/workshop/analytics",
+    analytics: "/$locale/workshop/reports",
     inquiries: "/$locale/workshop/inquiries",
     reviews: "/$locale/workshop/reviews",
   },
   mechanic: {
-    analytics: "/$locale/mechanic/analytics",
+    analytics: "/$locale/mechanic/reports",
     inquiries: "/$locale/mechanic/inquiries",
     reviews: "/$locale/mechanic/reviews",
   },

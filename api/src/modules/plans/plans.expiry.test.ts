@@ -38,6 +38,9 @@ const active = (userId: string) =>
     )
     .then(([row]) => row)
 const all = () => db.select().from(subscriptions).orderBy(asc(subscriptions.id))
+// The seed's demo subscriptions, without the billing history of step 11.7-r11 (all ended long ago).
+const demo = async () =>
+  (await all()).filter((row) => !row.id.startsWith("sub-h-"))
 
 describe("endExpired (subscription-end job)", () => {
   test("does nothing before a subscription ends", async () => {
@@ -123,16 +126,16 @@ describe("endExpired (subscription-end job)", () => {
     await expect(endExpired(2)).rejects.toThrow("crashed")
     // The first two accounts (sub-1, sub-2 by end then id) were ended and got their plan.
     expect(
-      (await all()).filter((row) => row.status === "expired")
+      (await demo()).filter((row) => row.status === "expired")
     ).toHaveLength(2)
 
     crash.mockRestore()
     expect(await endExpired(2)).toBe(2)
     expect(
-      (await all()).filter((row) => row.status === "expired")
+      (await demo()).filter((row) => row.status === "expired")
     ).toHaveLength(4)
-    expect((await all()).filter((row) => row.status === "active")).toHaveLength(
-      3
-    )
+    expect(
+      (await demo()).filter((row) => row.status === "active")
+    ).toHaveLength(3)
   })
 })

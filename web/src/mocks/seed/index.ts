@@ -15,6 +15,7 @@ import {
   seedSubscriptions,
 } from "./commerce"
 import { adPages, campaigns } from "./ads"
+import { billingHistory } from "./billing-history"
 import { seedListings } from "./listings"
 import { priceCluster } from "./price-cluster"
 import { seedPeople } from "./people"
@@ -81,6 +82,9 @@ export function buildSeed({ empty = false }: { empty?: boolean } = {}): Db {
     ? { favorites: [], savedSearches: [] }
     : seedSaved(users, listings)
   const payments = empty ? [] : seedPayments(users, listings, promotions)
+  // Step 11.7-r11: a year of paid plans for a few non-demo businesses (no faker draw).
+  const history = empty ? { subs: [], payments: [] } : billingHistory(users)
+  payments.push(...history.payments)
   const owned = new Set(
     listings
       .filter((l) => l.ownerUserId === "u-omar" || l.ownerUserId === "u-dealer")
@@ -103,7 +107,7 @@ export function buildSeed({ empty = false }: { empty?: boolean } = {}): Db {
       ? []
       : seedNotifications(users.filter((u) => demoIds.includes(u.id))),
     plans: structuredClone(plans),
-    subscriptions: seedSubscriptions(),
+    subscriptions: [...seedSubscriptions(), ...history.subs],
     payments,
     promotions,
     promotionPrices: structuredClone(promotionPrices),

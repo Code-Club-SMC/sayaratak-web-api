@@ -3,20 +3,28 @@ import {
   activityDaysOf,
   buildUsersReport,
 } from "@sayaratak/shared/lib/users-report"
+import { buildRevenueReport } from "@sayaratak/shared/lib/revenue-report"
 import type { PeriodQuery } from "@sayaratak/shared/schemas/period"
 import type {
   MarketplaceReport,
   UsersReport,
 } from "@sayaratak/shared/schemas/reports-insights"
+import type { RevenueReport } from "@sayaratak/shared/schemas/reports-revenue"
 
 import { db } from "~/shared/db/client"
 import { clock } from "~/shared/time/clock"
 import * as active from "~/modules/analytics/analytics.active.service"
 import { bucketsOf } from "~/modules/analytics/analytics.activity-reports.service"
 import { windowsOf } from "~/modules/analytics/analytics.period"
-import { listUsersForReport } from "~/modules/auth/auth.overview.service"
+import {
+  listAccountRoles,
+  listUsersForReport,
+} from "~/modules/auth/auth.overview.service"
+import { getBusinessesOfOwners } from "~/modules/businesses/businesses.admin.service"
 import { listMarketListings } from "~/modules/listings/listings.stats.service"
 import { listFirstListingMessageDays } from "~/modules/messaging/messaging.service"
+import { listPaymentsForRevenue } from "~/modules/payments/payments.service"
+import * as plans from "~/modules/plans/plans.report.service"
 
 const earlier = (a: string | undefined, b: string) => (a && a < b ? a : b)
 
@@ -68,5 +76,42 @@ export async function getUsersReport(query: PeriodQuery): Promise<UsersReport> {
     activeSince,
     current: bucketsOf(current),
     compare: bucketsOf(compare),
+  })
+}
+
+/** The admin Revenue tab: approved money, receipt outcomes, paid subscriptions, renewal, money per business and plans ending soon (step 11.7-r11). */
+export async function getRevenueReport(
+  query: PeriodQuery
+): Promise<RevenueReport> {
+  const { period, current, compare } = windowsOf(query)
+  const [payments, subs, roles, planNames] = await Promise.all([
+    listPaymentsForRevenue(db),
+    plans.listSubscriptionsForReport(db),
+    listAccountRoles(db),
+    plans.listPlanNames(db),
+  ])
+  const businesses = await getBusinessesOfOwners(
+    db,
+    roles
+      .filter((r) => r.role !== "user" && r.role !== "admin")
+      .map((r) => r.id)
+  )
+  return buildRevenueReport({
+    period,
+    payments,
+    subs,
+    accounts: roles.map((r) => {
+      const b = businesses.get(r.id)
+      return {
+        id: r.id,
+        role: r.role,
+        name: b?.name ?? { ar: r.name, en: r.name },
+        businessId: b?.id ?? null,
+      }
+    }),
+    plans: planNames,
+    current: bucketsOf(current),
+    compare: bucketsOf(compare),
+    now: clock.now().getTime(),
   })
 }

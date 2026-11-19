@@ -29,7 +29,7 @@ describe("payment table", () => {
     const again = {
       ...pending,
       id: "pay-x",
-      receiptUploadId: `receipt-${seeded.payments.length}`,
+      receiptUploadId: "receipt-1",
       createdAt: new Date(),
       reviewedAt: null,
     }

@@ -8,7 +8,7 @@ import { uploadUrl } from "~/modules/uploads/uploads.service"
 
 import { toPayment } from "./payments.mapper"
 import * as q from "./payments.queries"
-import { listSentSince } from "./payments.spend.queries"
+import { listForRevenue, listSentSince } from "./payments.spend.queries"
 
 // The reason the web shows on a receipt rejected because its sender left.
 const ACCOUNT_DELETED = "account_deleted"
@@ -61,6 +61,16 @@ export async function listSpendOf(
   return (await listSentSince(ex, find)).map((row) => ({
     ...row,
     createdAt: row.createdAt.toISOString(),
+  }))
+}
+
+/** Every receipt with ISO dates, for the admin Revenue tab (step 11.7-r11); a deleted payer reads as "". */
+export async function listPaymentsForRevenue(ex: Executor) {
+  return (await listForRevenue(ex)).map((row) => ({
+    ...row,
+    userId: row.userId ?? "",
+    createdAt: row.createdAt.toISOString(),
+    reviewedAt: row.reviewedAt?.toISOString(),
   }))
 }
 

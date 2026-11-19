@@ -14,7 +14,10 @@ export function markActive(
 }
 
 /** Activity rows of the days `first` to `last`, both included. */
-export function listActivity(ex: Executor, days: { first: string; last: string }) {
+export function listActivity(
+  ex: Executor,
+  days: { first: string; last: string }
+) {
   return ex
     .select({ day: a.day, userId: a.userId, device: a.device })
     .from(a)

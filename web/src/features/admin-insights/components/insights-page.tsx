@@ -8,6 +8,7 @@ import { usePageTitle } from "@/features/dashboard/components/page-title"
 import { useT } from "@/lib/i18n/use-t"
 import { insightsSearchSchema, insightsTabs } from "../schemas"
 import { MarketplaceInsights } from "./marketplace-insights"
+import { RevenueInsights } from "./revenue-insights"
 import { UsersInsights } from "./users-insights"
 
 // Admin Insights (step 11.7-r10): one period control over the platform report tabs; tab and period live in the URL.
@@ -52,6 +53,9 @@ export function InsightsPage() {
         </TabsContent>
         <TabsContent value="users" className="pt-2">
           <UsersInsights query={query} />
+        </TabsContent>
+        <TabsContent value="revenue" className="pt-2">
+          <RevenueInsights query={query} />
         </TabsContent>
       </Tabs>
     </div>

@@ -248,7 +248,7 @@ describe("PlansPage", () => {
     )
     await waitFor(() =>
       expect(within(table).getAllByRole("row")).toHaveLength(
-        workshops.length + 1
+        Math.min(20, workshops.length) + 1
       )
     )
   })

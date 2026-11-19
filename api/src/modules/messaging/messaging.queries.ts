@@ -138,8 +138,6 @@ export function listFirstListingMessageDays(ex: Executor, sinceDay: string) {
     })
     .from(messages)
     .innerJoin(threads, eq(threads.id, messages.threadId))
-    .where(
-      and(eq(threads.subjectType, "listing"), sql`${day} >= ${sinceDay}`)
-    )
+    .where(and(eq(threads.subjectType, "listing"), sql`${day} >= ${sinceDay}`))
     .groupBy(threads.subjectId, messages.senderId)
 }

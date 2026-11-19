@@ -23,3 +23,19 @@ export function listSentSince(
       and(eq(payments.userId, find.userId), gte(payments.createdAt, find.since))
     )
 }
+
+/** Every receipt as the admin Revenue tab reads it (step 11.7-r11). */
+export function listForRevenue(ex: Executor) {
+  return ex
+    .select({
+      id: payments.id,
+      userId: payments.userId,
+      itemType: payments.itemType,
+      itemId: payments.itemId,
+      amount: payments.amount,
+      status: payments.status,
+      createdAt: payments.createdAt,
+      reviewedAt: payments.reviewedAt,
+    })
+    .from(payments)
+}

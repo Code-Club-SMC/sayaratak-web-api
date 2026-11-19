@@ -93,7 +93,11 @@ describe("GET /admin/plans", () => {
 describe("GET /admin/subscriptions", () => {
   test("is every subscription with its plan and holder", async () => {
     const page = await subscriptions()
-    expect(page).toMatchObject({ total: 4, page: 1, pageSize: 20 })
+    expect(page).toMatchObject({
+      total: seeded.subscriptions.length,
+      page: 1,
+      pageSize: 20,
+    })
     const dealer = page.items.find((item) => item.userId === "u-dealer")
     expect(dealer).toMatchObject({
       planId: "plan-dealer-growth",
@@ -113,11 +117,23 @@ describe("GET /admin/subscriptions", () => {
   })
 
   test("filters by audience, plan, status and holder", async () => {
-    expect((await idsOf("?audience=dealership")).length).toBe(1)
+    // Step 11.7-r11 billing history adds ended paid plans of non-demo businesses.
+    const count = (
+      keep: (s: (typeof seeded.subscriptions)[number]) => boolean
+    ) => Math.min(20, seeded.subscriptions.filter(keep).length)
+    const audience = (id: string) =>
+      seeded.plans.find((p) => p.id === id)?.audience
+    expect((await idsOf("?audience=dealership")).length).toBe(
+      count((s) => audience(s.planId) === "dealership")
+    )
     expect((await idsOf("?audience=nope")).length).toBe(0)
-    expect((await idsOf("?planId=plan-workshop-plus")).length).toBe(1)
+    expect((await idsOf("?planId=plan-workshop-plus")).length).toBe(
+      count((s) => s.planId === "plan-workshop-plus")
+    )
     expect((await idsOf("?status=active")).length).toBe(4)
-    expect((await idsOf("?status=expired")).length).toBe(0)
+    expect((await idsOf("?status=expired")).length).toBe(
+      count((s) => s.status === "expired")
+    )
     expect((await idsOf("?q=OMAR")).length).toBe(1)
     const business = seeded.dealerships[0]?.name
     for (const text of [business?.ar, business?.en])

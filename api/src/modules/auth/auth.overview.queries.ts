@@ -100,3 +100,8 @@ export function listForReport(ex: Executor) {
     })
     .from(user)
 }
+
+/** Every account's id, role and name (step 11.7-r11 Revenue tab). */
+export function listRoles(ex: Executor) {
+  return ex.select({ id: user.id, role: user.role, name: user.name }).from(user)
+}

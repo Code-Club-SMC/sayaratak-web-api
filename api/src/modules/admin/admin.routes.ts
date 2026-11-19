@@ -8,6 +8,7 @@ import {
   marketplaceReportSchema,
   usersReportSchema,
 } from "@sayaratak/shared/schemas/reports-insights"
+import { revenueReportSchema } from "@sayaratak/shared/schemas/reports-revenue"
 import { Hono } from "hono"
 
 import { validate } from "~/shared/http/validate"
@@ -17,6 +18,7 @@ import { requireRole } from "~/modules/auth/auth.middleware"
 import { getActivity } from "./admin.activity.service"
 import {
   getMarketplaceReport,
+  getRevenueReport,
   getUsersReport,
 } from "./admin.insights.service"
 import { searchAdmin } from "./admin.search.service"
@@ -95,4 +97,18 @@ adminRoutes.get(
   requireRole("admin"),
   validate.query(rangeQuery),
   async (c) => c.json(await getUsersReport(c.req.valid("query")))
+)
+
+adminRoutes.get(
+  "/admin/insights/revenue",
+  spec({
+    summary:
+      "Admin Insights Revenue tab (step 11.7-r11): approved money by the day an admin approved it, split by item type and plan, receipt outcomes and review time, pending receipts, paid subscriptions per bucket, renewal rate (another paid plan before the end or up to 7 days after), average per paying business with personal accounts apart, and paid plans ending in the next 30 days",
+    access: "user",
+    responses: { 200: revenueReportSchema },
+    errors: [...ADMIN_ERRORS],
+  }),
+  requireRole("admin"),
+  validate.query(rangeQuery),
+  async (c) => c.json(await getRevenueReport(c.req.valid("query")))
 )

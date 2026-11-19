@@ -57,3 +57,8 @@ export async function listUsersForReport(ex: Executor): Promise<UserInput[]> {
     method: signupMethodSchema.catch("email").parse(row.provider),
   }))
 }
+
+/** Every account's id, role and name, for the admin Revenue tab (step 11.7-r11). */
+export function listAccountRoles(ex: Executor) {
+  return q.listRoles(ex)
+}

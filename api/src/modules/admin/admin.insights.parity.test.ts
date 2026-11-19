@@ -42,8 +42,8 @@ const PERIODS = [
   "?range=nonsense",
 ]
 
-describe("step 11.7-r10 admin Insights match the mock", () => {
-  for (const tab of ["marketplace", "users"])
+describe("steps 11.7-r10 and r11 admin Insights match the mock", () => {
+  for (const tab of ["marketplace", "users", "revenue"])
     test(`${tab} per period, refused for others`, async () => {
       for (const query of PERIODS)
         await expectParity(`/api/v1/admin/insights/${tab}${query}`, {

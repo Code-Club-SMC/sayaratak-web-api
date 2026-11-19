@@ -3,6 +3,7 @@ import {
   type MarketInput,
 } from "@sayaratak/shared/lib/marketplace-report"
 import { minuteOf } from "@sayaratak/shared/lib/period"
+import { buildRevenueReport } from "@sayaratak/shared/lib/revenue-report"
 import {
   activityDaysOf,
   buildUsersReport,
@@ -11,9 +12,11 @@ import {
   marketplaceReportSchema,
   usersReportSchema,
 } from "@sayaratak/shared/schemas/reports-insights"
+import { revenueReportSchema } from "@sayaratak/shared/schemas/reports-revenue"
 
 import { db } from "../db"
 import { needRole, route } from "../http"
+import { businessOf } from "../lib"
 import { windowsOf } from "./reports-account"
 
 // Step 11.7-r10: the admin Insights tabs. The rules are the shared builders', as in the api; this file only gathers their inputs.
@@ -95,6 +98,29 @@ route("GET", "/admin/insights/users", (c) => {
       })),
       activity: db.activity.filter((a) => a.day >= first && a.day <= last),
       activeSince: db.activity.map((a) => a.day).sort()[0] ?? null,
+    })
+  )
+})
+
+// Step 11.7-r11: the Revenue tab.
+route("GET", "/admin/insights/revenue", (c) => {
+  needRole(c, "admin")
+  return revenueReportSchema.parse(
+    buildRevenueReport({
+      ...windowsOf(c.query),
+      payments: db.payments,
+      subs: db.subscriptions,
+      accounts: db.users.map((u) => {
+        const b = businessOf(u)?.row
+        return {
+          id: u.id,
+          role: u.role,
+          name: b?.name ?? { ar: u.fullName, en: u.fullName },
+          businessId: b?.id ?? null,
+        }
+      }),
+      plans: db.plans,
+      now: Date.now(),
     })
   )
 })

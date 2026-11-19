@@ -27,10 +27,14 @@ const open = (query = "") =>
   })
 
 describe("admin insights", () => {
-  it("has the Marketplace and Users tabs, Marketplace first", async () => {
+  it("has the Marketplace, Users and Revenue tabs, Marketplace first", async () => {
     await open()
     const tabs = within(await screen.findByRole("tablist")).getAllByRole("tab")
-    expect(tabs.map((tab) => tab.textContent)).toEqual(["Marketplace", "Users"])
+    expect(tabs.map((tab) => tab.textContent)).toEqual([
+      "Marketplace",
+      "Users",
+      "Revenue",
+    ])
     expect(tabs[0]?.getAttribute("aria-selected")).toBe("true")
   })
 
@@ -54,6 +58,22 @@ describe("admin insights", () => {
     expect(
       screen.getByRole("heading", { name: "Account language" })
     ).toBeTruthy()
+  })
+
+  it("Revenue shows money, renewal, plans and plans ending soon (step 11.7-r11)", async () => {
+    await open("?tab=revenue")
+    expect(await screen.findByText("Average per paying business")).toBeTruthy()
+    expect(screen.getByText("Renewal rate")).toBeTruthy()
+    expect(
+      screen.getByRole("heading", { name: "Plan money by plan" })
+    ).toBeTruthy()
+    const ending = screen.getByRole("heading", {
+      name: "Paid plans ending in 30 days",
+    })
+    expect(ending).toBeTruthy()
+    // The seed dealer's plan ends within 30 days; the link opens its business sheet.
+    const link = await screen.findByRole("link", { name: "Al Nasr Motors" })
+    expect(link.getAttribute("href")).toBe("/en/admin/dealerships?id=d-1")
   })
 })
 

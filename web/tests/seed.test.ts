@@ -84,8 +84,17 @@ describe("seed counts (A9)", () => {
       db.payments.filter((p) => p.status === "pending_review")
     ).toHaveLength(5)
     expect(
-      db.payments.filter((p) => p.status !== "pending_review")
+      db.payments.filter(
+        (p) => p.status !== "pending_review" && !p.id.startsWith("pay-h-")
+      )
     ).toHaveLength(8)
+    // Step 11.7-r11 billing history: 53 approved plan receipts (one per plan) and 2 rejected.
+    const history = db.payments.filter((p) => p.id.startsWith("pay-h-"))
+    expect(history.filter((p) => p.status === "approved")).toHaveLength(53)
+    expect(history.filter((p) => p.status === "rejected")).toHaveLength(2)
+    expect(
+      db.subscriptions.filter((s) => s.id.startsWith("sub-h-"))
+    ).toHaveLength(53)
     expect(db.taxonomy.cities).toHaveLength(10)
     expect(db.taxonomy.makes).toHaveLength(55)
     for (const id of [

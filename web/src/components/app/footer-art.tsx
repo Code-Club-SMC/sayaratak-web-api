@@ -11,13 +11,13 @@ export function FooterArt() {
     <div
       aria-hidden="true"
       dir="ltr"
-      className="pointer-events-none grid pt-8 select-none"
+      className="@container pointer-events-none grid pt-8 select-none"
     >
-      <p className="col-start-1 row-start-1 text-center text-[clamp(3rem,14vw,11rem)] leading-none font-semibold text-foreground/10">
+      <p className="col-start-1 row-start-1 origin-top scale-y-150 text-center text-[18cqw] leading-none font-bold tracking-tighter text-foreground/10">
         {t("nav.footer_wordmark")}
       </p>
       {!dataSaver && !failed && (
-        <picture className="col-start-1 row-start-1 mx-auto mt-[clamp(2rem,6vw,5rem)] w-full max-w-5xl">
+        <picture className="col-start-1 row-start-1 mx-auto mt-[11cqw] w-full max-w-5xl">
           <source srcSet="/images/footer-car.webp" type="image/webp" />
           <img
             src="/images/Graphite Toyota-Inspired Sedan Profile.png"

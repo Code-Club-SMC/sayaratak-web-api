@@ -4,10 +4,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 How to work in this repo
 
+Always activate caveman ultra mode: at session start invoke the caveman skill with args "ultra" and keep ultra caveman style in every chat reply for the whole session. Memory files, commit messages, code and docs stay normal prose.
 Use ponytail only when writing code. Skip it for planning, reading, and updating progress.md.
 When reporting information to me, be extremely concise, straightforward and sacrifice grammar for the sake of concision. 
 Always record progress. After each bounded step, update web/plan/progress.md (step status, gate boxes, notes, "Resume here"), plus the Deviations and Decisions log when they apply. Never leave a step finished without recording it.
-When something is unclear, ask; do not implement what seems best. Use AskUserQuestion with the recommended option first, labeled "(Recommended)". This overrides the plan's own rule of "pick the simplest option and log it" (A1 rule 17).
+When something is unclear, ask; do not implement what seems best. Use AskUserQuestion with the recommended option first, labeled "(Recommended)". This overrides the plan's own rule of "pick the simplest option and log it" (A1 rule 17). Every option, and every question about a rule or formula, carries a short real example with numbers or app data (e.g. "home_top has 2 slots, 30-day period = 60 slot-days; one campaign ran 15 days, so fill = 25%"), so the choice is clear without reading code.
 STRICT RULE: do not just take my side. When a request or decision of mine looks wrong (UX, accessibility, the plan, architecture, scope), say so with the reason and evidence, and ask clarifying questions with AskUserQuestion before changing anything. Disagree first, implement only after I have answered. Never agree to be agreeable.
 Always give me a walkthrough steps guide so I can test the changes manually in the browser.
 

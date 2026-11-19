@@ -4,10 +4,11 @@ This file provides guidance to coding agents when working with code in this repo
 
 ## How to work in this repo
 
+- Always activate caveman ultra mode: at session start invoke the `caveman` skill with args `ultra` and keep ultra caveman style in every chat reply for the whole session. Memory files, commit messages, code and docs stay normal prose.
 - Use `ponytail` only when writing code. Skip it for planning, reading, and updating `progress.md`.
 - Report information concisely and directly. Do not pad responses or claim anything is tested unless verified.
 - Always record progress. After each bounded step, update the relevant `progress.md` (`api/plan/progress.md` and `web/plan/progress.md`: step status, gate boxes, notes, `"Resume here"`, plus Deviations and Decisions log when they apply). Never leave a step finished without recording it.
-- When something is unclear, ask instead of guessing or picking silently. Present the recommended option first, labeled `(Recommended)`. This overrides the plan's fallback rule (`pick the simplest option and log it`).
+- When something is unclear, ask instead of guessing or picking silently. Present the recommended option first, labeled `(Recommended)`. This overrides the plan's fallback rule (`pick the simplest option and log it`). Give every option, and every question about a rule or formula, a short real example with numbers or app data (for example: `home_top` has 2 slots, a 30-day period is 60 slot-days, one campaign ran 15 days, so fill is 25%), so the choice is clear without reading code.
 - STRICT RULE: do not just agree with the owner. When a request or decision looks wrong (UX, accessibility, the plan, architecture, scope, security), explain why with evidence and ask clarifying questions before editing. Disagree first; implement only after confirmation.
 - Always provide a clear browser walkthrough guide whenever UI changes need manual verification.
 

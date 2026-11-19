@@ -14,10 +14,14 @@ import {
   adminListingPatchSchema,
   banInputSchema,
   bulkInputSchema,
+  listingRejectInputSchema,
   rejectInputSchema,
 } from "@sayaratak/shared/schemas/inputs"
 import type { SeedStatus } from "@sayaratak/shared/schemas/admin-seed"
-import { listingSchema } from "@sayaratak/shared/schemas/listing"
+import {
+  listingSchema,
+  type RejectionCode,
+} from "@sayaratak/shared/schemas/listing"
 import { pageOf } from "@sayaratak/shared/schemas/fields"
 import type { z } from "zod"
 import { both } from "@/mocks/seed/util"
@@ -195,6 +199,7 @@ route("GET", "/admin/search", (c) => {
 export function approveListing(row: ListingRow) {
   row.moderation = "approved"
   row.rejectionReason = null
+  row.rejectionCode = undefined
   row.updatedAt = nowIso()
   notify(
     row.ownerUserId,
@@ -216,9 +221,14 @@ export function approveListing(row: ListingRow) {
     )
   }
 }
-function rejectListing(row: ListingRow, reason: string) {
+function rejectListing(
+  row: ListingRow,
+  reason: string,
+  code: RejectionCode = "other"
+) {
   row.moderation = "rejected"
   row.rejectionReason = reason
+  row.rejectionCode = code
   row.updatedAt = nowIso()
   notify(
     row.ownerUserId,
@@ -231,10 +241,11 @@ function rejectListing(row: ListingRow, reason: string) {
 const apply = (
   action: "approve" | "reject" | "remove" | "restore",
   row: ListingRow,
-  reason = ""
+  reason = "",
+  code?: RejectionCode
 ) => {
   if (action === "approve" || action === "restore") approveListing(row)
-  else if (action === "reject") rejectListing(row, reason || "—")
+  else if (action === "reject") rejectListing(row, reason || "—", code)
   else row.moderation = "removed"
   row.decidedAt = nowIso()
 }
@@ -270,17 +281,15 @@ for (const action of ["approve", "reject", "remove", "restore"] as const) {
   route("POST", `/admin/listings/:id/${action}`, async (c) => {
     admin(c)
     const row = listingOf(c.params.id ?? "")
-    apply(
-      action,
-      row,
-      action === "reject" ? (await c.body(rejectInputSchema)).reason : ""
-    )
+    const body =
+      action === "reject" ? await c.body(listingRejectInputSchema) : undefined
+    apply(action, row, body?.reason, body?.code)
     return listingSchema.parse(row)
   })
 }
 route("POST", "/admin/listings/bulk", async (c) => {
   admin(c)
-  const { ids, action, reason } = await c.body(bulkInputSchema)
+  const { ids, action, reason, code } = await c.body(bulkInputSchema)
   if (action === "reject" && !reason)
     throw fail(422, "validation", { reason: "validation.required" })
   // A row the action does not fit (approving an approved listing, restoring one that was never removed) is skipped.
@@ -292,7 +301,7 @@ route("POST", "/admin/listings/bulk", async (c) => {
         : l.moderation === "pending" ||
           (action === "approve" && l.moderation === "rejected")
   const rows = db.listings.filter((l) => ids.includes(l.id) && fits(l))
-  for (const row of rows) apply(action, row, reason)
+  for (const row of rows) apply(action, row, reason, code)
   return bulkResultSchema.parse({ count: rows.length })
 })
 // Every listing but drafts (a seller's unpublished work) unless `moderation` asks for them. `promoted` is yes or no: a promotion running now.

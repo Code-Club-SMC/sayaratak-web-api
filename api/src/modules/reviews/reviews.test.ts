@@ -24,7 +24,13 @@ describe("review table", () => {
   test("refuses a second review of one business by one author, and a rating out of 1 to 5", async () => {
     const twice = await db
       .insert(reviews)
-      .values({ ...first, id: "r-x", createdAt: new Date() })
+      .values({
+        ...first,
+        id: "r-x",
+        createdAt: new Date(),
+        flaggedAt: null,
+        decidedAt: null,
+      })
       .catch((error) => error)
     expect(twice.cause.errno).toBe("23505")
     const rating = await db

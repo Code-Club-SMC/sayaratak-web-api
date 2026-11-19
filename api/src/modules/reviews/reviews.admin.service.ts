@@ -1,6 +1,7 @@
 import { type Executor, type Transaction, transaction } from "~/shared/db/tx"
 import { fail } from "~/shared/http/errors"
 import { pageParams } from "~/shared/http/page"
+import { clock } from "~/shared/time/clock"
 import { recordAudit } from "~/modules/audit/audit.service"
 import type { Actor } from "~/modules/audit/audit.types"
 
@@ -66,7 +67,11 @@ export async function setReviewStatus(
   const locked = await admin.lockReview(tx, change.id)
   if (!locked) fail.notFound()
   if (locked.status === change.status) return toReview(locked)
-  const saved = await q.update(tx, change.id, { status: change.status })
+  // Step 11.7-r12a: leaving the flagged queue is the admin's decision on the flag.
+  const saved = await q.update(tx, change.id, {
+    status: change.status,
+    ...(locked.status === "flagged" && { decidedAt: clock.now() }),
+  })
   await recordAudit(tx, actor, {
     action: change.status === "hidden" ? "review.hide" : "review.show",
     targetType: "review",
@@ -92,4 +97,14 @@ export function deleteReviewAsAdmin(actor: Actor, row: ReviewRow) {
       },
     })
   })
+}
+
+/** Step 11.7-r12a: flag state and times of reviews that are or were flagged. */
+export async function listReviewFlags(ex: Executor) {
+  const rows = await q.listFlagRows(ex)
+  return rows.map((row) => ({
+    status: row.status,
+    flaggedAt: row.flaggedAt?.toISOString() ?? null,
+    decidedAt: row.decidedAt?.toISOString() ?? null,
+  }))
 }

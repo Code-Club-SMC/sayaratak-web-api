@@ -178,3 +178,13 @@ export async function listMarketListings(ex: Executor) {
         ]
   )
 }
+
+/** Step 11.7-r12a: what the admin Trust & safety tab reads of each listing (drafts left out). */
+export async function listTrustListings(ex: Executor) {
+  const rows = await statsQ.listTrustRows(ex)
+  return rows.map((row) => ({
+    ...row,
+    createdAt: row.createdAt.toISOString(),
+    decidedAt: row.decidedAt?.toISOString() ?? null,
+  }))
+}

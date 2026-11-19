@@ -9,6 +9,7 @@ import { useT } from "@/lib/i18n/use-t"
 import { insightsSearchSchema, insightsTabs } from "../schemas"
 import { MarketplaceInsights } from "./marketplace-insights"
 import { RevenueInsights } from "./revenue-insights"
+import { TrustInsights } from "./trust-insights"
 import { UsersInsights } from "./users-insights"
 
 // Admin Insights (step 11.7-r10): one period control over the platform report tabs; tab and period live in the URL.
@@ -56,6 +57,9 @@ export function InsightsPage() {
         </TabsContent>
         <TabsContent value="revenue" className="pt-2">
           <RevenueInsights query={query} />
+        </TabsContent>
+        <TabsContent value="trust" className="pt-2">
+          <TrustInsights query={query} />
         </TabsContent>
       </Tabs>
     </div>

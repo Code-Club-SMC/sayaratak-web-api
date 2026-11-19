@@ -48,3 +48,15 @@ export function countPerListing(ex: Executor, listingIds: string[]) {
     .where(inArray(reports.listingId, listingIds))
     .groupBy(reports.listingId)
 }
+
+/** Step 11.7-r12a: reason, state and times of every report, for the admin Trust & safety tab. */
+export function listForTrust(ex: Executor) {
+  return ex
+    .select({
+      reason: reports.reason,
+      status: reports.status,
+      createdAt: reports.createdAt,
+      decidedAt: reports.decidedAt,
+    })
+    .from(reports)
+}

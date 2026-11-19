@@ -1,7 +1,19 @@
 import type { TargetType } from "@sayaratak/shared/schemas/review"
-import { and, count, desc, eq, inArray, isNull, ne, sum } from "drizzle-orm"
+import {
+  and,
+  count,
+  desc,
+  eq,
+  inArray,
+  isNotNull,
+  isNull,
+  ne,
+  or,
+  sum,
+} from "drizzle-orm"
 
 import type { Executor } from "~/shared/db/tx"
+import { clock } from "~/shared/time/clock"
 import { type DayRange, withinDays } from "~/shared/time/khartoum"
 
 import { reviews } from "./reviews.tables"
@@ -132,7 +144,7 @@ export function remove(ex: Executor, id: string) {
 export function flagShown(ex: Executor, id: string) {
   return ex
     .update(reviews)
-    .set({ status: "flagged" })
+    .set({ status: "flagged", flaggedAt: clock.now() })
     .where(and(eq(reviews.id, id), eq(reviews.status, "visible")))
 }
 
@@ -147,4 +159,16 @@ export function listVisibleOf(ex: Executor, targetId: string) {
     .from(reviews)
     .where(and(eq(reviews.targetId, targetId), eq(reviews.status, "visible")))
     .orderBy(reviews.createdAt, reviews.id)
+}
+
+/** Step 11.7-r12a: reviews that are or were flagged, for the admin Trust & safety tab. */
+export function listFlagRows(ex: Executor) {
+  return ex
+    .select({
+      status: reviews.status,
+      flaggedAt: reviews.flaggedAt,
+      decidedAt: reviews.decidedAt,
+    })
+    .from(reviews)
+    .where(or(eq(reviews.status, "flagged"), isNotNull(reviews.flaggedAt)))
 }

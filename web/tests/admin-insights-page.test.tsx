@@ -27,13 +27,14 @@ const open = (query = "") =>
   })
 
 describe("admin insights", () => {
-  it("has the Marketplace, Users and Revenue tabs, Marketplace first", async () => {
+  it("has the Marketplace, Users, Revenue and Trust & safety tabs, Marketplace first", async () => {
     await open()
     const tabs = within(await screen.findByRole("tablist")).getAllByRole("tab")
     expect(tabs.map((tab) => tab.textContent)).toEqual([
       "Marketplace",
       "Users",
       "Revenue",
+      "Trust & safety",
     ])
     expect(tabs[0]?.getAttribute("aria-selected")).toBe("true")
   })
@@ -74,6 +75,20 @@ describe("admin insights", () => {
     // The seed dealer's plan ends within 30 days; the link opens its business sheet.
     const link = await screen.findByRole("link", { name: "Al Nasr Motors" })
     expect(link.getAttribute("href")).toBe("/en/admin/dealerships?id=d-1")
+  })
+
+  it("Trust & safety shows the queue, reasons and flagged reviews (step 11.7-r12a)", async () => {
+    await open("?tab=trust")
+    expect(await screen.findByText("Listings waiting for review")).toBeTruthy()
+    expect(screen.getByText("Time to decide a flag")).toBeTruthy()
+    const reasons = screen.getByRole("region", {
+      name: "Why listings were rejected",
+    })
+    // Seed rejections carry codes derived from their reason text.
+    expect(await within(reasons).findByText("Unclear photos")).toBeTruthy()
+    expect(
+      screen.getByRole("heading", { name: "Review queue by wait" })
+    ).toBeTruthy()
   })
 })
 

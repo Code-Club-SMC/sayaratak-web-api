@@ -1,4 +1,5 @@
 import type { adminListingPatchSchema } from "@sayaratak/shared/schemas/inputs"
+import type { RejectionCode } from "@sayaratak/shared/schemas/listing"
 import type { z } from "zod"
 
 import { db } from "~/shared/db/client"
@@ -44,7 +45,7 @@ export async function getAdminListings(
 /** `POST /admin/listings/:id/approve|reject|remove|restore`: the listing as it is after. */
 export function moderateListing(
   actor: Actor,
-  change: { id: string; action: Action; reason?: string }
+  change: { id: string; action: Action; reason?: string; code?: RejectionCode }
 ) {
   return transaction(async (tx) =>
     toOneListing(
@@ -58,7 +59,12 @@ export function moderateListing(
 /** `POST /admin/listings/bulk`: how many of the picked listings the action changed. */
 export async function moderateListings(
   actor: Actor,
-  change: { ids: string[]; action: Action; reason?: string }
+  change: {
+    ids: string[]
+    action: Action
+    reason?: string
+    code?: RejectionCode
+  }
 ) {
   const count = await transaction((tx) =>
     moderation.moderateMany(tx, actor, change)

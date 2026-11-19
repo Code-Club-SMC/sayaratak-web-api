@@ -9,6 +9,7 @@ import {
   usersReportSchema,
 } from "@sayaratak/shared/schemas/reports-insights"
 import { revenueReportSchema } from "@sayaratak/shared/schemas/reports-revenue"
+import { trustReportSchema } from "@sayaratak/shared/schemas/reports-trust"
 
 // One Insights tab for a period; under the admin key root, so admin changes refresh it.
 const insightsQuery = <TSchema extends z.ZodType>(
@@ -30,3 +31,5 @@ export const usersInsightsQuery = (query: PeriodQuery) =>
   insightsQuery("users", usersReportSchema, query)
 export const revenueInsightsQuery = (query: PeriodQuery) =>
   insightsQuery("revenue", revenueReportSchema, query)
+export const trustInsightsQuery = (query: PeriodQuery) =>
+  insightsQuery("trust", trustReportSchema, query)

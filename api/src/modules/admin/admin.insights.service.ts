@@ -4,12 +4,14 @@ import {
   buildUsersReport,
 } from "@sayaratak/shared/lib/users-report"
 import { buildRevenueReport } from "@sayaratak/shared/lib/revenue-report"
+import { buildTrustReport } from "@sayaratak/shared/lib/trust-report"
 import type { PeriodQuery } from "@sayaratak/shared/schemas/period"
 import type {
   MarketplaceReport,
   UsersReport,
 } from "@sayaratak/shared/schemas/reports-insights"
 import type { RevenueReport } from "@sayaratak/shared/schemas/reports-revenue"
+import type { TrustReport } from "@sayaratak/shared/schemas/reports-trust"
 
 import { db } from "~/shared/db/client"
 import { clock } from "~/shared/time/clock"
@@ -21,10 +23,16 @@ import {
   listUsersForReport,
 } from "~/modules/auth/auth.overview.service"
 import { getBusinessesOfOwners } from "~/modules/businesses/businesses.admin.service"
-import { listMarketListings } from "~/modules/listings/listings.stats.service"
+import {
+  listMarketListings,
+  listTrustListings,
+} from "~/modules/listings/listings.stats.service"
 import { listFirstListingMessageDays } from "~/modules/messaging/messaging.service"
 import { listPaymentsForRevenue } from "~/modules/payments/payments.service"
 import * as plans from "~/modules/plans/plans.report.service"
+import { listReportsForTrust } from "~/modules/reports/reports.service"
+import { listReviewFlags } from "~/modules/reviews/reviews.admin.service"
+import { listVerificationsForTrust } from "~/modules/verification/verification.service"
 
 const earlier = (a: string | undefined, b: string) => (a && a < b ? a : b)
 
@@ -110,6 +118,27 @@ export async function getRevenueReport(
       }
     }),
     plans: planNames,
+    current: bucketsOf(current),
+    compare: bucketsOf(compare),
+    now: clock.now().getTime(),
+  })
+}
+
+/** The admin Trust & safety tab: listing decisions and queue, abuse reports, verification turnaround and flagged reviews (step 11.7-r12a). */
+export async function getTrustReport(query: PeriodQuery): Promise<TrustReport> {
+  const { period, current, compare } = windowsOf(query)
+  const [listings, reports, verifications, reviews] = await Promise.all([
+    listTrustListings(db),
+    listReportsForTrust(db),
+    listVerificationsForTrust(db),
+    listReviewFlags(db),
+  ])
+  return buildTrustReport({
+    period,
+    listings,
+    reports,
+    verifications,
+    reviews,
     current: bucketsOf(current),
     compare: bucketsOf(compare),
     now: clock.now().getTime(),

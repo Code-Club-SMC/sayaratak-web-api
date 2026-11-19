@@ -1,6 +1,5 @@
 import type { Bilingual } from "@sayaratak/shared/schemas/fields"
 import type { Message } from "@sayaratak/shared/schemas/messaging"
-import type { Review } from "@sayaratak/shared/schemas/review"
 import type {
   Dealership,
   Mechanic,
@@ -11,6 +10,7 @@ import type {
   FavoriteRow,
   ListingRow,
   NotificationRow,
+  ReviewRow,
   SavedSearchRow,
   ThreadRow,
   UserRow,
@@ -50,7 +50,7 @@ type Business = {
 
 export function seedReviews(users: UserRow[], businesses: Business[]) {
   const authors = users.filter((u) => isPlain(u) && !u.banned)
-  const reviews: Review[] = []
+  const reviews: ReviewRow[] = []
   const seen = new Set<string>()
   while (reviews.length < 120) {
     const target = pick(businesses)
@@ -88,12 +88,28 @@ export function seedReviews(users: UserRow[], businesses: Business[]) {
             : "visible",
     })
   }
-  return reviews
+  return withFlags(reviews)
+}
+
+// Step 11.7-r12a, derived without the random source: reviews 109-112 were flagged and kept, 113-116 flagged and hidden, 117-120 wait flagged.
+function withFlags(reviews: ReviewRow[]) {
+  const later = (a: string, b: string) => (a > b ? a : b)
+  const plus = (iso: string, hours: number) =>
+    new Date(
+      Math.min(Date.parse(iso) + hours * HOUR, Date.parse(ago(0)))
+    ).toISOString()
+  return reviews.map((r, i) => {
+    if (i < 108) return r
+    const flaggedAt = later(r.createdAt, ago((120 - i) * 2 * DAY + 5 * HOUR))
+    return r.status === "flagged"
+      ? { ...r, flaggedAt }
+      : { ...r, flaggedAt, decidedAt: plus(flaggedAt, (i % 4) * 6 + 3) }
+  })
 }
 
 // Ratings are the average of visible reviews.
 export function applyRatings(
-  reviews: Review[],
+  reviews: ReviewRow[],
   rows: (Dealership | Workshop | Mechanic)[]
 ) {
   for (const row of rows) {

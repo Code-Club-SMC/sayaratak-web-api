@@ -4,6 +4,7 @@ import {
   type Listing,
   listingStatusSchema,
   moderationSchema,
+  rejectionCodeSchema,
   transmissionSchema,
 } from "@sayaratak/shared/schemas/listing"
 import type { ExtraFields } from "@sayaratak/shared/schemas/listing-fields"
@@ -43,6 +44,7 @@ export const rentPeriod = pgEnum("rent_period", ["day", "week", "month"])
 export const condition = pgEnum("condition", ["new", "used"])
 export const listingStatus = pgEnum("listing_status", listingStatusSchema.enum)
 export const moderation = pgEnum("moderation", moderationSchema.enum)
+export const rejectionCode = pgEnum("rejection_code", rejectionCodeSchema.enum)
 export const ownerType = pgEnum("owner_type", ["user", "dealership"])
 
 const at = () => timestamp({ withTimezone: true })
@@ -93,6 +95,8 @@ export const listings = pgTable(
     status: listingStatus().notNull(),
     moderation: moderation().notNull(),
     rejectionReason: text(),
+    // Step 11.7-r12a: the quick reason picked at the last rejection; null before r12a and once approved.
+    rejectionCode: rejectionCode(),
     // Title, both description slots and make and model names in both languages, lowercased.
     // Written by the service on every save: the names live in other tables.
     searchText: text().notNull(),

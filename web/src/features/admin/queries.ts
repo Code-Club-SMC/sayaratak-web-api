@@ -57,7 +57,10 @@ import type {
   planInputSchema,
   reportActionInputSchema,
 } from "@sayaratak/shared/schemas/inputs"
-import { listingSchema } from "@sayaratak/shared/schemas/listing"
+import {
+  listingSchema,
+  type RejectionCode,
+} from "@sayaratak/shared/schemas/listing"
 import { reviewSchema } from "@sayaratak/shared/schemas/review"
 import { userSchema } from "@sayaratak/shared/schemas/user"
 
@@ -201,8 +204,8 @@ export const useApproveListing = () =>
   )
 export const useRejectListing = () =>
   useApiMutation(
-    ({ id, reason }: { id: string; reason: string }) =>
-      post(listingSchema)(`/admin/listings/${id}/reject`, { reason }),
+    ({ id, ...body }: { id: string; reason: string; code?: RejectionCode }) =>
+      post(listingSchema)(`/admin/listings/${id}/reject`, body),
     withListings
   )
 export const useRemoveListing = () =>

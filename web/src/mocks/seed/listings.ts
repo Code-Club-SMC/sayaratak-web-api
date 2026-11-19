@@ -372,6 +372,13 @@ export function seedListings(ctx: Ctx) {
           : undefined,
       expiresAt: ahead(30 * DAY - created),
     }
+    // Step 11.7-r12a: the reason code follows the picked reason text (no extra draw).
+    if (row.rejectionReason)
+      row.rejectionCode = row.rejectionReason.startsWith("Photos")
+        ? "photos"
+        : row.rejectionReason.startsWith("Description")
+          ? "missing"
+          : "other"
     if (makeName && !row.description.ar) row.description = makeName.name
     if (approved) {
       const age = Math.max(1, created / DAY)

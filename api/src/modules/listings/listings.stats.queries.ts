@@ -81,3 +81,18 @@ export function listMarketRows(ex: Executor) {
     )
     .orderBy(asc(listings.id))
 }
+
+/** Step 11.7-r12a: moderation times and reason of every listing but drafts, for the admin Trust & safety tab. */
+export function listTrustRows(ex: Executor) {
+  return ex
+    .select({
+      createdAt: listings.createdAt,
+      moderation: listings.moderation,
+      decidedAt: listings.decidedAt,
+      rejectionCode: listings.rejectionCode,
+    })
+    .from(listings)
+    .where(
+      and(ne(listings.moderation, "draft"), eq(listings.seedHidden, false))
+    )
+}

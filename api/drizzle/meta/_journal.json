@@ -204,6 +204,13 @@
       "when": 1795072630314,
       "tag": "0028_r10_user_activity",
       "breakpoints": true
+    },
+    {
+      "idx": 29,
+      "version": "7",
+      "when": 1795102406815,
+      "tag": "0029_r12a_trust_capture",
+      "breakpoints": true
     }
   ]
 }

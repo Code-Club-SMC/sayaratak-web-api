@@ -78,6 +78,8 @@ for (const [action, status] of [
     admin(c)
     const row = find(db.reviews, c.params.id ?? "")
     if (!row) throw fail(404, "not_found")
+    // Step 11.7-r12a: leaving the flagged queue is the admin's decision on the flag.
+    if (row.status === "flagged") row.decidedAt = nowIso()
     row.status = status
     recomputeRating(row.targetId)
     return reviewSchema.parse(row)

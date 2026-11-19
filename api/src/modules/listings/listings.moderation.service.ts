@@ -1,6 +1,7 @@
 import type {
   ListingStatus,
   Moderation,
+  RejectionCode,
 } from "@sayaratak/shared/schemas/listing"
 
 import type { Transaction } from "~/shared/db/tx"
@@ -47,13 +48,18 @@ const REJECTED_TITLE = { ar: "تم رفض إعلانك", en: "Your listing was r
 export async function moderateOne(
   tx: Transaction,
   actor: Actor,
-  change: { id: string; action: ModerationAction; reason?: string }
+  change: {
+    id: string
+    action: ModerationAction
+    reason?: string
+    code?: RejectionCode
+  }
 ) {
   // FOR UPDATE: two admins pressing Approve together act one after the other.
   const row = await q.lockListing(tx, change.id)
   if (!row) fail.notFound()
   if (!FROM[change.action].includes(row.moderation)) fail.conflict()
-  return move(tx, actor, { row, action: change.action, reason: change.reason })
+  return move(tx, actor, { row, ...change })
 }
 
 /**
@@ -76,7 +82,12 @@ export async function removeIfLive(tx: Transaction, actor: Actor, id: string) {
 export async function moderateMany(
   tx: Transaction,
   actor: Actor,
-  change: { ids: string[]; action: ModerationAction; reason?: string }
+  change: {
+    ids: string[]
+    action: ModerationAction
+    reason?: string
+    code?: RejectionCode
+  }
 ) {
   if (change.action === "reject" && !change.reason)
     fail.validation({ reason: "validation.required" })
@@ -84,7 +95,7 @@ export async function moderateMany(
   for (const id of [...new Set(change.ids)].sort()) {
     const row = await q.lockListing(tx, id)
     if (!row || !BULK_FROM[change.action].includes(row.moderation)) continue
-    await move(tx, actor, { row, action: change.action, reason: change.reason })
+    await move(tx, actor, { row, ...change })
     count += 1
   }
   return count
@@ -115,13 +126,18 @@ export async function setStatus(
 async function move(
   tx: Transaction,
   actor: Actor,
-  change: { row: ListingRow; action: ModerationAction; reason?: string }
+  change: {
+    row: ListingRow
+    action: ModerationAction
+    reason?: string
+    code?: RejectionCode
+  }
 ) {
   const { row } = change
   if (row.seedDatasetId) fail.forbidden()
   const saved = await q.updateListing(tx, {
     id: row.id,
-    set: setOf(change.action, change.reason),
+    set: setOf(change.action, change.reason, change.code),
   })
   await recordAudit(tx, actor, {
     action: `listing.${change.action}`,
@@ -141,7 +157,11 @@ async function move(
 
 // Mock: approving or restoring clears the rejection note and stamps the change; a removal
 // changes only the state. Every action stamps `decidedAt` (step 11.7-r4).
-function setOf(action: ModerationAction, reason: string | undefined) {
+function setOf(
+  action: ModerationAction,
+  reason: string | undefined,
+  code: RejectionCode | undefined
+) {
   const decidedAt = clock.now()
   if (action === "remove") return { moderation: "removed" as const, decidedAt }
   const updatedAt = decidedAt
@@ -149,12 +169,15 @@ function setOf(action: ModerationAction, reason: string | undefined) {
     return {
       moderation: "rejected" as const,
       rejectionReason: reason,
+      // Step 11.7-r12a: a reason without a picked code was typed, so `other`.
+      rejectionCode: code ?? "other",
       updatedAt,
       decidedAt,
     }
   return {
     moderation: "approved" as const,
     rejectionReason: null,
+    rejectionCode: null,
     updatedAt,
     decidedAt,
   }
@@ -163,7 +186,12 @@ function setOf(action: ModerationAction, reason: string | undefined) {
 // The owner hears about an approval or a rejection; an approval is a new match for saved searches.
 async function tellPeople(
   tx: Transaction,
-  event: { row: ListingRow; action: ModerationAction; reason?: string }
+  event: {
+    row: ListingRow
+    action: ModerationAction
+    reason?: string
+    code?: RejectionCode
+  }
 ) {
   const { row } = event
   if (event.action === "remove") return

@@ -23,6 +23,7 @@ import {
   mediaSchema,
   moderationSchema,
   promotionTypeSchema,
+  rejectionCodeSchema,
   transmissionSchema,
   vehicleTypeSchema,
 } from "./listing"
@@ -270,6 +271,10 @@ export const imagesInputSchema = z.object({
 })
 
 export const rejectInputSchema = z.object({ reason: requiredText(300) })
+// Step 11.7-r12a: a listing rejection also says which quick reason was picked, if any.
+export const listingRejectInputSchema = rejectInputSchema.extend({
+  code: rejectionCodeSchema.optional(),
+})
 export const noteInputSchema = z.object({
   note: z.string().max(300).optional(),
 })
@@ -277,6 +282,7 @@ export const bulkInputSchema = z.object({
   ids: z.array(z.string()).min(1),
   action: z.enum(["approve", "reject", "remove", "restore"]),
   reason: z.string().optional(),
+  code: rejectionCodeSchema.optional(),
 })
 export const banInputSchema = z.object({
   reason: requiredText(300),

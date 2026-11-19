@@ -9,6 +9,7 @@ import {
   usersReportSchema,
 } from "@sayaratak/shared/schemas/reports-insights"
 import { revenueReportSchema } from "@sayaratak/shared/schemas/reports-revenue"
+import { trustReportSchema } from "@sayaratak/shared/schemas/reports-trust"
 import { Hono } from "hono"
 
 import { validate } from "~/shared/http/validate"
@@ -19,6 +20,7 @@ import { getActivity } from "./admin.activity.service"
 import {
   getMarketplaceReport,
   getRevenueReport,
+  getTrustReport,
   getUsersReport,
 } from "./admin.insights.service"
 import { searchAdmin } from "./admin.search.service"
@@ -111,4 +113,18 @@ adminRoutes.get(
   requireRole("admin"),
   validate.query(rangeQuery),
   async (c) => c.json(await getRevenueReport(c.req.valid("query")))
+)
+
+adminRoutes.get(
+  "/admin/insights/trust",
+  spec({
+    summary:
+      "Admin Insights Trust & safety tab (step 11.7-r12a): listing decisions by the day an admin made them (a listing counts by its state now), wait from sent to approved or rejected, the pending queue by age, rejections by quick reason, abuse reports by reason with resolve time and what is open, verification turnaround, and flagged reviews (flag to hide or keep)",
+    access: "user",
+    responses: { 200: trustReportSchema },
+    errors: [...ADMIN_ERRORS],
+  }),
+  requireRole("admin"),
+  validate.query(rangeQuery),
+  async (c) => c.json(await getTrustReport(c.req.valid("query")))
 )

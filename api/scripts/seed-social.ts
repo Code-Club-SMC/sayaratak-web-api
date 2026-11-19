@@ -61,6 +61,8 @@ function reviewRow(r: Seed["reviews"][number]) {
     replyBody: r.reply?.body,
     replyAt: date(r.reply?.createdAt),
     createdAt: new Date(r.createdAt),
+    flaggedAt: date(r.flaggedAt),
+    decidedAt: date(r.decidedAt),
   }
 }
 

@@ -52,10 +52,16 @@ describe("ReasonDialog", () => {
     fireEvent.click(within(dialog).getByRole("button", { name: "Duplicate" }))
     const box = within(dialog).getByLabelText("Reason the seller will see")
     expect((box as HTMLTextAreaElement).value).toBe("Duplicate")
+    // Step 11.7-r12a: an untouched chip text also names the chip.
+    fireEvent.click(within(dialog).getByRole("button", { name: "Reject" }))
+    await waitFor(() => expect(onConfirm).toHaveBeenCalledWith("Duplicate", 1))
     fireEvent.change(box, { target: { value: "Duplicate of an older ad" } })
     fireEvent.click(within(dialog).getByRole("button", { name: "Reject" }))
     await waitFor(() =>
-      expect(onConfirm).toHaveBeenCalledWith("Duplicate of an older ad")
+      expect(onConfirm).toHaveBeenLastCalledWith(
+        "Duplicate of an older ad",
+        undefined
+      )
     )
   })
 })

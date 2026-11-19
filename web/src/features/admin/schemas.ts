@@ -11,6 +11,7 @@ import {
 import { banInputSchema } from "@sayaratak/shared/schemas/inputs"
 import {
   promotionTypeSchema,
+  rejectionCodeSchema,
   typeFilterSchema,
   vehicleTypeSchema,
 } from "@sayaratak/shared/schemas/listing"
@@ -18,6 +19,10 @@ import { targetTypeSchema } from "@sayaratak/shared/schemas/review"
 
 // A decision the admin writes down: a rejection, a dismissal note, a suspension.
 export const reasonSchema = z.object({ reason: requiredText(300) })
+// The quick reasons of a listing rejection, in chip order; a typed reason is `other` (step 11.7-r12a).
+export const listingRejectChips = rejectionCodeSchema.options.filter(
+  (c) => c !== "other"
+)
 export type ReasonForm = z.infer<typeof reasonSchema>
 
 // The wire body of `POST /admin/users/:id/ban`; 7d and 30d end the ban on their own.

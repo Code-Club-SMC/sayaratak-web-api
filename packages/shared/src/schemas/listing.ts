@@ -41,6 +41,16 @@ export const moderationSchema = z.enum([
   "rejected",
   "removed",
 ])
+// Step 11.7-r12a: why an admin rejected a listing; a typed or edited reason is `other`. Server-only until a report reads it.
+export const rejectionCodeSchema = z.enum([
+  "photos",
+  "category",
+  "duplicate",
+  "prohibited",
+  "missing",
+  "other",
+])
+export type RejectionCode = z.infer<typeof rejectionCodeSchema>
 // Featured runs for days and lifts the listing; a bump is one-off and moves it back to the top of the newest.
 export const promotionTypeSchema = z.enum(["featured", "bump"])
 export type VehicleType = z.infer<typeof vehicleTypeSchema>

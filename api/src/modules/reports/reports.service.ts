@@ -72,3 +72,13 @@ export async function countReportsPerListing(
     )
   )
 }
+
+/** Step 11.7-r12a: every report's reason, state and times as ISO strings. */
+export async function listReportsForTrust(ex: Executor) {
+  const rows = await q.listForTrust(ex)
+  return rows.map((row) => ({
+    ...row,
+    createdAt: row.createdAt.toISOString(),
+    decidedAt: row.decidedAt?.toISOString() ?? null,
+  }))
+}

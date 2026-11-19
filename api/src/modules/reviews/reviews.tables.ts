@@ -39,6 +39,9 @@ export const reviews = pgTable(
     replyBody: text(),
     replyAt: timestamp({ withTimezone: true }),
     status: reviewStatus().default("visible").notNull(),
+    // Step 11.7-r12a: when the business owner last flagged it, and when an admin last took it out of the flagged queue (hide or show).
+    flaggedAt: timestamp({ withTimezone: true }),
+    decidedAt: timestamp({ withTimezone: true }),
     createdAt: createdAt(),
   },
   (table) => [

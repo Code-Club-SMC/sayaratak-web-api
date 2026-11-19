@@ -14,7 +14,11 @@ import type {
 } from "@sayaratak/shared/schemas/api"
 import type { Bilingual, Locale } from "@sayaratak/shared/schemas/fields"
 import type { contactSubjects } from "@sayaratak/shared/schemas/inputs"
-import type { Listing, Media } from "@sayaratak/shared/schemas/listing"
+import type {
+  Listing,
+  Media,
+  RejectionCode,
+} from "@sayaratak/shared/schemas/listing"
 import type { Message, Notification } from "@sayaratak/shared/schemas/messaging"
 import type {
   Payment,
@@ -54,10 +58,14 @@ export type ListingRow = Listing & {
   bumpedAt?: string
   soldAt?: string
   decidedAt?: string
+  // Step 11.7-r12a: the quick reason picked at the last rejection.
+  rejectionCode?: RejectionCode
 }
 // Step 11.7-r4: when an admin closed the report or decided the request.
 export type ReportRow = Report & { decidedAt?: string }
 export type VerificationRow = VerificationRequest & { decidedAt?: string }
+// Step 11.7-r12a: when the business owner last flagged it and when an admin last took it out of the flagged queue.
+export type ReviewRow = Review & { flaggedAt?: string; decidedAt?: string }
 // Step 11.7-r4: page-1 public searches per Khartoum day and filter set; "" is an absent filter.
 export type SearchRow = {
   day: string
@@ -142,7 +150,7 @@ export type Db = {
   dealerships: Dealership[]
   workshops: Workshop[]
   mechanics: Mechanic[]
-  reviews: Review[]
+  reviews: ReviewRow[]
   favorites: FavoriteRow[]
   savedSearches: SavedSearchRow[]
   threads: ThreadRow[]

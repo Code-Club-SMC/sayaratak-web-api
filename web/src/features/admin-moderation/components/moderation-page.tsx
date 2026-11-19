@@ -17,6 +17,7 @@ import {
   useRemoveListing,
 } from "@/features/admin/queries"
 import {
+  listingRejectChips,
   moderationSearchSchema,
   type ModerationSearch,
 } from "@/features/admin/schemas"
@@ -33,7 +34,6 @@ import { QueueList } from "./queue-list"
 import { ReviewActions } from "./review-actions"
 import { ShortcutsPopover } from "./shortcuts-popover"
 
-const reasons = ["photos", "category", "duplicate", "prohibited", "missing"]
 type Send = (o: {
   onSuccess: () => void
   onError: (e: unknown) => void
@@ -229,13 +229,20 @@ export function ModerationPage() {
         title={t("admin.reject_title")}
         label={t("admin.reject_label")}
         confirmLabel={t("admin.reject")}
-        chips={reasons.map((r) => t(`admin.reject_${r}`))}
-        onConfirm={(reason) => {
+        chips={listingRejectChips.map((r) => t(`admin.reject_${r}`))}
+        onConfirm={(reason, chip) => {
           if (!rejecting) return
           const id = rejecting.id
           setRejecting(null)
           act([id], t("admin.listing_rejected"), (o) =>
-            reject.mutate({ id, reason }, o)
+            reject.mutate(
+              {
+                id,
+                reason,
+                code: chip === undefined ? "other" : listingRejectChips[chip],
+              },
+              o
+            )
           )
           focusTitle()
         }}

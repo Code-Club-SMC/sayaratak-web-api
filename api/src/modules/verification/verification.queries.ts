@@ -150,3 +150,14 @@ export function updateDecision(
     })
     .where(eq(verificationRequests.id, change.id))
 }
+
+/** Step 11.7-r12a: state and times of every request, for the admin Trust & safety tab. */
+export function listForTrust(ex: Executor) {
+  return ex
+    .select({
+      status: verificationRequests.status,
+      createdAt: verificationRequests.createdAt,
+      decidedAt: verificationRequests.decidedAt,
+    })
+    .from(verificationRequests)
+}

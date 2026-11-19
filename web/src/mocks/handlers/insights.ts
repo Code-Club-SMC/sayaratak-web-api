@@ -4,6 +4,7 @@ import {
 } from "@sayaratak/shared/lib/marketplace-report"
 import { minuteOf } from "@sayaratak/shared/lib/period"
 import { buildRevenueReport } from "@sayaratak/shared/lib/revenue-report"
+import { buildTrustReport } from "@sayaratak/shared/lib/trust-report"
 import {
   activityDaysOf,
   buildUsersReport,
@@ -13,6 +14,7 @@ import {
   usersReportSchema,
 } from "@sayaratak/shared/schemas/reports-insights"
 import { revenueReportSchema } from "@sayaratak/shared/schemas/reports-revenue"
+import { trustReportSchema } from "@sayaratak/shared/schemas/reports-trust"
 
 import { db } from "../db"
 import { needRole, route } from "../http"
@@ -120,6 +122,39 @@ route("GET", "/admin/insights/revenue", (c) => {
         }
       }),
       plans: db.plans,
+      now: Date.now(),
+    })
+  )
+})
+
+// Step 11.7-r12a: the Trust & safety tab.
+route("GET", "/admin/insights/trust", (c) => {
+  needRole(c, "admin")
+  const decided = (at: string | undefined) => at ?? null
+  return trustReportSchema.parse(
+    buildTrustReport({
+      ...windowsOf(c.query),
+      listings: db.listings
+        .filter((l) => l.moderation !== "draft")
+        .map((l) => ({
+          createdAt: l.createdAt,
+          moderation: l.moderation,
+          decidedAt: decided(l.decidedAt),
+          rejectionCode: l.rejectionCode ?? null,
+        })),
+      reports: db.reports.map((r) => ({
+        ...r,
+        decidedAt: decided(r.decidedAt),
+      })),
+      verifications: db.verifications.map((v) => ({
+        ...v,
+        decidedAt: decided(v.decidedAt),
+      })),
+      reviews: db.reviews.map((r) => ({
+        status: r.status,
+        flaggedAt: r.flaggedAt ?? null,
+        decidedAt: decided(r.decidedAt),
+      })),
       now: Date.now(),
     })
   )

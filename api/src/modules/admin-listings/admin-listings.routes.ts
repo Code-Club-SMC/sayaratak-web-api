@@ -5,7 +5,7 @@ import {
 import {
   adminListingPatchSchema,
   bulkInputSchema,
-  rejectInputSchema,
+  listingRejectInputSchema,
 } from "@sayaratak/shared/schemas/inputs"
 import { listingSchema } from "@sayaratak/shared/schemas/listing"
 import { pageOf } from "@sayaratak/shared/schemas/fields"
@@ -78,13 +78,13 @@ adminListingsRoutes.post(
     errors: [...ADMIN_ERRORS, "not_found", "conflict", "validation"],
   }),
   requireAdmin,
-  validate.json(rejectInputSchema),
+  validate.json(listingRejectInputSchema),
   async (c) =>
     c.json(
       await moderateListing(c.get("actor"), {
         id: c.req.param("id"),
         action: "reject",
-        reason: c.req.valid("json").reason,
+        ...c.req.valid("json"),
       })
     )
 )

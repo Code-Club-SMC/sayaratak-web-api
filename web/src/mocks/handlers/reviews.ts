@@ -117,7 +117,10 @@ route("POST", "/reviews/:id/flag", (c) => {
   const row = reviewOf(c.params.id ?? "")
   if (findBusiness(row.targetId)?.ownerId !== user.id)
     throw fail(403, "forbidden")
-  if (row.status === "visible") row.status = "flagged"
+  if (row.status === "visible") {
+    row.status = "flagged"
+    row.flaggedAt = nowIso()
+  }
   return reviewSchema.parse(row)
 })
 

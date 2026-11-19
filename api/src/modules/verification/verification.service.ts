@@ -101,3 +101,13 @@ export async function toRequests(ex: Executor, rows: q.RequestRow[]) {
       )
   )
 }
+
+/** Step 11.7-r12a: every request's state and times as ISO strings. */
+export async function listVerificationsForTrust(ex: Executor) {
+  const rows = await q.listForTrust(ex)
+  return rows.map((row) => ({
+    ...row,
+    createdAt: row.createdAt.toISOString(),
+    decidedAt: row.decidedAt?.toISOString() ?? null,
+  }))
+}

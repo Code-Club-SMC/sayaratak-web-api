@@ -10,7 +10,7 @@ import { useAppForm } from "@/hooks/use-app-form"
 import { useT } from "@/lib/i18n/use-t"
 import { reasonSchema, type ReasonForm } from "../schemas"
 
-// Asks why before a decision. A quick-pick chip writes its text into the box, which the admin can still edit. The caller closes the dialog when its mutation settles.
+// Asks why before a decision. A quick-pick chip writes its text into the box, which the admin can still edit; `onConfirm` also gets the index of the chip the text still matches (step 11.7-r12a), none once edited or typed. The caller closes the dialog when its mutation settles.
 export function ReasonDialog({
   open,
   onOpenChange,
@@ -30,7 +30,7 @@ export function ReasonDialog({
   chips?: string[]
   destructive?: boolean
   pending?: boolean
-  onConfirm: (reason: string) => void
+  onConfirm: (reason: string, chip?: number) => void
 }) {
   const { t } = useT()
   const form = useAppForm<ReasonForm>({
@@ -47,7 +47,10 @@ export function ReasonDialog({
       <form
         noValidate
         className="flex flex-col gap-4"
-        onSubmit={form.handleSubmit(({ reason }) => onConfirm(reason))}
+        onSubmit={form.handleSubmit(({ reason }) => {
+          const chip = chips.indexOf(reason.trim())
+          onConfirm(reason, chip === -1 ? undefined : chip)
+        })}
       >
         {chips.length > 0 && (
           <div

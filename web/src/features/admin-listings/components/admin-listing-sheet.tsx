@@ -13,6 +13,7 @@ import {
   useRemoveListing,
   useRestoreListing,
 } from "@/features/admin/queries"
+import { listingRejectChips } from "@/features/admin/schemas"
 import { ListingReview } from "@/features/admin-moderation/components/listing-review"
 import { ConfirmButton } from "@/components/app/confirm-button"
 import { RemoveButton } from "@/components/app/remove-button"
@@ -21,8 +22,6 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { toast } from "@/components/ui/toast"
 import { GrantPromotionDialog } from "./grant-promotion-dialog"
 import { ListingControls } from "./listing-controls"
-
-const rejectChips = ["photos", "category", "duplicate", "prohibited", "missing"]
 
 // One listing, read only, with every admin action. The review state goes through the same endpoints as the queue, so the seller is told; status is a plain edit.
 export function AdminListingSheet({
@@ -146,11 +145,15 @@ export function AdminListingSheet({
             title={t("admin.reject_title")}
             label={t("admin.reject_label")}
             confirmLabel={t("admin.reject")}
-            chips={rejectChips.map((c) => t(`admin.reject_${c}`))}
+            chips={listingRejectChips.map((c) => t(`admin.reject_${c}`))}
             pending={reject.isPending}
-            onConfirm={(reason) =>
+            onConfirm={(reason, chip) =>
               reject.mutate(
-                { id: listing.id, reason },
+                {
+                  id: listing.id,
+                  reason,
+                  code: chip === undefined ? "other" : listingRejectChips[chip],
+                },
                 settle(t("admin.listing_rejected"))
               )
             }

@@ -18,6 +18,7 @@ import {
   businessPatchSchema,
   campaignInputSchema,
   grantInputSchema,
+  listingRejectInputSchema,
   idsInputSchema,
   imagesInputSchema,
   noteInputSchema,
@@ -134,6 +135,18 @@ runCases([
     bad: [
       ["blank", { reason: " " }, "validation.required"],
       ["long", { reason: "a".repeat(301) }, "validation.too_long"],
+    ],
+  },
+  {
+    name: "listingRejectInputSchema",
+    schema: listingRejectInputSchema,
+    valid: [
+      { reason: "Blurry photos" },
+      { reason: "Blurry photos", code: "photos" },
+    ],
+    bad: [
+      ["unknown code", { reason: "Blurry photos", code: "spam" }],
+      ["blank", { reason: " ", code: "photos" }, "validation.required"],
     ],
   },
   {

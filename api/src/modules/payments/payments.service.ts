@@ -8,6 +8,7 @@ import { uploadUrl } from "~/modules/uploads/uploads.service"
 
 import { toPayment } from "./payments.mapper"
 import * as q from "./payments.queries"
+import { listSentSince } from "./payments.spend.queries"
 
 // The reason the web shows on a receipt rejected because its sender left.
 const ACCOUNT_DELETED = "account_deleted"
@@ -50,6 +51,17 @@ export async function listMyPayments(
     )
   )
   return { items, total, page: page.page, pageSize: page.pageSize }
+}
+
+/** The account's receipts sent since `since` (step 11.7-r9 Spending report). */
+export async function listSpendOf(
+  ex: Executor,
+  find: { userId: string; since: Date }
+) {
+  return (await listSentSince(ex, find)).map((row) => ({
+    ...row,
+    createdAt: row.createdAt.toISOString(),
+  }))
 }
 
 /** The status of the newest receipt for each promotion (a promotion with none is not in the map). */

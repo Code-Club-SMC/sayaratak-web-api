@@ -16,6 +16,7 @@ import {
   matchesSearch,
   type SearchScope,
 } from "./listings.filters.queries"
+import { listMatchedAt } from "./listings.matched.queries"
 import { capPaid } from "./listings.ranking.service"
 import { listHiddenOwnerIds } from "./listings.read.service"
 import { countFacets } from "./listings.facets.queries"
@@ -102,6 +103,24 @@ export async function listingMatchesSearch(
 ) {
   const scope = await scopeOf(ex, find.params)
   return matchesSearch(ex, { ...find, scope })
+}
+
+/** When each listing of others matching the search went public in `[since, until)`; sold ones count, as they alerted when new (step 11.7-r9). */
+export async function listSearchMatchedAt(
+  ex: Executor,
+  find: {
+    params: SearchParams
+    since: Date
+    until: Date
+    exceptOwnerId: string
+  }
+) {
+  const params = { ...find.params, includeSold: true }
+  return listMatchedAt(ex, {
+    ...find,
+    params,
+    scope: await scopeOf(ex, params),
+  })
 }
 
 /** The id lists the filters need from other modules; each is read only when used. */

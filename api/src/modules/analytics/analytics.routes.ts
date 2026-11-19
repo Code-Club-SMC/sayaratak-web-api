@@ -6,16 +6,11 @@ import {
   listingsReportQuerySchema,
   listingsReportSchema,
 } from "@sayaratak/shared/schemas/reports"
-import { demandReportSchema } from "@sayaratak/shared/schemas/reports-demand"
 import {
   pricePositionSchema,
   priceReportQuerySchema,
   priceReportSchema,
 } from "@sayaratak/shared/schemas/reports-price"
-import { rankReportSchema } from "@sayaratak/shared/schemas/reports-rank"
-import { promotionsReportSchema } from "@sayaratak/shared/schemas/reports-promotions"
-import { repliesReportSchema } from "@sayaratak/shared/schemas/reports-replies"
-import { reviewsReportSchema } from "@sayaratak/shared/schemas/reports-reviews"
 import { analyticsSchema } from "@sayaratak/shared/schemas/responses"
 import { Hono } from "hono"
 
@@ -25,14 +20,8 @@ import { spec } from "~/shared/openapi/registry"
 import { requireUser } from "~/modules/auth/auth.middleware"
 
 import { getMyAnalytics } from "./analytics.me.service"
-import {
-  getDemandReport,
-  getRepliesReport,
-  getReviewsReport,
-} from "./analytics.activity-reports.service"
 import { getListingPrice, getPriceReport } from "./analytics.price.service"
-import { getRankReport } from "./analytics.rank.service"
-import { getPromotionsReport } from "./analytics.promotions-report.service"
+import { reportTabs } from "./analytics.report-tabs"
 import { getListingsReport } from "./analytics.reports.service"
 import { getListingAnalytics, recordEvent } from "./analytics.service"
 
@@ -112,41 +101,8 @@ analyticsRoutes.get(
   }
 )
 
-// Step 11.7-r6: the other report tabs, each for a preset or custom period.
-const reports = [
-  [
-    "promotions",
-    "Each promotion of the account's listings that ran in the period, against the same length before it (a bump counts 3 days): views, contacts, extra contacts and cost per extra contact; and the paid banner campaigns with views, clicks and click rate per bucket",
-    promotionsReportSchema,
-    getPromotionsReport,
-  ],
-  [
-    "demand",
-    "Share of market views per make and model in the account's city (all Sudan without a city or under 50 live listings) against the share of the account's live stock; under 5 market listings fold into Other",
-    demandReportSchema,
-    getDemandReport,
-  ],
-  [
-    "replies",
-    "Buyer threads started in the period: median minutes to the first reply, share answered within 24 hours, reply speed bands; and the threads waiting for a reply now",
-    repliesReportSchema,
-    getRepliesReport,
-  ],
-  [
-    "reviews",
-    "Visible reviews of the account's business: average stars per bucket, star breakdown, reply rate and median reply hours for the period and the compare window, and the all-time average",
-    reviewsReportSchema,
-    getReviewsReport,
-  ],
-  [
-    "rank",
-    "Where the account's business stands among listed businesses of its kind in its city (all Sudan under 5 there) for views, contacts, rating (3+ reviews) and 24 h reply rate: the share of the other ranked peers it beats, shown with 5+ ranked; aggregate only",
-    rankReportSchema,
-    getRankReport,
-  ],
-] as const
-
-for (const [name, summary, schema, read] of reports)
+// Steps 11.7-r6 to r9: the other report tabs, each for a preset or custom period.
+for (const [name, summary, schema, read] of reportTabs)
   analyticsRoutes.get(
     `/me/reports/${name}`,
     spec({

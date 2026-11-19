@@ -20,7 +20,7 @@ import * as reviews from "~/modules/reviews/reviews.service"
 import { countsPerTarget, type Window, windowsOf } from "./analytics.period"
 
 // The buckets a shared builder sums timestamps into.
-const bucketsOf = (w: Window) => ({
+export const bucketsOf = (w: Window) => ({
   starts: w.starts,
   end: w.hourly ? (w.starts.at(-1) ?? "") : w.last,
   hourly: w.hourly,

@@ -9,19 +9,20 @@ import { useT } from "@/lib/i18n/use-t"
 import type { PeriodQuery } from "@sayaratak/shared/schemas/period"
 import { durationText } from "../duration"
 import { repliesReportQuery } from "../queries"
+import type { ReportsRole } from "../schemas"
 import { UnansweredCard } from "./unanswered-card"
 
 // How fast buyers get an answer: threads they started in the period, the typical first-reply time, the share answered within 24 hours, speed bands and the threads waiting now (step 11.7-r6).
-// `customers`: workshops and mechanics hear from customers, not buyers (step 11.7-r8).
+// Workshops and mechanics hear from customers, not buyers (step 11.7-r8).
 export function RepliesReport({
   query,
-  customers,
+  role,
 }: {
   query: PeriodQuery
-  customers?: boolean
+  role: ReportsRole
 }) {
   const { t, locale } = useT()
-  const who = customers ? "_customer" : ""
+  const who = role === "workshop" || role === "mechanic" ? "_customer" : ""
   const report = useQuery(repliesReportQuery(query))
   const { data, isPending } = report
   if (report.isError && !data)
@@ -80,7 +81,11 @@ export function RepliesReport({
           value: s.count,
         }))}
       />
-      <UnansweredCard unanswered={data?.unanswered} loading={isPending} />
+      <UnansweredCard
+        role={role}
+        unanswered={data?.unanswered}
+        loading={isPending}
+      />
     </div>
   )
 }

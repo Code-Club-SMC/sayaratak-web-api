@@ -8,8 +8,16 @@ import { usePeriodSearch } from "@/features/analytics/hooks"
 import { PerformanceReport } from "@/features/analytics/components/performance-report"
 import { usePageTitle } from "@/features/dashboard/components/page-title"
 import { useT } from "@/lib/i18n/use-t"
-import { type ReportsRole, reportsSearchSchema, tabsOf } from "../schemas"
+import {
+  type ReportsRole,
+  type ReportsSearch,
+  type ReportsTab,
+  reportsSearchSchema,
+  tabsOf,
+} from "../schemas"
+import type { PeriodQuery } from "@sayaratak/shared/schemas/period"
 import { AdsReport } from "./ads-report"
+import { AlertsReport } from "./alerts-report"
 import { DemandReport } from "./demand-report"
 import { ListingsReport } from "./listings-report"
 import { PriceReport } from "./price-report"
@@ -17,8 +25,9 @@ import { PromotionsReport } from "./promotions-report"
 import { RankReport } from "./rank-report"
 import { RepliesReport } from "./replies-report"
 import { ReviewsReport } from "./reviews-report"
+import { SpendingReport } from "./spending-report"
 
-// Business Reports (steps 11.7-r5 to r8): one period control over the role's tabs (the dealer's Price ignores it). Tab, period, filter, sort and page live in the URL.
+// Reports (steps 11.7-r5 to r9): one period control over the role's tabs (Price ignores it). Tab, period, filter, sort and page live in the URL.
 export function ReportsPage({ role }: { role: ReportsRole }) {
   const { t } = useT()
   const title = t("dashboard.nav_business_reports")
@@ -72,41 +81,54 @@ export function ReportsPage({ role }: { role: ReportsRole }) {
             ))}
           </TabsList>
         </div>
-        <TabsContent value="performance" className="pt-2">
-          <PerformanceReport role={role} query={query} />
-        </TabsContent>
-        {role === "dealership" ? (
-          <>
-            <TabsContent value="listings" className="pt-2">
-              <ListingsReport search={search} />
-            </TabsContent>
-            <TabsContent value="price" className="pt-2">
-              <PriceReport search={search} />
-            </TabsContent>
-            <TabsContent value="promotions" className="pt-2">
-              <PromotionsReport query={query} />
-            </TabsContent>
-            <TabsContent value="demand" className="pt-2">
-              <DemandReport query={query} />
-            </TabsContent>
-          </>
-        ) : (
-          <>
-            <TabsContent value="ads" className="pt-2">
-              <AdsReport role={role} query={query} />
-            </TabsContent>
-            <TabsContent value="rank" className="pt-2">
-              <RankReport role={role} query={query} />
-            </TabsContent>
-          </>
-        )}
-        <TabsContent value="replies" className="pt-2">
-          <RepliesReport query={query} customers={role !== "dealership"} />
-        </TabsContent>
-        <TabsContent value="reviews" className="pt-2">
-          <ReviewsReport query={query} />
-        </TabsContent>
+        {tabs.map((tab) => (
+          <TabsContent key={tab} value={tab} className="pt-2">
+            <TabBody tab={tab} role={role} search={search} query={query} />
+          </TabsContent>
+        ))}
       </Tabs>
     </div>
   )
+}
+
+// One tab's report.
+function TabBody({
+  tab,
+  role,
+  search,
+  query,
+}: {
+  tab: ReportsTab
+  role: ReportsRole
+  search: ReportsSearch
+  query: PeriodQuery
+}) {
+  switch (tab) {
+    case "performance":
+      return <PerformanceReport role={role} query={query} />
+    case "listings":
+      return <ListingsReport search={search} />
+    case "price":
+      return <PriceReport search={search} />
+    case "promotions":
+      return <PromotionsReport query={query} campaigns={role !== "user"} />
+    case "demand":
+      return <DemandReport query={query} />
+    case "ads":
+      return role === "workshop" || role === "mechanic" ? (
+        <AdsReport role={role} query={query} />
+      ) : null
+    case "rank":
+      return role === "workshop" || role === "mechanic" ? (
+        <RankReport role={role} query={query} />
+      ) : null
+    case "replies":
+      return <RepliesReport query={query} role={role} />
+    case "reviews":
+      return <ReviewsReport query={query} />
+    case "spending":
+      return <SpendingReport query={query} />
+    case "alerts":
+      return <AlertsReport query={query} />
+  }
 }

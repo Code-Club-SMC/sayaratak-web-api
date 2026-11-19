@@ -103,8 +103,8 @@ async function contactHoursOf(input: {
   const { user, scope, w } = input
   const cells: number[] = Array.from({ length: 168 }, () => 0)
   const sinceMinute = `${input.since}T00:00`
-  // biome-ignore lint/complexity/useMathMinMax: ISO minute strings, not numbers
-  const from = w.from > sinceMinute ? w.from : sinceMinute
+  // The later of two ISO minute strings.
+  const from = [w.from, sinceMinute].sort()[1] ?? w.from
   if (from >= w.to) return cells
   const [taps, received] = await Promise.all([
     scope.targets?.length === 0

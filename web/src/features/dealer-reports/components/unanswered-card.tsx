@@ -8,12 +8,23 @@ import { formatNumber, formatRelative } from "@/lib/format"
 import { useT } from "@/lib/i18n/use-t"
 import { useNow } from "@/lib/now"
 import type { RepliesReport } from "@sayaratak/shared/schemas/reports-replies"
+import type { ReportsRole } from "../schemas"
 
-// Threads waiting for the dealer's reply now, oldest first, each opening the conversation.
+// Each role's inbox (all take `?thread=`).
+const inboxOf = {
+  user: "/$locale/account/messages",
+  dealership: "/$locale/dealer/messages",
+  workshop: "/$locale/workshop/inquiries",
+  mechanic: "/$locale/mechanic/inquiries",
+} as const
+
+// Threads waiting for the account's reply now, oldest first, each opening the conversation in the role's inbox.
 export function UnansweredCard({
+  role,
   unanswered,
   loading,
 }: {
+  role: ReportsRole
   unanswered?: RepliesReport["unanswered"]
   loading?: boolean
 }) {
@@ -49,9 +60,8 @@ export function UnansweredCard({
               key={item.threadId}
               className="flex items-center justify-between gap-3 py-3"
             >
-              {/* r8 gives workshops and mechanics their own messages link. */}
               <Link
-                to="/$locale/dealer/messages"
+                to={inboxOf[role]}
                 params={{ locale }}
                 search={{ thread: item.threadId }}
                 className="min-w-0 truncate text-ui font-medium hover:text-primary"

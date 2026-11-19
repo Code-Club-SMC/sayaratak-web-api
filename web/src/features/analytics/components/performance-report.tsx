@@ -16,7 +16,7 @@ export function PerformanceReport({
   role,
   query,
 }: {
-  role: "dealership" | "workshop" | "mechanic"
+  role: "user" | "dealership" | "workshop" | "mechanic"
   query: PeriodQuery
 }) {
   const { t } = useT()
@@ -44,7 +44,7 @@ export function PerformanceReport({
           <StatRow role={role} data={data} loading={isPending} />
           <AreaChartCard
             title={t(
-              role === "dealership"
+              role === "dealership" || role === "user"
                 ? "analytics.chart_views"
                 : "analytics.chart_profile_views"
             )}

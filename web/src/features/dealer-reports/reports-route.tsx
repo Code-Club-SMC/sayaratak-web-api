@@ -15,7 +15,7 @@ const ReportsPage = lazyRouteComponent(
   "ReportsPage"
 )
 
-// Route options of `<dashboard>/reports` for the three business roles (steps 11.7-r5 and r8).
+// Route options of `<dashboard>/reports` for the business roles and the personal account (steps 11.7-r5, r8 and r9).
 export const reportsRoute = (role: ReportsRole) => ({
   validateSearch: reportsSearchSchema,
   search: {

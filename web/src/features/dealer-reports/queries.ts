@@ -8,6 +8,7 @@ import {
   listingsReportSchema,
   type ListingsReportQuery,
 } from "@sayaratak/shared/schemas/reports"
+import { alertsReportSchema } from "@sayaratak/shared/schemas/reports-alerts"
 import { demandReportSchema } from "@sayaratak/shared/schemas/reports-demand"
 import {
   priceReportSchema,
@@ -17,6 +18,7 @@ import { rankReportSchema } from "@sayaratak/shared/schemas/reports-rank"
 import { promotionsReportSchema } from "@sayaratak/shared/schemas/reports-promotions"
 import { repliesReportSchema } from "@sayaratak/shared/schemas/reports-replies"
 import { reviewsReportSchema } from "@sayaratak/shared/schemas/reports-reviews"
+import { spendingReportSchema } from "@sayaratak/shared/schemas/reports-spending"
 
 // The account's approved listings with the period's counts, flags and stock summary; one page of 20.
 export const listingsReportQuery = (query: ListingsReportQuery) =>
@@ -58,3 +60,7 @@ export const priceReportQuery = (query: PriceReportQuery) =>
   tabQuery("price", priceReportSchema, query)
 export const rankReportQuery = (query: PeriodQuery) =>
   tabQuery("rank", rankReportSchema, query)
+export const spendingReportQuery = (query: PeriodQuery) =>
+  tabQuery("spending", spendingReportSchema, query)
+export const alertsReportQuery = (query: PeriodQuery) =>
+  tabQuery("alerts", alertsReportSchema, query)

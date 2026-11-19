@@ -8,7 +8,7 @@ import { listings } from "~/modules/listings/listings.tables"
 import { bothSessions, resetDb } from "../../../tests/helpers"
 import { expectParity } from "../../../tests/parity"
 
-// Steps 11.7-r7 and r8 (moved out of analytics.parity.test.ts, which hit the file size limit).
+// Steps 11.7-r7 to r9 (r7 and r8 moved out of analytics.parity.test.ts, which hit the file size limit).
 // The mock counts UTC days and the api Khartoum days (UTC+2). At noon UTC they
 // are the same date, so the two can be compared whatever time the suite runs.
 // The time is fixed before the seeds are built, so their message times are fixed too.
@@ -102,5 +102,26 @@ describe("step 11.7-r8 city rank matches the mock", () => {
 
   test("signed out", async () => {
     await expectParity("/api/v1/me/reports/rank")
+  })
+})
+
+describe("step 11.7-r9 spending and alerts match the mock", () => {
+  test("every role, presets, custom and year compare", async () => {
+    for (const name of ["spending", "alerts"])
+      for (const as of AS)
+        for (const query of [
+          "",
+          "?range=7d",
+          "?range=90d&compare=year",
+          "?from=2020-01-01T00:00&to=2020-01-02T00:00",
+        ])
+          await expectParity(`/api/v1/me/reports/${name}${query}`, {
+            init: { headers: sessions[as] },
+          })
+  })
+
+  test("signed out", async () => {
+    await expectParity("/api/v1/me/reports/spending")
+    await expectParity("/api/v1/me/reports/alerts")
   })
 })

@@ -79,7 +79,7 @@ const group = (key: string, items: NavItem[]): NavGroup => ({
 })
 
 // Business roles share the Work, Growth, Business and Account groups; only the Work items differ.
-// Every business role opens Reports (steps 11.7-r5 and r8).
+// Every business role opens Reports (steps 11.7-r5 and r8); the personal account too, under Selling (r9).
 const business = (
   work: NavItem[],
   growth: NavItem[] = [reports]
@@ -99,7 +99,11 @@ export const navConfig: Record<Role, NavGroup[]> = {
       item("saved_searches", "/saved-searches", BookmarkIcon),
       item("messages", "/messages", MessageSquareIcon, "unreadMessages"),
     ]),
-    group("selling", [item("listings", "/listings", CarIcon), billing]),
+    group("selling", [
+      item("listings", "/listings", CarIcon),
+      reports,
+      billing,
+    ]),
     group("account", [notifications, settings]),
   ],
   dealership: business(

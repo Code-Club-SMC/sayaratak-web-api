@@ -11,7 +11,14 @@ import { CampaignsSection } from "./campaigns-section"
 import { PromotionsTable } from "./promotions-table"
 
 // Did paid visibility pay off: money spent, contacts the promotions added and the cost of each, per promotion, and the banner campaigns (step 11.7-r6).
-export function PromotionsReport({ query }: { query: PeriodQuery }) {
+// `campaigns`: banner campaigns are for businesses; a personal seller has none (step 11.7-r9).
+export function PromotionsReport({
+  query,
+  campaigns = true,
+}: {
+  query: PeriodQuery
+  campaigns?: boolean
+}) {
   const { t, locale } = useT()
   const report = useQuery(promotionsReportQuery(query))
   const { data, isPending } = report
@@ -48,11 +55,13 @@ export function PromotionsReport({ query }: { query: PeriodQuery }) {
         />
       </div>
       <PromotionsTable rows={data?.promotions} loading={isPending} />
-      <CampaignsSection
-        rows={data?.campaigns}
-        period={data?.period}
-        loading={isPending}
-      />
+      {campaigns ? (
+        <CampaignsSection
+          rows={data?.campaigns}
+          period={data?.period}
+          loading={isPending}
+        />
+      ) : null}
     </div>
   )
 }

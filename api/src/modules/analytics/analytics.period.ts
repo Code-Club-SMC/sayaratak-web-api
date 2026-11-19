@@ -101,8 +101,8 @@ export async function countsPerDay(
     ...hours,
     ...monthly.map(({ month, ...row }) => ({
       ...row,
-      // biome-ignore lint/complexity/useMathMinMax: ISO day strings, not numbers
-      day: month < w.first ? w.first : month,
+      // The later of two ISO day strings.
+      day: [month, w.first].sort()[1] ?? month,
     })),
   ])
 }
@@ -195,8 +195,8 @@ const latestDay = (a: string, b: string) => (a < b ? b : a)
 export async function hourlySinceOf(today: string) {
   const kept = firstHourlyDay(today)
   const first = (await hourly.firstHourlyDay(db)) ?? today
-  // biome-ignore lint/complexity/useMathMinMax: ISO day strings, not numbers
-  return first > kept ? first : kept
+  // The later of two ISO day strings.
+  return [first, kept].sort()[1] ?? kept
 }
 
 /** One counter of a per-day map, for `bucket`. */

@@ -2,18 +2,20 @@ import { StatCard } from "@/components/app/stat-card"
 import { useT } from "@/lib/i18n/use-t"
 import type { Analytics } from "@sayaratak/shared/schemas/responses"
 
-type Role = "dealership" | "workshop" | "mechanic"
+type Role = "user" | "dealership" | "workshop" | "mechanic"
 type Key = keyof Analytics["totals"]
 
-// A dealership counts listing views and favorites; a workshop or mechanic counts profile views and new reviews.
+// A dealership or personal seller counts listing views and favorites; a workshop or mechanic counts profile views and new reviews.
+const listingStats: { key: Key; label: string }[] = [
+  { key: "views", label: "analytics.stat_views" },
+  { key: "calls", label: "analytics.stat_calls" },
+  { key: "whatsapp", label: "analytics.stat_whatsapp" },
+  { key: "messages", label: "analytics.stat_messages" },
+  { key: "favorites", label: "analytics.stat_favorites" },
+]
 const stats: Record<Role, { key: Key; label: string }[]> = {
-  dealership: [
-    { key: "views", label: "analytics.stat_views" },
-    { key: "calls", label: "analytics.stat_calls" },
-    { key: "whatsapp", label: "analytics.stat_whatsapp" },
-    { key: "messages", label: "analytics.stat_messages" },
-    { key: "favorites", label: "analytics.stat_favorites" },
-  ],
+  user: listingStats,
+  dealership: listingStats,
   workshop: [
     { key: "views", label: "analytics.stat_profile_views" },
     { key: "calls", label: "analytics.stat_calls" },

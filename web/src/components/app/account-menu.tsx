@@ -82,8 +82,13 @@ export function AccountMenu() {
         {photo ? (
           <Avatar className="size-7">
             <AvatarImage src={photo} alt="" />
-            <AvatarFallback className="bg-accent text-caption font-semibold text-accent-foreground">
-              <bdi>{initials(me.fullName)}</bdi>
+            {/* A photo that fails shows the same person icon as no photo: initials as text would not match the button's name "Account" (axe label-content-name-mismatch, step 11.7-r15). */}
+            <AvatarFallback className="bg-transparent text-foreground">
+              <UserRound
+                className="size-5"
+                strokeWidth={1.5}
+                aria-hidden="true"
+              />
             </AvatarFallback>
           </Avatar>
         ) : (

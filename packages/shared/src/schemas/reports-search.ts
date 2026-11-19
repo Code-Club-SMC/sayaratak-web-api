@@ -1,31 +1,31 @@
-import { z } from "zod";
+import { z } from "zod"
 
-import { periodSchema } from "./period";
+import { periodSchema } from "./period"
 
 // Admin Insights Search demand tab (step 11.7-r13, owner 2026-11-19): page-1 public searches from the daily search log (no user id, never the typed words). Searches count whole Khartoum days, so the chart is per day even when the period is per hour.
 
-const int = z.number().int();
-const countSchema = z.object({ count: int, previous: int });
+const int = z.number().int()
+const countSchema = z.object({ count: int, previous: int })
 // Percent with one decimal; null without searches.
 const rateSchema = z.object({
   value: z.number().nullable(),
   previous: z.number().nullable(),
-});
+})
 
-const searchPoint = z.object({ date: z.string(), searches: int, misses: int });
-export type SearchPoint = z.infer<typeof searchPoint>;
+const searchPoint = z.object({ date: z.string(), searches: int, misses: int })
+export type SearchPoint = z.infer<typeof searchPoint>
 
 // A filter value and how often it was searched; `misses` = searches that found nothing.
-const topRow = z.object({ id: z.string(), searches: int, misses: int });
-export type SearchTopRow = z.infer<typeof topRow>;
+const topRow = z.object({ id: z.string(), searches: int, misses: int })
+export type SearchTopRow = z.infer<typeof topRow>
 
 const makeRow = topRow.extend({
   // Vehicle listings of the make live now.
   live: int,
   // Searches per live listing, one decimal; null when none is live (owner: "No listings").
   perListing: z.number().nullable(),
-});
-export type SearchMakeRow = z.infer<typeof makeRow>;
+})
+export type SearchMakeRow = z.infer<typeof makeRow>
 
 // One filter set that found nothing at least once (owner: grouped by the whole set). An absent filter is "".
 const missRow = z.object({
@@ -39,8 +39,8 @@ const missRow = z.object({
   hasText: z.boolean(),
   searches: int,
   misses: int,
-});
-export type SearchMissRow = z.infer<typeof missRow>;
+})
+export type SearchMissRow = z.infer<typeof missRow>
 
 export const searchReportSchema = z.object({
   period: periodSchema,
@@ -61,5 +61,5 @@ export const searchReportSchema = z.object({
   cities: z.array(topRow),
   partCategories: z.array(topRow),
   missed: z.array(missRow),
-});
-export type SearchReport = z.infer<typeof searchReportSchema>;
+})
+export type SearchReport = z.infer<typeof searchReportSchema>

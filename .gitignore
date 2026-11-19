@@ -1,3 +1,8 @@
 graphify-out/
 .DS_Store
 node_modules
+
+# Local seed photo sources, a duplicate prompt file and an unrelated QR image (kept on disk, not in git)
+docs/Test-images/
+/seed-image-prompts.txt
+web/public/images/FairyBread-ExpoGo-QR.png

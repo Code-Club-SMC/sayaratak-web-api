@@ -10,6 +10,7 @@ import { insightsSearchSchema, insightsTabs } from "../schemas"
 import { AdsInsights } from "./ads-insights"
 import { MarketplaceInsights } from "./marketplace-insights"
 import { RevenueInsights } from "./revenue-insights"
+import { SearchInsights } from "./search-insights"
 import { TrustInsights } from "./trust-insights"
 import { UsersInsights } from "./users-insights"
 
@@ -64,6 +65,9 @@ export function InsightsPage() {
         </TabsContent>
         <TabsContent value="ads" className="pt-2">
           <AdsInsights query={query} />
+        </TabsContent>
+        <TabsContent value="search" className="pt-2">
+          <SearchInsights query={query} />
         </TabsContent>
       </Tabs>
     </div>

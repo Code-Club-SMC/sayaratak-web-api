@@ -1,5 +1,5 @@
 import type { SearchLogKey } from "@sayaratak/shared/search/log"
-import { sql } from "drizzle-orm"
+import { and, gte, lte, sql } from "drizzle-orm"
 
 import type { Executor } from "~/shared/db/tx"
 
@@ -29,4 +29,27 @@ export async function deleteOldSearches(
     sql`delete from ${s} where ctid in (select ctid from ${s} where ${s.day} < ${batch.beforeDay} limit ${batch.size} for update skip locked) returning day`
   )
   return rows.length
+}
+
+/** Search rows of the days `[first, last]`, both included (step 11.7-r13). */
+export function listSearchDays(
+  ex: Executor,
+  days: { first: string; last: string }
+) {
+  return ex
+    .select({
+      day: s.day,
+      kind: s.kind,
+      intent: s.intent,
+      type: s.type,
+      make: s.make,
+      model: s.model,
+      city: s.city,
+      partCategory: s.partCategory,
+      hasText: s.hasText,
+      searches: s.searches,
+      zeroResults: s.zeroResults,
+    })
+    .from(s)
+    .where(and(gte(s.day, days.first), lte(s.day, days.last)))
 }

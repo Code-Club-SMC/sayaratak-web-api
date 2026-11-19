@@ -6,6 +6,7 @@ import { backups } from "~/modules/admin-backups/admin-backups.tables"
 import {
   events,
   eventsHourly,
+  searchesDaily,
   userActivity,
 } from "~/modules/analytics/analytics.tables"
 import { settings, sitePages } from "~/modules/content/content.tables"
@@ -17,7 +18,7 @@ type Seed = ReturnType<typeof buildSeed>
 
 const BYTES_PER_MB = 1024 * 1024
 
-/** Settings, site pages, backups, event counters (daily and hourly) and signed-in days. */
+/** Settings, site pages, backups, event counters (daily and hourly), signed-in days and the search log. */
 export async function seedContent(ex: Executor, data: Seed) {
   await seedSite(ex, data)
   // Demo backups have no dump behind their key; restoring one fails with the object missing.
@@ -35,6 +36,7 @@ export async function seedContent(ex: Executor, data: Seed) {
   )
   await seedEvents(ex, data)
   await seedActivity(ex, data)
+  await seedSearches(ex, data)
 }
 
 // Step 11.7-r10: the mock's signed-in days, one unnest like the event counters.
@@ -45,6 +47,17 @@ async function seedActivity(ex: Executor, data: Seed) {
     `{${rows.map((r) => r[key]).join(",")}}`
   await ex.execute(
     sql`insert into ${userActivity} select * from unnest(${column("day")}::date[], ${column("userId")}::text[], ${column("device")}::activity_device[]) where not exists (select from ${userActivity})`
+  )
+}
+
+// Step 11.7-r13: the mock's search log, one unnest like the event counters.
+async function seedSearches(ex: Executor, data: Seed) {
+  const rows = data.searches
+  if (!rows.length) return
+  const column = <K extends keyof (typeof rows)[number]>(key: K) =>
+    `{${rows.map((r) => JSON.stringify(r[key])).join(",")}}`
+  await ex.execute(
+    sql`insert into ${searchesDaily} select * from unnest(${column("day")}::date[], ${column("kind")}::text[], ${column("intent")}::text[], ${column("type")}::text[], ${column("make")}::text[], ${column("model")}::text[], ${column("city")}::text[], ${column("partCategory")}::text[], ${column("hasText")}::boolean[], ${column("searches")}::int[], ${column("zeroResults")}::int[], ${column("results")}::bigint[]) where not exists (select from ${searchesDaily})`
   )
 }
 

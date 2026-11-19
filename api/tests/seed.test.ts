@@ -73,6 +73,8 @@ const expected = new Map<PgTable, number>([
   [schema.contacts, count(seeded.contacts)],
   [schema.broadcasts, count(seeded.broadcasts)],
   [schema.userActivity, count(seeded.activity)],
+  // 90 days of demo searches (step 11.7-r13).
+  [schema.searchesDaily, count(seeded.searches)],
 ])
 
 // Tables the mock has no rows for: runtime state (sessions, codes, throttles, keys, audit, mail).
@@ -88,8 +90,6 @@ const runtimeOnly = new Set([
   schema.devices,
   schema.fileDeletions,
   schema.eventsMonthly,
-  // Searches start empty in the mock seed too (step 11.7-r4).
-  schema.searchesDaily,
   // Public-preview preparation is runtime admin state, never part of the development seed.
   schema.seedDatasets,
   schema.seedOperations,

@@ -35,3 +35,7 @@ export function pruneOldSearches(size = BATCH_SIZE) {
     size
   )
 }
+
+/** Search rows of the days `[first, last]` for the admin Search demand tab (step 11.7-r13). */
+export const listSearchDays = (days: { first: string; last: string }) =>
+  q.listSearchDays(db, days)

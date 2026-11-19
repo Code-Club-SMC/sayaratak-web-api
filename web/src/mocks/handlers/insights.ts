@@ -4,6 +4,7 @@ import {
   type MarketInput,
 } from "@sayaratak/shared/lib/marketplace-report"
 import { minuteOf } from "@sayaratak/shared/lib/period"
+import { buildSearchReport } from "@sayaratak/shared/lib/search-report"
 import { buildRevenueReport } from "@sayaratak/shared/lib/revenue-report"
 import { buildTrustReport } from "@sayaratak/shared/lib/trust-report"
 import {
@@ -15,6 +16,7 @@ import {
   usersReportSchema,
 } from "@sayaratak/shared/schemas/reports-insights"
 import { adsReportSchema } from "@sayaratak/shared/schemas/reports-ads"
+import { searchReportSchema } from "@sayaratak/shared/schemas/reports-search"
 import { revenueReportSchema } from "@sayaratak/shared/schemas/reports-revenue"
 import { trustReportSchema } from "@sayaratak/shared/schemas/reports-trust"
 
@@ -201,6 +203,20 @@ route("GET", "/admin/insights/ads", (c) => {
       pages: db.adPages,
       current,
       compare,
+    })
+  )
+})
+
+// Step 11.7-r13: the Search demand tab.
+route("GET", "/admin/insights/search", (c) => {
+  needRole(c, "admin")
+  const { period } = periodOf(c.query)
+  return searchReportSchema.parse(
+    buildSearchReport({
+      period,
+      rows: db.searches,
+      listings: db.listings,
+      now: Date.now(),
     })
   )
 })

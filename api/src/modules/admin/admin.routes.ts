@@ -10,6 +10,7 @@ import {
 } from "@sayaratak/shared/schemas/reports-insights"
 import { revenueReportSchema } from "@sayaratak/shared/schemas/reports-revenue"
 import { adsReportSchema } from "@sayaratak/shared/schemas/reports-ads"
+import { searchReportSchema } from "@sayaratak/shared/schemas/reports-search"
 import { trustReportSchema } from "@sayaratak/shared/schemas/reports-trust"
 import { Hono } from "hono"
 
@@ -19,6 +20,7 @@ import { requireRole } from "~/modules/auth/auth.middleware"
 
 import { getActivity } from "./admin.activity.service"
 import { getAdsReport } from "./admin.insights-ads.service"
+import { getSearchReport } from "./admin.insights-search.service"
 import {
   getMarketplaceReport,
   getRevenueReport,
@@ -143,4 +145,18 @@ adminRoutes.get(
   requireRole("admin"),
   validate.query(rangeQuery),
   async (c) => c.json(await getAdsReport(c.req.valid("query")))
+)
+
+adminRoutes.get(
+  "/admin/insights/search",
+  spec({
+    summary:
+      "Admin Insights Search demand tab (step 11.7-r13): page-1 public searches per day from the search log, top makes, models, cities and part categories, searches per live listing per make, and the filter sets that found nothing",
+    access: "user",
+    responses: { 200: searchReportSchema },
+    errors: [...ADMIN_ERRORS],
+  }),
+  requireRole("admin"),
+  validate.query(rangeQuery),
+  async (c) => c.json(await getSearchReport(c.req.valid("query")))
 )

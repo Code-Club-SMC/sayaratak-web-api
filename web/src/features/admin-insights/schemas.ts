@@ -2,13 +2,14 @@ import { z } from "zod"
 
 import { periodQuerySchema } from "@sayaratak/shared/schemas/period"
 
-// Admin Insights (step 11.7-r10): the tab and the period live in the URL. Revenue joined in r11, Trust & safety in r12a, Ads in r12b; Search demand joins in r13.
+// Admin Insights (step 11.7-r10): the tab and the period live in the URL. Revenue joined in r11, Trust & safety in r12a, Ads in r12b, Search demand in r13.
 export const insightsTabs = [
   "marketplace",
   "users",
   "revenue",
   "trust",
   "ads",
+  "search",
 ] as const
 export type InsightsTab = (typeof insightsTabs)[number]
 export const insightsSearchSchema = periodQuerySchema.extend({

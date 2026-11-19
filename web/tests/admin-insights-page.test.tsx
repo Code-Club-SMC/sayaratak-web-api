@@ -27,7 +27,7 @@ const open = (query = "") =>
   })
 
 describe("admin insights", () => {
-  it("has the Marketplace, Users, Revenue, Trust & safety and Ads tabs, Marketplace first", async () => {
+  it("has the Marketplace, Users, Revenue, Trust & safety, Ads and Search demand tabs, Marketplace first", async () => {
     await open()
     const tabs = within(await screen.findByRole("tablist")).getAllByRole("tab")
     expect(tabs.map((tab) => tab.textContent)).toEqual([
@@ -36,6 +36,7 @@ describe("admin insights", () => {
       "Revenue",
       "Trust & safety",
       "Ads",
+      "Search demand",
     ])
     expect(tabs[0]?.getAttribute("aria-selected")).toBe("true")
   })
@@ -100,6 +101,20 @@ describe("admin insights", () => {
     expect(await within(pages).findByText("Home, top banner")).toBeTruthy()
     expect(
       screen.getByRole("region", { name: "Ads in this period" })
+    ).toBeTruthy()
+  })
+
+  it("Search demand shows searches, makes against live listings and misses (step 11.7-r13)", async () => {
+    await open("?tab=search")
+    expect(await screen.findByText("No-result rate")).toBeTruthy()
+    const makes = screen.getByRole("region", { name: "Most searched makes" })
+    expect(
+      await within(makes).findByRole("columnheader", {
+        name: "Searches per listing",
+      })
+    ).toBeTruthy()
+    expect(
+      screen.getByRole("region", { name: "Searches that found nothing" })
     ).toBeTruthy()
   })
 })

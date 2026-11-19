@@ -30,6 +30,7 @@ import {
 } from "./site"
 import { seedActivity } from "./presence"
 import { seedReceipts } from "./receipts"
+import { seedSearches } from "./searches"
 import { countries, seedTaxonomy } from "./taxonomy"
 import { clock } from "./util"
 
@@ -143,7 +144,7 @@ export function buildSeed({ empty = false }: { empty?: boolean } = {}): Db {
             ...listings.slice(0, 40).map((l) => l.id),
           ]),
         ]),
-    searches: [],
+    searches: empty ? [] : seedSearches(taxonomy, listings, clock.now),
     activity: empty ? [] : seedActivity(users, clock.now),
     contacts: [],
     broadcasts: [],

@@ -7,6 +7,7 @@ import { usePeriodSearch } from "@/features/analytics/hooks"
 import { usePageTitle } from "@/features/dashboard/components/page-title"
 import { useT } from "@/lib/i18n/use-t"
 import { insightsSearchSchema, insightsTabs } from "../schemas"
+import { AdsInsights } from "./ads-insights"
 import { MarketplaceInsights } from "./marketplace-insights"
 import { RevenueInsights } from "./revenue-insights"
 import { TrustInsights } from "./trust-insights"
@@ -60,6 +61,9 @@ export function InsightsPage() {
         </TabsContent>
         <TabsContent value="trust" className="pt-2">
           <TrustInsights query={query} />
+        </TabsContent>
+        <TabsContent value="ads" className="pt-2">
+          <AdsInsights query={query} />
         </TabsContent>
       </Tabs>
     </div>

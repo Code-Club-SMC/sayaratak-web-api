@@ -8,6 +8,7 @@ import {
   marketplaceReportSchema,
   usersReportSchema,
 } from "@sayaratak/shared/schemas/reports-insights"
+import { adsReportSchema } from "@sayaratak/shared/schemas/reports-ads"
 import { revenueReportSchema } from "@sayaratak/shared/schemas/reports-revenue"
 import { trustReportSchema } from "@sayaratak/shared/schemas/reports-trust"
 
@@ -33,3 +34,5 @@ export const revenueInsightsQuery = (query: PeriodQuery) =>
   insightsQuery("revenue", revenueReportSchema, query)
 export const trustInsightsQuery = (query: PeriodQuery) =>
   insightsQuery("trust", trustReportSchema, query)
+export const adsInsightsQuery = (query: PeriodQuery) =>
+  insightsQuery("ads", adsReportSchema, query)

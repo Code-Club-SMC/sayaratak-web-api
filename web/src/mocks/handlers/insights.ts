@@ -1,3 +1,4 @@
+import { buildAdsReport } from "@sayaratak/shared/lib/ads-report"
 import {
   buildMarketplaceReport,
   type MarketInput,
@@ -13,12 +14,15 @@ import {
   marketplaceReportSchema,
   usersReportSchema,
 } from "@sayaratak/shared/schemas/reports-insights"
+import { adsReportSchema } from "@sayaratak/shared/schemas/reports-ads"
 import { revenueReportSchema } from "@sayaratak/shared/schemas/reports-revenue"
 import { trustReportSchema } from "@sayaratak/shared/schemas/reports-trust"
 
 import { db } from "../db"
 import { needRole, route } from "../http"
 import { businessOf } from "../lib"
+import { periodOf } from "../period"
+import { campaignView } from "./ads"
 import { windowsOf } from "./reports-account"
 
 // Step 11.7-r10: the admin Insights tabs. The rules are the shared builders', as in the api; this file only gathers their inputs.
@@ -156,6 +160,47 @@ route("GET", "/admin/insights/trust", (c) => {
         decidedAt: decided(r.decidedAt),
       })),
       now: Date.now(),
+    })
+  )
+})
+
+// Step 11.7-r12b: the Ads tab.
+route("GET", "/admin/insights/ads", (c) => {
+  needRole(c, "admin")
+  const { period, current, compare } = periodOf(c.query)
+  const counts = (id: string) => {
+    const only = (t: string) => t === id
+    const of = (w: typeof current) => ({
+      views: w.events(only, "banner_view").series,
+      clicks: w.events(only, "banner_click").series,
+    })
+    return { current: of(current), compare: of(compare) }
+  }
+  return adsReportSchema.parse(
+    buildAdsReport({
+      period,
+      campaigns: db.campaigns
+        .filter((x) => x.status === "approved")
+        .map((x) => ({
+          id: x.id,
+          name: campaignView(x).ownerName,
+          startsAt: x.startsAt,
+          endsAt: x.endsAt,
+          pages: x.pages,
+          ...counts(x.id),
+        })),
+      banners: db.banners.map((b) => ({
+        id: b.id,
+        name: b.title,
+        startsAt: b.startsAt,
+        endsAt: b.endsAt,
+        active: b.active,
+        placement: b.placement,
+        ...counts(b.id),
+      })),
+      pages: db.adPages,
+      current,
+      compare,
     })
   )
 })

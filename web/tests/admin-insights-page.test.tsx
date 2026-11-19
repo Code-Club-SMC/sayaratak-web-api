@@ -27,7 +27,7 @@ const open = (query = "") =>
   })
 
 describe("admin insights", () => {
-  it("has the Marketplace, Users, Revenue and Trust & safety tabs, Marketplace first", async () => {
+  it("has the Marketplace, Users, Revenue, Trust & safety and Ads tabs, Marketplace first", async () => {
     await open()
     const tabs = within(await screen.findByRole("tablist")).getAllByRole("tab")
     expect(tabs.map((tab) => tab.textContent)).toEqual([
@@ -35,6 +35,7 @@ describe("admin insights", () => {
       "Users",
       "Revenue",
       "Trust & safety",
+      "Ads",
     ])
     expect(tabs[0]?.getAttribute("aria-selected")).toBe("true")
   })
@@ -88,6 +89,17 @@ describe("admin insights", () => {
     expect(await within(reasons).findByText("Unclear photos")).toBeTruthy()
     expect(
       screen.getByRole("heading", { name: "Review queue by wait" })
+    ).toBeTruthy()
+  })
+
+  it("Ads shows click rate, slot fill per page and the ads of the period (step 11.7-r12b)", async () => {
+    await open("?tab=ads")
+    expect(await screen.findByText("Paid slots filled")).toBeTruthy()
+    expect(screen.getByText("Campaign click rate")).toBeTruthy()
+    const pages = screen.getByRole("region", { name: "Slot fill by page" })
+    expect(await within(pages).findByText("Home, top banner")).toBeTruthy()
+    expect(
+      screen.getByRole("region", { name: "Ads in this period" })
     ).toBeTruthy()
   })
 })

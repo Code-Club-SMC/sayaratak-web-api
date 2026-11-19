@@ -9,6 +9,7 @@ import {
   usersReportSchema,
 } from "@sayaratak/shared/schemas/reports-insights"
 import { revenueReportSchema } from "@sayaratak/shared/schemas/reports-revenue"
+import { adsReportSchema } from "@sayaratak/shared/schemas/reports-ads"
 import { trustReportSchema } from "@sayaratak/shared/schemas/reports-trust"
 import { Hono } from "hono"
 
@@ -17,6 +18,7 @@ import { spec } from "~/shared/openapi/registry"
 import { requireRole } from "~/modules/auth/auth.middleware"
 
 import { getActivity } from "./admin.activity.service"
+import { getAdsReport } from "./admin.insights-ads.service"
 import {
   getMarketplaceReport,
   getRevenueReport,
@@ -127,4 +129,18 @@ adminRoutes.get(
   requireRole("admin"),
   validate.query(rangeQuery),
   async (c) => c.json(await getTrustReport(c.req.valid("query")))
+)
+
+adminRoutes.get(
+  "/admin/insights/ads",
+  spec({
+    summary:
+      "Admin Insights Ads tab (step 11.7-r12b): banner views, clicks and click rate per bucket for approved campaigns and admin banners, slot fill per page (slot-days held by approved campaigns / slots x days; admin banners use no slots) and every ad that ran or was seen in the period",
+    access: "user",
+    responses: { 200: adsReportSchema },
+    errors: [...ADMIN_ERRORS],
+  }),
+  requireRole("admin"),
+  validate.query(rangeQuery),
+  async (c) => c.json(await getAdsReport(c.req.valid("query")))
 )

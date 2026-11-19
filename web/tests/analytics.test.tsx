@@ -4,10 +4,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest"
 
 import { ContactActions } from "@/components/app/contact-actions"
 import { ReportsPage } from "@/features/dealer-reports/components/reports-page"
-import {
-  analyticsSearchSchema,
-  reportSearchSchema,
-} from "@/features/analytics/schemas"
+import { reportSearchSchema } from "@/features/analytics/schemas"
 import { MechanicProfilePage } from "@/features/directory/components/mechanic-profile-page"
 import { WorkshopProfilePage } from "@/features/directory/components/workshop-profile-page"
 import { mechanicProfileSearchSchema } from "@/features/directory/mechanic-schemas"
@@ -66,18 +63,6 @@ const dealerListings = () =>
 const dealerBiz = () => db.dealerships.find((d) => d.ownerId === dealer().id)!
 const card = async (name: string) =>
   (await screen.findByText(name)).parentElement!
-
-describe("search params", () => {
-  it("an unknown or missing period falls back to 30 days", () => {
-    expect(analyticsSearchSchema.parse({})).toEqual({ range: "30d" })
-    expect(analyticsSearchSchema.parse({ range: "1y" })).toEqual({
-      range: "30d",
-    })
-    expect(analyticsSearchSchema.parse({ range: "7d" })).toEqual({
-      range: "7d",
-    })
-  })
-})
 
 describe("report period (step 11.7-r1)", () => {
   it("custom minutes and compare live in the URL; broken ones fall back", () => {

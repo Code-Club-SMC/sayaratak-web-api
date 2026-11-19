@@ -32,17 +32,16 @@ const open = (path = "/en/dealer") =>
     </NowProvider>,
     { role: "dealership", path }
   )
-// The funnel repeats some labels; the stat card is the one inside a link.
 const cardLink = async (label: string) =>
   (await screen.findAllByText(label)).map((e) => e.closest("a")).find(Boolean)!
 
 describe("DealerOverviewPage", () => {
-  it("links every number to the page that explains it, keeping the range", async () => {
+  it("links every number to the page that explains it; an old range in the URL is ignored", async () => {
     await open("/en/dealer?range=7d")
     const hrefs = {
       "Active vehicles": "/en/dealer/inventory?tab=active",
-      "Listing views": "/en/dealer/analytics?range=7d",
-      Contacts: "/en/dealer/analytics?range=7d",
+      "Listing views": "/en/dealer/reports",
+      Contacts: "/en/dealer/reports",
       "Unread messages": "/en/dealer/messages",
       Rating: "/en/dealer/reviews",
     }
@@ -55,15 +54,14 @@ describe("DealerOverviewPage", () => {
     }
   })
 
-  it("shows the funnel with the period's totals", async () => {
+  it("counts the last 30 days and leaves charts to Reports (step 11.7-r14)", async () => {
     await open()
-    const funnel = (await screen.findByText("From views to messages")).closest(
-      "section"
-    )!
-    const items = await within(funnel).findAllByRole("listitem")
+    expect(await screen.findByText("Last 30 days")).toBeTruthy()
     expect(
-      items.map((i) => i.firstElementChild?.firstChild?.textContent)
-    ).toEqual(["Views", "Contacts", "Messages"])
+      screen.getByRole("link", { name: "See reports" }).getAttribute("href")
+    ).toBe("/en/dealer/reports")
+    expect(screen.queryByText("From views to messages")).toBeNull()
+    expect(screen.queryByRole("combobox", { name: "Period" })).toBeNull()
   })
 
   it("lists pending and rejected vehicles with an edit link to the dealer wizard", async () => {
@@ -96,8 +94,8 @@ describe("DealerOverviewPage", () => {
     ).toBe(`/en/dealer/inventory/${rejected!.id}/edit`)
   })
 
-  it("welcomes a new dealer with the first vehicle, and closing keeps the range", async () => {
-    const { router } = await open("/en/dealer?range=7d&welcome=1")
+  it("welcomes a new dealer with the first vehicle, and closing drops the notice", async () => {
+    const { router } = await open("/en/dealer?welcome=1")
     const add = await screen.findByRole("link", {
       name: "Add your first vehicle",
     })
@@ -109,6 +107,6 @@ describe("DealerOverviewPage", () => {
         screen.queryByRole("link", { name: "Add your first vehicle" })
       ).toBeNull()
     )
-    expect(router.state.location.search).toEqual({ range: "7d" })
+    expect(router.state.location.search).toEqual({})
   })
 })

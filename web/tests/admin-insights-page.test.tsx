@@ -41,9 +41,10 @@ describe("admin insights", () => {
     expect(tabs[0]?.getAttribute("aria-selected")).toBe("true")
   })
 
-  it("Marketplace shows stock, lifecycle and the typical price table", async () => {
+  it("Marketplace shows stock, lifecycle, contact times and the typical price table", async () => {
     await open()
     expect(await screen.findByText("Contacted in first week")).toBeTruthy()
+    expect(await screen.findByText("Contact times")).toBeTruthy()
     expect(
       screen.getByRole("heading", {
         name: "Where this period's listings are now",

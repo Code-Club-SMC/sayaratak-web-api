@@ -7,9 +7,9 @@ import { listingQueries } from "@/features/listings/queries"
 import { countsQuery } from "@/features/notifications/counts-query"
 import { useT } from "@/lib/i18n/use-t"
 
-// Four numbers. Views and favorites come with their change against the 30 days before; the active count is the same one the listings table's Active tab shows.
+// Four numbers, each a link to the page that explains it. Views and favorites come with their change against the 30 days before (views with a trend line); the active count is the same one the listings table's Active tab shows.
 export function OverviewStats() {
-  const { t } = useT()
+  const { t, locale } = useT()
   const analytics = useQuery(analyticsQuery("30d"))
   const active = useQuery(listingQueries.mine({ tab: "active", pageSize: 1 }))
   const counts = useQuery(countsQuery)
@@ -27,25 +27,38 @@ export function OverviewStats() {
     )
   const totals = analytics.data?.totals
   const previous = analytics.data?.previous
+  const toReports = {
+    to: "/$locale/account/reports",
+    params: { locale },
+  } as const
   return (
     <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
       <StatCard
         label={t("dashboard.overview_stat_active")}
         value={active.data?.total}
+        link={{
+          to: "/$locale/account/listings",
+          params: { locale },
+          search: { tab: "active" },
+        }}
       />
       <StatCard
         label={t("dashboard.overview_stat_views")}
         value={totals?.views}
         previous={previous?.views}
+        spark={analytics.data?.daily.map((d) => d.views)}
+        link={toReports}
       />
       <StatCard
         label={t("dashboard.overview_stat_favorites")}
         value={totals?.favorites}
         previous={previous?.favorites}
+        link={toReports}
       />
       <StatCard
         label={t("dashboard.overview_stat_messages")}
         value={counts.data?.unreadMessages}
+        link={{ to: "/$locale/account/messages", params: { locale } }}
       />
     </div>
   )

@@ -1,37 +1,33 @@
-import { useQuery, type UseQueryResult } from "@tanstack/react-query"
+import { useQuery } from "@tanstack/react-query"
 
 import { SectionError } from "@/components/app/section-error"
 import { StatCard } from "@/components/app/stat-card"
+import { analyticsQuery } from "@/features/analytics/queries"
 import { businessQueries } from "@/features/directory/queries"
 import { countsQuery } from "@/features/notifications/counts-query"
 import { useT } from "@/lib/i18n/use-t"
-import type { Range } from "@sayaratak/shared/schemas/api"
-import type { Analytics } from "@sayaratak/shared/schemas/responses"
 
 const paths = {
   workshop: {
-    analytics: "/$locale/workshop/reports",
+    reports: "/$locale/workshop/reports",
     inquiries: "/$locale/workshop/inquiries",
     reviews: "/$locale/workshop/reviews",
   },
   mechanic: {
-    analytics: "/$locale/mechanic/reports",
+    reports: "/$locale/mechanic/reports",
     inquiries: "/$locale/mechanic/inquiries",
     reviews: "/$locale/mechanic/reviews",
   },
 } as const
 
-// Five numbers on the workshop and mechanic overviews, each a link to the page that explains it. Views and contacts follow the range; unread inquiries and the rating are counts of now.
+// Five numbers on the workshop and mechanic overviews, each a link to the page that explains it. Views, calls and WhatsApp count the last 30 days (with a trend line); unread inquiries and the rating are counts of now.
 export function WorkshopStats({
   role = "workshop",
-  range,
-  analytics,
 }: {
   role?: "workshop" | "mechanic"
-  range: Range
-  analytics: UseQueryResult<Analytics>
 }) {
   const { t, locale } = useT()
+  const analytics = useQuery(analyticsQuery("30d"))
   const counts = useQuery(countsQuery)
   const business = useQuery(businessQueries.mine)
   const queries = [analytics, counts, business]
@@ -48,30 +44,30 @@ export function WorkshopStats({
     business.data && "rating" in business.data
       ? business.data.rating
       : undefined
-  const toAnalytics = {
-    to: paths[role].analytics,
-    params: { locale },
-    search: { range },
-  } as const
+  const daily = analytics.data?.daily
+  const toReports = { to: paths[role].reports, params: { locale } } as const
   return (
     <div className="grid grid-cols-2 gap-4 md:grid-cols-3 xl:grid-cols-5">
       <StatCard
         label={t("analytics.stat_profile_views")}
         value={totals?.views}
         previous={previous?.views}
-        link={toAnalytics}
+        spark={daily?.map((d) => d.views)}
+        link={toReports}
       />
       <StatCard
         label={t("analytics.stat_calls")}
         value={totals?.calls}
         previous={previous?.calls}
-        link={toAnalytics}
+        spark={daily?.map((d) => d.calls)}
+        link={toReports}
       />
       <StatCard
         label={t("analytics.stat_whatsapp")}
         value={totals?.whatsapp}
         previous={previous?.whatsapp}
-        link={toAnalytics}
+        spark={daily?.map((d) => d.whatsapp)}
+        link={toReports}
       />
       <StatCard
         label={t("dashboard.workshop_stat_inquiries")}

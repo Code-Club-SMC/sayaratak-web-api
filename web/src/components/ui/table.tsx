@@ -1,10 +1,25 @@
 import * as React from "react"
 import { cn } from "cn"
 
+// A table wider than its box scrolls sideways; only then is the box a Tab stop, so keyboard users can scroll it with the arrow keys (axe scrollable-region-focusable, step 11.7-r14).
 function Table({ className, ...props }: React.ComponentProps<"table">) {
+  const ref = React.useRef<HTMLDivElement>(null)
+  const [scrolls, setScrolls] = React.useState(false)
+  React.useEffect(() => {
+    const box = ref.current
+    if (!box) return
+    const check = () => setScrolls(box.scrollWidth > box.clientWidth)
+    check()
+    const observer = new ResizeObserver(check)
+    observer.observe(box)
+    if (box.firstElementChild) observer.observe(box.firstElementChild)
+    return () => observer.disconnect()
+  }, [])
   return (
     <div
+      ref={ref}
       data-slot="table-container"
+      tabIndex={scrolls ? 0 : undefined}
       className="relative w-full overflow-x-auto"
     >
       <table

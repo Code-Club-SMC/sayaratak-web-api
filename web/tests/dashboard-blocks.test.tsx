@@ -9,11 +9,9 @@ import { AreaChartCard } from "@/components/app/area-chart-card"
 import { BarChartCard } from "@/components/app/bar-chart-card"
 import { CopyButton } from "@/components/app/copy-button"
 import { DataTable } from "@/components/app/data-table"
-import { DateRangeSelect } from "@/components/app/date-range-select"
 import { EmptyState } from "@/components/app/empty-state"
 import { RowActions } from "@/components/app/row-actions"
 import { StatCard } from "@/components/app/stat-card"
-import { pick } from "./pick"
 import { renderShell } from "./shell-render"
 
 type Row = { id: string; name: string; price: number }
@@ -177,15 +175,6 @@ describe("StatCard", () => {
   it("hides the change when the previous period is 0", async () => {
     await renderShell(<StatCard label="Views" value={5} previous={0} />)
     expect(screen.queryByText(/%/)).toBeNull()
-  })
-})
-
-describe("DateRangeSelect", () => {
-  it("reports the chosen range", async () => {
-    const onChange = vi.fn()
-    await renderShell(<DateRangeSelect value="30d" onChange={onChange} />)
-    await pick(screen.getByLabelText("Period"), "Last 7 days")
-    expect(onChange).toHaveBeenCalledWith("7d")
   })
 })
 

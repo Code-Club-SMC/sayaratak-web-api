@@ -35,11 +35,15 @@ const authRoutes = ["/auth", "/auth/login", "/auth/signup", "/auth/forgot"]
 // Checkout needs an item; a paid plan of the role's audience.
 const checkout = (plan: string) => `/billing/checkout?item=plan:${plan}`
 
+// Every Reports tab of a role (step 11.7-r14); `tabsOf` in features/dealer-reports/schemas.ts is the source.
+const reports = (tabs: Array<string>) =>
+  tabs.map((tab) => `/reports?tab=${tab}`)
+const businessTabs = ["performance", "replies", "reviews"]
+
 const business = (plan: string) => [
   "",
   "/ads",
   "/ads/new",
-  "/analytics",
   "/billing",
   checkout(plan),
   "/notifications",
@@ -58,6 +62,15 @@ const dashboards: Record<Exclude<Role, "anon">, Array<string>> = {
     "/account/listings",
     "/account/messages",
     "/account/notifications",
+    ...reports([
+      "performance",
+      "listings",
+      "price",
+      "promotions",
+      "replies",
+      "spending",
+      "alerts",
+    ]).map((p) => `/account${p}`),
     "/account/saved-searches",
     "/account/settings",
     "/post",
@@ -70,17 +83,26 @@ const dashboards: Record<Exclude<Role, "anon">, Array<string>> = {
     `/dealer/inventory/${dealerListing}/edit`,
     "/dealer/messages",
     "/dealer/promotions",
+    ...reports([
+      ...businessTabs,
+      "listings",
+      "price",
+      "promotions",
+      "demand",
+    ]).map((p) => `/dealer${p}`),
   ],
   workshop: [
     ...business("plan-workshop-plus").map((p) => `/workshop${p}`),
     "/workshop/inquiries",
     "/workshop/photos",
     "/workshop/services",
+    ...reports([...businessTabs, "ads", "rank"]).map((p) => `/workshop${p}`),
   ],
   mechanic: [
     ...business("plan-mechanic-plus").map((p) => `/mechanic${p}`),
     "/mechanic/inquiries",
     "/mechanic/portfolio",
+    ...reports([...businessTabs, "ads", "rank"]).map((p) => `/mechanic${p}`),
   ],
   admin: [
     "",
@@ -91,6 +113,9 @@ const dashboards: Record<Exclude<Role, "anon">, Array<string>> = {
     "/banners",
     "/broadcasts",
     "/categories",
+    ...["marketplace", "users", "revenue", "trust", "ads", "search"].map(
+      (tab) => `/insights?tab=${tab}`
+    ),
     "/dealerships",
     "/listings",
     "/locations",

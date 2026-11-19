@@ -68,9 +68,9 @@ describe("WorkshopOverviewPage role=mechanic", () => {
   it("links every number to the mechanic page that explains it", async () => {
     await open("/en/mechanic?range=7d")
     const hrefs = {
-      "Profile views": "/en/mechanic/reports?range=7d",
-      Calls: "/en/mechanic/reports?range=7d",
-      "WhatsApp clicks": "/en/mechanic/reports?range=7d",
+      "Profile views": "/en/mechanic/reports",
+      Calls: "/en/mechanic/reports",
+      "WhatsApp clicks": "/en/mechanic/reports",
       "Unread inquiries": "/en/mechanic/inquiries",
       Rating: "/en/mechanic/reviews",
     }

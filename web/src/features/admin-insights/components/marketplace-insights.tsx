@@ -2,10 +2,12 @@ import { useQuery } from "@tanstack/react-query"
 
 import { BarChartCard } from "@/components/app/bar-chart-card"
 import { BarListCard } from "@/components/app/bar-list-card"
+import { ContactHeatmap } from "@/components/app/contact-heatmap"
 import { PeriodNote } from "@/components/app/period-note"
 import { SectionError } from "@/components/app/section-error"
 import { StatCard } from "@/components/app/stat-card"
 import { dayRows, reportChart } from "@/features/analytics/chart-props"
+import { analyticsQuery } from "@/features/analytics/queries"
 import { taxonomyQuery } from "@/features/listings/queries"
 import { formatNumber } from "@/lib/format"
 import { useT } from "@/lib/i18n/use-t"
@@ -17,11 +19,13 @@ import { PriceTable } from "./price-table"
 type Split =
   MarketplaceReport["byType"][number] | MarketplaceReport["byCity"][number]
 
-// Platform stock and flow (step 11.7-r10): live, new and sold listings, how many get a contact in their first week, how long selling and review take, where the period's listings ended up, splits by type, sale/rent and city, and the typical price per model.
+// Platform stock and flow (step 11.7-r10): live, new and sold listings, how many get a contact in their first week, how long selling and review take, the site-wide contact heatmap (moved from the overview in r14), where the period's listings ended up, splits by type, sale/rent and city, and the typical price per model.
 export function MarketplaceInsights({ query }: { query: PeriodQuery }) {
   const { t, locale } = useT()
   const report = useQuery(marketplaceInsightsQuery(query))
   const taxonomy = useQuery(taxonomyQuery).data
+  // The whole site's contacts (an admin's /me/analytics counts everything), for the heatmap.
+  const contacts = useQuery(analyticsQuery(query))
   const { data, isPending } = report
   if (report.isError && !data)
     return (
@@ -126,6 +130,14 @@ export function MarketplaceInsights({ query }: { query: PeriodQuery }) {
           rows: dayRows(data?.series),
           previous: dayRows(data?.previousSeries),
         })}
+      />
+      <ContactHeatmap
+        cells={contacts.data?.contactHours}
+        since={contacts.data?.hourlySince}
+        from={contacts.data?.period.from}
+        loading={contacts.isPending}
+        error={contacts.isError}
+        onRetry={() => void contacts.refetch()}
       />
       <div className="grid gap-4 lg:grid-cols-2">
         <BarListCard

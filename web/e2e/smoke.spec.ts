@@ -1,10 +1,12 @@
+import process from "node:process"
 import { expect, test } from "@playwright/test"
 
 import { apiBase, resetLimits, roleCookies } from "./auth"
 import { routesFor } from "./routes"
 import type { Role } from "./routes"
 
-// Every route each role may open, in both languages and at both widths (14.1).
+// Every route each role may open, in both languages and at both widths (14.1). `DATA_SAVER=1` runs the same checks with data saver on (step 11.7-r14 sweep).
+const dataSaver = process.env.DATA_SAVER === "1"
 const roles: Array<Role> = [
   "anon",
   "user",
@@ -45,6 +47,10 @@ for (const role of roles) {
       await resetLimits()
       if (role !== "anon")
         await context.addCookies(await roleCookies(role, baseURL!))
+      if (dataSaver)
+        await context.addCookies([
+          { name: "data_saver", value: "1", url: baseURL! },
+        ])
     })
 
     for (const locale of locales)

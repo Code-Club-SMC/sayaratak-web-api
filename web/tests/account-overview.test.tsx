@@ -90,6 +90,23 @@ describe("attentionOf", () => {
 })
 
 describe("AccountOverviewPage", () => {
+  it("links every number to its page and leaves the chart to Reports (step 11.7-r14)", async () => {
+    await open()
+    const hrefs = {
+      "Active listings": "/en/account/listings?tab=active",
+      "Views, last 30 days": "/en/account/reports",
+      "Favorites received": "/en/account/reports",
+      "Unread messages": "/en/account/messages",
+    }
+    for (const [label, href] of Object.entries(hrefs))
+      expect(
+        (await screen.findByText(label)).closest("a")?.getAttribute("href")
+      ).toBe(href)
+    expect(
+      screen.getByRole("link", { name: "See reports" }).getAttribute("href")
+    ).toBe("/en/account/reports")
+  })
+
   it("shows the four numbers of the account", async () => {
     seedProblems()
     await open()

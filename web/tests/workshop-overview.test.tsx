@@ -34,12 +34,12 @@ const cardLink = async (label: string) =>
   (await screen.findAllByText(label)).map((e) => e.closest("a")).find(Boolean)!
 
 describe("WorkshopOverviewPage", () => {
-  it("links every number to the page that explains it, keeping the range", async () => {
+  it("links every number to the page that explains it; an old range in the URL is ignored", async () => {
     await open("/en/workshop?range=7d")
     const hrefs = {
-      "Profile views": "/en/workshop/reports?range=7d",
-      Calls: "/en/workshop/reports?range=7d",
-      "WhatsApp clicks": "/en/workshop/reports?range=7d",
+      "Profile views": "/en/workshop/reports",
+      Calls: "/en/workshop/reports",
+      "WhatsApp clicks": "/en/workshop/reports",
       "Unread inquiries": "/en/workshop/inquiries",
       Rating: "/en/workshop/reviews",
     }

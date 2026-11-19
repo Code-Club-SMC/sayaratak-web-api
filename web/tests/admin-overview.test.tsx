@@ -106,20 +106,21 @@ describe("AdminOverviewPage", () => {
       expect(a.getAttribute("href")).toMatch(/^\/en\/admin\/\w+\?(id|listing)=/)
   })
 
-  it.each(["7d", "30d"] as const)(
-    "sums revenue of payments approved in the last %s",
-    async (range) => {
-      const days = range === "7d" ? 7 : 30
-      const approved = db.payments.filter((p) => p.status === "approved")
-      approved[0]!.reviewedAt = new Date(Date.now() - 20 * DAY).toISOString()
-      const sum = approved
-        .filter(
-          (p) =>
-            Date.parse(p.reviewedAt ?? p.createdAt) >= Date.now() - days * DAY
-        )
-        .reduce((total, p) => total + p.amount, 0)
-      await open(`/en/admin?range=${range}`)
-      await shows(await linkOf("Revenue (SDG)"), formatNumber(sum, "en"))
-    }
-  )
+  it("sums revenue of payments approved in the last 30 days, ignoring an old range in the URL", async () => {
+    const days = 30
+    const approved = db.payments.filter((p) => p.status === "approved")
+    approved[0]!.reviewedAt = new Date(Date.now() - 20 * DAY).toISOString()
+    const sum = approved
+      .filter(
+        (p) =>
+          Date.parse(p.reviewedAt ?? p.createdAt) >= Date.now() - days * DAY
+      )
+      .reduce((total, p) => total + p.amount, 0)
+    await open("/en/admin?range=7d")
+    await shows(await linkOf("Revenue (SDG)"), formatNumber(sum, "en"))
+    expect(
+      screen.getByRole("link", { name: "See insights" }).getAttribute("href")
+    ).toBe("/en/admin/insights")
+    expect(screen.queryByText("New listings")).toBeNull()
+  })
 })

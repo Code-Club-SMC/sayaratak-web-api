@@ -5,7 +5,7 @@ import { PageHeader } from "@/components/app/page-header"
 import { SectionError } from "@/components/app/section-error"
 import { buttonVariants } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
-import { toast } from "@/components/ui/toast"
+import { toast, toastError } from "@/components/ui/toast"
 import { billingQueries } from "@/features/billing/queries"
 import { usePageTitle } from "@/features/dashboard/components/page-title"
 import {
@@ -64,7 +64,7 @@ export function PhotosPage() {
               save.mutate(images, {
                 onSuccess: () =>
                   toast.add({ title: t("toast.photos_updated") }),
-                onError: (error) => toast.add({ title: errorText(t, error) }),
+                onError: (error) => toastError({ title: errorText(t, error) }),
               })
             }
           />

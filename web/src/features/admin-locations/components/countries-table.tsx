@@ -16,7 +16,7 @@ import {
 import type { LocationsSearch } from "@/features/admin/schemas"
 import { EmptyState } from "@/components/app/empty-state"
 import { Button } from "@/components/ui/button"
-import { toast } from "@/components/ui/toast"
+import { toast, toastError } from "@/components/ui/toast"
 import { CountryDialog } from "./country-dialog"
 import { LocationActions } from "./location-actions"
 import { pageRows } from "./location-rows"
@@ -83,7 +83,7 @@ export function CountriesTable({
             onConfirm={(next) =>
               update
                 .mutateAsync({ id: c.id, enabled: next })
-                .catch((e: unknown) => toast.add({ title: errorText(t, e) }))
+                .catch((e: unknown) => toastError({ title: errorText(t, e) }))
             }
           />
         )
@@ -100,7 +100,7 @@ export function CountriesTable({
             remove.mutate(row.original.id, {
               onSuccess: () =>
                 toast.add({ title: t("admin.locations_removed") }),
-              onError: (e) => toast.add({ title: errorText(t, e) }),
+              onError: (e) => toastError({ title: errorText(t, e) }),
             })
           }
         />

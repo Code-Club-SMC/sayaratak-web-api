@@ -9,7 +9,7 @@ import { FormField } from "@/components/app/form-field"
 import { SectionError } from "@/components/app/section-error"
 import { SelectInput } from "@/components/app/select-input"
 import { Skeleton } from "@/components/ui/skeleton"
-import { toast } from "@/components/ui/toast"
+import { toast, toastError } from "@/components/ui/toast"
 
 const schedule = settingsSchema.shape.backupSchedule
 
@@ -60,7 +60,7 @@ export function ScheduleCard() {
                 {
                   onSuccess: () =>
                     toast.add({ title: t("admin.backups_schedule_saved") }),
-                  onError: (e) => toast.add({ title: errorText(t, e) }),
+                  onError: (e) => toastError({ title: errorText(t, e) }),
                 }
               )
             }

@@ -9,7 +9,7 @@ import { useBanUser, useUnbanUser } from "@/features/admin/queries"
 import { ConfirmDialog } from "@/components/app/confirm-dialog"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
-import { toast } from "@/components/ui/toast"
+import { toast, toastError } from "@/components/ui/toast"
 import { UserDetails } from "./user-details"
 
 // One person with Ban or Unban. Both ask first; an admin account cannot be banned, so it has no footer.
@@ -34,7 +34,7 @@ export function UserSheet({
       setDialog(null)
       toast.add({ title: done })
     },
-    onError: (e: unknown) => toast.add({ title: errorText(t, e) }),
+    onError: (e: unknown) => toastError({ title: errorText(t, e) }),
   })
   const footer =
     user && user.role !== "admin" ? (

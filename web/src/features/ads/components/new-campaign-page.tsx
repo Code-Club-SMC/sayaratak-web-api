@@ -7,7 +7,7 @@ import { PageHeader } from "@/components/app/page-header"
 import { StepIndicator } from "@/components/app/step-indicator"
 import { SubmitButton } from "@/components/app/submit-button"
 import { Button } from "@/components/ui/button"
-import { toast } from "@/components/ui/toast"
+import { toastError } from "@/components/ui/toast"
 import { usePageTitle } from "@/features/dashboard/components/page-title"
 import { ApiError } from "@/lib/api/client"
 import { errorText } from "@/lib/api/error-text"
@@ -79,9 +79,9 @@ export function NewCampaignPage({ role }: { role: User["role"] }) {
     } catch (e) {
       // Someone took the last slot meanwhile: back to the pages, which now show it full.
       if (e instanceof ApiError && e.code === "page_full") {
-        toast.add({ title: t("ads.page_taken") })
+        toastError({ title: t("ads.page_taken") })
         setStep(2)
-      } else toast.add({ title: errorText(t, e) })
+      } else toastError({ title: errorText(t, e) })
     }
   })
   return (

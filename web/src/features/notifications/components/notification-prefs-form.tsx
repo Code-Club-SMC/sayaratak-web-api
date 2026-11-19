@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query"
 import { SectionError } from "@/components/app/section-error"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Switch } from "@/components/ui/switch"
-import { toast } from "@/components/ui/toast"
+import { toastError } from "@/components/ui/toast"
 import { prefsQuery, useUpdateNotificationPrefs } from "@/features/auth/queries"
 import { errorText } from "@/lib/api/error-text"
 import { useT } from "@/lib/i18n/use-t"
@@ -60,7 +60,7 @@ export function NotificationPrefsForm() {
             onCheckedChange={(on) =>
               update.mutate(
                 { [key]: on },
-                { onError: (e) => toast.add({ title: errorText(t, e) }) }
+                { onError: (e) => toastError({ title: errorText(t, e) }) }
               )
             }
           />

@@ -8,7 +8,7 @@ import { SubmitButton } from "@/components/app/submit-button"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
-import { toast } from "@/components/ui/toast"
+import { toast, toastError } from "@/components/ui/toast"
 import { useAddService, useUpdateService } from "@/features/directory/queries"
 import { useAppForm } from "@/hooks/use-app-form"
 import { errorText } from "@/lib/api/error-text"
@@ -38,7 +38,7 @@ function ServiceFormBody({
     toast.add({ title: t(key) })
     onDone()
   }
-  const fail = (error: unknown) => toast.add({ title: errorText(t, error) })
+  const fail = (error: unknown) => toastError({ title: errorText(t, error) })
   const submit = form.handleSubmit((values) =>
     draft.id
       ? update.mutate(

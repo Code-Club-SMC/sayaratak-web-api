@@ -13,7 +13,7 @@ import { ShellLink } from "@/components/app/shell-link"
 import { SubmitButton } from "@/components/app/submit-button"
 import { buttonVariants } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { toast } from "@/components/ui/toast"
+import { toast, toastError } from "@/components/ui/toast"
 import { useAppForm } from "@/hooks/use-app-form"
 import {
   fromPage,
@@ -45,7 +45,7 @@ export function PageForm({ page }: { page: SitePage }) {
       { slug: page.slug, ...toPagePatch(v) },
       {
         onSuccess: () => toast.add({ title: t("admin.pages_saved") }),
-        onError: (e) => toast.add({ title: errorText(t, e) }),
+        onError: (e) => toastError({ title: errorText(t, e) }),
       }
     )
   // The first error may sit in the hidden tab: open it, then focus the field.

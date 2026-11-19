@@ -7,7 +7,7 @@ import { EntitySheet } from "@/features/admin/components/entity-sheet"
 import { useAssignPlan } from "@/features/admin/queries"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
-import { toast } from "@/components/ui/toast"
+import { toast, toastError } from "@/components/ui/toast"
 import { AssignPlanDialog } from "./assign-plan-dialog"
 import type { BusinessChange } from "./business-change"
 import { BusinessDetails } from "./business-details"
@@ -113,7 +113,7 @@ export function BusinessSheet({
                   setAssigning(false)
                   toast.add({ title: t("admin.business_plan_assigned_toast") })
                 },
-                onError: (e) => toast.add({ title: errorText(t, e) }),
+                onError: (e) => toastError({ title: errorText(t, e) }),
               }
             )
           }

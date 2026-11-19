@@ -2,7 +2,7 @@ import { useState } from "react"
 
 import { ConfirmDialog } from "@/components/app/confirm-dialog"
 import { Button } from "@/components/ui/button"
-import { toast } from "@/components/ui/toast"
+import { toast, toastError } from "@/components/ui/toast"
 import { errorText } from "@/lib/api/error-text"
 import { useT } from "@/lib/i18n/use-t"
 import type { Review } from "@sayaratak/shared/schemas/review"
@@ -40,7 +40,7 @@ export function ReportReviewButton({ review }: { review: Review }) {
               setOpen(false)
             },
             onError: (error) => {
-              toast.add({ title: errorText(t, error) })
+              toastError({ title: errorText(t, error) })
               setOpen(false)
             },
           })

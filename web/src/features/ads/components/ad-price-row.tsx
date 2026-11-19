@@ -6,7 +6,7 @@ import { NumberField } from "@/components/app/number-field"
 import { SubmitButton } from "@/components/app/submit-button"
 import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
-import { toast } from "@/components/ui/toast"
+import { toastError } from "@/components/ui/toast"
 import { errorText } from "@/lib/api/error-text"
 import { useT } from "@/lib/i18n/use-t"
 import type { AdPage } from "@sayaratak/shared/schemas/ads"
@@ -33,7 +33,7 @@ export function AdPriceRow({ page }: { page: AdPage }) {
         if (invalid) return
         update.mutate(
           { id: page.id, weeklyPrice: price, slots, enabled },
-          { onError: (err) => toast.add({ title: errorText(t, err) }) }
+          { onError: (err) => toastError({ title: errorText(t, err) }) }
         )
       }}
     >

@@ -14,7 +14,7 @@ import { ResponsiveDialog } from "@/components/app/responsive-dialog"
 import { SelectInput } from "@/components/app/select-input"
 import { SubmitButton } from "@/components/app/submit-button"
 import { Button } from "@/components/ui/button"
-import { toast } from "@/components/ui/toast"
+import { toast, toastError } from "@/components/ui/toast"
 import { useAppForm } from "@/hooks/use-app-form"
 import { districtSchema, type DistrictForm } from "../schemas"
 import { NameFields } from "./name-fields"
@@ -73,7 +73,7 @@ export function DistrictDialog({
               toast.add({ title: t("admin.locations_saved") })
               onClose()
             },
-            onError: (e: unknown) => toast.add({ title: errorText(t, e) }),
+            onError: (e: unknown) => toastError({ title: errorText(t, e) }),
           }
           if (editing) update.mutate({ id: editing.id, ...body }, options)
           else create.mutate(body, options)

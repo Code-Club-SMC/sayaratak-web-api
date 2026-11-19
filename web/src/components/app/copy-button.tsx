@@ -3,7 +3,7 @@ import { CheckIcon, CopyIcon } from "lucide-react"
 
 import { useT } from "@/lib/i18n/use-t"
 import { Button } from "@/components/ui/button"
-import { toast } from "@/components/ui/toast"
+import { toastError } from "@/components/ui/toast"
 
 // `label` says what is copied ("Copy listing ID"). The icon becomes a check for 1.5 s and a polite live region says "Copied". Inside a menu that closes, use the toast variant instead (`ShareMenu`).
 export function CopyButton({ value, label }: { value: string; label: string }) {
@@ -15,7 +15,7 @@ export function CopyButton({ value, label }: { value: string; label: string }) {
         setDone(true)
         window.setTimeout(() => setDone(false), 1500)
       },
-      () => toast.add({ title: t("common.copy_failed") })
+      () => toastError({ title: t("common.copy_failed") })
     )
   }
   return (

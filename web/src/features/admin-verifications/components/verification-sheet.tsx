@@ -12,7 +12,7 @@ import {
 import { ConfirmDialog } from "@/components/app/confirm-dialog"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
-import { toast } from "@/components/ui/toast"
+import { toast, toastError } from "@/components/ui/toast"
 import { VerificationDetails } from "./verification-details"
 
 const rejectChips = ["unclear", "mismatch", "missing"]
@@ -40,7 +40,7 @@ export function VerificationSheet({
       onClose()
       toast.add({ title: done })
     },
-    onError: (e: unknown) => toast.add({ title: errorText(t, e) }),
+    onError: (e: unknown) => toastError({ title: errorText(t, e) }),
   })
   const footer = request?.status === "pending" && (
     <>

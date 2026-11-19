@@ -1,9 +1,9 @@
-import * as React from "react"
 import { Toast as ToastPrimitive } from "@base-ui/react/toast"
 import { cn } from "cn"
 
 import { Button } from "@/components/ui/button"
-import { XIcon, OctagonXIcon } from "lucide-react"
+import { CircleCheckIcon, InfoIcon, OctagonXIcon, XIcon } from "lucide-react"
+import { useT } from "@/lib/i18n/use-t"
 
 const toast = ToastPrimitive.createToastManager()
 
@@ -33,7 +33,8 @@ function Toast({ className, ...props }: ToastPrimitive.Root.Props) {
     <ToastPrimitive.Root
       data-slot="toast"
       className={cn(
-        "group/toast pointer-events-auto absolute end-0 bottom-0 z-[calc(1000-var(--toast-index))] w-full origin-bottom rounded-xl bg-popover text-popover-foreground shadow-floating will-change-transform outline-none select-none focus-visible:border-ring",
+        "group/toast pointer-events-auto absolute end-0 bottom-0 z-[calc(1000-var(--toast-index))] w-full origin-bottom rounded-xl bg-popover text-popover-foreground shadow-floating will-change-transform outline-none select-none focus-visible:ring-2 focus-visible:ring-ring",
+        "before:absolute before:inset-y-3 before:start-0 before:w-1 before:rounded-e-full before:bg-primary before:content-[''] data-[type=error]:before:bg-destructive data-[type=info]:before:bg-muted-foreground",
         "[--gap:0.75rem] [--height:var(--toast-frontmost-height,var(--toast-height))] [--offset-y:calc(var(--toast-offset-y)*-1+calc(var(--toast-index)*var(--gap)*-1)+var(--toast-swipe-movement-y))] [--peek:0.75rem] [--scale:calc(max(0,1-(var(--toast-index)*0.1)))] [--shrink:calc(1-var(--scale))]",
         "h-(--height) [transform:translateX(var(--toast-swipe-movement-x))_translateY(calc(var(--toast-swipe-movement-y)-(var(--toast-index)*var(--peek))-(var(--shrink)*var(--height))))_scale(var(--scale))] [transition:transform_var(--dur-base)_var(--ease-standard),opacity_var(--dur-base)_var(--ease-standard),height_var(--dur-fast)_var(--ease-standard)]",
         "after:absolute after:top-full after:start-0 after:h-[calc(var(--gap)+1px)] after:w-full after:content-['']",
@@ -60,7 +61,7 @@ function ToastContent({ className, ...props }: ToastPrimitive.Content.Props) {
     <ToastPrimitive.Content
       data-slot="toast-content"
       className={cn(
-        "flex h-full items-center gap-3 overflow-hidden p-4 motion-fade data-behind:opacity-0 data-expanded:opacity-100",
+        "flex h-full items-center gap-3 overflow-hidden py-3 ps-4 pe-2 motion-fade data-behind:opacity-0 data-expanded:opacity-100",
         className
       )}
       {...props}
@@ -100,7 +101,7 @@ function ToastAction({
     <ToastPrimitive.Action
       data-slot="toast-action"
       render={render}
-      className={cn("shrink-0", className)}
+      className={cn("shrink-0 font-semibold text-primary", className)}
       {...props}
     />
   )
@@ -115,7 +116,6 @@ function ToastClose({
   return (
     <ToastPrimitive.Close
       data-slot="toast-close"
-      aria-label="Close toast"
       render={render}
       className={cn(
         "relative shrink-0 text-muted-foreground after:absolute after:-inset-2 after:content-[''] hover:text-foreground",
@@ -131,30 +131,18 @@ function ToastClose({
 }
 
 function ToastIcon({ type }: { type: string | undefined }) {
-  let icon: React.ReactNode = null
-
   if (type === "error") {
-    icon = (
-      <OctagonXIcon className="text-destructive" aria-hidden="true" />
-    )
+    return <OctagonXIcon className="size-5 shrink-0 text-destructive" aria-hidden="true" />
   }
-
-  if (!icon) {
-    return null
+  if (type === "info") {
+    return <InfoIcon className="size-5 shrink-0 text-muted-foreground" aria-hidden="true" />
   }
-
-  return (
-    <span
-      data-slot="toast-icon"
-      className="shrink-0 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4"
-    >
-      {icon}
-    </span>
-  )
+  return <CircleCheckIcon className="size-5 shrink-0 text-primary" aria-hidden="true" />
 }
 
 function ToastList() {
   const { toasts } = ToastPrimitive.useToastManager()
+  const { t } = useT()
 
   return toasts.map((toastItem) => (
     <Toast key={toastItem.id} toast={toastItem}>
@@ -165,6 +153,7 @@ function ToastList() {
           <ToastDescription />
         </div>
         <ToastAction />
+        <ToastClose aria-label={t("common.close")} />
       </ToastContent>
     </Toast>
   ))
@@ -176,7 +165,7 @@ function Toaster({
   ...props
 }: ToastPrimitive.Provider.Props) {
   return (
-    <ToastProvider toastManager={toastManager} {...props}>
+    <ToastProvider toastManager={toastManager} timeout={4000} {...props}>
       {children}
       <ToastPortal>
         <ToastViewport>
@@ -186,6 +175,10 @@ function Toaster({
     </ToastProvider>
   )
 }
+
+// Errors and toasts with an action stay 6 s (A5); the type drives the stripe and icon.
+const toastError = (options: Parameters<typeof toast.add>[0]) =>
+  toast.add({ type: "error", timeout: 6000, ...options })
 
 const createToastManager = ToastPrimitive.createToastManager
 const useToastManager = ToastPrimitive.useToastManager
@@ -203,5 +196,6 @@ export {
   ToastViewport,
   createToastManager,
   toast,
+  toastError,
   useToastManager,
 }

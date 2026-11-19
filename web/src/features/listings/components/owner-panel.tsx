@@ -5,7 +5,7 @@ import type { Listing, ListingStatus } from "@sayaratak/shared/schemas/listing"
 import type { User } from "@sayaratak/shared/schemas/user"
 import { SelectInput } from "@/components/app/select-input"
 import { buttonVariants } from "@/components/ui/button"
-import { toast } from "@/components/ui/toast"
+import { toast, toastError } from "@/components/ui/toast"
 import { useSetListingStatus } from "../queries"
 
 // Where the owner manages the listing. Promote and Analytics are row actions of the listings manager (8.2), so until it exists they open that list.
@@ -34,7 +34,7 @@ export function OwnerPanel({ listing, me }: { listing: Listing; me: User }) {
       {
         onSuccess: () => toast.add({ title: t("toast.status_updated") }),
         onError: () =>
-          toast.add({
+          toastError({
             title: t("toast.error_save"),
             actionProps: {
               children: t("common.retry"),

@@ -5,7 +5,7 @@ import { useT } from "@/lib/i18n/use-t"
 import { ReasonDialog } from "@/features/admin/components/reason-dialog"
 import { useUpdateBusinessAdmin } from "@/features/admin/queries"
 import { ConfirmDialog } from "@/components/app/confirm-dialog"
-import { toast } from "@/components/ui/toast"
+import { toast, toastError } from "@/components/ui/toast"
 import type { BusinessChange } from "./business-change"
 
 // One dialog for the row switches and the sheet buttons. Suspend asks why (the owner sees it); the other three confirm.
@@ -37,7 +37,7 @@ export function BusinessChangeDialog({
           onClose()
           toast.add({ title: t(`admin.business_${change.action}_toast`) })
         },
-        onError: (e) => toast.add({ title: errorText(t, e) }),
+        onError: (e) => toastError({ title: errorText(t, e) }),
       }
     )
   return (

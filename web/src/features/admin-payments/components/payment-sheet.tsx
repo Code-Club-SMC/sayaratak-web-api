@@ -9,7 +9,7 @@ import { useApprovePayment, useRejectPayment } from "@/features/admin/queries"
 import { ConfirmDialog } from "@/components/app/confirm-dialog"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
-import { toast } from "@/components/ui/toast"
+import { toast, toastError } from "@/components/ui/toast"
 import { PaymentDetails } from "./payment-details"
 import { paymentItem } from "./payment-item"
 
@@ -38,7 +38,7 @@ export function PaymentSheet({
       onClose()
       toast.add({ title: done })
     },
-    onError: (e: unknown) => toast.add({ title: errorText(t, e) }),
+    onError: (e: unknown) => toastError({ title: errorText(t, e) }),
   })
   const footer = payment?.status === "pending_review" && (
     <>

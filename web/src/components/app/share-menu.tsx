@@ -14,7 +14,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { toast } from "@/components/ui/toast"
+import { toast, toastError } from "@/components/ui/toast"
 
 import { BrandIcon } from "./brand-icon"
 
@@ -66,7 +66,7 @@ export function ShareMenu({
     void navigator.clipboard
       .writeText(url)
       .then(() => toast.add({ title: message }))
-      .catch(() => toast.add({ title: t("toast.error_save") }))
+      .catch(() => toastError({ title: t("toast.error_save") }))
     done()
   }
   const item = "min-h-11 md:min-h-10"

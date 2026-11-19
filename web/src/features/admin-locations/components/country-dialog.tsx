@@ -16,7 +16,7 @@ import { SubmitButton } from "@/components/app/submit-button"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Switch } from "@/components/ui/switch"
-import { toast } from "@/components/ui/toast"
+import { toast, toastError } from "@/components/ui/toast"
 import { useAppForm } from "@/hooks/use-app-form"
 import { countrySchema, type CountryForm } from "../schemas"
 import { NameFields } from "./name-fields"
@@ -85,7 +85,7 @@ export function CountryDialog({
                   ? form.setError("code", {
                       message: "validation.country_code_taken",
                     })
-                  : toast.add({ title: errorText(t, e) }),
+                  : toastError({ title: errorText(t, e) }),
             }
             if (editing)
               update.mutate({ id: editing.id, name, dialCode }, options)

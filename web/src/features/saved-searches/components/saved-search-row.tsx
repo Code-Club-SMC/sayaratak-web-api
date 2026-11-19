@@ -2,7 +2,7 @@ import { RowActions } from "@/components/app/row-actions"
 import { Badge } from "@/components/ui/badge"
 import { buttonVariants } from "@/components/ui/button"
 import { Switch } from "@/components/ui/switch"
-import { toast } from "@/components/ui/toast"
+import { toast, toastError } from "@/components/ui/toast"
 import { routeHref, searchRoute } from "@/features/search/landing"
 import {
   useDeleteSavedSearch,
@@ -27,7 +27,7 @@ export function SavedSearchRow({
   const { t, locale } = useT()
   const update = useUpdateSavedSearch()
   const remove = useDeleteSavedSearch()
-  const fail = (error: unknown) => toast.add({ title: errorText(t, error) })
+  const fail = (error: unknown) => toastError({ title: errorText(t, error) })
   // Opening clears the new count; the link is a plain anchor so it also opens in a new tab. `cn` merges the transparent base border away, which `buttonVariants` alone leaves on a link.
   const href = localeHref(
     routeHref(searchRoute({ ...search.params, page: 1 })),

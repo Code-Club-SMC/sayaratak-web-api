@@ -14,7 +14,7 @@ import { errorText } from "@/lib/api/error-text"
 import { useT } from "@/lib/i18n/use-t"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
-import { toast } from "@/components/ui/toast"
+import { toast, toastError } from "@/components/ui/toast"
 import { ChipSingleSelect } from "./chip-single-select"
 import { FormField } from "./form-field"
 import { ResponsiveDialog } from "./responsive-dialog"
@@ -51,7 +51,7 @@ export function ReportDialog({
           form.reset()
           setOpen(false)
         },
-        onError: (error) => toast.add({ title: errorText(t, error) }),
+        onError: (error) => toastError({ title: errorText(t, error) }),
       }
     )
   )

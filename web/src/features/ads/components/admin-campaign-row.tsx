@@ -3,7 +3,7 @@ import { useState } from "react"
 import { PriceText } from "@/components/app/price-text"
 import { Badge } from "@/components/ui/badge"
 import { Button, buttonVariants } from "@/components/ui/button"
-import { toast } from "@/components/ui/toast"
+import { toast, toastError } from "@/components/ui/toast"
 import { errorText } from "@/lib/api/error-text"
 import { formatDate } from "@/lib/format"
 import { useT } from "@/lib/i18n/use-t"
@@ -24,7 +24,7 @@ export function AdminCampaignRow({ campaign: c }: { campaign: AdminCampaign }) {
       setRejecting(false)
       toast.add({ title: t(key) })
     },
-    onError: (e: unknown) => toast.add({ title: errorText(t, e) }),
+    onError: (e: unknown) => toastError({ title: errorText(t, e) }),
   })
   return (
     <article className="flex flex-col gap-4 rounded-xl bg-card p-5">

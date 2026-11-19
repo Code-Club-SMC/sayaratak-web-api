@@ -4,7 +4,7 @@ import { SectionError } from "@/components/app/section-error"
 import { Badge } from "@/components/ui/badge"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Switch } from "@/components/ui/switch"
-import { toast } from "@/components/ui/toast"
+import { toast, toastError } from "@/components/ui/toast"
 import {
   businessQueries,
   useUpdateBusiness,
@@ -44,7 +44,7 @@ export function AvailabilitySwitch() {
               {
                 onSuccess: () =>
                   toast.add({ title: t("toast.availability_saved") }),
-                onError: (error) => toast.add({ title: errorText(t, error) }),
+                onError: (error) => toastError({ title: errorText(t, error) }),
               }
             )
           }

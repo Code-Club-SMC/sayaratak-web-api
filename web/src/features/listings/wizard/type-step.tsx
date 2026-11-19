@@ -36,6 +36,8 @@ export function TypeStep() {
     if (current !== null && detailsTouched(before))
       toast.add({
         title: t("post.type_changed"),
+        type: "info",
+        timeout: 6000,
         actionProps: {
           children: t("common.undo"),
           onClick: () => {

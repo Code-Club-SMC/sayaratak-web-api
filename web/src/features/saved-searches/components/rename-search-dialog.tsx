@@ -5,7 +5,7 @@ import { ResponsiveDialog } from "@/components/app/responsive-dialog"
 import { SubmitButton } from "@/components/app/submit-button"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { toast } from "@/components/ui/toast"
+import { toast, toastError } from "@/components/ui/toast"
 import { errorText } from "@/lib/api/error-text"
 import { useT } from "@/lib/i18n/use-t"
 import { useUpdateSavedSearch } from "@/features/search/queries"
@@ -36,7 +36,7 @@ function RenameForm({
           toast.add({ title: t("toast.search_renamed") })
           onDone()
         },
-        onError: (error) => toast.add({ title: errorText(t, error) }),
+        onError: (error) => toastError({ title: errorText(t, error) }),
       }
     )
   )

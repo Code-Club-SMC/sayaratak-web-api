@@ -13,7 +13,7 @@ import { SectionError } from "@/components/app/section-error"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Skeleton } from "@/components/ui/skeleton"
-import { toast } from "@/components/ui/toast"
+import { toast, toastError } from "@/components/ui/toast"
 import { MakeDialog } from "./make-dialog"
 
 type Make = NonNullable<ReturnType<typeof useMakes>>[number]
@@ -130,7 +130,7 @@ export function MakesList({
                           if (search.make === row.id)
                             go({ ...search, make: undefined })
                         },
-                        onError: (e) => toast.add({ title: errorText(t, e) }),
+                        onError: (e) => toastError({ title: errorText(t, e) }),
                       })
                     }
                   >

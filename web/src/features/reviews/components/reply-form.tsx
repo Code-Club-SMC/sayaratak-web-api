@@ -4,7 +4,7 @@ import { FormField } from "@/components/app/form-field"
 import { SubmitButton } from "@/components/app/submit-button"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
-import { toast } from "@/components/ui/toast"
+import { toast, toastError } from "@/components/ui/toast"
 import { errorText } from "@/lib/api/error-text"
 import { useT } from "@/lib/i18n/use-t"
 import type { Review } from "@sayaratak/shared/schemas/review"
@@ -35,7 +35,7 @@ export function ReplyForm({
           toast.add({ title: t("toast.reply_saved") })
           onDone(true)
         },
-        onError: (error) => toast.add({ title: errorText(t, error) }),
+        onError: (error) => toastError({ title: errorText(t, error) }),
       }
     )
   )

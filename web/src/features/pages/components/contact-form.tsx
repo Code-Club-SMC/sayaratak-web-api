@@ -12,7 +12,7 @@ import { SubmitButton } from "@/components/app/submit-button"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
-import { toast } from "@/components/ui/toast"
+import { toastError } from "@/components/ui/toast"
 import { useSendContact } from "../queries"
 import { contactFormSchema, type ContactForm as Values } from "../schemas"
 import { useAppForm } from "@/hooks/use-app-form"
@@ -41,7 +41,7 @@ export function ContactForm() {
   const submit = form.handleSubmit((values) =>
     send.mutate(
       { ...values, contact: normalizeIdentifier(values.contact) },
-      { onError: (error) => toast.add({ title: errorText(t, error) }) }
+      { onError: (error) => toastError({ title: errorText(t, error) }) }
     )
   )
   if (send.isSuccess)

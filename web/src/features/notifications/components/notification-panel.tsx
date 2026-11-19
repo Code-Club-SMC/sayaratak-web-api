@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query"
 
 import { buttonVariants, Button } from "@/components/ui/button"
-import { toast } from "@/components/ui/toast"
+import { toastError } from "@/components/ui/toast"
 import { errorText } from "@/lib/api/error-text"
 import { useT } from "@/lib/i18n/use-t"
 import { dashboardPath, localeHref } from "@/lib/navigation"
@@ -23,7 +23,7 @@ export function NotificationPanel({
   const list = useQuery(notificationQueries.list({ pageSize: 8 }))
   const unread = useQuery(countsQuery).data?.unreadNotifications ?? 0
   const markAll = useMarkNotificationsRead()
-  const fail = (error: unknown) => toast.add({ title: errorText(t, error) })
+  const fail = (error: unknown) => toastError({ title: errorText(t, error) })
   const open = useOpenNotification(onClose)
   return (
     <div className="flex flex-col">

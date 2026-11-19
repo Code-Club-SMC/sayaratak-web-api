@@ -6,7 +6,7 @@ import type { z } from "zod"
 import { FieldError } from "@/components/app/field-error"
 import { PromotionOption } from "@/components/app/promotion-option"
 import { SubmitButton } from "@/components/app/submit-button"
-import { toast } from "@/components/ui/toast"
+import { toastError } from "@/components/ui/toast"
 import { promotionChoiceSchema } from "@sayaratak/shared/listings/schemas"
 import { errorText } from "@/lib/api/error-text"
 import { focusFirstInvalid } from "@/lib/focus-invalid"
@@ -55,7 +55,7 @@ export function PromotionChoiceForm({
           localeHref(`${dashboardPath(role)}/billing/checkout?${item}`, locale)
         )
       } catch (e) {
-        toast.add({ title: errorText(t, e) })
+        toastError({ title: errorText(t, e) })
       }
     },
     () => focusFirstInvalid(formRef.current)

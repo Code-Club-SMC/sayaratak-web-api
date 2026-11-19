@@ -12,7 +12,7 @@ import { NumberField } from "@/components/app/number-field"
 import { ResponsiveDialog } from "@/components/app/responsive-dialog"
 import { SubmitButton } from "@/components/app/submit-button"
 import { Button } from "@/components/ui/button"
-import { toast } from "@/components/ui/toast"
+import { toast, toastError } from "@/components/ui/toast"
 import { useAppForm } from "@/hooks/use-app-form"
 import { promotionPriceFormSchema, type PromotionPriceForm } from "../schemas"
 
@@ -58,7 +58,7 @@ export function PriceDialog({
                 toast.add({ title: t("admin.promos_price_saved") })
                 onClose()
               },
-              onError: (e) => toast.add({ title: errorText(t, e) }),
+              onError: (e) => toastError({ title: errorText(t, e) }),
             }
           )
         })}

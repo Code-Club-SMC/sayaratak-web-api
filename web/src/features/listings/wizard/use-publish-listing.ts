@@ -4,7 +4,7 @@ import type { FieldValues } from "react-hook-form"
 import { meQuery } from "@/features/auth/me-query"
 import { useRequireAuth } from "@/features/auth/auth-gate"
 import { useCompleteOnboarding } from "@/features/onboarding/queries"
-import { toast } from "@/components/ui/toast"
+import { toastError } from "@/components/ui/toast"
 import { ApiError } from "@/lib/api/client"
 import { errorText } from "@/lib/api/error-text"
 import { useT } from "@/lib/i18n/use-t"
@@ -50,7 +50,7 @@ export function usePublishListing({
     let done: Promise<boolean> = Promise.resolve(false)
     requireAuth(() => {
       done = run(values).catch((error: unknown) => {
-        toast.add({
+        toastError({
           title:
             error instanceof ApiError && error.code === "limit_reached"
               ? t("billing.limit_reached")

@@ -12,7 +12,7 @@ import type { LocationsSearch } from "@/features/admin/schemas"
 import { EmptyState } from "@/components/app/empty-state"
 import { SelectInput } from "@/components/app/select-input"
 import { Button } from "@/components/ui/button"
-import { toast } from "@/components/ui/toast"
+import { toast, toastError } from "@/components/ui/toast"
 import { DistrictDialog } from "./district-dialog"
 import { LocationActions } from "./location-actions"
 import { pageRows } from "./location-rows"
@@ -60,7 +60,7 @@ export function DistrictsTable({
             remove.mutate(row.original.id, {
               onSuccess: () =>
                 toast.add({ title: t("admin.locations_removed") }),
-              onError: (e) => toast.add({ title: errorText(t, e) }),
+              onError: (e) => toastError({ title: errorText(t, e) }),
             })
           }
         />

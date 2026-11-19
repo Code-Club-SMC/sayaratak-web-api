@@ -14,7 +14,7 @@ import { usePageTitle } from "@/features/dashboard/components/page-title"
 import { ListingPickerDialog } from "@/components/app/listing-picker-dialog"
 import { PageHeader } from "@/components/app/page-header"
 import { Button } from "@/components/ui/button"
-import { toast } from "@/components/ui/toast"
+import { toast, toastError } from "@/components/ui/toast"
 import { ActivePromotionsTable } from "./active-promotions-table"
 import { PricesCard } from "./prices-card"
 
@@ -74,7 +74,7 @@ export function AdminPromotionsPage() {
             {
               onSuccess: () =>
                 toast.add({ title: t("admin.promotion_granted") }),
-              onError: (e) => toast.add({ title: errorText(t, e) }),
+              onError: (e) => toastError({ title: errorText(t, e) }),
               onSettled: () => setListingId(undefined),
             }
           )

@@ -7,7 +7,7 @@ import type { AdminReview } from "@sayaratak/shared/schemas/admin"
 import { useHideReview, useShowReview } from "@/features/admin/queries"
 import { ConfirmDialog } from "@/components/app/confirm-dialog"
 import { RowActions, type RowAction } from "@/components/app/row-actions"
-import { toast } from "@/components/ui/toast"
+import { toast, toastError } from "@/components/ui/toast"
 
 type Action = "hide" | "show" | "keep"
 
@@ -69,7 +69,7 @@ export function ReviewActions({ review }: { review: AdminReview }) {
                 toast.add({ title: t(`admin.review_${asking}_done`) })
                 setAsking(undefined)
               },
-              onError: (e) => toast.add({ title: errorText(t, e) }),
+              onError: (e) => toastError({ title: errorText(t, e) }),
             })
           }
         />

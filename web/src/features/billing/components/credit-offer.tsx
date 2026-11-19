@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query"
 
 import { Button } from "@/components/ui/button"
-import { toast } from "@/components/ui/toast"
+import { toast, toastError } from "@/components/ui/toast"
 import { errorText } from "@/lib/api/error-text"
 import { useT } from "@/lib/i18n/use-t"
 import { billingQueries, useCreatePromotion } from "../queries"
@@ -41,7 +41,7 @@ export function CreditOffer({
                 toast.add({ title: t("billing.credit_used") })
                 onDone()
               },
-              onError: (e) => toast.add({ title: errorText(t, e) }),
+              onError: (e) => toastError({ title: errorText(t, e) }),
             }
           )
         }

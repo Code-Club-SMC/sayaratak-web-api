@@ -9,7 +9,7 @@ import { useCreatePlan, useUpdatePlan } from "@/features/admin/queries"
 import { ResponsiveDialog } from "@/components/app/responsive-dialog"
 import { SubmitButton } from "@/components/app/submit-button"
 import { Button } from "@/components/ui/button"
-import { toast } from "@/components/ui/toast"
+import { toast, toastError } from "@/components/ui/toast"
 import { useAppForm } from "@/hooks/use-app-form"
 import { planFormSchema, type PlanForm } from "../schemas"
 import { PlanFormFields } from "./plan-form-fields"
@@ -86,7 +86,7 @@ export function PlanFormDialog({
       toast.add({ title: t(key) })
       onOpenChange(false)
     },
-    onError: (e: unknown) => toast.add({ title: errorText(t, e) }),
+    onError: (e: unknown) => toastError({ title: errorText(t, e) }),
   })
   const submit = form.handleSubmit(
     (values) => {

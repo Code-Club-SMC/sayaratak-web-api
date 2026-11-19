@@ -10,7 +10,7 @@ import { useActionReport, useDismissReport } from "@/features/admin/queries"
 import { RemoveButton } from "@/components/app/remove-button"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
-import { toast } from "@/components/ui/toast"
+import { toast, toastError } from "@/components/ui/toast"
 import { ReportDetails } from "./report-details"
 
 const dismissChips = ["ok", "fixed", "unclear"]
@@ -38,7 +38,7 @@ export function ReportSheet({
       onClose()
       toast.add({ title: done })
     },
-    onError: (e: unknown) => toast.add({ title: errorText(t, e) }),
+    onError: (e: unknown) => toastError({ title: errorText(t, e) }),
   })
   const listing = report?.listing
   const footer = report?.status === "open" && (

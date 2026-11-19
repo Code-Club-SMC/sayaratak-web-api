@@ -1,6 +1,6 @@
 import { useQueryClient } from "@tanstack/react-query"
 
-import { toast } from "@/components/ui/toast"
+import { toastError } from "@/components/ui/toast"
 import { listingQueries } from "@/features/listings/queries"
 import { errorText } from "@/lib/api/error-text"
 import { useT } from "@/lib/i18n/use-t"
@@ -45,7 +45,7 @@ export function useExportListings() {
         ]),
       ])
     } catch (error) {
-      toast.add({ title: errorText(t, error) })
+      toastError({ title: errorText(t, error) })
     }
   }
 }

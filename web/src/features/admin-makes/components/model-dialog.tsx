@@ -12,7 +12,7 @@ import { NameFields } from "@/features/admin-locations/components/name-fields"
 import { ResponsiveDialog } from "@/components/app/responsive-dialog"
 import { SubmitButton } from "@/components/app/submit-button"
 import { Button } from "@/components/ui/button"
-import { toast } from "@/components/ui/toast"
+import { toast, toastError } from "@/components/ui/toast"
 import { useAppForm } from "@/hooks/use-app-form"
 import { modelSchema, type ModelForm } from "../schemas"
 
@@ -56,7 +56,7 @@ export function ModelDialog({
               toast.add({ title: t("admin.makes_saved") })
               onClose()
             },
-            onError: (e: unknown) => toast.add({ title: errorText(t, e) }),
+            onError: (e: unknown) => toastError({ title: errorText(t, e) }),
           }
           if (draft.id) update.mutate({ id: draft.id, name }, options)
           else create.mutate({ makeId: draft.makeId, name }, options)

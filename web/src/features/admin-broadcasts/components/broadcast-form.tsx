@@ -10,7 +10,7 @@ import { FormField } from "@/components/app/form-field"
 import { LeaveGuard } from "@/components/app/leave-guard"
 import { SubmitButton } from "@/components/app/submit-button"
 import { Input } from "@/components/ui/input"
-import { toast } from "@/components/ui/toast"
+import { toast, toastError } from "@/components/ui/toast"
 import { useAppForm } from "@/hooks/use-app-form"
 import {
   broadcastFormDefaults,
@@ -54,7 +54,7 @@ export function BroadcastForm() {
         toast.add({ title: t("admin.broadcast_queued") })
         form.reset(broadcastFormDefaults)
       },
-      onError: (e) => toast.add({ title: errorText(t, e) }),
+      onError: (e) => toastError({ title: errorText(t, e) }),
       onSettled: () => setConfirm(undefined),
     })
   }

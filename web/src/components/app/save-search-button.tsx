@@ -5,7 +5,7 @@ import type { SearchParams } from "@sayaratak/shared/search/schemas"
 import { useActiveFilters } from "@/features/search/use-active-filters"
 import { useT } from "@/lib/i18n/use-t"
 import { Button } from "@/components/ui/button"
-import { toast } from "@/components/ui/toast"
+import { toast, toastError } from "@/components/ui/toast"
 
 // The name is the active filters in words, so no extra dialog stands between the click and the alert. Gated behind sign in.
 export function SaveSearchButton({ params }: { params: SearchParams }) {
@@ -29,7 +29,7 @@ export function SaveSearchButton({ params }: { params: SearchParams }) {
               setSaved(true)
               toast.add({ title: t("search.saved") })
             },
-            onError: () => toast.add({ title: t("search.save_error") }),
+            onError: () => toastError({ title: t("search.save_error") }),
           }
         ),
       "auth.reason_save_search"

@@ -10,7 +10,7 @@ import { RemoveButton } from "@/components/app/remove-button"
 import { SectionError } from "@/components/app/section-error"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
-import { toast } from "@/components/ui/toast"
+import { toast, toastError } from "@/components/ui/toast"
 import { CategoryDialog, type CategoryDraft } from "./category-dialog"
 
 // The categories a seller picks for a spare part, A to Z in the visitor's language. Add, Edit and Remove; a category in use refuses to go.
@@ -89,7 +89,7 @@ export function PartCategoriesSection() {
                       remove.mutate(row.id, {
                         onSuccess: () =>
                           toast.add({ title: t("admin.categories_removed") }),
-                        onError: (e) => toast.add({ title: errorText(t, e) }),
+                        onError: (e) => toastError({ title: errorText(t, e) }),
                       })
                     }
                   >

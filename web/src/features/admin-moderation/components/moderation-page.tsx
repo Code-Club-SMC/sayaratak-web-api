@@ -25,7 +25,7 @@ import { usePageTitle } from "@/features/dashboard/components/page-title"
 import { ConfirmDialog } from "@/components/app/confirm-dialog"
 import { PageHeader } from "@/components/app/page-header"
 import { Button } from "@/components/ui/button"
-import { toast } from "@/components/ui/toast"
+import { toast, toastError } from "@/components/ui/toast"
 import { reviewKeyHandler, useShortcutsOn } from "../use-review-shortcuts"
 import { ListingReview } from "./listing-review"
 import { ModerationToolbar } from "./moderation-toolbar"
@@ -100,7 +100,7 @@ export function ModerationPage() {
       onSuccess: () => toast.add({ title: done }),
       onError: (e) => {
         setGone((prev) => new Set([...prev].filter((id) => !ids.includes(id))))
-        toast.add({ title: errorText(t, e) })
+        toastError({ title: errorText(t, e) })
       },
     })
   }

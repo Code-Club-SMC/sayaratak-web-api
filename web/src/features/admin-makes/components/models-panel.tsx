@@ -10,7 +10,7 @@ import { taxonomyQuery } from "@/features/listings/queries"
 import { EmptyState } from "@/components/app/empty-state"
 import { RemoveButton } from "@/components/app/remove-button"
 import { Button } from "@/components/ui/button"
-import { toast } from "@/components/ui/toast"
+import { toast, toastError } from "@/components/ui/toast"
 import { ModelDialog, type ModelDraft } from "./model-dialog"
 
 // The models of the open make, A to Z. A model a listing uses cannot be removed.
@@ -104,7 +104,7 @@ export function ModelsPanel({
                       remove.mutate(row.id, {
                         onSuccess: () =>
                           toast.add({ title: t("admin.models_removed") }),
-                        onError: (e) => toast.add({ title: errorText(t, e) }),
+                        onError: (e) => toastError({ title: errorText(t, e) }),
                       })
                     }
                   >

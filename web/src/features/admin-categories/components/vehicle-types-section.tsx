@@ -8,7 +8,7 @@ import { StatusSwitch } from "@/features/admin/components/status-switch"
 import { taxonomyQuery } from "@/features/listings/queries"
 import { SectionError } from "@/components/app/section-error"
 import { Skeleton } from "@/components/ui/skeleton"
-import { toast } from "@/components/ui/toast"
+import { toastError } from "@/components/ui/toast"
 
 // Show or hide each of the five types. A hidden type leaves the home tiles, filters and the posting form. The last shown type stays on.
 export function VehicleTypesSection() {
@@ -91,7 +91,7 @@ export function VehicleTypesSection() {
                       update
                         .mutateAsync({ id: row.id, enabled: next })
                         .catch((e: unknown) => {
-                          toast.add({ title: errorText(t, e) })
+                          toastError({ title: errorText(t, e) })
                         })
                     }
                   />

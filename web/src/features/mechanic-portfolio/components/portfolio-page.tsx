@@ -8,7 +8,7 @@ import { PageHeader } from "@/components/app/page-header"
 import { SectionError } from "@/components/app/section-error"
 import { Button, buttonVariants } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
-import { toast } from "@/components/ui/toast"
+import { toast, toastError } from "@/components/ui/toast"
 import { billingQueries } from "@/features/billing/queries"
 import { usePageTitle } from "@/features/dashboard/components/page-title"
 import {
@@ -38,7 +38,7 @@ export function PortfolioPage() {
   const { data } = list
   const cap = useQuery(billingQueries.subscription).data?.plan?.portfolioLimit
   const reached = cap !== undefined && (data?.length ?? 0) >= cap
-  const fail = (error: unknown) => toast.add({ title: errorText(t, error) })
+  const fail = (error: unknown) => toastError({ title: errorText(t, error) })
 
   // A moved item is re-inserted in the DOM, which drops focus; put it back on the same arrow, or on the other one when the item reached an end.
   const moved = useRef<{ id: string; step: number }>(undefined)

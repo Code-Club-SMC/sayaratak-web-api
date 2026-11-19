@@ -4,7 +4,7 @@ import type { AdminPlan } from "@sayaratak/shared/schemas/admin"
 import { useUpdatePlan } from "@/features/admin/queries"
 import { StatusSwitch } from "@/features/admin/components/status-switch"
 import { Switch } from "@/components/ui/switch"
-import { toast } from "@/components/ui/toast"
+import { toast, toastError } from "@/components/ui/toast"
 
 // On means people can pick the plan in onboarding and billing. Each change asks first. The free plan always stays on.
 export function PlanEnabledSwitch({ plan }: { plan: AdminPlan }) {
@@ -41,7 +41,7 @@ export function PlanEnabledSwitch({ plan }: { plan: AdminPlan }) {
                 on ? "admin.plan_enabled_toast" : "admin.plan_disabled_toast"
               ),
             }),
-          (e: unknown) => toast.add({ title: errorText(t, e) })
+          (e: unknown) => toastError({ title: errorText(t, e) })
         )
       }
     />

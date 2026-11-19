@@ -3,7 +3,7 @@ import { useT } from "@/lib/i18n/use-t"
 import type { Banner } from "@sayaratak/shared/schemas/admin"
 import { useDeleteBanner, useUpdateBanner } from "@/features/admin/queries"
 import { RowActions } from "@/components/app/row-actions"
-import { toast } from "@/components/ui/toast"
+import { toast, toastError } from "@/components/ui/toast"
 
 // Edit, Duplicate (opens the form with a copy that starts off), Turn on or off, and Delete after a confirm.
 export function BannerActions({
@@ -20,7 +20,7 @@ export function BannerActions({
   const remove = useDeleteBanner()
   const done = (key: string) => ({
     onSuccess: () => toast.add({ title: t(key) }),
-    onError: (e: unknown) => toast.add({ title: errorText(t, e) }),
+    onError: (e: unknown) => toastError({ title: errorText(t, e) }),
   })
   return (
     <RowActions

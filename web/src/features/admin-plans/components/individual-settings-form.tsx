@@ -11,7 +11,7 @@ import { LeaveGuard } from "@/components/app/leave-guard"
 import { NumberField } from "@/components/app/number-field"
 import { SubmitButton } from "@/components/app/submit-button"
 import { Switch } from "@/components/ui/switch"
-import { toast } from "@/components/ui/toast"
+import { toast, toastError } from "@/components/ui/toast"
 import { useAppForm } from "@/hooks/use-app-form"
 import {
   individualSettingsSchema,
@@ -38,7 +38,7 @@ export function IndividualSettingsForm({ settings }: { settings: Settings }) {
   const submit = form.handleSubmit((values) =>
     update.mutate(values, {
       onSuccess: () => toast.add({ title: t("admin.plans_settings_saved") }),
-      onError: (e) => toast.add({ title: errorText(t, e) }),
+      onError: (e) => toastError({ title: errorText(t, e) }),
     })
   )
   return (

@@ -6,7 +6,7 @@ import { FormField } from "@/components/app/form-field"
 import { ImageFileInput } from "@/components/app/image-file-input"
 import { SubmitButton } from "@/components/app/submit-button"
 import { Input } from "@/components/ui/input"
-import { toast } from "@/components/ui/toast"
+import { toastError } from "@/components/ui/toast"
 import { ApiError } from "@/lib/api/client"
 import { errorText } from "@/lib/api/error-text"
 import { keys } from "@/lib/api/query-keys"
@@ -41,7 +41,7 @@ export function PaymentForm({ checkout }: { checkout: Checkout }) {
             const fields = error instanceof ApiError ? error.fields : undefined
             for (const name of fieldNames)
               if (fields?.[name]) form.setError(name, { message: fields[name] })
-            if (!fields) toast.add({ title: errorText(t, error) })
+            if (!fields) toastError({ title: errorText(t, error) })
             // Another tab may have sent it already: reload the checkout to show its pending state.
             void qc.invalidateQueries({ queryKey: keys.billing.all })
           },

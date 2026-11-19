@@ -19,7 +19,7 @@ import { ConfirmButton } from "@/components/app/confirm-button"
 import { RemoveButton } from "@/components/app/remove-button"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
-import { toast } from "@/components/ui/toast"
+import { toast, toastError } from "@/components/ui/toast"
 import { GrantPromotionDialog } from "./grant-promotion-dialog"
 import { ListingControls } from "./listing-controls"
 
@@ -49,7 +49,7 @@ export function AdminListingSheet({
       setDialog(null)
       toast.add({ title: done })
     },
-    onError: (e: unknown) => toast.add({ title: errorText(t, e) }),
+    onError: (e: unknown) => toastError({ title: errorText(t, e) }),
   })
   const m = listing?.moderation
   const footer = listing && (

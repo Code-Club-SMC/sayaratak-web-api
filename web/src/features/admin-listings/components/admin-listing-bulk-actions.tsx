@@ -4,7 +4,7 @@ import { useBulkListings } from "@/features/admin/queries"
 import type { AdminListingsSearch } from "@/features/admin/schemas"
 import { ConfirmButton } from "@/components/app/confirm-button"
 import { RemoveButton } from "@/components/app/remove-button"
-import { toast } from "@/components/ui/toast"
+import { toast, toastError } from "@/components/ui/toast"
 
 type Action = "approve" | "remove" | "restore"
 
@@ -28,7 +28,7 @@ export function AdminListingBulkActions({
           clear()
           toast.add({ title: t(`admin.listings_${action}d`, { count }) })
         },
-        onError: (e) => toast.add({ title: errorText(t, e) }),
+        onError: (e) => toastError({ title: errorText(t, e) }),
       }
     )
   return (

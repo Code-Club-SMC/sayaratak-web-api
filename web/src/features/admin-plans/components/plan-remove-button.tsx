@@ -8,7 +8,7 @@ import { useDeletePlan, useUpdatePlan } from "@/features/admin/queries"
 import { ConfirmDialog } from "@/components/app/confirm-dialog"
 import { RemoveButton } from "@/components/app/remove-button"
 import { Button } from "@/components/ui/button"
-import { toast } from "@/components/ui/toast"
+import { toast, toastError } from "@/components/ui/toast"
 
 // A plan nobody used is removed after a confirm. A plan a subscription or payment names stays for that history: the button explains and offers to turn it off instead (A12 `in_use`). The free plan, and a used plan already off, get no button (see PlanActions).
 export function PlanRemoveButton({ plan }: { plan: AdminPlan }) {
@@ -33,7 +33,7 @@ export function PlanRemoveButton({ plan }: { plan: AdminPlan }) {
           {
             onSuccess: () =>
               toast.add({ title: t("admin.plan_disabled_toast") }),
-            onError: (e) => toast.add({ title: errorText(t, e) }),
+            onError: (e) => toastError({ title: errorText(t, e) }),
             onSettled: () => setBlocked(false),
           }
         )
@@ -69,7 +69,7 @@ export function PlanRemoveButton({ plan }: { plan: AdminPlan }) {
             onError: (e) =>
               e instanceof ApiError && e.code === "in_use"
                 ? setBlocked(true)
-                : toast.add({ title: errorText(t, e) }),
+                : toastError({ title: errorText(t, e) }),
           })
         }
       >

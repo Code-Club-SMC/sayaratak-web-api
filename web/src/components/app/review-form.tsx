@@ -11,7 +11,7 @@ import { useT } from "@/lib/i18n/use-t"
 import type { Review, TargetType } from "@sayaratak/shared/schemas/review"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
-import { toast } from "@/components/ui/toast"
+import { toast, toastError } from "@/components/ui/toast"
 import { FieldError } from "./field-error"
 import { FormField } from "./form-field"
 import { RatingStars } from "./rating-stars"
@@ -47,7 +47,7 @@ export function ReviewForm({
       toast.add({ title: t("toast.review_saved") })
       onDone()
     },
-    onError: (error: unknown) => toast.add({ title: errorText(t, error) }),
+    onError: (error: unknown) => toastError({ title: errorText(t, error) }),
   }
   const submit = form.handleSubmit(({ rating, body }) => {
     if (existing)

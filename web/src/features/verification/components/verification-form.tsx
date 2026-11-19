@@ -8,7 +8,7 @@ import { FormField } from "@/components/app/form-field"
 import { SubmitButton } from "@/components/app/submit-button"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
-import { toast } from "@/components/ui/toast"
+import { toastError } from "@/components/ui/toast"
 import { errorText } from "@/lib/api/error-text"
 import { keys } from "@/lib/api/query-keys"
 import { focusFirstInvalid } from "@/lib/focus-invalid"
@@ -64,7 +64,7 @@ export function VerificationForm({ targetType }: { targetType: TargetType }) {
       send.mutate(values, {
         onSuccess: () => document.getElementById(verificationStatusId)?.focus(),
         onError: (error) => {
-          toast.add({ title: errorText(t, error) })
+          toastError({ title: errorText(t, error) })
           // Another tab may have sent it already: reload the status.
           void qc.invalidateQueries({ queryKey: keys.verification })
         },

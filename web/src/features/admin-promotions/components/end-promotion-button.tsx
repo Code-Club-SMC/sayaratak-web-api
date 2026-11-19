@@ -6,7 +6,7 @@ import type { MyPromotion } from "@sayaratak/shared/schemas/responses"
 import { useEndPromotion } from "@/features/admin/queries"
 import { ConfirmDialog } from "@/components/app/confirm-dialog"
 import { Button } from "@/components/ui/button"
-import { toast } from "@/components/ui/toast"
+import { toast, toastError } from "@/components/ui/toast"
 
 // Takes the promotion off its listing at once, after a confirm.
 export function EndPromotionButton({ promotion }: { promotion: MyPromotion }) {
@@ -37,7 +37,7 @@ export function EndPromotionButton({ promotion }: { promotion: MyPromotion }) {
           end.mutate(promotion.id, {
             onSuccess: () =>
               toast.add({ title: t("admin.promos_ended_toast") }),
-            onError: (e) => toast.add({ title: errorText(t, e) }),
+            onError: (e) => toastError({ title: errorText(t, e) }),
             onSettled: () => setOpen(false),
           })
         }

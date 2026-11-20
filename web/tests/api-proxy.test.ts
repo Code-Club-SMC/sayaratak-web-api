@@ -5,7 +5,7 @@ import { verifyClientIp } from "@sayaratak/shared/lib/proxy-client-ip"
 
 import { forwardApiRequest } from "@/lib/server/api-proxy"
 
-const upstream = "https://sayaratak-api-91a8.onrender.com"
+const upstream = "https://sayaratak-api-vmlm.onrender.com"
 const website = "https://sayaratak-web.onrender.com"
 afterEach(() => vi.useRealTimers())
 
@@ -15,12 +15,12 @@ it("forwards site requests to the fixed API origin", async () => {
     .mockResolvedValue(Response.json({ locales: ["ar", "en"] }))
   const response = await forwardApiRequest(
     new Request("https://sayaratak-web.onrender.com/api/v1/site?locale=en"),
-    { apiBaseUrl: "https://sayaratak-api-91a8.onrender.com", fetchImpl }
+    { apiBaseUrl: "https://sayaratak-api-vmlm.onrender.com", fetchImpl }
   )
   expect(response?.status).toBe(200)
   const [input, init] = fetchImpl.mock.calls[0]!
   expect(new Request(input, init).url).toBe(
-    "https://sayaratak-api-91a8.onrender.com/api/v1/site?locale=en"
+    "https://sayaratak-api-vmlm.onrender.com/api/v1/site?locale=en"
   )
   await response?.text()
 })

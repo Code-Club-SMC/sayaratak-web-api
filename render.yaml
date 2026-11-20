@@ -44,7 +44,7 @@ services:
       - key: CLIENT_IP_MODE
         value: render
       - key: API_PUBLIC_ORIGIN
-        value: https://sayaratak-api-91a8.onrender.com
+        value: https://sayaratak-api-vmlm.onrender.com
       # Same dedicated server-only key on BOTH services; never generate independent keys here.
       - key: PROXY_CLIENT_IP_SECRET
         sync: false
@@ -104,6 +104,8 @@ services:
         sync: false
       - key: ADMIN_RECOVERY_EMAIL
         sync: false
+      - key: ADMIN_SEED_ENABLED
+        sync: false
 
   - type: web
     name: sayaratak-web
@@ -122,7 +124,7 @@ services:
         value: 1.4.2
       # SSR/proxy uses the API; browsers use the website. Rebuild after VITE changes.
       - key: API_BASE_URL
-        value: https://sayaratak-api-91a8.onrender.com
+        value: https://sayaratak-api-vmlm.onrender.com
       - key: VITE_API_BASE_URL
         value: https://sayaratak-web.onrender.com
       - key: APP_ORIGIN

@@ -7,7 +7,7 @@ import { readDeploymentConfig } from "@/lib/server/deployment-config"
 
 const deployed = {
   NODE_ENV: "production",
-  API_BASE_URL: "https://sayaratak-api-91a8.onrender.com",
+  API_BASE_URL: "https://sayaratak-api-vmlm.onrender.com",
   APP_ORIGIN: "https://sayaratak-web.onrender.com",
   VITE_API_BASE_URL: "https://sayaratak-web.onrender.com",
 }

@@ -252,7 +252,7 @@ those ranges are shared with unrelated services.
 For the approved same-origin Render repair, opt in with `CLIENT_IP_MODE=render` on both services.
 Set the same dedicated `PROXY_CLIENT_IP_SECRET` on both, at least 32 characters, stored only in
 server environments. Never reuse the auth/admin secret or put it in a `VITE_` variable. On the API
-also set `API_PUBLIC_ORIGIN=https://sayaratak-api-91a8.onrender.com`, without an API path.
+also set `API_PUBLIC_ORIGIN=https://sayaratak-api-vmlm.onrender.com`, without an API path.
 These are prepared Task 4 instructions for separately approved Task 6, not hosted changes.
 
 [Render documents](https://render.com/articles/host-pocketbase-on-render) that its public ingress
@@ -283,7 +283,7 @@ Origins have no `/en`, `/ar` or `/api/v1` suffix.
 
 | Service | Variable | Exact target |
 | --- | --- | --- |
-| Web | `API_BASE_URL` | `https://sayaratak-api-91a8.onrender.com` |
+| Web | `API_BASE_URL` | `https://sayaratak-api-vmlm.onrender.com` |
 | Web | `VITE_API_BASE_URL` | `https://sayaratak-web.onrender.com` |
 | Web | `APP_ORIGIN` | `https://sayaratak-web.onrender.com` |
 | Web | `IMAGE_ORIGINS` | `https://res.cloudinary.com` |
@@ -292,7 +292,7 @@ Origins have no `/en`, `/ar` or `/api/v1` suffix.
 | Web | `VITE_FEATURE_FACEBOOK` | `false` |
 | Both | `CLIENT_IP_MODE` | `render` |
 | Both | `PROXY_CLIENT_IP_SECRET` | Same privately generated dedicated key, at least 32 characters |
-| API | `API_PUBLIC_ORIGIN` | `https://sayaratak-api-91a8.onrender.com` |
+| API | `API_PUBLIC_ORIGIN` | `https://sayaratak-api-vmlm.onrender.com` |
 | API | `WEB_ORIGIN` | `https://sayaratak-web.onrender.com` |
 | API | `BETTER_AUTH_URL` | `https://sayaratak-web.onrender.com` |
 | API | `COOKIE_DOMAIN` | Absent or blank, host-only |

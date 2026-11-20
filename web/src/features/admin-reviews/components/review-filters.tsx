@@ -1,4 +1,4 @@
-import { SelectInput } from "@/components/app/select-input"
+import { FilterChip } from "@/components/app/filter-chip"
 import { useT } from "@/lib/i18n/use-t"
 import { formatNumber } from "@/lib/format"
 import { targetTypeSchema } from "@sayaratak/shared/schemas/review"
@@ -21,10 +21,8 @@ export function ReviewFilters({
   const { targetType, rating } = reviewsSearchSchema.shape
   return (
     <>
-      <SelectInput
-        className="w-44"
-        aria-label={t("admin.review_target_filter")}
-        placeholder={t("admin.review_target_filter")}
+      <FilterChip
+        label={t("admin.review_target_filter")}
         value={search.targetType ?? ""}
         options={targetTypeSchema.options.map((v) => ({
           value: v,
@@ -34,10 +32,8 @@ export function ReviewFilters({
           onChange({ targetType: targetType.parse(next || undefined) })
         }
       />
-      <SelectInput
-        className="w-36"
-        aria-label={t("admin.review_rating_filter")}
-        placeholder={t("admin.review_rating_filter")}
+      <FilterChip
+        label={t("admin.review_rating_filter")}
         value={search.rating ? String(search.rating) : ""}
         options={ratings.map((v) => ({
           value: v,

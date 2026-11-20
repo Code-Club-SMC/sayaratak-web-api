@@ -93,6 +93,7 @@ export function BusinessesPage({ type }: { type: AdminBusiness["type"] }) {
             onChange={(next) => onNavigate({ ...search, ...next, page: 1 })}
           />
         }
+        onRowClick={open}
         mobileCard={(b) => (
           <BusinessCard business={b} onOpen={() => open(b)} onAsk={setChange} />
         )}

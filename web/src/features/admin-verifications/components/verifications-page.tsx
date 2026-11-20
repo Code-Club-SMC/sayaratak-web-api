@@ -102,6 +102,7 @@ export function VerificationsPage() {
             search={search}
             onNavigate={onNavigate}
             result={list.data}
+            onRowClick={open}
             mobileCard={(r) => (
               <VerificationCard request={r} onOpen={() => open(r)} />
             )}

@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query"
 
-import { SelectInput } from "@/components/app/select-input"
+import { FilterChip } from "@/components/app/filter-chip"
 import { useT } from "@/lib/i18n/use-t"
 import type { AdminBusiness } from "@sayaratak/shared/schemas/admin"
 import { taxonomyQuery } from "@/features/listings/queries"
@@ -26,10 +26,8 @@ export function BusinessFilters({
   const { verified, status } = businessesSearchSchema.shape
   return (
     <>
-      <SelectInput
-        className="w-40"
-        aria-label={t("admin.city_filter")}
-        placeholder={t("admin.city_filter")}
+      <FilterChip
+        label={t("admin.city_filter")}
         value={search.cityId ?? ""}
         options={(tax?.cities ?? []).map((c) => ({
           value: c.id,
@@ -37,10 +35,8 @@ export function BusinessFilters({
         }))}
         onChange={(next) => onChange({ cityId: next || undefined })}
       />
-      <SelectInput
-        className="w-40"
-        aria-label={t("admin.business_col_verified")}
-        placeholder={t("admin.business_col_verified")}
+      <FilterChip
+        label={t("admin.business_col_verified")}
         value={search.verified ?? ""}
         options={(["yes", "no"] as const).map((v) => ({
           value: v,
@@ -50,10 +46,8 @@ export function BusinessFilters({
           onChange({ verified: verified.parse(next || undefined) })
         }
       />
-      <SelectInput
-        className="w-36"
-        aria-label={t("admin.report_col_status")}
-        placeholder={t("admin.report_col_status")}
+      <FilterChip
+        label={t("admin.report_col_status")}
         value={search.status ?? ""}
         options={(["active", "suspended"] as const).map((v) => ({
           value: v,
@@ -63,10 +57,8 @@ export function BusinessFilters({
           onChange({ status: status.parse(next || undefined) })
         }
       />
-      <SelectInput
-        className="w-40"
-        aria-label={t("admin.business_col_plan")}
-        placeholder={t("admin.business_col_plan")}
+      <FilterChip
+        label={t("admin.business_col_plan")}
         value={search.planId ?? ""}
         options={(plans ?? [])
           .filter((p) => p.audience === type)

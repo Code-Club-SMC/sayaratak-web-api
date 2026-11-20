@@ -113,6 +113,7 @@ export function PaymentsPage() {
             search={search}
             onNavigate={onNavigate}
             result={list.data}
+            onRowClick={open}
             mobileCard={(p) => (
               <AdminPaymentCard payment={p} onOpen={() => open(p)} />
             )}

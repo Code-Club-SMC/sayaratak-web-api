@@ -1,4 +1,4 @@
-import { SelectInput } from "@/components/app/select-input"
+import { FilterChip } from "@/components/app/filter-chip"
 import { useT } from "@/lib/i18n/use-t"
 import { roleSchema } from "@sayaratak/shared/schemas/fields"
 import {
@@ -19,10 +19,8 @@ export function UserFilters({
   const { role, status } = usersSearchSchema.shape
   return (
     <>
-      <SelectInput
-        className="w-44"
-        aria-label={t("admin.user_col_role")}
-        placeholder={t("admin.user_col_role")}
+      <FilterChip
+        label={t("admin.user_col_role")}
         value={search.role ?? ""}
         options={roleSchema.options.map((v) => ({
           value: v,
@@ -30,10 +28,8 @@ export function UserFilters({
         }))}
         onChange={(next) => onChange({ role: role.parse(next || undefined) })}
       />
-      <SelectInput
-        className="w-36"
-        aria-label={t("admin.report_col_status")}
-        placeholder={t("admin.report_col_status")}
+      <FilterChip
+        label={t("admin.report_col_status")}
         value={search.status ?? ""}
         options={userStatuses.map((v) => ({
           value: v,

@@ -69,6 +69,7 @@ export function UsersPage() {
             onChange={(next) => onNavigate({ ...search, ...next, page: 1 })}
           />
         }
+        onRowClick={open}
         mobileCard={(u) => <UserCard user={u} onOpen={() => open(u)} />}
         empty={
           <EmptyState

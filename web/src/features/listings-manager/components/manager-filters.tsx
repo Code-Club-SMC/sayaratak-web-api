@@ -1,4 +1,4 @@
-import { SelectInput } from "@/components/app/select-input"
+import { FilterChip } from "@/components/app/filter-chip"
 import { useT } from "@/lib/i18n/use-t"
 import {
   intentSchema,
@@ -23,18 +23,14 @@ export function ManagerFilters({
   const { type, intent } = listingsManagerSearchSchema.shape
   return (
     <>
-      <SelectInput
-        className="w-44"
-        aria-label={t("manager.type_filter")}
-        placeholder={t("manager.type_filter")}
+      <FilterChip
+        label={t("manager.type_filter")}
         value={search.type ?? ""}
         options={types.map((v) => ({ value: v, label: t(`post.type_${v}`) }))}
         onChange={(next) => onChange({ type: type.parse(next || undefined) })}
       />
-      <SelectInput
-        className="w-44"
-        aria-label={t("manager.intent_filter")}
-        placeholder={t("manager.intent_filter")}
+      <FilterChip
+        label={t("manager.intent_filter")}
         value={search.intent ?? ""}
         options={intentSchema.options.map((v) => ({
           value: v,

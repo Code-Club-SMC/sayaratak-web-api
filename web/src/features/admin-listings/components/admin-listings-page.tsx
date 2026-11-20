@@ -112,6 +112,7 @@ export function AdminListingsPage() {
             bulkActions={(ids, clear) => (
               <AdminListingBulkActions tab={tab} ids={ids} clear={clear} />
             )}
+            onRowClick={open}
             mobileCard={(l) => (
               <AdminListingCard listing={l} onOpen={() => open(l)} />
             )}

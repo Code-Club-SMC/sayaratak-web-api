@@ -7,7 +7,7 @@ import {
   subscriptionStatuses,
   type PlansSearch,
 } from "@/features/admin/schemas"
-import { SelectInput } from "@/components/app/select-input"
+import { FilterChip } from "@/components/app/filter-chip"
 
 const audiences = ["user", "dealership", "workshop", "mechanic"] as const
 
@@ -24,10 +24,8 @@ export function SubscriberFilters({
   const { audience, status } = plansSearchSchema.shape
   return (
     <>
-      <SelectInput
-        className="w-40"
-        aria-label={t("admin.plan_audience_filter")}
-        placeholder={t("admin.plan_audience_filter")}
+      <FilterChip
+        label={t("admin.plan_audience_filter")}
         value={search.audience ?? ""}
         options={audiences.map((a) => ({
           value: a,
@@ -45,10 +43,8 @@ export function SubscriberFilters({
           })
         }}
       />
-      <SelectInput
-        className="w-44"
-        aria-label={t("admin.business_col_plan")}
-        placeholder={t("admin.business_col_plan")}
+      <FilterChip
+        label={t("admin.business_col_plan")}
         value={search.planId ?? ""}
         options={(plans ?? [])
           .filter((p) => !search.audience || p.audience === search.audience)
@@ -58,10 +54,8 @@ export function SubscriberFilters({
           }))}
         onChange={(next) => onChange({ planId: next || undefined })}
       />
-      <SelectInput
-        className="w-40"
-        aria-label={t("admin.report_col_status")}
-        placeholder={t("admin.report_col_status")}
+      <FilterChip
+        label={t("admin.report_col_status")}
         value={search.status ?? ""}
         options={subscriptionStatuses.map((s) => ({
           value: s,

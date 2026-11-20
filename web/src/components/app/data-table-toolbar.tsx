@@ -48,14 +48,14 @@ export function DataTableToolbar({
           aria-label={t("common.search")}
           placeholder={t("common.search")}
           enterKeyHint="search"
-          className="max-w-xs"
+          className="h-8 max-w-xs"
         />
       )}
       {filters}
       {columns.length > 0 && (
         <DropdownMenu>
           <DropdownMenuTrigger
-            render={<Button variant="outline" className="ms-auto" />}
+            render={<Button variant="ghost" size="sm" className="ms-auto" />}
           >
             <Columns3Icon aria-hidden="true" />
             {t("table.columns")}

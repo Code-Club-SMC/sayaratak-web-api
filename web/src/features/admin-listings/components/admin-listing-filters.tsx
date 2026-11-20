@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query"
 import { XIcon } from "lucide-react"
 
-import { SelectInput } from "@/components/app/select-input"
+import { FilterChip } from "@/components/app/filter-chip"
 import { useT } from "@/lib/i18n/use-t"
 import { taxonomyQuery } from "@/features/listings/queries"
 import { adminQueries } from "@/features/admin/queries"
@@ -43,10 +43,8 @@ export function AdminListingFilters({
           <XIcon aria-hidden className="size-4 shrink-0" />
         </button>
       )}
-      <SelectInput
-        className="w-40"
-        aria-label={t("admin.city_filter")}
-        placeholder={t("admin.city_filter")}
+      <FilterChip
+        label={t("admin.city_filter")}
         value={search.cityId ?? ""}
         options={(tax?.cities ?? []).map((c) => ({
           value: c.id,
@@ -54,10 +52,8 @@ export function AdminListingFilters({
         }))}
         onChange={(next) => onChange({ cityId: next || undefined })}
       />
-      <SelectInput
-        className="w-40"
-        aria-label={t("admin.type_filter")}
-        placeholder={t("admin.type_filter")}
+      <FilterChip
+        label={t("admin.type_filter")}
         value={search.type ?? ""}
         options={adminListingTypes.map((v) => ({
           value: v,
@@ -65,20 +61,19 @@ export function AdminListingFilters({
         }))}
         onChange={(next) => onChange({ type: type.parse(next || undefined) })}
       />
-      <SelectInput
-        className="w-40"
-        aria-label={t("admin.seller_kind")}
-        value={search.sellerKind}
-        options={sellerKinds.map((v) => ({
-          value: v,
-          label: t(`admin.seller_${v}`),
-        }))}
-        onChange={(next) => onChange({ sellerKind: sellerKind.parse(next) })}
+      {/* "All sellers" is the unset state, so the chip shows only a real choice and clearing returns to all. */}
+      <FilterChip
+        label={t("admin.seller_kind")}
+        value={search.sellerKind === "all" ? "" : search.sellerKind}
+        options={sellerKinds
+          .filter((v) => v !== "all")
+          .map((v) => ({ value: v, label: t(`admin.seller_${v}`) }))}
+        onChange={(next) =>
+          onChange({ sellerKind: sellerKind.parse(next || "all") })
+        }
       />
-      <SelectInput
-        className="w-40"
-        aria-label={t("admin.promoted_filter")}
-        placeholder={t("admin.promoted_filter")}
+      <FilterChip
+        label={t("admin.promoted_filter")}
         value={search.promoted ?? ""}
         options={(["yes", "no"] as const).map((v) => ({
           value: v,

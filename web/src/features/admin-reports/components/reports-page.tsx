@@ -101,6 +101,7 @@ export function ReportsPage() {
             search={search}
             onNavigate={onNavigate}
             result={list.data}
+            onRowClick={(r) => go({ ...search, id: r.id }, true)}
             mobileCard={(r) => (
               <ReportCard
                 report={r}

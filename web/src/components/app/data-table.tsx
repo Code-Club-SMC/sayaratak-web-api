@@ -28,6 +28,7 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { BulkActionBar } from "./bulk-action-bar"
+import { EmptyState } from "./empty-state"
 import { DataTableToolbar } from "./data-table-toolbar"
 import { ResultsPagination } from "./results-pagination"
 
@@ -54,6 +55,8 @@ export type DataTableProps<T extends RowData> = {
   }
   // Below md each row renders as this card. Without it the table scrolls sideways with its first column pinned.
   mobileCard?: (row: T) => ReactNode
+  // Opens the row's detail sheet on a click anywhere in the row; keyboard users keep the row's own link or button.
+  onRowClick?: (row: T) => void
   empty: ReactNode
   page: number
   pageCount: number
@@ -78,6 +81,7 @@ export function DataTable<T extends RowData>({
   filters,
   selection,
   mobileCard,
+  onRowClick,
   empty,
   page,
   pageCount,
@@ -120,41 +124,45 @@ export function DataTable<T extends RowData>({
     />
   )
   const message = error ? (
-    <div
-      role="alert"
-      className="flex flex-col items-center gap-3 px-4 py-12 text-center"
-    >
-      <TriangleAlertIcon aria-hidden className="size-6 text-muted-foreground" />
-      <p className="text-ui font-medium">{t("table.error")}</p>
-      <Button type="button" variant="outline" onClick={onRetry}>
-        <RefreshCwIcon data-icon="inline-start" />
-        {t("common.retry")}
-      </Button>
-    </div>
+    <EmptyState
+      error
+      icon={TriangleAlertIcon}
+      title={t("table.error")}
+      body={t("dashboard.chart_error_body")}
+      action={
+        <Button type="button" variant="outline" onClick={onRetry}>
+          <RefreshCwIcon data-icon="inline-start" />
+          {t("common.retry")}
+        </Button>
+      }
+    />
   ) : data?.length === 0 ? (
     empty
   ) : null
 
   return (
     <div className="flex flex-col gap-4">
-      {(onSearch || filters || toggles.length > 0) && (
-        <DataTableToolbar
-          search={search}
-          onSearch={onSearch}
-          filters={filters}
-          columns={toggles}
-        />
-      )}
       {selection && count > 0 && (
         <BulkActionBar count={count} onClear={() => selection.onChange({})}>
           {selection.actions}
         </BulkActionBar>
       )}
       <div
-        className="overflow-hidden panel"
+        className="overflow-hidden panel [&_td_.num]:font-mono [&_td_.num]:text-[0.8125rem]"
         aria-busy={loading}
         data-slot="data-table"
       >
+        {/* Search, filter chips and columns head the panel, so filters and rows read as one block. */}
+        {(onSearch || filters || toggles.length > 0) && (
+          <div className="border-b px-3 py-2.5">
+            <DataTableToolbar
+              search={search}
+              onSearch={onSearch}
+              filters={filters}
+              columns={toggles}
+            />
+          </div>
+        )}
         {message ?? (
           <>
             <div className={mobileOnly}>
@@ -246,7 +254,21 @@ export function DataTable<T extends RowData>({
                     : rows.map((row) => (
                         <TableRow
                           key={row.id}
-                          className="h-12"
+                          className={cn("h-12", onRowClick && "cursor-pointer")}
+                          onClick={
+                            onRowClick &&
+                            ((e) => {
+                              // Buttons, links, switches and checkboxes in the row keep their own job.
+                              if (
+                                e.target instanceof Element &&
+                                e.target.closest(
+                                  "a,button,input,label,[role=switch],[role=checkbox],[role=menuitem]"
+                                )
+                              )
+                                return
+                              onRowClick(row.original)
+                            })
+                          }
                           data-state={
                             row.getIsSelected() ? "selected" : undefined
                           }

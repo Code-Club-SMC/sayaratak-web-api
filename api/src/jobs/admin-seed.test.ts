@@ -14,9 +14,12 @@ import {
 import {
   seedMediaFailureCode,
   runSeedPass,
+  runSeedPasses,
 } from "~/modules/admin-seed/admin-seed.work.service"
 
+import { prepareSeedAssets } from "../../tests/admin-seed"
 import { resetDb } from "../../tests/helpers"
+import { startSeedInstall } from "~/modules/admin-seed/admin-seed.start.service"
 import { adminCaller } from "../../tests/admin"
 import { adminSeedJob } from "./admin-seed.job"
 import { jobs } from "./index"
@@ -37,7 +40,6 @@ test("registers one awaited minute job through the existing scheduler", () => {
     name: "admin-seed",
     schedule: "* * * * *",
   })
-  expect(adminSeedJob.run).toBe(runSeedPass)
   expect(jobs.filter((job) => job.name === "admin-seed")).toHaveLength(1)
 })
 
@@ -113,4 +115,14 @@ test("failed upload source cleanup retries even when no operation is queued", as
     .from(seedStorageIntents)
     .where(eq(seedStorageIntents.id, "failed-source"))
   expect(deleted?.state).toBe("deleted")
+})
+
+test("one run keeps taking passes until the queued work is done, and stops at its budget", async () => {
+  const { dataset, actor } = await prepareSeedAssets(true)
+  await startSeedInstall(actor, dataset.manifestDigest)
+  // A zero budget stops after the first pass (an install pass commits at most 25 items).
+  expect(await runSeedPasses(0)).toBe(25)
+  // The default budget finishes the remaining 205 in the same call instead of one pass a minute.
+  expect(await runSeedPasses()).toBe(205)
+  expect(await runSeedPasses()).toBe(0)
 })

@@ -21,6 +21,23 @@ const missingSourceSchema = z.object({
   message: z.string().optional(),
 })
 
+const RUN_BUDGET_MS = 45_000
+
+/**
+ * The minute job: repeats single passes until one handles nothing or the budget is spent, so a
+ * 50-image ZIP finishes in one or two runs instead of waiting a minute after every 5 images.
+ * Each pass still checkpoints on its own, and the budget leaves the next minute's run free to start.
+ */
+export async function runSeedPasses(budgetMs = RUN_BUDGET_MS): Promise<number> {
+  const start = performance.now()
+  let total = 0
+  for (;;) {
+    const handled = await runSeedPass()
+    total += handled
+    if (!handled || performance.now() - start >= budgetMs) return total
+  }
+}
+
 /** Runs only implemented archive stages; unsupported kinds stay queued for their dispatcher. */
 export async function runSeedPass(): Promise<number> {
   await expireSeedArchiveReceipts()

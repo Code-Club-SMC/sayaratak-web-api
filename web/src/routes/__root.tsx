@@ -72,8 +72,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
           rel: "stylesheet",
           href: appCss,
         },
-        { rel: "icon", href: "/sayaratak-logo.svg", type: "image/svg+xml" },
-        { rel: "icon", href: "/favicon.ico", sizes: "16x16 32x32 48x48" },
+        // White logo on a blue tile, so the tab icon reads on light and dark browser tabs alike.
+        { rel: "icon", href: "/favicon.ico", sizes: "48x48" },
+        { rel: "icon", href: "/favicon.svg", type: "image/svg+xml" },
+        { rel: "apple-touch-icon", href: "/apple-touch-icon.png" },
+        { rel: "manifest", href: "/manifest.json" },
         ...(loaderData ? fontPreloads(loaderData.locale) : []),
       ],
     }),

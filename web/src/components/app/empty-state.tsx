@@ -1,7 +1,9 @@
 import type { ReactNode } from "react"
 import type { LucideIcon } from "lucide-react"
 
+import { useT } from "@/lib/i18n/use-t"
 import { cn } from "@/lib/utils"
+import { Button } from "@/components/ui/button"
 import {
   Empty,
   EmptyContent,
@@ -34,6 +36,7 @@ export type EmptyArt =
 
 // The one empty state of the app, on the shadcn Empty: icon tile, title, optional sentence, optional action, all centered.
 // `level` is the heading level of the title and also sets the size: 2 for a page or pane (48px tile, title role), 3 inside a titled panel (40px tile, body-size title). Pass `className` for the height (`h-64`) or a tighter `py-6`.
+// `onClear` marks an empty caused by filters: it adds the "try other filters" sentence (unless `body` is given) and a Clear filters button.
 // `error` paints the tile red and announces the state; pass the retry button as `action`.
 // The type roles sit on inner spans, because `cn` reads a role next to a text size as a clash.
 export function EmptyState({
@@ -44,6 +47,7 @@ export function EmptyState({
   level = 2,
   wide = false,
   error = false,
+  onClear,
   className,
 }: {
   icon: LucideIcon | EmptyArt
@@ -54,9 +58,19 @@ export function EmptyState({
   // Lets the action grow past the 24 rem column (a row of suggestion chips).
   wide?: boolean
   error?: boolean
+  onClear?: () => void
   className?: string
 }) {
+  const { t } = useT()
   const panel = level === 3
+  const text = body ?? (onClear ? t("common.empty_filtered_body") : undefined)
+  const actions =
+    action ??
+    (onClear && (
+      <Button type="button" variant="outline" onClick={onClear}>
+        {t("common.clear_filters")}
+      </Button>
+    ))
   return (
     <Empty
       role={error ? "alert" : undefined}
@@ -102,15 +116,15 @@ export function EmptyState({
             {title}
           </span>
         </EmptyTitle>
-        {body && (
+        {text && (
           <EmptyDescription>
-            <span className={panel ? "text-ui" : "text-body"}>{body}</span>
+            <span className={panel ? "text-ui" : "text-body"}>{text}</span>
           </EmptyDescription>
         )}
       </EmptyHeader>
-      {action && (
+      {actions && (
         <EmptyContent className={wide ? "max-w-none" : undefined}>
-          {action}
+          {actions}
         </EmptyContent>
       )}
     </Empty>

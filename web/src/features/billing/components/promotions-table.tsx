@@ -90,6 +90,7 @@ export function PromotionsTable({
         <EmptyState
           icon={MegaphoneIcon}
           title={t(`billing.promos_empty_${tab}`)}
+          body={t(`billing.promos_empty_${tab}_body`)}
           level={3}
         />
       }

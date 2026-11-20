@@ -132,6 +132,12 @@ export function ListingsReportTable({
               ? "reports.empty_title"
               : "reports.empty_filtered"
           )}
+          body={
+            search.filter === "all" ? t("reports.empty_title_body") : undefined
+          }
+          onClear={
+            search.filter === "all" ? undefined : () => go({ filter: "all" })
+          }
           level={3}
           className="py-6"
         />

@@ -47,6 +47,7 @@ export function UnansweredCard({
         <EmptyState
           icon={MessageCircleIcon}
           title={t("reports.unanswered_empty")}
+          body={t("reports.unanswered_empty_body")}
           level={3}
           className="py-4"
         />

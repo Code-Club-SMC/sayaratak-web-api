@@ -172,7 +172,7 @@
   "form.remove_service": "Remove service {{number}}",
   "form.pick_date": "Choose a date",
   "form.search_listings": "Search your listings",
-  "form.no_listings": "No approved listings found.",
+  "form.no_listings": "No approved listings found",
   "form.listings_error": "Could not load your listings. Try again.",
   "form.preview_name": "Your name",
   "form.preview_fact_negotiable": "Price can be discussed",
@@ -292,5 +292,8 @@
   "common.leave_body": "Your unsaved changes will be lost.",
   "common.leave_confirm": "Leave",
   "common.zoom": "Zoom",
-  "common.seed_notice": "Demo data. Contact and payments are unavailable for these listings."
+  "common.seed_notice": "Demo data. Contact and payments are unavailable for these listings.",
+  "common.clear_filters": "Clear filters",
+  "common.empty_filtered_body": "Try other filters, or clear them to see everything.",
+  "common.empty_search_body": "Try a different search."
 }

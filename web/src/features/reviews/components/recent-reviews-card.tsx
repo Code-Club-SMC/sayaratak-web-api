@@ -59,6 +59,7 @@ export function RecentReviewsCard({
         <EmptyState
           icon={StarIcon}
           title={t("reviews_manager.empty_title")}
+          body={t("reviews_manager.empty_body")}
           level={3}
           className="py-6"
         />

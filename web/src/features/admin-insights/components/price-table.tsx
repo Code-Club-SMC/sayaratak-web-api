@@ -49,6 +49,7 @@ export function PriceTable({
         <EmptyState
           icon={SearchXIcon}
           title={t("reports.insights_prices_empty")}
+          body={t("reports.insights_prices_empty_body")}
           level={3}
           className="py-6"
         />

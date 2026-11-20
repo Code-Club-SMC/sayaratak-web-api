@@ -58,6 +58,7 @@ export function ExpiringTable({
         <EmptyState
           icon={CalendarCheckIcon}
           title={t("reports.revenue_expiring_empty")}
+          body={t("reports.revenue_expiring_empty_body")}
           level={3}
           className="py-6"
         />

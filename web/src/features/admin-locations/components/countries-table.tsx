@@ -126,7 +126,11 @@ export function CountriesTable({
         onNavigate={go}
         result={pageRows(list.data, search, locale)}
         empty={
-          <EmptyState icon={GlobeIcon} title={t("admin.locations_empty")} />
+          <EmptyState
+            icon={GlobeIcon}
+            title={t("admin.locations_empty")}
+            body={t("common.empty_search_body")}
+          />
         }
       />
       <CountryDialog country={editing} onClose={() => setEditing(undefined)} />

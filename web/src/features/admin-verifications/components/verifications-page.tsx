@@ -54,7 +54,10 @@ export function VerificationsPage() {
   const open = (r: { id: string }) => go({ ...search, id: r.id }, true)
   const columns = useVerificationColumns(open)
   const empty = q
-    ? { title: t("admin.verifications_empty_search") }
+    ? {
+        title: t("admin.verifications_empty_search"),
+        onClear: () => go({ ...search, q: undefined, page: 1 }),
+      }
     : {
         title: t(`admin.verifications_empty_${tab}`),
         body: t(`admin.verifications_empty_${tab}_body`),

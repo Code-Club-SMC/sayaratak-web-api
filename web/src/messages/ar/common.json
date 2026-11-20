@@ -180,7 +180,7 @@
   "form.remove_service": "حذف الخدمة {{number}}",
   "form.pick_date": "اختر تاريخًا",
   "form.search_listings": "ابحث في إعلاناتك",
-  "form.no_listings": "لا توجد إعلانات معتمدة.",
+  "form.no_listings": "لا توجد إعلانات معتمدة",
   "form.listings_error": "تعذر تحميل إعلاناتك. حاول مرة أخرى.",
   "form.preview_name": "اسمك",
   "form.preview_fact_negotiable": "السعر قابل للتفاوض",
@@ -300,5 +300,8 @@
   "common.leave_body": "ستفقد التغييرات غير المحفوظة.",
   "common.leave_confirm": "مغادرة",
   "common.zoom": "تكبير",
-  "common.seed_notice": "بيانات تجريبية. الاتصال والدفع غير متاحين لهذه الإعلانات."
+  "common.seed_notice": "بيانات تجريبية. الاتصال والدفع غير متاحين لهذه الإعلانات.",
+  "common.clear_filters": "مسح عوامل التصفية",
+  "common.empty_filtered_body": "جرّب عوامل تصفية أخرى، أو امسحها لعرض كل النتائج.",
+  "common.empty_search_body": "جرّب بحثًا مختلفًا."
 }

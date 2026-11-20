@@ -135,6 +135,12 @@ export function PriceReportTable({
               ? "reports.price_empty"
               : "reports.empty_filtered"
           )}
+          body={
+            search.band === "all" ? t("reports.price_empty_body") : undefined
+          }
+          onClear={
+            search.band === "all" ? undefined : () => go({ band: "all" })
+          }
           level={3}
           className="py-6"
         />

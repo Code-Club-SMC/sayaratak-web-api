@@ -39,6 +39,7 @@ export function BarListCard({
           <EmptyState
             icon={ChartNoAxesColumnIcon}
             title={t("dashboard.chart_empty")}
+            body={t("dashboard.chart_empty_body")}
             level={3}
             className="py-6"
           />

@@ -53,7 +53,10 @@ export function ReportsPage() {
   )
   const columns = useReportColumns((r) => go({ ...search, id: r.id }, true))
   const empty = q
-    ? { title: t("admin.reports_empty_search") }
+    ? {
+        title: t("admin.reports_empty_search"),
+        onClear: () => go({ ...search, q: undefined, page: 1 }),
+      }
     : {
         title: t(`admin.reports_empty_${tab}`),
         body: t(`admin.reports_empty_${tab}_body`),

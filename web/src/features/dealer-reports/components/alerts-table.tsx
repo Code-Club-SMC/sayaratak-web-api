@@ -104,6 +104,7 @@ export function AlertsTable({
           <EmptyState
             icon={BookmarkIcon}
             title={t("reports.alerts_empty")}
+            body={t("reports.alerts_empty_body")}
             level={3}
             className="py-6"
             action={

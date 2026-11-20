@@ -104,7 +104,7 @@
   "messages.empty_body": "When someone writes to you, the conversation shows up here.",
   "messages.empty_browse": "Browse listings",
   "messages.empty_profile": "View your public profile",
-  "messages.no_match": "No conversations match.",
+  "messages.no_match": "No conversations match",
   "messages.pick_title": "Select a conversation",
   "messages.pick_body": "Choose one from the list to read and reply.",
   "messages.back": "Back to conversations",
@@ -809,5 +809,13 @@
   "settings.method_remove_title": "Remove {{name}} sign-in? You can connect it again later.",
   "settings.method_link_error": "Could not connect. The account must use the same email as this one.",
   "settings.method_apple": "Apple",
-  "settings.method_soon": "Coming soon"
+  "settings.method_soon": "Coming soon",
+  "dashboard.overview_attention_empty_body": "Unanswered messages, payments and expiring listings show here when they need you.",
+  "dashboard.chart_error_body": "Check your connection and try again.",
+  "reports.alerts_empty_body": "Save a search to get an alert when a new listing matches it.",
+  "reports.unanswered_empty_body": "Buyer messages you have not answered yet show here.",
+  "reports.insights_prices_empty_body": "Prices show once a model has at least 5 live listings.",
+  "reports.revenue_expiring_empty_body": "Paid plans ending in the next 30 days show here, so you can remind the business to renew.",
+  "reports.empty_title_body": "Your listings show here once one is published.",
+  "reports.price_empty_body": "Publish a listing to compare its price with the market."
 }

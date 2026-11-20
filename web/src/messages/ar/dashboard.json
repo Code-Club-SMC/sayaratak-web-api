@@ -104,7 +104,7 @@
   "messages.empty_body": "عندما يراسلك أحد ستظهر المحادثة هنا.",
   "messages.empty_browse": "تصفح الإعلانات",
   "messages.empty_profile": "عرض ملفك العام",
-  "messages.no_match": "لا توجد محادثات مطابقة.",
+  "messages.no_match": "لا توجد محادثات مطابقة",
   "messages.pick_title": "اختر محادثة",
   "messages.pick_body": "اختر محادثة من القائمة لقراءتها والرد عليها.",
   "messages.back": "العودة إلى المحادثات",
@@ -849,5 +849,13 @@
   "settings.method_remove_title": "إزالة الدخول عبر {{name}}؟ يمكنك ربطه مرة أخرى لاحقًا.",
   "settings.method_link_error": "تعذّر الربط. يجب أن يستخدم الحساب البريد الإلكتروني نفسه لهذا الحساب.",
   "settings.method_apple": "Apple",
-  "settings.method_soon": "قريبًا"
+  "settings.method_soon": "قريبًا",
+  "dashboard.overview_attention_empty_body": "تظهر هنا الرسائل غير المجاب عنها والمدفوعات والإعلانات القريبة من الانتهاء عندما تحتاج إليك.",
+  "dashboard.chart_error_body": "تحقق من الاتصال ثم حاول مرة أخرى.",
+  "reports.alerts_empty_body": "احفظ بحثًا لتصلك تنبيهات عندما يطابقه إعلان جديد.",
+  "reports.unanswered_empty_body": "تظهر هنا رسائل المشترين التي لم ترد عليها بعد.",
+  "reports.insights_prices_empty_body": "تظهر الأسعار عندما يصبح للطراز 5 إعلانات منشورة على الأقل.",
+  "reports.revenue_expiring_empty_body": "تظهر هنا الخطط المدفوعة التي تنتهي خلال 30 يومًا، لتذكير النشاط التجاري بالتجديد.",
+  "reports.empty_title_body": "تظهر إعلاناتك هنا بعد نشر أول إعلان.",
+  "reports.price_empty_body": "انشر إعلانًا لمقارنة سعره بالسوق."
 }

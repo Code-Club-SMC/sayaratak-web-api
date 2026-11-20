@@ -32,7 +32,11 @@ export function AdminCampaignsPage() {
       ) : !campaigns.data ? (
         <Skeleton className="h-64 rounded-xl" aria-hidden="true" />
       ) : !campaigns.data.length ? (
-        <EmptyState icon={PresentationIcon} title={t("ads.admin_empty")} />
+        <EmptyState
+          icon={PresentationIcon}
+          title={t("ads.admin_empty")}
+          body={t("ads.admin_empty_body")}
+        />
       ) : (
         campaigns.data.map((c) => <AdminCampaignRow key={c.id} campaign={c} />)
       )}

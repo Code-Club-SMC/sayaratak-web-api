@@ -64,7 +64,10 @@ export function PaymentsPage() {
   const open = (p: { id: string }) => go({ ...search, id: p.id }, true)
   const columns = usePaymentColumns(open)
   const empty = q
-    ? { title: t("admin.payments_empty_search") }
+    ? {
+        title: t("admin.payments_empty_search"),
+        onClear: () => go({ ...search, q: undefined, page: 1 }),
+      }
     : {
         title: t(`admin.payments_empty_${tab}`),
         body: t(`admin.payments_empty_${tab}_body`),

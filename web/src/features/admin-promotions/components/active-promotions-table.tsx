@@ -42,6 +42,12 @@ export function ActivePromotionsTable({
         <EmptyState
           icon={MegaphoneIcon}
           title={t(q ? "admin.promos_empty_filtered" : "admin.promos_empty")}
+          body={q ? undefined : t("admin.promos_empty_body")}
+          onClear={
+            q
+              ? () => onNavigate({ ...search, q: undefined, page: 1 })
+              : undefined
+          }
         />
       }
     />

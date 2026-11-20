@@ -209,5 +209,10 @@
   "billing.reminder_keep_free": "Keep {{plan}}",
   "billing.reminder_later": "Not now",
   "billing.ends_on_one": "Ends {{date}} · in {{count}} day",
-  "billing.ends_on_other": "Ends {{date}} · in {{count}} days"
+  "billing.ends_on_other": "Ends {{date}} · in {{count}} days",
+  "billing.prices_empty_body": "Check back later. Your listings stay live in the meantime.",
+  "billing.promos_empty_active_body": "Promote a listing to put it at the top of search and the home page.",
+  "billing.promos_empty_ended_body": "Promotions show here after their last day.",
+  "billing.promos_empty_waiting_body": "Promotions you book show here until the Bankak payment is approved.",
+  "ads.admin_empty_body": "Banner campaigns that businesses book show here for review."
 }

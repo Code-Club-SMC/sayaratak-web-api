@@ -101,6 +101,7 @@ export function ThreadList({
           <EmptyState
             icon={SearchXIcon}
             title={t("messages.no_match")}
+            body={t("common.empty_search_body")}
             className="py-8"
           />
         ) : (

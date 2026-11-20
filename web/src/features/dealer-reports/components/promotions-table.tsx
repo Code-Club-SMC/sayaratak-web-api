@@ -104,6 +104,7 @@ export function PromotionsTable({
           <EmptyState
             icon={MegaphoneIcon}
             title={t("reports.promos_empty")}
+            body={t("dashboard.chart_empty_body")}
             level={3}
             className="py-6"
           />

@@ -76,6 +76,19 @@ export function UsersPage() {
             title={t(
               narrowed ? "admin.users_empty_filtered" : "admin.users_empty"
             )}
+            body={narrowed ? undefined : t("admin.users_empty_body")}
+            onClear={
+              narrowed
+                ? () =>
+                    onNavigate({
+                      ...search,
+                      q: undefined,
+                      role: undefined,
+                      status: undefined,
+                      page: 1,
+                    })
+                : undefined
+            }
           />
         }
       />

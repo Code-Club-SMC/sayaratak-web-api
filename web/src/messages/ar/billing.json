@@ -241,5 +241,10 @@
   "billing.ends_on_two": "تنتهي في {{date}} · بعد يومين",
   "billing.ends_on_few": "تنتهي في {{date}} · بعد {{count}} أيام",
   "billing.ends_on_many": "تنتهي في {{date}} · بعد {{count}} يومًا",
-  "billing.ends_on_other": "تنتهي في {{date}} · بعد {{count}} يوم"
+  "billing.ends_on_other": "تنتهي في {{date}} · بعد {{count}} يوم",
+  "billing.prices_empty_body": "عد لاحقًا. تبقى إعلاناتك منشورة في هذه الأثناء.",
+  "billing.promos_empty_active_body": "روّج إعلانًا ليظهر في أعلى نتائج البحث والصفحة الرئيسية.",
+  "billing.promos_empty_ended_body": "تظهر الترويجات هنا بعد يومها الأخير.",
+  "billing.promos_empty_waiting_body": "تظهر الترويجات التي تحجزها هنا حتى تتم الموافقة على دفعة بنكك.",
+  "ads.admin_empty_body": "تظهر هنا حملات اللافتات التي تحجزها الأنشطة التجارية للمراجعة."
 }

@@ -71,6 +71,7 @@ export function NeedsAttentionCard({
           level={3}
           icon={CircleCheckIcon}
           title={t("dashboard.overview_attention_empty")}
+          body={t("dashboard.overview_attention_empty_body")}
           className="py-6"
         />
       ) : (

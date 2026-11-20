@@ -138,6 +138,7 @@ export function CampaignsSection({
           <EmptyState
             icon={ImageIcon}
             title={t("reports.campaigns_empty")}
+            body={t("dashboard.chart_empty_body")}
             action={emptyAction}
             level={3}
             className="py-6"

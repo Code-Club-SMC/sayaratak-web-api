@@ -126,7 +126,11 @@ export function CitiesTable({
           />
         }
         empty={
-          <EmptyState icon={Building2Icon} title={t("admin.locations_empty")} />
+          <EmptyState
+            icon={Building2Icon}
+            title={t("admin.locations_empty")}
+            body={t("common.empty_search_body")}
+          />
         }
       />
       <CityDialog

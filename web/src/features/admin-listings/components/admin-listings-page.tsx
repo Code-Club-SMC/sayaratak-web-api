@@ -123,6 +123,22 @@ export function AdminListingsPage() {
                     ? "admin.listings_empty_filtered"
                     : "admin.listings_empty"
                 )}
+                body={narrowed ? undefined : t("admin.listings_empty_body")}
+                onClear={
+                  narrowed
+                    ? () =>
+                        onNavigate({
+                          ...search,
+                          q: undefined,
+                          type: undefined,
+                          cityId: undefined,
+                          promoted: undefined,
+                          ownerId: undefined,
+                          sellerKind: "all",
+                          page: 1,
+                        })
+                    : undefined
+                }
               />
             }
           />

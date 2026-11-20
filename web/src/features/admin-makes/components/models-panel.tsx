@@ -60,7 +60,11 @@ export function ModelsPanel({
       {!make ? (
         <EmptyState icon={CarIcon} title={t("admin.models_pick_body")} />
       ) : rows?.length === 0 ? (
-        <EmptyState icon={CarIcon} title={t("admin.models_empty")} />
+        <EmptyState
+          icon={CarIcon}
+          title={t("admin.models_empty")}
+          body={t("admin.models_empty_body")}
+        />
       ) : (
         <ul
           aria-labelledby={id}

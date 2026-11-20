@@ -53,6 +53,12 @@ export function HistoryTable({
           title={t(
             q ? "admin.broadcast_empty_filtered" : "admin.broadcast_empty"
           )}
+          body={q ? undefined : t("admin.broadcast_empty_body")}
+          onClear={
+            q
+              ? () => onNavigate({ ...search, q: undefined, page: 1 })
+              : undefined
+          }
         />
       }
     />

@@ -37,6 +37,7 @@ export function PlanRevenueTable({
         <EmptyState
           icon={ReceiptIcon}
           title={t("reports.revenue_by_plan_empty")}
+          body={t("dashboard.chart_empty_body")}
           level={3}
           className="py-6"
         />

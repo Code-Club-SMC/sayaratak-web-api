@@ -57,6 +57,12 @@ export function BannersTable({
         <EmptyState
           icon={ImagesIcon}
           title={t(q ? "admin.banners_empty_filtered" : "admin.banners_empty")}
+          body={q ? undefined : t("admin.banners_empty_body")}
+          onClear={
+            q
+              ? () => onNavigate({ ...search, q: undefined, page: 1 })
+              : undefined
+          }
         />
       }
     />

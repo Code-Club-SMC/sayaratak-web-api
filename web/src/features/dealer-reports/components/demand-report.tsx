@@ -102,6 +102,7 @@ export function DemandReport({ query }: { query: PeriodQuery }) {
           <EmptyState
             icon={SearchXIcon}
             title={t("reports.demand_empty")}
+            body={t("dashboard.chart_empty_body")}
             level={3}
             className="py-6"
           />

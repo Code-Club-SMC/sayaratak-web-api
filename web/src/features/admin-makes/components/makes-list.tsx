@@ -73,7 +73,11 @@ export function MakesList({
           ))}
         </div>
       ) : rows.length === 0 ? (
-        <EmptyState icon={CarIcon} title={t("admin.makes_empty")} />
+        <EmptyState
+          icon={CarIcon}
+          title={t("admin.makes_empty")}
+          body={t("common.empty_search_body")}
+        />
       ) : (
         <ul
           aria-labelledby={id}

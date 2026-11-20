@@ -44,6 +44,7 @@ export function PromoteDialog({
         <EmptyState
           icon={MegaphoneIcon}
           title={t("billing.prices_empty")}
+          body={t("billing.prices_empty_body")}
           level={3}
           className="py-6"
         />

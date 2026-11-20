@@ -46,7 +46,17 @@ export function ReviewsPage() {
   const columns = useReviewColumns()
   const filtered = q || targetType || rating
   const empty = filtered
-    ? { title: t("admin.reviews_empty_search") }
+    ? {
+        title: t("admin.reviews_empty_search"),
+        onClear: () =>
+          onNavigate({
+            ...search,
+            q: undefined,
+            targetType: undefined,
+            rating: undefined,
+            page: 1,
+          }),
+      }
     : {
         title: t(`admin.reviews_empty_${tab}`),
         body: t(`admin.reviews_empty_${tab}_body`),

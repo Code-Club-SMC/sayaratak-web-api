@@ -101,7 +101,11 @@ export function DistrictsTable({
           />
         }
         empty={
-          <EmptyState icon={MapPinIcon} title={t("admin.locations_empty")} />
+          <EmptyState
+            icon={MapPinIcon}
+            title={t("admin.locations_empty")}
+            body={t("common.empty_search_body")}
+          />
         }
       />
       <DistrictDialog

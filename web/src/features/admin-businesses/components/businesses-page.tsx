@@ -1,7 +1,7 @@
 import { useCallback, useState } from "react"
 import { useQuery } from "@tanstack/react-query"
 import { useNavigate, useSearch } from "@tanstack/react-router"
-import { BuildingIcon } from "lucide-react"
+import { StoreIcon, WarehouseIcon, WrenchIcon } from "lucide-react"
 
 import { formatNumber } from "@/lib/format"
 import { useT } from "@/lib/i18n/use-t"
@@ -23,6 +23,13 @@ import { BusinessSheet } from "./business-sheet"
 import { useBusinessColumns } from "./use-business-columns"
 
 // Dealerships, workshops or mechanics. The URL holds the filters, search, page and the business open in the sheet (`id`); one opened from a link loads on its own.
+// Each kind of business has its own icon, so the three admin lists never look alike.
+const typeIcon = {
+  dealership: StoreIcon,
+  workshop: WarehouseIcon,
+  mechanic: WrenchIcon,
+} as const
+
 export function BusinessesPage({ type }: { type: AdminBusiness["type"] }) {
   const { t, locale } = useT()
   const title = t(`dashboard.nav_${type}s`)
@@ -91,12 +98,29 @@ export function BusinessesPage({ type }: { type: AdminBusiness["type"] }) {
         )}
         empty={
           <EmptyState
-            icon={BuildingIcon}
+            icon={typeIcon[type]}
             title={t(
               narrowed
                 ? "admin.businesses_empty_filtered"
                 : `admin.businesses_empty_${type}`
             )}
+            body={
+              narrowed ? undefined : t(`admin.businesses_empty_${type}_body`)
+            }
+            onClear={
+              narrowed
+                ? () =>
+                    onNavigate({
+                      ...search,
+                      q: undefined,
+                      cityId: undefined,
+                      verified: undefined,
+                      status: undefined,
+                      planId: undefined,
+                      page: 1,
+                    })
+                : undefined
+            }
           />
         }
       />

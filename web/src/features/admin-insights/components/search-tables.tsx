@@ -44,6 +44,7 @@ function Section(props: {
         <EmptyState
           icon={SearchXIcon}
           title={t("reports.search_empty")}
+          body={t("dashboard.chart_empty_body")}
           level={3}
           className="py-6"
         />

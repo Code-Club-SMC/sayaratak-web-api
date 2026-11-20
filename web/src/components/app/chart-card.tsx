@@ -133,6 +133,7 @@ export function ChartCard({
             error
             icon={CircleAlertIcon}
             title={t("dashboard.chart_error")}
+            body={t("dashboard.chart_error_body")}
             level={3}
             className="h-64"
             action={

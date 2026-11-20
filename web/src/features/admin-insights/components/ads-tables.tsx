@@ -124,6 +124,7 @@ export function AdsList({
         <EmptyState
           icon={ImageIcon}
           title={t("reports.ads_list_empty")}
+          body={t("dashboard.chart_empty_body")}
           level={3}
           className="py-6"
         />

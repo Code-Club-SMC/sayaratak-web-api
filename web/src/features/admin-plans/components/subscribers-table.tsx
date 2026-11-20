@@ -56,6 +56,20 @@ export function SubscribersTable({
               ? "admin.businesses_empty_filtered"
               : "admin.plans_subscribers_empty"
           )}
+          body={narrowed ? undefined : t("admin.plans_subscribers_empty_body")}
+          onClear={
+            narrowed
+              ? () =>
+                  onNavigate({
+                    ...search,
+                    q: undefined,
+                    audience: undefined,
+                    planId: undefined,
+                    status: undefined,
+                    page: 1,
+                  })
+              : undefined
+          }
         />
       }
     />

@@ -6,3 +6,7 @@ node_modules
 docs/Test-images/
 /seed-image-prompts.txt
 web/public/images/FairyBread-ExpoGo-QR.png
+
+# Client manual PDFs and their local generator scripts
+/Sayaratak_Client_*.pdf
+/scripts/

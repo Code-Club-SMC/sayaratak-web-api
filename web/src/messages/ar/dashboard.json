@@ -857,5 +857,6 @@
   "reports.insights_prices_empty_body": "تظهر الأسعار عندما يصبح للطراز 5 إعلانات منشورة على الأقل.",
   "reports.revenue_expiring_empty_body": "تظهر هنا الخطط المدفوعة التي تنتهي خلال 30 يومًا، لتذكير النشاط التجاري بالتجديد.",
   "reports.empty_title_body": "تظهر إعلاناتك هنا بعد نشر أول إعلان.",
-  "reports.price_empty_body": "انشر إعلانًا لمقارنة سعره بالسوق."
+  "reports.price_empty_body": "انشر إعلانًا لمقارنة سعره بالسوق.",
+  "dashboard.nav_group_home": "الرئيسية"
 }

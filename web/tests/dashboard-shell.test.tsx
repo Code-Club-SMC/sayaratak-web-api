@@ -37,7 +37,6 @@ describe("dashboard shell", () => {
     ["dealership", "/en/dealer", "/en/dealer/inventory"],
     ["workshop", "/en/workshop", "/en/workshop/services"],
     ["mechanic", "/en/mechanic", "/en/mechanic/portfolio"],
-    ["admin", "/en/admin", "/en/admin/moderation"],
   ] as const)("%s gets its own nav", async (role, path, sample) => {
     await renderShell(<DashboardLayout />, { role, path })
     const hrefs = sidebarLinks().map((a) => a.getAttribute("href"))
@@ -63,13 +62,28 @@ describe("dashboard shell", () => {
     ])
   })
 
-  it("groups the admin nav and links with the Arabic prefix", async () => {
+  it("admin shows the open page's section beside a rail of sections", async () => {
+    await renderShell(<DashboardLayout />, { role: "admin", path: "/en/admin" })
+    const hrefs = () => sidebarLinks().map((a) => a.getAttribute("href"))
+    expect(hrefs()).toContain("/en/admin/insights")
+    expect(hrefs()).not.toContain("/en/admin/moderation")
+    expect(screen.getAllByRole("tab")).toHaveLength(navConfig.admin.length)
+    fireEvent.click(screen.getByRole("tab", { name: "Moderation" }))
+    expect(hrefs()).toContain("/en/admin/moderation")
+    expect(hrefs()).not.toContain("/en/admin/insights")
+    expect(screen.getByRole("tab", { name: "Moderation" })).toHaveProperty(
+      "ariaSelected",
+      "true"
+    )
+  })
+
+  it("opens the admin rail on the section of the open page, with the Arabic prefix", async () => {
     await renderShell(<DashboardLayout />, {
       role: "admin",
       path: "/ar/admin/payments",
       locale: "ar",
     })
-    expect(screen.getByText("المراجعة")).toBeTruthy()
+    expect(screen.getByRole("tab", { name: "المال" }).ariaSelected).toBe("true")
     expect(
       sidebarLinks().some(
         (a) => a.getAttribute("href") === "/ar/admin/payments"

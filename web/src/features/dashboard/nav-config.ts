@@ -1,11 +1,12 @@
 import {
   BadgeCheckIcon,
   BarChart3Icon,
+  BookOpenIcon,
   BellIcon,
   BookmarkIcon,
-  BriefcaseIcon,
   CarIcon,
   CircleDollarSignIcon,
+  CoinsIcon,
   ClipboardCheckIcon,
   CreditCardIcon,
   DatabaseBackupIcon,
@@ -31,6 +32,7 @@ import {
   TagsIcon,
   UserRoundIcon,
   UsersIcon,
+  WarehouseIcon,
   WrenchIcon,
   type LucideIcon,
 } from "lucide-react"
@@ -48,7 +50,8 @@ export type NavItem = {
   icon: LucideIcon
   count?: keyof Counts
 }
-export type NavGroup = { key?: string; items: NavItem[] }
+// `icon` marks a section on the admin rail; groups without one never reach the rail.
+export type NavGroup = { key?: string; icon?: LucideIcon; items: NavItem[] }
 
 const item = (
   name: string,
@@ -73,9 +76,10 @@ const verification = item("verification", "/verification", BadgeCheckIcon)
 const profile = item("profile", "/profile", UserRoundIcon)
 const inquiries = item("inquiries", "/inquiries", InboxIcon, "unreadMessages")
 
-const group = (key: string, items: NavItem[]): NavGroup => ({
+const group = (key: string, items: NavItem[], icon?: LucideIcon): NavGroup => ({
   key: `dashboard.nav_group_${key}`,
   items,
+  icon,
 })
 
 // Business roles share the Work, Growth, Business and Account groups; only the Work items differ.
@@ -121,53 +125,87 @@ export const navConfig: Record<Role, NavGroup[]> = {
   mechanic: business([inquiries, item("portfolio", "/portfolio", ImagesIcon)]),
   admin: [
     // Step 11.7-r10: Insights is the admin's reports page; "Reports" under Moderation stays the abuse reports.
-    { items: [overview, item("insights", "/insights", BarChart3Icon)] },
-    group("moderation", [
-      item(
-        "review_queue",
-        "/moderation",
-        ClipboardCheckIcon,
-        "pendingListings"
-      ),
-      item("reports", "/reports", FlagIcon, "openReports"),
-      item("reviews", "/reviews", StarIcon, "flaggedReviews"),
-      item(
-        "verifications",
-        "/verifications",
-        ShieldCheckIcon,
-        "pendingVerifications"
-      ),
-    ]),
-    group("marketplace", [
-      item("all_listings", "/listings", CarIcon),
-      item("users", "/users", UsersIcon),
-      item("dealerships", "/dealerships", StoreIcon),
-      item("workshops", "/workshops", WrenchIcon),
-      item("mechanics", "/mechanics", BriefcaseIcon),
-    ]),
-    group("money", [
-      item("payments", "/payments", CircleDollarSignIcon, "pendingPayments"),
-      item("plans", "/plans", LayersIcon),
-      item("promotions", "/promotions", MegaphoneIcon),
-      item("ad_campaigns", "/ads", PresentationIcon),
-      item("ad_prices", "/ad-prices", ReceiptIcon),
-    ]),
-    group("catalog", [
-      item("categories", "/categories", TagsIcon),
-      item("locations", "/locations", MapPinIcon),
-      item("makes", "/makes", ListChecksIcon),
-    ]),
-    group("communication", [
-      notifications,
-      item("broadcasts", "/broadcasts", SendIcon),
-      item("banners", "/banners", ImagesIcon),
-    ]),
-    group("site", [
-      item("pages", "/pages", FileTextIcon),
-      settings,
-      item("backups", "/backups", DatabaseBackupIcon),
-    ]),
+    group(
+      "home",
+      [overview, item("insights", "/insights", BarChart3Icon)],
+      LayoutDashboardIcon
+    ),
+    group(
+      "moderation",
+      [
+        item(
+          "review_queue",
+          "/moderation",
+          ClipboardCheckIcon,
+          "pendingListings"
+        ),
+        item("reports", "/reports", FlagIcon, "openReports"),
+        item("reviews", "/reviews", StarIcon, "flaggedReviews"),
+        item(
+          "verifications",
+          "/verifications",
+          ShieldCheckIcon,
+          "pendingVerifications"
+        ),
+      ],
+      ShieldCheckIcon
+    ),
+    group(
+      "marketplace",
+      [
+        item("all_listings", "/listings", CarIcon),
+        item("users", "/users", UsersIcon),
+        item("dealerships", "/dealerships", StoreIcon),
+        item("workshops", "/workshops", WarehouseIcon),
+        item("mechanics", "/mechanics", WrenchIcon),
+      ],
+      StoreIcon
+    ),
+    group(
+      "money",
+      [
+        item("payments", "/payments", CircleDollarSignIcon, "pendingPayments"),
+        item("plans", "/plans", LayersIcon),
+        item("promotions", "/promotions", MegaphoneIcon),
+        item("ad_campaigns", "/ads", PresentationIcon),
+        item("ad_prices", "/ad-prices", ReceiptIcon),
+      ],
+      CoinsIcon
+    ),
+    group(
+      "catalog",
+      [
+        item("categories", "/categories", TagsIcon),
+        item("locations", "/locations", MapPinIcon),
+        item("makes", "/makes", ListChecksIcon),
+      ],
+      BookOpenIcon
+    ),
+    group(
+      "communication",
+      [
+        notifications,
+        item("broadcasts", "/broadcasts", SendIcon),
+        item("banners", "/banners", ImagesIcon),
+      ],
+      SendIcon
+    ),
+    group(
+      "site",
+      [
+        item("pages", "/pages", FileTextIcon),
+        settings,
+        item("backups", "/backups", DatabaseBackupIcon),
+      ],
+      SettingsIcon
+    ),
   ],
 }
 
 export const navHref = (role: Role, path: string) => dashboardPath(role) + path
+
+// The overview matches only itself; every other item also matches the pages below it.
+export const isActive = (pathname: string, href: string, root: boolean) => {
+  const path = pathname.replace(/\/$/, "")
+  return path === href || (!root && path.startsWith(`${href}/`))
+}

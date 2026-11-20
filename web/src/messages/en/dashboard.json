@@ -817,5 +817,6 @@
   "reports.insights_prices_empty_body": "Prices show once a model has at least 5 live listings.",
   "reports.revenue_expiring_empty_body": "Paid plans ending in the next 30 days show here, so you can remind the business to renew.",
   "reports.empty_title_body": "Your listings show here once one is published.",
-  "reports.price_empty_body": "Publish a listing to compare its price with the market."
+  "reports.price_empty_body": "Publish a listing to compare its price with the market.",
+  "dashboard.nav_group_home": "Home"
 }

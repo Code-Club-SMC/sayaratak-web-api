@@ -1,3 +1,4 @@
+import type { CSSProperties } from "react"
 import { useQuery } from "@tanstack/react-query"
 import { Outlet } from "@tanstack/react-router"
 
@@ -21,7 +22,18 @@ export function DashboardLayout() {
   if (!me) return null
   return (
     <PageTitleProvider>
-      <SidebarProvider defaultOpen={sidebarOpen()}>
+      <SidebarProvider
+        defaultOpen={sidebarOpen()}
+        // Admin's sidebar holds the section rail beside the panel; folded, only the rail stays.
+        style={
+          me.role === "admin"
+            ? ({
+                "--sidebar-width": "18rem",
+                "--sidebar-width-icon": "3.5rem",
+              } as CSSProperties)
+            : undefined
+        }
+      >
         <a
           href="#main-content"
           className="sr-only z-(--z-dialog) rounded-lg bg-primary px-4 py-3 text-ui font-medium text-primary-foreground focus:not-sr-only focus:fixed focus:start-4 focus:top-2"
@@ -31,7 +43,8 @@ export function DashboardLayout() {
         </a>
         <DashboardSidebar me={me} />
         {me.role !== "admin" && <PlanReminderDialog me={me} />}
-        <div className="flex min-w-0 flex-1 flex-col">
+        {/* The white work surface: inset from the grey chrome on desktop, edge to edge on phones. */}
+        <div className="flex min-w-0 flex-1 flex-col bg-card lg:my-2 lg:me-2 lg:rounded-lg lg:shadow-panel lg:peer-data-[state=collapsed]:ms-2">
           <DashboardTopbar role={me.role} />
           <main
             id="main-content"

@@ -10,8 +10,9 @@ import {
 } from "@/components/ui/sidebar"
 
 // A11: items are 40 high with a 20 px icon, also when the sidebar is collapsed to icons.
+// On the grey chrome the open page is a raised white row with a blue icon, the same lift as a panel.
 export const itemClass =
-  "h-10 gap-3 group-data-[collapsible=icon]:mx-auto group-data-[collapsible=icon]:size-10! [&_svg]:size-5"
+  "h-10 gap-3 group-data-[collapsible=icon]:mx-auto group-data-[collapsible=icon]:size-10! hover:bg-muted data-active:bg-card data-active:shadow-panel [&_svg]:size-5 data-active:[&_svg]:text-primary"
 
 export function SidebarNavItem({
   icon: Icon,

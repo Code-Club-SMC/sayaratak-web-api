@@ -44,7 +44,14 @@ export function useBusinessColumns(
     {
       id: "plan",
       header: t("admin.business_col_plan"),
-      cell: ({ row }) => <bdi>{row.original.plan.name[locale]}</bdi>,
+      // A paid plan is a dark pill, the free plan an outlined one, so paying businesses stand out down the column.
+      cell: ({ row }) => (
+        <span
+          className={`rounded px-1.5 py-0.5 text-caption ${row.original.plan.price > 0 ? "bg-foreground text-background" : "text-muted-foreground ring-1 ring-border"}`}
+        >
+          <bdi>{row.original.plan.name[locale]}</bdi>
+        </span>
+      ),
     },
     {
       id: "verified",
@@ -86,7 +93,11 @@ export function useBusinessColumns(
     {
       id: "created",
       header: t("admin.business_col_created"),
-      cell: ({ row }) => formatDate(row.original.createdAt, locale),
+      cell: ({ row }) => (
+        <span className="num">
+          {formatDate(row.original.createdAt, locale)}
+        </span>
+      ),
     },
   ]
   return columns.filter((c) => c !== false)

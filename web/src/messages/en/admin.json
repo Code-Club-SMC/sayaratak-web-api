@@ -17,7 +17,7 @@
   "admin.overview_vehicles": "Total vehicles",
   "admin.overview_subscriptions": "Active subscriptions",
   "admin.overview_revenue": "Revenue (SDG)",
-  "admin.queues_title": "Queues",
+  "admin.queues_title": "Work waiting",
   "admin.queues_error": "Could not load the queues.",
   "admin.queue_listings": "Pending listings",
   "admin.queue_reports": "Open reports",

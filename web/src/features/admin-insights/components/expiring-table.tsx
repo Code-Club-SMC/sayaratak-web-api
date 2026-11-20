@@ -64,7 +64,7 @@ export function ExpiringTable({
         />
       ) : (
         <Table>
-          <TableHeader className="bg-muted">
+          <TableHeader>
             <TableRow>
               <TableHead>{t("reports.revenue_col_account")}</TableHead>
               <TableHead>{t("reports.revenue_col_ends")}</TableHead>

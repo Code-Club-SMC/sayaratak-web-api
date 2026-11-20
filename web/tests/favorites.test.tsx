@@ -88,8 +88,8 @@ describe("FavoritesPage", () => {
       .map((f) => f.listingId)
     await cardOf(expected[0]!)
     expect(shown()).toEqual(expected)
-    expect(screen.getByRole("heading", { level: 1 }).textContent).toContain(
-      `(${rows().length})`
+    expect(screen.getByRole("heading", { level: 1 }).textContent).toBe(
+      `Favorites${rows().length}`
     )
   })
 

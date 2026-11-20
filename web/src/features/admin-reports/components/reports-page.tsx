@@ -73,6 +73,7 @@ export function ReportsPage() {
         }
       />
       <Tabs
+        className="tabs-attached gap-0"
         value={tab}
         onValueChange={(next) =>
           go({

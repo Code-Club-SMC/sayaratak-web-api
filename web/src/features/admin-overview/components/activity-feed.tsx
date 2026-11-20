@@ -26,9 +26,14 @@ export function ActivityFeed() {
     <section aria-labelledby="admin-activity" className="flex flex-col panel">
       <h2
         id="admin-activity"
-        className="flex min-h-14 items-center border-b px-5 py-3 text-body font-semibold"
+        className="flex min-h-14 items-center justify-between gap-2 border-b px-5 py-3 text-body font-semibold"
       >
         {t("dashboard.overview_activity_title")}
+        {items && (
+          <span className="font-mono text-caption font-normal text-muted-foreground">
+            {items.length}
+          </span>
+        )}
       </h2>
       <div className="p-3">
         {activity.isError ? (
@@ -60,7 +65,7 @@ export function ActivityFeed() {
                 >
                   <time
                     dateTime={item.createdAt}
-                    className="text-caption text-muted-foreground num"
+                    className="font-mono text-caption text-muted-foreground"
                   >
                     {when(item.createdAt)}
                   </time>

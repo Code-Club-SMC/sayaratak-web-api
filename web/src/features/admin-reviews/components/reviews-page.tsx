@@ -73,6 +73,7 @@ export function ReviewsPage() {
         }
       />
       <Tabs
+        className="tabs-attached gap-0"
         value={tab}
         onValueChange={(next) =>
           onNavigate({

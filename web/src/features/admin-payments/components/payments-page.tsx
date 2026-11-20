@@ -85,6 +85,7 @@ export function PaymentsPage() {
       />
       <PaymentSummary summary={list.data?.summary} />
       <Tabs
+        className="tabs-attached gap-0"
         value={tab}
         onValueChange={(next) =>
           go({

@@ -34,7 +34,7 @@
   "dashboard.role_mechanic": "Mechanic",
   "dashboard.role_admin": "Admin",
   "dashboard.view_site": "View public site",
-  "dashboard.search_pages": "Search pages",
+  "dashboard.search_pages": "Search or jump to",
   "dashboard.search_placeholder": "Search pages and actions",
   "dashboard.search_empty": "No results.",
   "dashboard.search_pages_group": "Pages",
@@ -827,5 +827,13 @@
   "dashboard.greeting_morning": "Good morning, {{name}}",
   "dashboard.greeting_afternoon": "Good afternoon, {{name}}",
   "dashboard.greeting_evening": "Good evening, {{name}}",
-  "dashboard.overview_hint": "{{date}} · {{range}}"
+  "dashboard.overview_hint": "{{date}} · {{range}}",
+  "dashboard.nav_group_home_hint": "Your day on Sayaratak",
+  "dashboard.nav_group_moderation_hint": "What waits for your decision",
+  "dashboard.nav_group_marketplace_hint": "People and businesses on the site",
+  "dashboard.nav_group_money_hint": "Payments, plans and promotion",
+  "dashboard.nav_group_catalog_hint": "Categories, places and car makes",
+  "dashboard.nav_group_communication_hint": "What users hear from Sayaratak",
+  "dashboard.nav_group_site_hint": "Pages, settings and backups",
+  "dashboard.overview_new_listings": "New listings per day"
 }

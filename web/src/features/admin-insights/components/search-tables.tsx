@@ -91,7 +91,7 @@ export function MakesTable(props: {
       empty={rows?.length === 0}
     >
       <Table>
-        <TableHeader className="bg-muted">
+        <TableHeader>
           <TableRow>
             <TableHead>{t("reports.search_col_make")}</TableHead>
             <TableHead className="text-end">
@@ -161,7 +161,7 @@ export function MissedTable(props: {
       empty={props.rows?.length === 0}
     >
       <Table>
-        <TableHeader className="bg-muted">
+        <TableHeader>
           <TableRow>
             <TableHead>{t("reports.search_col_filters")}</TableHead>
             <TableHead className="text-end">

@@ -76,7 +76,7 @@ export function StatCard({
         <p className="flex flex-wrap items-baseline gap-x-2">
           {/* A zero goes grey so the real numbers in the row stand out. */}
           <span
-            className={`text-page font-semibold num ${value === 0 && !display ? "text-muted-foreground" : ""}`}
+            className={`font-mono text-page font-medium tracking-tight ${value === 0 && !display ? "text-muted-foreground" : ""}`}
           >
             {display ??
               (suffix ? (

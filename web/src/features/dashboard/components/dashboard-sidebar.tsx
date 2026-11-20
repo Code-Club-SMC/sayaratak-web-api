@@ -45,15 +45,16 @@ export function DashboardSidebar({ me }: { me: User }) {
     <nav aria-label={t("dashboard.menu")} className="flex flex-col">
       {shown.map((group, i) => (
         <SidebarGroup key={group.key ?? i} className="py-1">
-          {group.key && (
-            <SidebarGroupLabel
-              className={rail ? "font-semibold text-foreground" : undefined}
-            >
-              {/* The type role sits on its own span: cn reads it as a text colour next to text-foreground. */}
-              <span className={rail ? "text-ui" : undefined}>
-                {t(group.key)}
+          {rail && group.key ? (
+            // The section panel opens with the section's name and what it holds, like a document heading.
+            <div className="flex flex-col px-2 pt-2 pb-3">
+              <span className="text-body font-semibold">{t(group.key)}</span>
+              <span className="text-caption text-muted-foreground">
+                {t(`${group.key}_hint`)}
               </span>
-            </SidebarGroupLabel>
+            </div>
+          ) : (
+            group.key && <SidebarGroupLabel>{t(group.key)}</SidebarGroupLabel>
           )}
           <SidebarGroupContent>
             <SidebarMenu>
@@ -85,17 +86,20 @@ export function DashboardSidebar({ me }: { me: User }) {
       label={t("dashboard.menu")}
       className="[view-transition-name:dashboard-sidebar]"
     >
-      <SidebarHeader className="px-4 py-4 group-data-[collapsible=icon]:h-14 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:p-0">
-        <div className="flex items-center justify-center group-data-[collapsible=icon]:hidden">
-          <BrandLogo />
-        </div>
-        <div className="hidden items-center justify-center group-data-[collapsible=icon]:flex">
-          <BrandLogo compact />
-        </div>
-      </SidebarHeader>
+      {!rail && (
+        <SidebarHeader className="px-4 py-4 group-data-[collapsible=icon]:h-14 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:p-0">
+          <div className="flex items-center justify-center group-data-[collapsible=icon]:hidden">
+            <BrandLogo />
+          </div>
+          <div className="hidden items-center justify-center group-data-[collapsible=icon]:flex">
+            <BrandLogo compact />
+          </div>
+        </SidebarHeader>
+      )}
       {rail ? (
         <div className="flex min-h-0 flex-1">
           <AdminRail
+            logo={<BrandLogo compact />}
             groups={groups}
             current={current}
             busy={busy}

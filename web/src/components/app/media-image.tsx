@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, type ReactNode } from "react"
 import { ImageOffIcon } from "lucide-react"
 
 import { mediaSrc, mediaSrcSet } from "@/lib/media"
@@ -16,6 +16,7 @@ export function MediaImage({
   sizes,
   priority = false,
   fit = "cover",
+  fallback,
   className,
 }: {
   src: string | null
@@ -24,6 +25,8 @@ export function MediaImage({
   sizes?: string
   priority?: boolean
   fit?: "cover" | "contain"
+  // Shown instead of the broken-picture icon when there is no file or it fails (initials on a row).
+  fallback?: ReactNode
   className?: string
 }) {
   const { dataSaver } = usePrefs()
@@ -73,7 +76,9 @@ export function MediaImage({
           )}
         />
       ) : (
-        <ImageOffIcon aria-hidden className="size-5 text-muted-foreground" />
+        (fallback ?? (
+          <ImageOffIcon aria-hidden className="size-5 text-muted-foreground" />
+        ))
       )}
     </div>
   )

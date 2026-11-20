@@ -57,6 +57,8 @@ export type DataTableProps<T extends RowData> = {
   mobileCard?: (row: T) => ReactNode
   // Opens the row's detail sheet on a click anywhere in the row; keyboard users keep the row's own link or button.
   onRowClick?: (row: T) => void
+  // "1-24 of 46" beside the pager.
+  summary?: string
   empty: ReactNode
   page: number
   pageCount: number
@@ -82,6 +84,7 @@ export function DataTable<T extends RowData>({
   selection,
   mobileCard,
   onRowClick,
+  summary,
   empty,
   page,
   pageCount,
@@ -167,7 +170,7 @@ export function DataTable<T extends RowData>({
           <>
             <div className={mobileOnly}>
               <Table aria-label={label}>
-                <TableHeader className="bg-muted">
+                <TableHeader>
                   {table.getHeaderGroups().map((group) => (
                     <TableRow key={group.id} className="hover:bg-transparent">
                       {selection && (
@@ -208,7 +211,7 @@ export function DataTable<T extends RowData>({
                             className={cn(
                               !mobileCard &&
                                 i === 0 &&
-                                "max-md:sticky max-md:start-0 max-md:bg-muted",
+                                "max-md:sticky max-md:start-0 max-md:bg-card",
                               end && "text-end"
                             )}
                           >
@@ -314,13 +317,19 @@ export function DataTable<T extends RowData>({
             )}
           </>
         )}
+        {/* The row range and the pager close the panel, so the table reads as one block. */}
+        {!message && (summary || pageCount > 1) && (
+          <div className="flex flex-wrap items-center justify-between gap-3 border-t px-4 py-2">
+            <p className="text-caption text-muted-foreground num">{summary}</p>
+            <ResultsPagination
+              page={page}
+              pageCount={pageCount}
+              hrefFor={hrefFor}
+              onPageChange={onPageChange}
+            />
+          </div>
+        )}
       </div>
-      <ResultsPagination
-        page={page}
-        pageCount={pageCount}
-        hrefFor={hrefFor}
-        onPageChange={onPageChange}
-      />
     </div>
   )
 }

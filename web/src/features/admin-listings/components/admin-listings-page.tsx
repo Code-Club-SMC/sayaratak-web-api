@@ -71,6 +71,7 @@ export function AdminListingsPage() {
     <div className="flex flex-col gap-6">
       <PageHeader title={title} />
       <Tabs
+        className="tabs-attached gap-0"
         value={tab}
         onValueChange={(next) =>
           go({

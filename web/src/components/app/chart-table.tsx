@@ -30,7 +30,7 @@ export function ChartTable({
   return (
     <div className="max-h-80 overflow-y-auto">
       <Table>
-        <TableHeader className="bg-muted">
+        <TableHeader>
           <TableRow>
             <TableHead>{t("dashboard.col_period")}</TableHead>
             {series.map((s) => (

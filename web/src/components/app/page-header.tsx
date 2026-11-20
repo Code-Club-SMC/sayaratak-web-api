@@ -25,7 +25,9 @@ export function PageHeader({
         >
           {title}
           {count && (
-            <span className="ms-2 text-muted-foreground num">({count})</span>
+            <span className="ms-2.5 font-mono text-body font-medium text-muted-foreground">
+              {count}
+            </span>
           )}
         </h1>
         {hint && <p className="text-ui text-muted-foreground">{hint}</p>}

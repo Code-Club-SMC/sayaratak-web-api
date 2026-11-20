@@ -61,10 +61,10 @@ export function CommandMenu({ role }: { role: User["role"] }) {
   return (
     <>
       <Button
-        variant="outline"
+        variant="ghost"
         size="sm"
         onClick={() => setOpen(true)}
-        className="gap-2 text-muted-foreground md:min-w-48 md:justify-start"
+        className="gap-2 bg-muted text-muted-foreground hover:bg-muted/70 md:min-w-56 md:justify-start"
       >
         <SearchIcon aria-hidden="true" />
         <span className="max-md:sr-only">{t("dashboard.search_pages")}</span>

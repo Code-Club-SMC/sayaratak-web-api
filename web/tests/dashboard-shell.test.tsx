@@ -243,7 +243,7 @@ describe("command menu", () => {
       role: "user",
       path: "/en/account",
     })
-    fireEvent.click(screen.getByRole("button", { name: /Search pages/ }))
+    fireEvent.click(screen.getByRole("button", { name: /Search or jump to/ }))
     expect(await screen.findByText("Post a listing")).toBeTruthy()
   })
 

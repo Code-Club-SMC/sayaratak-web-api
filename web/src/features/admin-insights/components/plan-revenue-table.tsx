@@ -43,7 +43,7 @@ export function PlanRevenueTable({
         />
       ) : (
         <Table>
-          <TableHeader className="bg-muted">
+          <TableHeader>
             <TableRow>
               <TableHead>{t("reports.revenue_col_plan")}</TableHead>
               <TableHead className="text-end">

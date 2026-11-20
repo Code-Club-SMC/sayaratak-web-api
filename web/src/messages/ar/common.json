@@ -303,5 +303,6 @@
   "common.seed_notice": "بيانات تجريبية. الاتصال والدفع غير متاحين لهذه الإعلانات.",
   "common.clear_filters": "مسح عوامل التصفية",
   "common.empty_filtered_body": "جرّب عوامل تصفية أخرى، أو امسحها لعرض كل النتائج.",
-  "common.empty_search_body": "جرّب بحثًا مختلفًا."
+  "common.empty_search_body": "جرّب بحثًا مختلفًا.",
+  "table.range": "{{from}}–{{to}} من {{total}}"
 }

@@ -44,7 +44,10 @@ test("command menu opens from its button", async ({
   await context.addCookies(await roleCookies("dealer", baseURL!))
   await page.setViewportSize({ width: 1280, height: 900 })
   await page.goto("/en/dealer", { waitUntil: "networkidle" })
-  await layerRoundTrip(page, page.getByRole("button", { name: /Search pages/ }))
+  await layerRoundTrip(
+    page,
+    page.getByRole("button", { name: /Search or jump to/ })
+  )
 })
 
 test("filter sheet opens from the Filters button on a phone", async ({

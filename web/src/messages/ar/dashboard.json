@@ -34,7 +34,7 @@
   "dashboard.role_mechanic": "ميكانيكي",
   "dashboard.role_admin": "مشرف",
   "dashboard.view_site": "عرض الموقع",
-  "dashboard.search_pages": "بحث في الصفحات",
+  "dashboard.search_pages": "ابحث أو انتقل إلى",
   "dashboard.search_placeholder": "ابحث في الصفحات والإجراءات",
   "dashboard.search_empty": "لا توجد نتائج.",
   "dashboard.search_pages_group": "الصفحات",
@@ -867,5 +867,13 @@
   "dashboard.greeting_morning": "صباح الخير يا {{name}}",
   "dashboard.greeting_afternoon": "مساء الخير يا {{name}}",
   "dashboard.greeting_evening": "مساء الخير يا {{name}}",
-  "dashboard.overview_hint": "{{date}} · {{range}}"
+  "dashboard.overview_hint": "{{date}} · {{range}}",
+  "dashboard.nav_group_home_hint": "يومك على سيارتك",
+  "dashboard.nav_group_moderation_hint": "ما ينتظر قرارك",
+  "dashboard.nav_group_marketplace_hint": "الأشخاص والأنشطة التجارية على الموقع",
+  "dashboard.nav_group_money_hint": "المدفوعات والخطط والترويج",
+  "dashboard.nav_group_catalog_hint": "الفئات والأماكن وماركات السيارات",
+  "dashboard.nav_group_communication_hint": "ما يصل المستخدمين من سيارتك",
+  "dashboard.nav_group_site_hint": "الصفحات والإعدادات والنسخ الاحتياطية",
+  "dashboard.overview_new_listings": "الإعلانات الجديدة يوميًا"
 }

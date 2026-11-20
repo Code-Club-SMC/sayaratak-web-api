@@ -55,7 +55,7 @@ export function PagesFill({
   return (
     <Section title={t("reports.ads_pages_title")} loading={loading || !rows}>
       <Table>
-        <TableHeader className="bg-muted">
+        <TableHeader>
           <TableRow>
             <TableHead>{t("reports.ads_col_page")}</TableHead>
             <TableHead className="text-end">
@@ -130,7 +130,7 @@ export function AdsList({
         />
       ) : (
         <Table>
-          <TableHeader className="bg-muted">
+          <TableHeader>
             <TableRow>
               <TableHead>{t("reports.ads_col_ad")}</TableHead>
               <TableHead className="text-end">

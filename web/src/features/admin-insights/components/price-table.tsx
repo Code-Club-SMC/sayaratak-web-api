@@ -55,7 +55,7 @@ export function PriceTable({
         />
       ) : (
         <Table>
-          <TableHeader className="bg-muted">
+          <TableHeader>
             <TableRow>
               <TableHead>{t("reports.insights_col_model")}</TableHead>
               <TableHead className="text-end">

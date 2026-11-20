@@ -83,7 +83,13 @@ export function EmptyState({
         className
       )}
     >
-      <EmptyHeader className={steps ? "max-w-xl items-start" : undefined}>
+      <EmptyHeader
+        className={
+          steps
+            ? "grid max-w-2xl grid-cols-[auto_1fr] items-start justify-items-start gap-x-5 gap-y-1.5 [&>:not([data-slot=empty-icon])]:col-start-2 [&>[data-slot=empty-icon]]:row-span-3 [&>[data-slot=empty-icon]]:mb-0"
+            : undefined
+        }
+      >
         {typeof Icon === "string" ? (
           <EmptyMedia>
             <span
@@ -129,7 +135,7 @@ export function EmptyState({
           </EmptyDescription>
         )}
         {steps && (
-          <ol className="mt-3 flex flex-col gap-2">
+          <ol className="col-start-2 mt-3 flex flex-col gap-2">
             {steps.map((step, i) => (
               <li key={step} className="flex items-baseline gap-3">
                 <span className="w-4 font-mono text-caption text-muted-foreground">

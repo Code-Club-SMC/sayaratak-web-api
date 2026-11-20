@@ -31,7 +31,14 @@ export function DashboardTopbar({ role }: { role: User["role"] }) {
     <header className="sticky top-0 z-(--z-sticky) flex h-14 shrink-0 items-center gap-2 border-b bg-card px-4 [view-transition-name:dashboard-topbar] md:px-6 lg:rounded-t-lg">
       <SidebarTrigger aria-label={t("dashboard.toggle_menu")} />
       <p className="flex min-w-0 flex-1 items-center gap-1.5 truncate text-ui">
-        {section && (
+        <span className="text-muted-foreground max-sm:hidden">
+          {t(`dashboard.role_${role}`)}
+        </span>
+        <ChevronRightIcon
+          aria-hidden="true"
+          className="size-4 shrink-0 text-muted-foreground max-sm:hidden rtl:-scale-x-100"
+        />
+        {section && section !== "dashboard.nav_group_home" && (
           <>
             <span className="text-muted-foreground max-sm:hidden">
               {t(section)}

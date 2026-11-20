@@ -61,9 +61,9 @@ export function QueuesCard() {
                   {row.count === undefined ? (
                     <Skeleton className="h-5 w-8" aria-hidden="true" />
                   ) : (
-                    // Work waiting gets a warning pill; an empty queue stays plain grey.
+                    // Work waiting reads in the warning colour; an empty queue stays plain grey.
                     <span
-                      className={`min-w-7 rounded-full px-2 text-center text-ui num ${row.count > 0 ? "bg-warning/15 font-semibold text-warning" : "text-muted-foreground"}`}
+                      className={`min-w-7 text-end font-mono text-body ${row.count > 0 ? "font-semibold text-warning" : "text-muted-foreground"}`}
                     >
                       {formatNumber(row.count, locale)}
                     </span>

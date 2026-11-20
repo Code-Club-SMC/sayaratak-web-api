@@ -1,5 +1,5 @@
 import { useEffect, useState, type ReactNode } from "react"
-import { Columns3Icon } from "lucide-react"
+import { Columns3Icon, SearchIcon } from "lucide-react"
 
 import { useT } from "@/lib/i18n/use-t"
 import { Button } from "@/components/ui/button"
@@ -41,24 +41,36 @@ export function DataTableToolbar({
   return (
     <div className="flex flex-wrap items-center gap-2">
       {onSearch && (
-        <Input
-          type="search"
-          value={draft}
-          onChange={(e) => setDraft(e.target.value)}
-          aria-label={t("common.search")}
-          placeholder={t("common.search")}
-          enterKeyHint="search"
-          className="h-8 max-w-xs"
-        />
+        <label className="relative w-full max-w-xs">
+          <SearchIcon
+            aria-hidden="true"
+            className="pointer-events-none absolute start-2.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
+          />
+          <Input
+            type="search"
+            value={draft}
+            onChange={(e) => setDraft(e.target.value)}
+            aria-label={t("common.search")}
+            placeholder={t("common.search")}
+            enterKeyHint="search"
+            className="h-8 bg-transparent ps-8"
+          />
+        </label>
       )}
       {filters}
       {columns.length > 0 && (
         <DropdownMenu>
           <DropdownMenuTrigger
-            render={<Button variant="ghost" size="sm" className="ms-auto" />}
+            render={
+              <Button
+                variant="ghost"
+                size="icon-sm"
+                className="ms-auto"
+                aria-label={t("table.columns")}
+              />
+            }
           >
             <Columns3Icon aria-hidden="true" />
-            {t("table.columns")}
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             {columns.map((c) => (

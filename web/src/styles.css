@@ -15,8 +15,8 @@
 @theme inline {
   --font-heading: var(--font-sans);
   --font-sans: var(--font-family);
-  /* Figures in tables (counts, money, IDs, phones) read like a ledger: same family as the UI font, equal-width digits (console redesign, 2026-11-20). */
-  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+  /* Figures in tables (counts, money, IDs, phones) read like a ledger: same family as the UI font, equal-width digits (console redesign, 2026-11-20). Arabic letters fall to Plex Sans Arabic, never a monospace font, so words stay joined. */
+  --font-mono: "IBM Plex Mono", "IBM Plex Sans Arabic", ui-monospace, monospace;
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -340,6 +340,34 @@
   & > * > * {
     border-inline-end: 1px solid var(--color-border);
     border-block-end: 1px solid var(--color-border);
+  }
+}
+
+/* Tabs that head a table (console redesign): a grey band joined to the table panel below, the open tab a white tab cut into it. Put it on the Tabs root. */
+@utility tabs-attached {
+  & > [data-slot="tabs-list"] {
+    width: 100%;
+    gap: 2px;
+    padding: 6px 6px 0;
+    background: var(--color-muted);
+    border-start-start-radius: var(--radius-lg);
+    border-start-end-radius: var(--radius-lg);
+    box-shadow: var(--shadow-panel);
+  }
+  & [data-slot="tabs-trigger"] {
+    height: 2.25rem;
+    border-start-start-radius: 5px;
+    border-start-end-radius: 5px;
+  }
+  & [data-slot="tabs-trigger"][data-active] {
+    background: var(--color-card);
+  }
+  & [data-slot="tabs-trigger"]::after {
+    display: none;
+  }
+  & [data-slot="data-table"] {
+    border-start-start-radius: 0;
+    border-start-end-radius: 0;
   }
 }
 

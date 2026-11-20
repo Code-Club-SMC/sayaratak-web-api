@@ -2,6 +2,8 @@ import { expect, it } from "vitest"
 
 import { normalizeDigits } from "@sayaratak/shared/lib/digits"
 import {
+  formatDayLong,
+  khartoumHour,
   formatBucket,
   formatHour,
   formatWeekdayShort,
@@ -84,4 +86,14 @@ it("report labels: a Khartoum minute, and buckets by width", () => {
   expect(formatBucket("2026-11-01T08:00", "hour", "en")).toMatch(/Nov 1.*8:00/)
   expect(formatHour(8)).toBe("08:00")
   expect(formatWeekdayShort(0, "en")).toBe("Sun")
+})
+
+it("greets by Khartoum time, with Latin digits in both languages", () => {
+  // 20 Nov 2026 10:30 UTC is 12:30 in Khartoum (UTC+2 all year).
+  const ms = Date.UTC(2026, 10, 20, 10, 30)
+  expect(khartoumHour(ms)).toBe(12)
+  expect(khartoumHour(Date.UTC(2026, 10, 20, 22, 0))).toBe(0)
+  expect(formatDayLong(ms, "en")).toBe("Friday, November 20")
+  expect(formatDayLong(ms, "ar")).toContain("20")
+  expect(formatDayLong(ms, "ar")).toContain("الجمعة")
 })

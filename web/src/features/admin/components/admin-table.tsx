@@ -3,6 +3,7 @@ import { useLocation } from "@tanstack/react-router"
 import type { RowData, RowSelectionState } from "@tanstack/react-table"
 
 import { DataTable, type DataTableProps } from "@/components/app/data-table"
+import { formatNumber } from "@/lib/format"
 import { useT } from "@/lib/i18n/use-t"
 import { localeHref } from "@/lib/navigation"
 import type { AdminTableSearch } from "../schemas"
@@ -39,7 +40,7 @@ export function AdminTable<
   result: Page<T> | undefined
   bulkActions?: (ids: string[], clear: () => void) => ReactNode
 }) {
-  const { locale } = useT()
+  const { t, locale } = useT()
   const pathname = useLocation({ select: (l) => l.pathname })
   const urlKey = JSON.stringify(search)
   const [picked, setPicked] = useState<{
@@ -80,6 +81,21 @@ export function AdminTable<
         }
       }
       page={search.page}
+      summary={
+        result?.total
+          ? t("table.range", {
+              from: formatNumber(
+                (search.page - 1) * result.pageSize + 1,
+                locale
+              ),
+              to: formatNumber(
+                Math.min(search.page * result.pageSize, result.total),
+                locale
+              ),
+              total: formatNumber(result.total, locale),
+            })
+          : undefined
+      }
       pageCount={
         result ? Math.max(1, Math.ceil(result.total / result.pageSize)) : 1
       }

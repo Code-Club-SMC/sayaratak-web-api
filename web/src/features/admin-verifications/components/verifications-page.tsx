@@ -74,6 +74,7 @@ export function VerificationsPage() {
         }
       />
       <Tabs
+        className="tabs-attached gap-0"
         value={tab}
         onValueChange={(next) =>
           go({

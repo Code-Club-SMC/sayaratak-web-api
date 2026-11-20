@@ -818,5 +818,10 @@
   "reports.revenue_expiring_empty_body": "Paid plans ending in the next 30 days show here, so you can remind the business to renew.",
   "reports.empty_title_body": "Your listings show here once one is published.",
   "reports.price_empty_body": "Publish a listing to compare its price with the market.",
-  "dashboard.nav_group_home": "Home"
+  "dashboard.nav_group_home": "Home",
+  "dashboard.waiting_label": "Work waiting",
+  "dashboard.waiting_review": "to review",
+  "dashboard.waiting_reports": "reports",
+  "dashboard.waiting_payments": "payments",
+  "dashboard.clock_khartoum": "Khartoum"
 }

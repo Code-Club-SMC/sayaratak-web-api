@@ -150,6 +150,33 @@ describe("dashboard shell", () => {
     expect(screen.getByText("Inventory")).toBeTruthy()
   })
 
+  it("admin top bar shows work waiting, each opening its queue", async () => {
+    const { client } = await renderShell(<DashboardLayout />, {
+      role: "admin",
+      path: "/en/admin",
+    })
+    await waitFor(() =>
+      expect(client.getQueryState(keys.counts)?.status).toBe("success")
+    )
+    client.setQueryData(keys.counts, {
+      unreadMessages: 0,
+      unreadNotifications: 0,
+      pendingListings: 14,
+      openReports: 3,
+      pendingPayments: 0,
+    })
+    const waiting = await screen.findByRole("navigation", {
+      name: "Work waiting",
+    })
+    const links = within(waiting).getAllByRole("link")
+    expect(links.map((a) => [a.textContent, a.getAttribute("href")])).toEqual([
+      ["14to review", "/en/admin/moderation"],
+      ["3reports", "/en/admin/reports"],
+      ["0payments", "/en/admin/payments"],
+    ])
+    expect(screen.getByText("Khartoum")).toBeTruthy()
+  })
+
   it("sign out returns to the public home", async () => {
     const { router } = await renderShell(<DashboardLayout />, {
       role: "user",

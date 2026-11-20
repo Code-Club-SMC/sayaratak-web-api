@@ -7,7 +7,9 @@ import type { User } from "@sayaratak/shared/schemas/user"
 import { LanguageSwitcher } from "@/components/app/language-switcher"
 import { NotificationBell } from "@/components/app/notification-bell"
 import { SidebarTrigger } from "@/components/ui/sidebar"
+import { AdminWaiting } from "./admin-waiting"
 import { CommandMenu } from "./command-menu"
+import { KhartoumClock } from "./khartoum-clock"
 import { useTopbarTitle } from "./page-title"
 import { isActive, navConfig, navHref } from "../nav-config"
 
@@ -42,6 +44,12 @@ export function DashboardTopbar({ role }: { role: User["role"] }) {
         )}
         <span className="truncate font-medium">{title}</span>
       </p>
+      {role === "admin" && (
+        <>
+          <AdminWaiting />
+          <KhartoumClock />
+        </>
+      )}
       <CommandMenu role={role} />
       <LanguageSwitcher />
       <NotificationBell />

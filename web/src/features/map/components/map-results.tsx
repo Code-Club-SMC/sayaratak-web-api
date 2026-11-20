@@ -1,5 +1,3 @@
-import { MapPinOffIcon } from "lucide-react"
-
 import { useT } from "@/lib/i18n/use-t"
 import type { MapPoint } from "@sayaratak/shared/schemas/responses"
 import { EmptyState } from "@/components/app/empty-state"
@@ -48,7 +46,7 @@ export function MapResults({
       )}
       {items.length === 0 ? (
         <EmptyState
-          icon={MapPinOffIcon}
+          icon="map"
           title={t("map.empty")}
           level={3}
           className="py-6"

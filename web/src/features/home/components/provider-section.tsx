@@ -6,7 +6,7 @@ import { useDelayedFlag } from "@/lib/use-delayed-flag"
 import { SectionError } from "@/components/app/section-error"
 import { Skeleton } from "@/components/ui/skeleton"
 
-// A titled list of provider cards (dealerships, workshops or mechanics): skeleton after 150 ms, an error with retry, and nothing when empty. `href` is a path without the locale.
+// A titled list of provider cards (dealerships, workshops or mechanics): skeleton after 150 ms, an error with retry, and `empty` under the title when there is nothing. `href` is a path without the locale.
 export function ProviderSection({
   title,
   href,
@@ -15,6 +15,7 @@ export function ProviderSection({
   error,
   onRetry,
   items,
+  empty,
   className,
 }: {
   title: string
@@ -24,6 +25,7 @@ export function ProviderSection({
   error: boolean
   onRetry: () => void
   items: { id: string; node: ReactNode }[]
+  empty: ReactNode
   className: string
 }) {
   const { t, locale } = useT()
@@ -53,27 +55,32 @@ export function ProviderSection({
         onRetry={onRetry}
       />
     )
-  if (!items.length) return null
   return (
     <section aria-labelledby={id} className="flex flex-col gap-5">
       <div className="flex items-baseline justify-between gap-4">
         <h2 id={id} className="text-title font-semibold">
           {title}
         </h2>
-        <a
-          href={localeHref(href, locale)}
-          className="inline-flex min-h-11 min-w-11 shrink-0 items-center justify-end text-ui font-medium text-primary hover:underline md:min-h-0"
-        >
-          {linkLabel}
-        </a>
+        {items.length > 0 && (
+          <a
+            href={localeHref(href, locale)}
+            className="inline-flex min-h-11 min-w-11 shrink-0 items-center justify-end text-ui font-medium text-primary hover:underline md:min-h-0"
+          >
+            {linkLabel}
+          </a>
+        )}
       </div>
-      <ul className={className}>
-        {items.map((item) => (
-          <li key={item.id} className="*:h-full">
-            {item.node}
-          </li>
-        ))}
-      </ul>
+      {items.length ? (
+        <ul className={className}>
+          {items.map((item) => (
+            <li key={item.id} className="*:h-full">
+              {item.node}
+            </li>
+          ))}
+        </ul>
+      ) : (
+        empty
+      )}
     </section>
   )
 }

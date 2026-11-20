@@ -24,13 +24,13 @@ export function ListingScene() {
         <div className="relative h-28 overflow-hidden rounded-lg bg-muted">
           {!dataSaver && (
             <img
-              src="/images/categories/cars-640.webp"
-              width={640}
-              height={480}
+              src="/images/auth-camry-960.webp"
+              width={960}
+              height={360}
               alt=""
               loading="lazy"
               decoding="async"
-              className="size-full object-contain"
+              className="size-full object-cover"
             />
           )}
           <Badge variant="signal" className="absolute start-3 top-3">

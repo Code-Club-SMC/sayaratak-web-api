@@ -8,7 +8,7 @@ import { ListingRail } from "@/components/app/listing-rail"
 import { SectionError } from "@/components/app/section-error"
 import { RailSkeleton } from "./rail-skeleton"
 
-// One home rail: skeleton after 150 ms, an error with retry, and nothing at all when there are no listings (unless `empty` says what to do).
+// One home rail: skeleton after 150 ms, an error with retry, and `empty` when there are no listings.
 export function HomeRail({
   query,
   title,
@@ -21,7 +21,7 @@ export function HomeRail({
   title: string
   href: string
   action?: ReactNode
-  empty?: string
+  empty: ReactNode
   // How many of the first cards load their photo at once, without a fade.
   eager?: number
 }) {
@@ -40,7 +40,6 @@ export function HomeRail({
         }}
       />
     )
-  if (!data.items.length && !empty) return null
   return (
     <ListingRail
       title={title}

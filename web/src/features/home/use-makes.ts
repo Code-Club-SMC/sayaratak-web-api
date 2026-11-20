@@ -18,5 +18,6 @@ export function useMakes() {
   )
   const countOf = (id: string) =>
     facets && (facets.find((f) => f.value === id)?.count ?? 0)
-  return { makes, countOf }
+  // `loaded` keeps the empty state from showing while the taxonomy is still on its way.
+  return { makes, countOf, loaded: Boolean(taxonomy) }
 }

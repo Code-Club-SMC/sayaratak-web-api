@@ -1,5 +1,3 @@
-import { ImagesIcon } from "lucide-react"
-
 import { useT } from "@/lib/i18n/use-t"
 import type { Mechanic } from "@sayaratak/shared/schemas/profile"
 import { EmptyState } from "@/components/app/empty-state"
@@ -19,7 +17,7 @@ export function MechanicWork({
       <h2 className="text-title font-semibold">{t("directory.work_title")}</h2>
       {portfolio.length === 0 ? (
         <EmptyState
-          icon={ImagesIcon}
+          icon="portfolio"
           title={t("directory.work_empty")}
           level={3}
           className="py-6"

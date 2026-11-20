@@ -45,6 +45,7 @@ export function DealershipsPage({
         renderItem={(d) => <DealershipCard dealership={d} headingAs="h2" />}
         errorMessage={t("directory.load_error")}
         empty={{
+          art: "dealerships",
           title: t("directory.dealerships_empty_title"),
           body: t("directory.dealerships_empty_body"),
         }}

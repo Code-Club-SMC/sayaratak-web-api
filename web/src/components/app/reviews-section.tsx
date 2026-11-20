@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react"
 import { useQuery } from "@tanstack/react-query"
-import { StarIcon } from "lucide-react"
 
 import { useRequireAuth } from "@/features/auth/auth-gate"
 import { meQuery } from "@/features/auth/me-query"
@@ -91,7 +90,7 @@ export function ReviewsSection({
       {isPending && delayed && <Skeleton className="h-24 w-full" />}
       {data && data.items.length === 0 && (
         <EmptyState
-          icon={StarIcon}
+          icon="reviews"
           title={t("reviews.empty")}
           level={3}
           className="py-6"

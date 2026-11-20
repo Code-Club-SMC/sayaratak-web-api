@@ -1,5 +1,4 @@
 import { useQueries, useQuery } from "@tanstack/react-query"
-import { SearchXIcon } from "lucide-react"
 
 import { listingQueries, taxonomyQuery } from "@/features/listings/queries"
 import { clearFilters, distanceKm, radii } from "@/features/search/filters"
@@ -9,15 +8,29 @@ import { formatNumber } from "@/lib/format"
 import { useT } from "@/lib/i18n/use-t"
 import type { ListingPage } from "@sayaratak/shared/schemas/listing"
 import { Button } from "@/components/ui/button"
-import { EmptyState } from "./empty-state"
+import { EmptyState, type EmptyArt } from "./empty-state"
 import { SaveSearchButton } from "./save-search-button"
 
 // A4 item 11: say what to loosen instead of a dead end. Every suggestion is a button that applies it, with how many listings it brings back.
+// The drawn icon follows what was searched; a dealer's stock passes its own.
+const artFor = (p: SearchParams): EmptyArt =>
+  p.kind === "part"
+    ? "parts"
+    : p.type === "truck"
+      ? "trucks"
+      : p.type === "motorcycle"
+        ? "motorcycles"
+        : p.intent === "rent"
+          ? "rentals"
+          : "search"
+
 export function EmptyResults({
   params,
   facets,
   onChange,
+  art,
 }: {
+  art?: EmptyArt
   params: SearchParams
   facets?: ListingPage["facets"]
   onChange: (next: SearchParams) => void
@@ -57,7 +70,7 @@ export function EmptyResults({
     : []
   return (
     <EmptyState
-      icon={SearchXIcon}
+      icon={art ?? artFor(params)}
       title={t("search.no_results")}
       body={t("search.empty_hint")}
       wide

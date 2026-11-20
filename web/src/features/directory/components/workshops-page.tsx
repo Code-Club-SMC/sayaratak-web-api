@@ -45,6 +45,7 @@ export function WorkshopsPage({
         renderItem={(w) => <WorkshopCard workshop={w} headingAs="h2" />}
         errorMessage={t("directory.workshops_load_error")}
         empty={{
+          art: "workshops",
           title: t("directory.workshops_empty_title"),
           body: t("directory.workshops_empty_body"),
         }}

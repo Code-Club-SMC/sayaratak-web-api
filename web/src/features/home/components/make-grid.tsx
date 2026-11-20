@@ -5,6 +5,7 @@ import { useT } from "@/lib/i18n/use-t"
 import { MakeTile } from "@/components/app/make-tile"
 import { ResponsiveDialog } from "@/components/app/responsive-dialog"
 import { useMakes } from "../use-makes"
+import { HomeEmpty } from "./home-empty"
 
 // Always two full rows: 4 columns on a phone (8 tiles), 6 from md (12), 8 from lg (16). Tiles past the count for a width are hidden by their breakpoint.
 const hideBelow = (i: number) =>
@@ -15,8 +16,23 @@ export function MakeGrid() {
   const { t, locale } = useT()
   const id = useId()
   const [open, setOpen] = useState(false)
-  const { makes, countOf } = useMakes()
-  if (!makes.length) return null
+  const { makes, countOf, loaded } = useMakes()
+  if (!loaded) return null
+  if (!makes.length)
+    return (
+      <section aria-labelledby={id} className="flex flex-col gap-5">
+        <h2 id={id} className="text-title font-semibold">
+          {t("home.makes")}
+        </h2>
+        <HomeEmpty
+          art="makes"
+          title={t("home.empty_makes_title")}
+          body={t("home.empty_makes_body")}
+          href="/vehicles/cars"
+          label={t("home.empty_makes_action")}
+        />
+      </section>
+    )
   const all = [...makes].sort((a, b) =>
     a.name[locale].localeCompare(b.name[locale], locale)
   )

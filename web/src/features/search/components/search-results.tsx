@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query"
 import { listingQueries } from "@/features/listings/queries"
 import { useT } from "@/lib/i18n/use-t"
 import { ActiveFilterChips } from "@/components/app/active-filter-chips"
+import type { EmptyArt } from "@/components/app/empty-state"
 import { EmptyResults } from "@/components/app/empty-results"
 import { FilterPanel } from "@/components/app/filter-panel"
 import { FilterSheet } from "@/components/app/filter-sheet"
@@ -38,6 +39,7 @@ export function SearchResults({
   title,
   headingAs,
   groups,
+  emptyArt,
   actions,
 }: {
   search: SearchParams
@@ -47,6 +49,8 @@ export function SearchResults({
   title: string
   headingAs?: "h1" | "h2"
   groups?: readonly FilterGroup[]
+  // A dealer's stock shows its own empty icon.
+  emptyArt?: EmptyArt
   actions?: ReactNode
 }) {
   const { t } = useT()
@@ -83,7 +87,12 @@ export function SearchResults({
     )
   else if (data.total === 0)
     results = (
-      <EmptyResults params={search} facets={data.facets} onChange={onChange} />
+      <EmptyResults
+        params={search}
+        facets={data.facets}
+        onChange={onChange}
+        art={emptyArt}
+      />
     )
   else
     results = (

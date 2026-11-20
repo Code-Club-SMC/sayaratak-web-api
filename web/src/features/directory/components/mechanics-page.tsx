@@ -45,6 +45,7 @@ export function MechanicsPage({
         renderItem={(m) => <MechanicCard mechanic={m} headingAs="h2" />}
         errorMessage={t("directory.mechanics_load_error")}
         empty={{
+          art: "mechanics",
           title: t("directory.mechanics_empty_title"),
           body: t("directory.mechanics_empty_body"),
         }}

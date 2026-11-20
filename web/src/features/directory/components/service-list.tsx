@@ -1,5 +1,3 @@
-import { WrenchIcon } from "lucide-react"
-
 import { useT } from "@/lib/i18n/use-t"
 import type { Workshop } from "@sayaratak/shared/schemas/profile"
 import { EmptyState } from "@/components/app/empty-state"
@@ -15,7 +13,7 @@ export function ServiceList({ services }: { services: Workshop["services"] }) {
       </h2>
       {services.length === 0 ? (
         <EmptyState
-          icon={WrenchIcon}
+          icon="services"
           title={t("directory.services_empty")}
           level={3}
           className="py-6"

@@ -1,9 +1,8 @@
 import type { ReactNode } from "react"
 import type { UseQueryResult } from "@tanstack/react-query"
-import { SearchXIcon } from "lucide-react"
 
 import { useT } from "@/lib/i18n/use-t"
-import { EmptyState } from "@/components/app/empty-state"
+import { EmptyState, type EmptyArt } from "@/components/app/empty-state"
 import { ResultsPagination } from "@/components/app/results-pagination"
 import { ResultsRegion } from "@/components/app/results-region"
 import { SectionError } from "@/components/app/section-error"
@@ -27,7 +26,7 @@ export function DirectoryResults<T extends { id: string }>({
   list: UseQueryResult<Page<T>>
   renderItem: (item: T) => ReactNode
   errorMessage: string
-  empty: { title: string; body: string }
+  empty: { art: EmptyArt; title: string; body: string }
   onClear: () => void
   onPageChange: (page: number) => void
   hrefFor: (page: number) => string
@@ -52,7 +51,7 @@ export function DirectoryResults<T extends { id: string }>({
   if (data.total === 0)
     return (
       <EmptyState
-        icon={SearchXIcon}
+        icon={empty.art}
         title={empty.title}
         body={empty.body}
         action={

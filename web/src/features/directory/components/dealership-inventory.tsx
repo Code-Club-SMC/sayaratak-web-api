@@ -30,6 +30,7 @@ export function DealershipInventory({
         title={t("directory.inventory_title")}
         headingAs="h2"
         groups={groups}
+        emptyArt="inventory"
         actions={
           <IntentToggle
             value={search.intent}

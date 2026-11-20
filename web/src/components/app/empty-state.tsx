@@ -11,6 +11,27 @@ import {
   EmptyTitle,
 } from "@/components/ui/empty"
 
+// The drawn icons in public/icons/empty (owner, 2026-11-20). Painted through a CSS mask so they take the text color in both themes.
+export type EmptyArt =
+  | "ad-space"
+  | "dealerships"
+  | "featured"
+  | "inventory"
+  | "makes"
+  | "map"
+  | "mechanics"
+  | "motorcycles"
+  | "near-you"
+  | "newest"
+  | "parts"
+  | "portfolio"
+  | "rentals"
+  | "reviews"
+  | "search"
+  | "services"
+  | "trucks"
+  | "workshops"
+
 // The one empty state of the app, on the shadcn Empty: icon tile, title, optional sentence, optional action, all centered.
 // `level` is the heading level of the title: 2 for a page or pane, 3 inside a titled section. Pass `className` for the size (`h-64`) or a tighter `py-6`.
 // The type roles sit on inner spans, because `cn` reads a role next to a text size as a clash.
@@ -23,7 +44,7 @@ export function EmptyState({
   wide = false,
   className,
 }: {
-  icon: LucideIcon
+  icon: LucideIcon | EmptyArt
   title: string
   body?: string
   action?: ReactNode
@@ -35,9 +56,21 @@ export function EmptyState({
   return (
     <Empty className={cn("py-12", className)}>
       <EmptyHeader>
-        <EmptyMedia variant="icon">
-          <Icon aria-hidden="true" strokeWidth={1.5} />
-        </EmptyMedia>
+        {typeof Icon === "string" ? (
+          <EmptyMedia>
+            <span
+              aria-hidden="true"
+              className="size-14 bg-muted-foreground"
+              style={{
+                mask: `url(/icons/empty/empty-${Icon}.svg) center / contain no-repeat`,
+              }}
+            />
+          </EmptyMedia>
+        ) : (
+          <EmptyMedia variant="icon">
+            <Icon aria-hidden="true" strokeWidth={1.5} />
+          </EmptyMedia>
+        )}
         {/* tracking-normal undoes the primitive's tracking-tight: letter spacing breaks Arabic joining (A5). */}
         <EmptyTitle
           role="heading"

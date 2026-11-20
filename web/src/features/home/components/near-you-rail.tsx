@@ -7,6 +7,7 @@ import { useT } from "@/lib/i18n/use-t"
 import type { Geo } from "@sayaratak/shared/schemas/fields"
 import { homeQueries } from "../queries"
 import { HomeRail } from "./home-rail"
+import { HomeEmpty } from "./home-empty"
 import { LocationControl, type LocateStatus } from "./location-control"
 
 const DAY = 24 * 60 * 60
@@ -57,7 +58,19 @@ export function NearYouRail({
           ? searchPath({ ...geo, radius, sort: "nearest" })
           : searchPath({ city })
       }
-      empty={geo ? t("home.near_empty", { km: radius }) : undefined}
+      empty={
+        <HomeEmpty
+          art="near-you"
+          title={t("home.empty_near_title")}
+          body={
+            geo
+              ? t("home.near_empty", { km: radius })
+              : t("home.empty_near_body", { city: cityName })
+          }
+          href="/post"
+          label={t("home.empty_post")}
+        />
+      }
       action={
         <LocationControl
           geo={geo}

@@ -1,14 +1,12 @@
 import { useId, type ReactNode } from "react"
-import { CarIcon } from "lucide-react"
 
 import { useT } from "@/lib/i18n/use-t"
 import { localeHref } from "@/lib/navigation"
 import type { Listing } from "@sayaratak/shared/schemas/listing"
-import { EmptyState } from "./empty-state"
 import { ListingCard } from "./listing-card"
 
 // Sideways scroll-snap row on mobile, four columns from lg. `href` is a path without the locale.
-// `action` sits beside the title; `empty` replaces the row when there are no cards; `eager` is how many first photos load at once.
+// `action` sits beside the title; `empty` (a node) replaces the row when there are no cards; `eager` is how many first photos load at once.
 export function ListingRail({
   title,
   href,
@@ -21,7 +19,7 @@ export function ListingRail({
   href?: string
   listings: Listing[]
   action?: ReactNode
-  empty?: string
+  empty?: ReactNode
   // How many of the first cards load their photo at once (no fade).
   eager?: number
 }) {
@@ -34,7 +32,7 @@ export function ListingRail({
           {title}
         </h2>
         {action}
-        {href && (
+        {href && listings.length > 0 && (
           <a
             href={localeHref(href, locale)}
             className="ms-auto inline-flex min-h-11 min-w-11 shrink-0 items-center justify-end text-ui font-medium text-primary hover:underline md:min-h-0"
@@ -44,12 +42,7 @@ export function ListingRail({
         )}
       </div>
       {listings.length === 0 ? (
-        <EmptyState
-          icon={CarIcon}
-          title={empty ?? ""}
-          level={3}
-          className="py-6"
-        />
+        empty
       ) : (
         <ul className="flex snap-x snap-mandatory gap-3 overflow-x-auto pb-2 lg:grid lg:grid-cols-4 lg:overflow-visible lg:pb-0">
           {listings.map((listing, i) => (

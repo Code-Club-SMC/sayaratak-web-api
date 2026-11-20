@@ -37,6 +37,13 @@ const dateFull = dateFormat({
 const timeOnly = dateFormat({ ...dateBase, hour: "numeric", minute: "2-digit" })
 const monthYear = dateFormat({ ...dateBase, month: "long", year: "numeric" })
 const dayMonth = dateFormat({ ...dateBase, day: "numeric", month: "short" })
+const dayLong = dateFormat({
+  ...dateBase,
+  weekday: "long",
+  day: "numeric",
+  month: "long",
+})
+const hour24 = dateFormat({ ...dateBase, hour: "numeric", hourCycle: "h23" })
 const dayMonthTime = dateFormat({
   ...dateBase,
   day: "numeric",
@@ -127,3 +134,11 @@ export const initials = (name: string) =>
     .slice(0, 2)
     .map((word) => word[0])
     .join("")
+
+// "Thursday 20 November", for the overview greeting.
+export const formatDayLong = (ms: number, locale: Locale) =>
+  dayLong(locale).format(new Date(ms))
+
+// The hour (0 to 23) in Khartoum, so the greeting says morning or evening by Khartoum time.
+export const khartoumHour = (ms: number) =>
+  Number(hour24("en").format(new Date(ms)))

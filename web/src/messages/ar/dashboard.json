@@ -863,5 +863,9 @@
   "dashboard.waiting_review": "للمراجعة",
   "dashboard.waiting_reports": "بلاغات",
   "dashboard.waiting_payments": "مدفوعات",
-  "dashboard.clock_khartoum": "الخرطوم"
+  "dashboard.clock_khartoum": "الخرطوم",
+  "dashboard.greeting_morning": "صباح الخير يا {{name}}",
+  "dashboard.greeting_afternoon": "مساء الخير يا {{name}}",
+  "dashboard.greeting_evening": "مساء الخير يا {{name}}",
+  "dashboard.overview_hint": "{{date}} · {{range}}"
 }

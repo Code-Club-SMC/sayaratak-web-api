@@ -37,6 +37,7 @@ export type EmptyArt =
 // The one empty state of the app, on the shadcn Empty: icon tile, title, optional sentence, optional action, all centered.
 // `level` is the heading level of the title and also sets the size: 2 for a page or pane (48px tile, title role), 3 inside a titled panel (40px tile, body-size title). Pass `className` for the height (`h-64`) or a tighter `py-6`.
 // `onClear` marks an empty caused by filters: it adds the "try other filters" sentence (unless `body` is given) and a Clear filters button.
+// `steps` teaches what fills the list: numbered (they are a real sequence) and the whole state reads from the start edge like a document.
 // `error` paints the tile red and announces the state; pass the retry button as `action`.
 // The type roles sit on inner spans, because `cn` reads a role next to a text size as a clash.
 export function EmptyState({
@@ -48,6 +49,7 @@ export function EmptyState({
   wide = false,
   error = false,
   onClear,
+  steps,
   className,
 }: {
   icon: LucideIcon | EmptyArt
@@ -59,6 +61,7 @@ export function EmptyState({
   wide?: boolean
   error?: boolean
   onClear?: () => void
+  steps?: string[]
   className?: string
 }) {
   const { t } = useT()
@@ -74,9 +77,13 @@ export function EmptyState({
   return (
     <Empty
       role={error ? "alert" : undefined}
-      className={cn(panel ? "py-8" : "py-12", className)}
+      className={cn(
+        panel ? "py-8" : "py-12",
+        steps && "items-start px-8 text-start md:px-12",
+        className
+      )}
     >
-      <EmptyHeader>
+      <EmptyHeader className={steps ? "max-w-xl items-start" : undefined}>
         {typeof Icon === "string" ? (
           <EmptyMedia>
             <span
@@ -121,9 +128,23 @@ export function EmptyState({
             <span className={panel ? "text-ui" : "text-body"}>{text}</span>
           </EmptyDescription>
         )}
+        {steps && (
+          <ol className="mt-3 flex flex-col gap-2">
+            {steps.map((step, i) => (
+              <li key={step} className="flex items-baseline gap-3">
+                <span className="w-4 font-mono text-caption text-muted-foreground">
+                  {i + 1}
+                </span>
+                <span className="text-ui">{step}</span>
+              </li>
+            ))}
+          </ol>
+        )}
       </EmptyHeader>
       {actions && (
-        <EmptyContent className={wide ? "max-w-none" : undefined}>
+        <EmptyContent
+          className={cn(wide && "max-w-none", steps && "items-start")}
+        >
           {actions}
         </EmptyContent>
       )}

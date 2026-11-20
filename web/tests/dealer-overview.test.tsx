@@ -56,7 +56,7 @@ describe("DealerOverviewPage", () => {
 
   it("counts the last 30 days and leaves charts to Reports (step 11.7-r14)", async () => {
     await open()
-    expect(await screen.findByText("Last 30 days")).toBeTruthy()
+    expect(await screen.findByText(/· Last 30 days$/)).toBeTruthy()
     expect(
       screen.getByRole("link", { name: "See reports" }).getAttribute("href")
     ).toBe("/en/dealer/reports")

@@ -108,6 +108,11 @@ export function BusinessesPage({ type }: { type: AdminBusiness["type"] }) {
             body={
               narrowed ? undefined : t(`admin.businesses_empty_${type}_body`)
             }
+            steps={
+              narrowed
+                ? undefined
+                : [1, 2, 3].map((n) => t(`admin.businesses_step_${n}`))
+            }
             onClear={
               narrowed
                 ? () =>

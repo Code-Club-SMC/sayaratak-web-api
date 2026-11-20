@@ -768,5 +768,11 @@
   "admin.plans_subscribers_empty_body": "Businesses show here once an admin approves their first plan payment.",
   "admin.promos_empty_body": "Listings that sellers pay to promote show here while the promotion runs.",
   "admin.broadcast_empty_body": "Notifications you send to users show here with their reach.",
-  "admin.banners_empty_body": "Add a banner to show it on the home page."
+  "admin.banners_empty_body": "Add a banner to show it on the home page.",
+  "admin.businesses_step_1": "They sign up with a phone number",
+  "admin.businesses_step_2": "They add their page details, area and photos",
+  "admin.businesses_step_3": "You verify them from Verifications",
+  "admin.listings_step_1": "A seller fills in the listing form",
+  "admin.listings_step_2": "It waits in the review queue",
+  "admin.listings_step_3": "You approve it and it goes live"
 }

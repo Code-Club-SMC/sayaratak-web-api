@@ -2,11 +2,12 @@ import { useQuery } from "@tanstack/react-query"
 import { ActivityIcon } from "lucide-react"
 
 import { EmptyState } from "@/components/app/empty-state"
-import { RelativeTime } from "@/components/app/relative-time"
 import { SectionError } from "@/components/app/section-error"
 import { Skeleton } from "@/components/ui/skeleton"
 import { adminQueries } from "@/features/admin/queries"
+import { formatDate, formatShortDate, formatTime } from "@/lib/format"
 import { useT } from "@/lib/i18n/use-t"
+import { useNow } from "@/lib/now"
 import { localeHref } from "@/lib/navigation"
 
 // The ten newest events on the site; each row opens its admin screen with the item selected.
@@ -14,6 +15,13 @@ export function ActivityFeed() {
   const { t, locale } = useT()
   const activity = useQuery(adminQueries.activity)
   const items = activity.data?.items
+  const now = useNow()
+  // A log reads by the clock: today's events show their time, older ones their date.
+  const today = formatDate(new Date(now).toISOString(), locale)
+  const when = (iso: string) =>
+    formatDate(iso, locale) === today
+      ? formatTime(iso, locale)
+      : formatShortDate(iso, locale)
   return (
     <section aria-labelledby="admin-activity" className="flex flex-col panel">
       <h2
@@ -48,17 +56,19 @@ export function ActivityFeed() {
               <li key={`${item.type}-${item.id}`}>
                 <a
                   href={localeHref(item.href, locale)}
-                  className="flex flex-col gap-0.5 rounded-lg px-2 py-3 motion-color hover:bg-muted"
+                  className="grid grid-cols-[4.5rem_1fr] items-baseline gap-3 rounded-lg px-2 py-2.5 motion-color hover:bg-muted"
                 >
+                  <time
+                    dateTime={item.createdAt}
+                    className="text-caption text-muted-foreground num"
+                  >
+                    {when(item.createdAt)}
+                  </time>
                   <span className="text-ui">
                     {t(`admin.activity_${item.type}`, {
                       label: `⁨${item.label[locale]}⁩`,
                     })}
                   </span>
-                  <RelativeTime
-                    iso={item.createdAt}
-                    className="text-caption text-muted-foreground"
-                  />
                 </a>
               </li>
             ))}

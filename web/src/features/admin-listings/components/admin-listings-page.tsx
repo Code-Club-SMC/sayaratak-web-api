@@ -125,6 +125,11 @@ export function AdminListingsPage() {
                     : "admin.listings_empty"
                 )}
                 body={narrowed ? undefined : t("admin.listings_empty_body")}
+                steps={
+                  narrowed
+                    ? undefined
+                    : [1, 2, 3].map((n) => t(`admin.listings_step_${n}`))
+                }
                 onClear={
                   narrowed
                     ? () =>

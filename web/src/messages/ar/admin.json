@@ -812,5 +812,11 @@
   "admin.plans_subscribers_empty_body": "تظهر الأنشطة التجارية هنا بعد موافقة المشرف على أول دفعة خطة.",
   "admin.promos_empty_body": "تظهر هنا الإعلانات التي يدفع البائعون لترويجها طوال مدة الترويج.",
   "admin.broadcast_empty_body": "تظهر هنا الإشعارات التي ترسلها للمستخدمين مع عدد من وصلتهم.",
-  "admin.banners_empty_body": "أضف لافتة لعرضها في الصفحة الرئيسية."
+  "admin.banners_empty_body": "أضف لافتة لعرضها في الصفحة الرئيسية.",
+  "admin.businesses_step_1": "يسجّلون برقم الهاتف",
+  "admin.businesses_step_2": "يضيفون بيانات صفحتهم ومنطقتهم وصورهم",
+  "admin.businesses_step_3": "توثّقهم أنت من صفحة التوثيق",
+  "admin.listings_step_1": "يملأ البائع نموذج الإعلان",
+  "admin.listings_step_2": "ينتظر الإعلان في قائمة المراجعة",
+  "admin.listings_step_3": "توافق عليه فيُنشر"
 }

@@ -125,4 +125,5 @@ test("one run keeps taking passes until the queued work is done, and stops at it
   // The default budget finishes the remaining 205 in the same call instead of one pass a minute.
   expect(await runSeedPasses()).toBe(205)
   expect(await runSeedPasses()).toBe(0)
-})
+  // 230 install items in one call: slower than bun's 5 s default on a busy full run.
+}, 20_000)

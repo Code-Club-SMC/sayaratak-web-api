@@ -39,10 +39,10 @@ export async function expectParity(
   ])
   expect(fromApi.status).toBe(fromMock.status)
   const ignore = options.ignore ?? ((body: unknown) => body)
-  const expected = ignore(await fromMock.json())
-  expect(normalizeTimes(ignore(await fromApi.json()), expected)).toEqual(
-    expected
-  )
+  const expected = ignore(withoutSignInMethod(await fromMock.json()))
+  expect(
+    normalizeTimes(ignore(withoutSignInMethod(await fromApi.json())), expected)
+  ).toEqual(expected)
 }
 
 /**
@@ -82,4 +82,20 @@ function isTime(value: unknown): value is string {
 
 function isObject(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value)
+}
+
+/**
+ * `lastSignInMethod` is what Better-Auth records at a real sign-in; parity
+ * tests sign in on the api side only, so the mock account never has one.
+ * It is dropped from both bodies wherever a user object carries it.
+ */
+function withoutSignInMethod(body: unknown): unknown {
+  if (Array.isArray(body)) return body.map(withoutSignInMethod)
+  if (body && typeof body === "object")
+    return Object.fromEntries(
+      Object.entries(body)
+        .filter(([key]) => key !== "lastSignInMethod")
+        .map(([key, value]) => [key, withoutSignInMethod(value)])
+    )
+  return body
 }

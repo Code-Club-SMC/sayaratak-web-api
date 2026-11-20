@@ -130,6 +130,9 @@
                         "chosenPlanId": {
                           "type": "string",
                           "minLength": 1
+                        },
+                        "lastSignInMethod": {
+                          "type": "string"
                         }
                       },
                       "required": [
@@ -323,6 +326,9 @@
                     "chosenPlanId": {
                       "type": "string",
                       "minLength": 1
+                    },
+                    "lastSignInMethod": {
+                      "type": "string"
                     }
                   },
                   "required": [
@@ -1981,6 +1987,9 @@
                     "chosenPlanId": {
                       "type": "string",
                       "minLength": 1
+                    },
+                    "lastSignInMethod": {
+                      "type": "string"
                     }
                   },
                   "required": [
@@ -40152,6 +40161,9 @@
                     "chosenPlanId": {
                       "type": "string",
                       "minLength": 1
+                    },
+                    "lastSignInMethod": {
+                      "type": "string"
                     }
                   },
                   "required": [
@@ -58843,6 +58855,9 @@
                             "type": "string",
                             "minLength": 1
                           },
+                          "lastSignInMethod": {
+                            "type": "string"
+                          },
                           "listings": {
                             "type": "integer",
                             "minimum": -9007199254740991,
@@ -59109,6 +59124,9 @@
                     "chosenPlanId": {
                       "type": "string",
                       "minLength": 1
+                    },
+                    "lastSignInMethod": {
+                      "type": "string"
                     }
                   },
                   "required": [
@@ -59385,6 +59403,9 @@
                     "chosenPlanId": {
                       "type": "string",
                       "minLength": 1
+                    },
+                    "lastSignInMethod": {
+                      "type": "string"
                     }
                   },
                   "required": [

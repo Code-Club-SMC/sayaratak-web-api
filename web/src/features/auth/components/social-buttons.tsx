@@ -29,6 +29,7 @@ export function useLastUsedMethod() {
   )
 }
 
+// One row of three, logo and short name, so the form does not grow a scroll (owner, 2026-11-20). Apple and Facebook show disabled with "Soon" until live; the full "Continue with ..." name stays as the accessible label.
 export function SocialButtons({
   disabled,
   onSelect,
@@ -39,23 +40,46 @@ export function SocialButtons({
   const { t } = useT()
   const last = useLastUsedMethod()
   return (
-    <div className="flex flex-col gap-3">
-      {allProviders.filter(isLive).map((provider) => (
-        <Button
-          key={provider}
-          type="button"
-          variant="outline"
-          size="lg"
-          disabled={disabled}
-          onClick={() => onSelect(provider)}
-        >
-          <BrandIcon name={provider} />
-          {t(`auth.continue_${provider}`)}
-          {last === provider && (
-            <Badge variant="primary">{t("auth.last_used")}</Badge>
-          )}
-        </Button>
-      ))}
+    // Below 20rem (phones under about 375px) the names drop and the logos stay; the aria-label carries the name.
+    <div className="@container grid grid-cols-3 gap-2">
+      {allProviders.map((provider) => {
+        const live = isLive(provider)
+        const label = t(`auth.continue_${provider}`)
+        return (
+          <Button
+            key={provider}
+            type="button"
+            variant="outline"
+            size="lg"
+            className="relative min-w-0 gap-1 px-1"
+            disabled={disabled || !live}
+            aria-label={
+              !live
+                ? t("auth.provider_soon", { name: label })
+                : last === provider
+                  ? t("auth.provider_last_used", { label })
+                  : label
+            }
+            onClick={() => onSelect(provider)}
+          >
+            <BrandIcon name={provider} />
+            <span className="hidden truncate @[20rem]:inline">
+              {t(`auth.provider_${provider}`)}
+            </span>
+            {(!live || last === provider) && (
+              // Sits on the top border; the background plate hides the line behind the tinted badge.
+              <span
+                aria-hidden="true"
+                className="absolute end-1 -top-2.5 rounded-full bg-background"
+              >
+                <Badge variant={live ? "primary" : "muted"}>
+                  {live ? t("auth.last_used") : t("auth.coming_soon")}
+                </Badge>
+              </span>
+            )}
+          </Button>
+        )
+      })}
     </div>
   )
 }

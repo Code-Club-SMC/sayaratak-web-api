@@ -14,12 +14,16 @@ afterEach(() => {
 })
 
 describe("social redirect", () => {
-  it("returns to the gated page including its filters, and hides Facebook when unconfigured", async () => {
+  it("returns to the gated page including its filters, and disables Facebook and Apple as coming soon when unconfigured", async () => {
     vi.stubEnv("VITE_FEATURE_FACEBOOK", "false")
+    vi.stubEnv("VITE_FEATURE_APPLE", "false")
     await renderShell(<SocialSignIn />, { path: "/en/search?q=toyota&page=2" })
-    expect(
-      screen.queryByRole("button", { name: "Continue with Facebook" })
-    ).toBeNull()
+    for (const name of ["Facebook", "Apple"])
+      expect(
+        screen
+          .getByRole("button", { name: `Continue with ${name}, coming soon` })
+          .hasAttribute("disabled")
+      ).toBe(true)
     fireEvent.click(
       screen.getByRole("button", { name: "Continue with Google" })
     )

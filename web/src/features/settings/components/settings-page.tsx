@@ -6,6 +6,7 @@ import { SettingsSection } from "@/components/app/settings-section"
 import { ShellLink } from "@/components/app/shell-link"
 import { buttonVariants } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
+import { Separator } from "@/components/ui/separator"
 import { Skeleton } from "@/components/ui/skeleton"
 import { meQuery } from "@/features/auth/queries"
 import { usePageTitle } from "@/features/dashboard/components/page-title"
@@ -16,6 +17,7 @@ import { DeleteAccountDialog } from "./delete-account-dialog"
 import { PasswordForm } from "./password-form"
 import { PreferencesForm } from "./preferences-form"
 import { ProfileForm } from "./profile-form"
+import { SignInMethods } from "./sign-in-methods"
 
 // One page for every dashboard: the person behind the account, not the business profile. The admin has no account to delete.
 export function SettingsPage({ role }: { role: Role }) {
@@ -55,7 +57,11 @@ export function SettingsPage({ role }: { role: Role }) {
                 : "settings.security_body_new"
             )}
           >
-            <PasswordForm hasPassword={user.hasPassword} />
+            <div className="flex flex-col gap-6">
+              <PasswordForm hasPassword={user.hasPassword} />
+              <Separator />
+              <SignInMethods lastUsed={user.lastSignInMethod} />
+            </div>
           </SettingsSection>
           <SettingsSection
             title={t("settings.preferences_title")}

@@ -66,6 +66,8 @@ export const user = pgTable(
     chosenPlanId: text().references((): AnyPgColumn => plans.id, {
       onDelete: "set null",
     }),
+    // Better-Auth lastLoginMethod plugin: "email", "google", "facebook", "apple".
+    lastLoginMethod: text(),
     // Internal provenance only; never a Better-Auth client-writable field.
     seedDatasetId: text(),
   },

@@ -29,7 +29,8 @@ try {
   assert.ok(cookies.some(value => value.startsWith(name + "=")), "HTTPS development session must use secure prefix");
   for (const value of cookies) {
     assert.match(value, /; Path=\//i);
-    assert.match(value, /; HttpOnly/i);
+    // The "Last used" cookie is read by the web client on purpose; it holds only "email" or a provider name.
+    if (!value.startsWith("sy.last_login=")) assert.match(value, /; HttpOnly/i);
     assert.match(value, /; SameSite=Lax/i);
     assert.equal(/; Secure(?:;|$)/i.test(value), secure);
     if (process.env.COOKIE_DOMAIN) assert.match(value, /; Domain=example.test/i);

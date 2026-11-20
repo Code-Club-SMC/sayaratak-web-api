@@ -56,7 +56,7 @@ export function useVerifySignup() {
 export const useSocialLogin = () =>
   useApiMutation(
     (body: {
-      provider: "google" | "facebook"
+      provider: "google" | "apple" | "facebook"
       callbackURL: string
       errorCallbackURL: string
     }) => authCall(authClient.signIn.social(body))

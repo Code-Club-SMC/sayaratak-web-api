@@ -32,6 +32,7 @@ bun run start          # .output/server/index.mjs, port 3000 (set PORT to change
 | `VITE_DEMO` | browser | `true` | Shows the folded demo accounts list on the sign-in form (`false` for production builds) |
 | `VITE_FEATURE_OTP` | browser | `false` | Phone OTP UI flag (future work) |
 | `VITE_FEATURE_FACEBOOK` | browser | `false` | Shows the Facebook sign-in button (`true` once Facebook OAuth keys are set on the API; rebuild after changing) |
+| `VITE_FEATURE_APPLE` | browser | `false` | Shows the Apple sign-in button (`true` once Apple keys are set on the API); settings shows "Coming soon" while off |
 | `SEO_ORIGIN` | `scripts/check-seo.ts` | unset | Server the SEO check runs against |
 | `PORT` | `bun run start` | `3000` | Port of the production server |
 

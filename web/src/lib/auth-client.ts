@@ -1,5 +1,9 @@
 import { createAuthClient } from "better-auth/react"
-import { emailOTPClient, twoFactorClient } from "better-auth/client/plugins"
+import {
+  emailOTPClient,
+  lastLoginMethodClient,
+  twoFactorClient,
+} from "better-auth/client/plugins"
 
 import { authError } from "./api/auth-error"
 
@@ -9,7 +13,12 @@ const browserBase = import.meta.env.VITE_API_BASE_URL
 export const authClient = createAuthClient({
   baseURL: browserBase === "/" ? undefined : browserBase || undefined,
   basePath: "/api/v1/auth",
-  plugins: [emailOTPClient(), twoFactorClient()],
+  // Cookie name matches api/src/modules/auth/auth.config.ts.
+  plugins: [
+    emailOTPClient(),
+    twoFactorClient(),
+    lastLoginMethodClient({ cookieName: "sy.last_login" }),
+  ],
   fetchOptions: {
     credentials: "include",
     customFetchImpl: (input, init) => {

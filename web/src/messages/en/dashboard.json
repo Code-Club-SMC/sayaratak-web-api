@@ -229,7 +229,7 @@
   "settings.verify_title_phone": "Confirm your new phone number",
   "settings.verify_body": "We sent a 6-digit code to",
   "settings.security_title": "Sign in and security",
-  "settings.security_body": "Change the password you sign in with.",
+  "settings.security_body": "Change your password and choose the ways you sign in.",
   "settings.security_body_new": "You signed up with Google or Facebook, so you have no password yet. Create one to sign in with it too.",
   "settings.current_password_label": "Current password",
   "settings.new_password_label": "New password",
@@ -798,5 +798,15 @@
   "reports.search_missed": "Searches that found nothing",
   "reports.search_missed_note": "Each row is one set of filters. No results counts the times it found nothing, out of all its searches.",
   "reports.search_typed": "With typed words",
-  "reports.search_empty": "No searches in this period"
+  "reports.search_empty": "No searches in this period",
+  "settings.methods_title": "Ways to sign in",
+  "settings.method_email": "Email and password",
+  "settings.method_google": "Google",
+  "settings.method_facebook": "Facebook",
+  "settings.method_connect": "Connect",
+  "settings.method_remove_label": "Remove {{name}} sign-in",
+  "settings.method_remove_title": "Remove {{name}} sign-in? You can connect it again later.",
+  "settings.method_link_error": "Could not connect. The account must use the same email as this one.",
+  "settings.method_apple": "Apple",
+  "settings.method_soon": "Coming soon"
 }

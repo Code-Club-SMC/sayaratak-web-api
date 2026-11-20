@@ -229,7 +229,7 @@
   "settings.verify_title_phone": "أكّد رقم هاتفك الجديد",
   "settings.verify_body": "أرسلنا رمزًا من 6 أرقام إلى",
   "settings.security_title": "تسجيل الدخول والأمان",
-  "settings.security_body": "غيّر كلمة المرور التي تدخل بها.",
+  "settings.security_body": "غيّر كلمة المرور واختر طرق تسجيل الدخول.",
   "settings.security_body_new": "سجّلت عبر Google أو Facebook، فليس لديك كلمة مرور بعد. أنشئ واحدة لتدخل بها أيضًا.",
   "settings.current_password_label": "كلمة المرور الحالية",
   "settings.new_password_label": "كلمة المرور الجديدة",
@@ -838,5 +838,15 @@
   "reports.search_missed": "عمليات بحث لم تجد شيئًا",
   "reports.search_missed_note": "كل صف مجموعة واحدة من عوامل التصفية. «بلا نتائج» عدد المرات التي لم تجد فيها شيئًا من بين كل عمليات بحثها.",
   "reports.search_typed": "بكلمات مكتوبة",
-  "reports.search_empty": "لا عمليات بحث في هذه الفترة"
+  "reports.search_empty": "لا عمليات بحث في هذه الفترة",
+  "settings.methods_title": "طرق تسجيل الدخول",
+  "settings.method_email": "البريد الإلكتروني وكلمة المرور",
+  "settings.method_google": "Google",
+  "settings.method_facebook": "Facebook",
+  "settings.method_connect": "ربط",
+  "settings.method_remove_label": "إزالة الدخول عبر {{name}}",
+  "settings.method_remove_title": "إزالة الدخول عبر {{name}}؟ يمكنك ربطه مرة أخرى لاحقًا.",
+  "settings.method_link_error": "تعذّر الربط. يجب أن يستخدم الحساب البريد الإلكتروني نفسه لهذا الحساب.",
+  "settings.method_apple": "Apple",
+  "settings.method_soon": "قريبًا"
 }

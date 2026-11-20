@@ -136,6 +136,17 @@ export const authClient = {
       }
     ),
   },
+  getLastUsedLoginMethod: vi.fn((): string | null => null),
+  listAccounts: vi.fn(async () =>
+    ok([
+      { id: "acc-email", providerId: "credential" },
+      { id: "acc-google", providerId: "google" },
+    ])
+  ),
+  linkSocial: vi.fn(async (_body: { provider: string }) =>
+    ok({ redirect: true, url: "https://accounts.example/authorize" })
+  ),
+  unlinkAccount: vi.fn(async (_body: { accountId: string }) => ok()),
   signOut: vi.fn(async () => {
     document.cookie = "sy_session=; Path=/; Max-Age=0"
     return ok()

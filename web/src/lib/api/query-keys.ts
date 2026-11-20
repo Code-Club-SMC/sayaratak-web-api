@@ -8,6 +8,7 @@ export const keys = {
   taxonomy: ["taxonomy"] as const,
   counts: ["counts"] as const,
   prefs: ["me", "notification-prefs"] as const,
+  accounts: ["me", "accounts"] as const,
   drafts: (key: string) => ["drafts", key] as const,
   listings: {
     all: ["listings"] as const,

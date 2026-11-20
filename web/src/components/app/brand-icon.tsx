@@ -5,7 +5,7 @@ export function BrandIcon({
   name,
   className,
 }: {
-  name: "google" | "facebook" | "whatsapp" | "telegram" | "tiktok"
+  name: "google" | "apple" | "facebook" | "whatsapp" | "telegram" | "tiktok"
   className?: string
 }) {
   return (
@@ -14,7 +14,12 @@ export function BrandIcon({
       alt=""
       width={20}
       height={20}
-      className={cn("size-5 shrink-0", className)}
+      // The Apple mark is plain black; flip it on the dark theme.
+      className={cn(
+        "size-5 shrink-0",
+        name === "apple" && "dark:invert",
+        className
+      )}
     />
   )
 }

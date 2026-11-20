@@ -1,6 +1,12 @@
 import { betterAuth } from "better-auth"
 import { drizzleAdapter } from "better-auth/adapters/drizzle"
-import { admin, bearer, emailOTP, twoFactor } from "better-auth/plugins"
+import {
+  admin,
+  bearer,
+  emailOTP,
+  lastLoginMethod,
+  twoFactor,
+} from "better-auth/plugins"
 import { createAuthMiddleware, getSessionFromCtx } from "better-auth/api"
 
 import { env } from "~/env"
@@ -167,6 +173,8 @@ export const auth = betterAuth({
     ),
   },
   plugins: [
+    // "Last used" mark: readable cookie (name shared with web auth-client.ts) and a user column.
+    lastLoginMethod({ storeInDatabase: true, cookieName: "sy.last_login" }),
     emailOTP({
       otpLength: 6,
       expiresIn: OTP_SECONDS,

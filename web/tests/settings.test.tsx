@@ -114,6 +114,51 @@ describe("SettingsPage", () => {
     }
   )
 
+  it("marks the last used method and asks before removing Google", async () => {
+    rowOf("user").lastSignInMethod = "google"
+    await open()
+    const google = (await screen.findByText("Google")).closest("li")!
+    expect(within(google).getByText("Last used")).toBeTruthy()
+    fireEvent.click(
+      within(google).getByRole("button", { name: "Remove Google sign-in" })
+    )
+    expect(authClient.unlinkAccount).not.toHaveBeenCalled()
+    fireEvent.click(
+      within(await screen.findByRole("alertdialog")).getByRole("button", {
+        name: "Remove",
+      })
+    )
+    await waitFor(() =>
+      expect(authClient.unlinkAccount).toHaveBeenCalledWith({
+        accountId: "acc-google",
+      })
+    )
+  })
+
+  it("offers no Remove on the only sign-in method", async () => {
+    authClient.listAccounts.mockResolvedValueOnce({
+      data: [{ id: "acc-google", providerId: "google" }],
+      error: null,
+    })
+    await open()
+    const google = (await screen.findByText("Google")).closest("li")!
+    expect(within(google).queryByRole("button")).toBeNull()
+  })
+
+  it("shows Apple and Facebook as coming soon until their flags are on", async () => {
+    vi.stubEnv("VITE_FEATURE_APPLE", "false")
+    vi.stubEnv("VITE_FEATURE_FACEBOOK", "true")
+    await open()
+    const apple = (await screen.findByText("Apple")).closest("li")!
+    expect(within(apple).getByText("Coming soon")).toBeTruthy()
+    expect(within(apple).queryByRole("button")).toBeNull()
+    const facebook = screen.getByText("Facebook").closest("li")!
+    expect(
+      within(facebook).getByRole("button", { name: "Connect" })
+    ).toBeTruthy()
+    vi.unstubAllEnvs()
+  })
+
   it("gives the admin an account page without the delete section", async () => {
     await open("admin")
     expect(await screen.findByRole("heading", { name: "Account" })).toBeTruthy()

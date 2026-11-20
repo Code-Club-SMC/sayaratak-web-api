@@ -211,6 +211,13 @@
       "when": 1795102406815,
       "tag": "0029_r12a_trust_capture",
       "breakpoints": true
+    },
+    {
+      "idx": 30,
+      "version": "7",
+      "when": 1795140834505,
+      "tag": "0030_last_login_method",
+      "breakpoints": true
     }
   ]
 }

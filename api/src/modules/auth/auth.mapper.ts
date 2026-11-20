@@ -37,6 +37,7 @@ export function toUser(row: UserRow, extras: Extras): User {
     onboardingDone: row.onboardingDone,
     interests: row.interests,
     chosenPlanId: row.chosenPlanId ?? undefined,
+    lastSignInMethod: row.lastLoginMethod ?? undefined,
   }
 }
 

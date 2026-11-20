@@ -45,40 +45,42 @@ export function UsersInsights({ query }: { query: PeriodQuery }) {
             })
           : t("reports.insights_active_none")}
       </p>
-      <div className="grid grid-cols-2 gap-4 xl:grid-cols-3">
-        <StatCard
-          label={t("reports.insights_stat_accounts")}
-          value={data?.accounts}
-          detail={t("reports.now")}
-          loading={isPending}
-        />
-        <StatCard
-          label={t("reports.insights_stat_signups")}
-          value={data?.signups.count}
-          previous={data?.signups.previous}
-          compare={compare}
-          loading={isPending}
-        />
-        <StatCard
-          label={t("reports.insights_stat_dau")}
-          value={data?.dau.value}
-          previous={data?.dau.previous ?? undefined}
-          compare={compare}
-          empty={t("reports.insights_active_none")}
-          loading={isPending}
-        />
-        <StatCard
-          label={t("reports.insights_stat_wau")}
-          value={data?.wau}
-          detail={t("reports.insights_to_end")}
-          loading={isPending}
-        />
-        <StatCard
-          label={t("reports.insights_stat_mau")}
-          value={data?.mau}
-          detail={t("reports.insights_to_end")}
-          loading={isPending}
-        />
+      <div className="stat-grid">
+        <div className="grid grid-cols-2 xl:grid-cols-3">
+          <StatCard
+            label={t("reports.insights_stat_accounts")}
+            value={data?.accounts}
+            detail={t("reports.now")}
+            loading={isPending}
+          />
+          <StatCard
+            label={t("reports.insights_stat_signups")}
+            value={data?.signups.count}
+            previous={data?.signups.previous}
+            compare={compare}
+            loading={isPending}
+          />
+          <StatCard
+            label={t("reports.insights_stat_dau")}
+            value={data?.dau.value}
+            previous={data?.dau.previous ?? undefined}
+            compare={compare}
+            empty={t("reports.insights_active_none")}
+            loading={isPending}
+          />
+          <StatCard
+            label={t("reports.insights_stat_wau")}
+            value={data?.wau}
+            detail={t("reports.insights_to_end")}
+            loading={isPending}
+          />
+          <StatCard
+            label={t("reports.insights_stat_mau")}
+            value={data?.mau}
+            detail={t("reports.insights_to_end")}
+            loading={isPending}
+          />
+        </div>
       </div>
       <div className="grid gap-4 lg:grid-cols-2">
         <BarChartCard

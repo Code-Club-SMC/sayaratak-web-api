@@ -27,7 +27,7 @@ export function BusinessAbout({
 }) {
   const { t } = useT()
   return (
-    <div className="flex flex-col gap-8 rounded-xl bg-card p-4 md:p-5">
+    <div className="flex flex-col gap-8 panel p-4 md:p-5">
       {text && (
         <section className="flex flex-col gap-3">
           <h2 className="text-title font-semibold">

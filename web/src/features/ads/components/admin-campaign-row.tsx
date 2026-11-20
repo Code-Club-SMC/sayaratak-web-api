@@ -27,7 +27,7 @@ export function AdminCampaignRow({ campaign: c }: { campaign: AdminCampaign }) {
     onError: (e: unknown) => toastError({ title: errorText(t, e) }),
   })
   return (
-    <article className="flex flex-col gap-4 rounded-xl bg-card p-5">
+    <article className="flex flex-col gap-4 panel p-5">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex flex-wrap items-center gap-2">
           <h2 className="text-ui font-semibold">{c.ownerName}</h2>

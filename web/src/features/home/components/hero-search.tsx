@@ -59,7 +59,7 @@ export function HeroSearch({ city }: { city: string }) {
       noValidate
       onSubmit={handleSubmit(go)}
       aria-labelledby="home-title"
-      className="rounded-xl bg-card p-4 md:px-5"
+      className="panel p-4 md:px-5"
     >
       <Tabs
         value={kind}

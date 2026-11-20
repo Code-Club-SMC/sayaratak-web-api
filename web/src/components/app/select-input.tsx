@@ -70,7 +70,12 @@ export function SelectInput({
         >
           <SelectValue placeholder={placeholder} />
         </SelectTrigger>
-        <SelectContent alignItemWithTrigger={false} align="start">
+        {/* The list grows past a narrow trigger so a long label ("Same period last year") is never clipped under the check. */}
+        <SelectContent
+          alignItemWithTrigger={false}
+          align="start"
+          className="w-auto max-w-(--available-width) min-w-(--anchor-width)"
+        >
           {options.map((o) => (
             <SelectItem key={o.value} value={o.value}>
               {labelOf(o)}

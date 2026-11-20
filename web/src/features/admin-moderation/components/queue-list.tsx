@@ -40,10 +40,7 @@ export function QueueList({
     )
   if (query.isPending)
     return (
-      <div
-        className="flex flex-col gap-1 rounded-xl bg-card p-2"
-        aria-hidden="true"
-      >
+      <div className="flex flex-col gap-1 panel p-2" aria-hidden="true">
         {Array.from({ length: 5 }, (_, i) => (
           <Skeleton key={i} className="h-18" />
         ))}
@@ -57,7 +54,7 @@ export function QueueList({
         body={t(
           filtered ? "admin.queue_empty_filtered" : "admin.queue_empty_body"
         )}
-        className="rounded-xl bg-card"
+        className="panel"
       />
     )
   const check = (id: string, on: boolean) => {
@@ -70,7 +67,7 @@ export function QueueList({
     <div className="flex flex-col gap-3">
       <ul
         aria-label={t("admin.queue_label")}
-        className="flex flex-col gap-1 rounded-xl bg-card p-2"
+        className="flex flex-col gap-1 panel p-2"
       >
         {items.map((l) => (
           <QueueRow

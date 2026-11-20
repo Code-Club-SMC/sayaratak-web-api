@@ -27,7 +27,7 @@ export function ProfilePreview({
   const city = useCityName(cityId ?? "")
   const round = variant === "mechanic"
   return (
-    <div className="overflow-hidden rounded-xl bg-card">
+    <div className="overflow-hidden panel">
       {!round && (
         <MediaImage
           src={coverUrl || null}

@@ -31,10 +31,7 @@ function Section(props: {
   const { t } = useT()
   const id = useId()
   return (
-    <section
-      aria-labelledby={id}
-      className="flex flex-col gap-2 rounded-xl bg-card p-5"
-    >
+    <section aria-labelledby={id} className="flex flex-col gap-2 panel p-5">
       <h2 id={id} className="text-body font-semibold">
         {props.title}
       </h2>
@@ -93,7 +90,7 @@ export function MakesTable(props: {
       empty={rows?.length === 0}
     >
       <Table>
-        <TableHeader>
+        <TableHeader className="bg-muted">
           <TableRow>
             <TableHead>{t("reports.search_col_make")}</TableHead>
             <TableHead className="text-end">
@@ -163,7 +160,7 @@ export function MissedTable(props: {
       empty={props.rows?.length === 0}
     >
       <Table>
-        <TableHeader>
+        <TableHeader className="bg-muted">
           <TableRow>
             <TableHead>{t("reports.search_col_filters")}</TableHead>
             <TableHead className="text-end">

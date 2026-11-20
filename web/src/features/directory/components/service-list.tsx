@@ -7,7 +7,7 @@ import { PriceText } from "@/components/app/price-text"
 export function ServiceList({ services }: { services: Workshop["services"] }) {
   const { t } = useT()
   return (
-    <section className="flex flex-col gap-3 rounded-xl bg-card p-4 md:p-5">
+    <section className="flex flex-col gap-3 panel p-4 md:p-5">
       <h2 className="text-title font-semibold">
         {t("directory.services_title")}
       </h2>

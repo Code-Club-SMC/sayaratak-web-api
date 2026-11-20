@@ -22,7 +22,7 @@ export function SellerCard({
   const name = owner.name[locale]
   const business = owner.type === "dealership"
   return (
-    <section className="flex flex-col gap-4 rounded-xl bg-card p-4 md:p-5">
+    <section className="flex flex-col gap-4 panel p-4 md:p-5">
       <h2 className="sr-only">{t("listing.seller_title")}</h2>
       <div className="flex items-center gap-3">
         <Avatar className={business ? "size-12 rounded-lg" : "size-12"}>

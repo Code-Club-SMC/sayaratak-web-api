@@ -31,10 +31,7 @@ export function SubscriptionCard({
   // An upgrade in review: a second payment is blocked, so the button opens the payment.
   const upgrading = !!data?.reviewPlan && data.reviewPlan.id !== plan?.id
   return (
-    <section
-      aria-labelledby={id}
-      className="flex flex-col gap-4 rounded-xl bg-card p-5"
-    >
+    <section aria-labelledby={id} className="flex flex-col gap-4 panel p-5">
       {subscription.isError ? (
         <>
           <h2 id={id} className="text-body font-semibold">

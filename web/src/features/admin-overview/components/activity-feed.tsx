@@ -15,53 +15,56 @@ export function ActivityFeed() {
   const activity = useQuery(adminQueries.activity)
   const items = activity.data?.items
   return (
-    <section
-      aria-labelledby="admin-activity"
-      className="flex flex-col gap-2 rounded-xl bg-card p-5"
-    >
-      <h2 id="admin-activity" className="text-body font-semibold">
+    <section aria-labelledby="admin-activity" className="flex flex-col panel">
+      <h2
+        id="admin-activity"
+        className="flex min-h-14 items-center border-b px-5 py-3 text-body font-semibold"
+      >
         {t("dashboard.overview_activity_title")}
       </h2>
-      {activity.isError ? (
-        <SectionError
-          message={t("admin.activity_error")}
-          onRetry={() => void activity.refetch()}
-        />
-      ) : !items ? (
-        <div aria-hidden="true" className="flex flex-col gap-3 py-3">
-          <Skeleton className="h-10" />
-          <Skeleton className="h-10" />
-          <Skeleton className="h-10" />
-        </div>
-      ) : items.length === 0 ? (
-        <EmptyState
-          level={3}
-          icon={ActivityIcon}
-          title={t("admin.activity_empty")}
-          className="py-6"
-        />
-      ) : (
-        <ul className="flex flex-col divide-y divide-border">
-          {items.map((item) => (
-            <li key={`${item.type}-${item.id}`}>
-              <a
-                href={localeHref(item.href, locale)}
-                className="flex flex-col gap-0.5 rounded-lg px-2 py-3 motion-color hover:bg-muted"
-              >
-                <span className="text-ui">
-                  {t(`admin.activity_${item.type}`, {
-                    label: `⁨${item.label[locale]}⁩`,
-                  })}
-                </span>
-                <RelativeTime
-                  iso={item.createdAt}
-                  className="text-caption text-muted-foreground"
-                />
-              </a>
-            </li>
-          ))}
-        </ul>
-      )}
+      <div className="p-3">
+        {activity.isError ? (
+          <SectionError
+            message={t("admin.activity_error")}
+            onRetry={() => void activity.refetch()}
+          />
+        ) : !items ? (
+          <div aria-hidden="true" className="flex flex-col gap-3 py-3">
+            <Skeleton className="h-10" />
+            <Skeleton className="h-10" />
+            <Skeleton className="h-10" />
+          </div>
+        ) : items.length === 0 ? (
+          <EmptyState
+            level={3}
+            icon={ActivityIcon}
+            title={t("admin.activity_empty")}
+            body={t("admin.activity_empty_body")}
+            className="py-6"
+          />
+        ) : (
+          <ul className="flex flex-col divide-y divide-border">
+            {items.map((item) => (
+              <li key={`${item.type}-${item.id}`}>
+                <a
+                  href={localeHref(item.href, locale)}
+                  className="flex flex-col gap-0.5 rounded-lg px-2 py-3 motion-color hover:bg-muted"
+                >
+                  <span className="text-ui">
+                    {t(`admin.activity_${item.type}`, {
+                      label: `⁨${item.label[locale]}⁩`,
+                    })}
+                  </span>
+                  <RelativeTime
+                    iso={item.createdAt}
+                    className="text-caption text-muted-foreground"
+                  />
+                </a>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
     </section>
   )
 }

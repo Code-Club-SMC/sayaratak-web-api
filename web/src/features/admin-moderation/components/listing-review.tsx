@@ -15,7 +15,7 @@ import { Description } from "@/features/listings/components/description"
 import { useListingFacts } from "@/features/listings/use-listing-facts"
 import { useSpecGroups } from "@/features/listings/use-spec-groups"
 
-const card = "flex flex-col gap-4 rounded-xl bg-card p-4 md:p-5"
+const card = "flex flex-col gap-4 panel p-4 md:p-5"
 
 // The listing as the admin judges it: photos, price, every filled spec, the description, the exact spot and who posted it. `actions` is the sticky bar at the bottom. The pane stays mounted from one listing to the next so focus survives J, K and A; the gallery and description restart per listing.
 export function ListingReview({

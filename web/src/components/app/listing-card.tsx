@@ -53,7 +53,7 @@ export function ListingCard({
   return (
     <article
       className={cn(
-        "group relative flex rounded-xl bg-card p-2",
+        "group relative flex panel p-2",
         row ? "gap-3" : "flex-col gap-2"
       )}
     >

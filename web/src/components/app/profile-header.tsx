@@ -32,7 +32,7 @@ export function ProfileHeader({
 }) {
   const city = useCityName(cityId)
   return (
-    <header className="overflow-hidden rounded-xl bg-card">
+    <header className="overflow-hidden panel">
       {coverUrl && (
         <MediaImage
           src={coverUrl}

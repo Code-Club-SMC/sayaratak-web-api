@@ -42,7 +42,7 @@ export function PhotosPage() {
           className="h-64 w-full rounded-xl"
         />
       ) : (
-        <section className="flex flex-col gap-3 rounded-xl bg-card p-4 md:p-5">
+        <section className="flex flex-col gap-3 panel p-4 md:p-5">
           {cap !== undefined && (
             <p className="text-caption text-muted-foreground">
               {t("dashboard.photos_plan_limit", { count: cap })}{" "}

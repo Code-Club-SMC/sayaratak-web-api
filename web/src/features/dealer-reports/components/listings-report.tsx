@@ -28,44 +28,46 @@ export function ListingsReport({ search }: { search: ReportsSearch }) {
   return (
     <div className="flex flex-col gap-6">
       <PeriodNote period={data?.period} />
-      <div className="grid grid-cols-2 gap-4 xl:grid-cols-4">
-        <StatCard
-          label={t("reports.stat_live")}
-          value={summary?.live}
-          detail={t("reports.now")}
-          loading={isPending}
-        />
-        <StatCard
-          label={t("reports.stat_expiring")}
-          value={summary?.expiringSoon}
-          detail={t("reports.next_7_days")}
-          loading={isPending}
-        />
-        <StatCard
-          label={t("reports.stat_days_to_sell")}
-          value={sell?.median}
-          empty={t("reports.no_sales")}
-          detail={
-            sell?.count
-              ? t("reports.sold_count", { count: sell.count })
-              : undefined
-          }
-          note={
-            before?.median != null
-              ? t("dashboard.previous_value", {
-                  value: t("reports.days", { count: before.median }),
-                })
-              : undefined
-          }
-          loading={isPending}
-        />
-        <StatCard
-          label={t("reports.stat_median_rate")}
-          value={summary?.medianRate}
-          suffix="%"
-          empty={t("reports.rate_not_enough")}
-          loading={isPending}
-        />
+      <div className="stat-grid">
+        <div className="grid grid-cols-2 xl:grid-cols-4">
+          <StatCard
+            label={t("reports.stat_live")}
+            value={summary?.live}
+            detail={t("reports.now")}
+            loading={isPending}
+          />
+          <StatCard
+            label={t("reports.stat_expiring")}
+            value={summary?.expiringSoon}
+            detail={t("reports.next_7_days")}
+            loading={isPending}
+          />
+          <StatCard
+            label={t("reports.stat_days_to_sell")}
+            value={sell?.median}
+            empty={t("reports.no_sales")}
+            detail={
+              sell?.count
+                ? t("reports.sold_count", { count: sell.count })
+                : undefined
+            }
+            note={
+              before?.median != null
+                ? t("dashboard.previous_value", {
+                    value: t("reports.days", { count: before.median }),
+                  })
+                : undefined
+            }
+            loading={isPending}
+          />
+          <StatCard
+            label={t("reports.stat_median_rate")}
+            value={summary?.medianRate}
+            suffix="%"
+            empty={t("reports.rate_not_enough")}
+            loading={isPending}
+          />
+        </div>
       </div>
       <StockAgeCard buckets={summary?.stockAge} loading={isPending} />
       <ListingsReportTable search={search} report={report} />

@@ -30,10 +30,7 @@ export function PageEditor({ slug }: { slug: SitePage["slug"] }) {
       {page.data ? (
         <PageForm key={page.data.updatedAt} page={page.data} />
       ) : (
-        <div
-          aria-hidden="true"
-          className="flex flex-col gap-4 rounded-xl bg-card p-4"
-        >
+        <div aria-hidden="true" className="flex flex-col gap-4 panel p-4">
           <Skeleton className="h-10 w-40" />
           <Skeleton className="h-10 w-full" />
           <Skeleton className="h-80 w-full" />

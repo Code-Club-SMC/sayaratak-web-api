@@ -29,7 +29,7 @@ import { SellerCard } from "./seller-card"
 import { StatusBanner } from "./status-banner"
 import { TitleBlock } from "./title-block"
 
-const card = "rounded-xl bg-card p-4 md:p-5"
+const card = "panel p-4 md:p-5"
 
 // The route loader has put the listing in the cache, so the first render already has it. Main column on the left of the aside from lg (sticky); below lg the seller card sits after the description and the contact buttons live in the fixed bar.
 export function ListingDetailPage({ slug }: { slug: string }) {

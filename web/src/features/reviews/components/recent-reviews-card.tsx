@@ -35,10 +35,7 @@ export function RecentReviewsCard({
   })
   const failed = business.isError || (list.isError && !list.data)
   return (
-    <section
-      aria-labelledby={id}
-      className="flex flex-col gap-2 rounded-xl bg-card p-5"
-    >
+    <section aria-labelledby={id} className="flex flex-col gap-2 panel p-5">
       <div className="flex items-center justify-between gap-2">
         <h2 id={id} className="text-body font-semibold">
           {t("dashboard.recent_reviews_title")}

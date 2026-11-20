@@ -28,7 +28,7 @@ export function PricePositionCard({ id }: { id: string }) {
   return (
     <section
       aria-labelledby={`price-${id}`}
-      className="flex flex-col gap-3 rounded-xl bg-card p-5"
+      className="flex flex-col gap-3 panel p-5"
     >
       <h3 id={`price-${id}`} className="text-ui font-medium">
         {t("reports.price_title")}

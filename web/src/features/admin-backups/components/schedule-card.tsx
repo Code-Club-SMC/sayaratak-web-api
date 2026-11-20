@@ -34,7 +34,7 @@ export function ScheduleCard() {
     ? (update.variables.backupSchedule ?? settings.data.backupSchedule)
     : settings.data.backupSchedule
   return (
-    <div className="rounded-xl bg-card p-4">
+    <div className="panel p-4">
       <FormField
         className="max-w-xs"
         label={t("admin.backups_schedule")}

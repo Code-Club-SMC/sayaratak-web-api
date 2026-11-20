@@ -32,34 +32,36 @@ export function OverviewStats() {
     params: { locale },
   } as const
   return (
-    <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-      <StatCard
-        label={t("dashboard.overview_stat_active")}
-        value={active.data?.total}
-        link={{
-          to: "/$locale/account/listings",
-          params: { locale },
-          search: { tab: "active" },
-        }}
-      />
-      <StatCard
-        label={t("dashboard.overview_stat_views")}
-        value={totals?.views}
-        previous={previous?.views}
-        spark={analytics.data?.daily.map((d) => d.views)}
-        link={toReports}
-      />
-      <StatCard
-        label={t("dashboard.overview_stat_favorites")}
-        value={totals?.favorites}
-        previous={previous?.favorites}
-        link={toReports}
-      />
-      <StatCard
-        label={t("dashboard.overview_stat_messages")}
-        value={counts.data?.unreadMessages}
-        link={{ to: "/$locale/account/messages", params: { locale } }}
-      />
+    <div className="stat-grid">
+      <div className="grid grid-cols-2 lg:grid-cols-4">
+        <StatCard
+          label={t("dashboard.overview_stat_active")}
+          value={active.data?.total}
+          link={{
+            to: "/$locale/account/listings",
+            params: { locale },
+            search: { tab: "active" },
+          }}
+        />
+        <StatCard
+          label={t("dashboard.overview_stat_views")}
+          value={totals?.views}
+          previous={previous?.views}
+          spark={analytics.data?.daily.map((d) => d.views)}
+          link={toReports}
+        />
+        <StatCard
+          label={t("dashboard.overview_stat_favorites")}
+          value={totals?.favorites}
+          previous={previous?.favorites}
+          link={toReports}
+        />
+        <StatCard
+          label={t("dashboard.overview_stat_messages")}
+          value={counts.data?.unreadMessages}
+          link={{ to: "/$locale/account/messages", params: { locale } }}
+        />
+      </div>
     </div>
   )
 }

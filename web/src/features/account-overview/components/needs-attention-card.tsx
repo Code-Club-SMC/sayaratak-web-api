@@ -51,7 +51,7 @@ export function NeedsAttentionCard({
   return (
     <section
       aria-labelledby="overview-attention"
-      className="flex flex-col gap-2 rounded-xl bg-card p-5"
+      className="flex flex-col gap-2 panel p-5"
     >
       <h2 id="overview-attention" className="text-body font-semibold">
         {t("dashboard.overview_attention_title")}

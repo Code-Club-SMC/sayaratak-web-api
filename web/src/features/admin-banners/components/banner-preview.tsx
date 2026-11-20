@@ -3,6 +3,8 @@ import { useFormContext, useWatch } from "react-hook-form"
 import { useT } from "@/lib/i18n/use-t"
 import { BannerCopy } from "@/components/app/banner-copy"
 import type { BannerForm } from "../schemas"
+import { ImageIcon } from "lucide-react"
+import { EmptyState } from "@/components/app/empty-state"
 
 // Both languages as the strip banner shows them (the hero uses the same text on a taller photo).
 export function BannerPreview() {
@@ -34,9 +36,12 @@ export function BannerPreview() {
           </div>
         ))
       ) : (
-        <p className="rounded-xl bg-muted p-4 text-ui text-muted-foreground">
-          {t("admin.banners_preview_empty")}
-        </p>
+        <EmptyState
+          icon={ImageIcon}
+          title={t("admin.banners_preview_empty")}
+          level={3}
+          className="rounded-lg bg-muted py-6"
+        />
       )}
     </section>
   )

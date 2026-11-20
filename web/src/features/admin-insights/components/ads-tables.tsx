@@ -27,10 +27,7 @@ function Section({
 }) {
   const id = useId()
   return (
-    <section
-      aria-labelledby={id}
-      className="flex flex-col gap-2 rounded-xl bg-card p-5"
-    >
+    <section aria-labelledby={id} className="flex flex-col gap-2 panel p-5">
       <h2 id={id} className="text-body font-semibold">
         {title}
       </h2>
@@ -58,7 +55,7 @@ export function PagesFill({
   return (
     <Section title={t("reports.ads_pages_title")} loading={loading || !rows}>
       <Table>
-        <TableHeader>
+        <TableHeader className="bg-muted">
           <TableRow>
             <TableHead>{t("reports.ads_col_page")}</TableHead>
             <TableHead className="text-end">
@@ -132,7 +129,7 @@ export function AdsList({
         />
       ) : (
         <Table>
-          <TableHeader>
+          <TableHeader className="bg-muted">
             <TableRow>
               <TableHead>{t("reports.ads_col_ad")}</TableHead>
               <TableHead className="text-end">

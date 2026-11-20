@@ -31,7 +31,7 @@ export function StatusCard({
   return (
     <section
       aria-labelledby={verificationStatusId}
-      className="flex flex-col items-start gap-3 rounded-xl bg-card p-5"
+      className="flex flex-col items-start gap-3 panel p-5"
     >
       <h2
         id={verificationStatusId}

@@ -61,9 +61,13 @@
   --radius-4xl: calc(var(--radius) * 3);
 }
 
-/* Literal tokens. The shadow is only for floating layers: popover, dialog, sheet, toast. */
+/* Literal tokens. `floating` is for layers that open over the page: popover, dialog, sheet, toast. `panel` is the resting card: a 6% hairline ring and a 1px contact shadow with no blur halo, so floating layers still read as higher (owner, 2026-11-20, Deviation from A5). */
 @theme {
   --shadow-floating: 0 8px 24px oklch(0.2 0.01 260 / 0.1);
+  --shadow-panel:
+    0 0 0 1px oklch(0.2 0.012 260 / 0.06),
+    0 1px 1px oklch(0.2 0.012 260 / 0.05),
+    0 1px 2px -1px oklch(0.2 0.012 260 / 0.06);
   --default-transition-duration: var(--dur-fast);
   --default-transition-timing-function: var(--ease-standard);
   --animate-heart-pop: heart-pop 200ms var(--ease-standard);
@@ -114,7 +118,7 @@
   --chart-3: oklch(0.55 0.02 170);
   --chart-4: oklch(0.55 0.07 200);
   --chart-5: oklch(0.5 0.1 350);
-  --radius: 0.5rem;
+  --radius: 0.375rem;
   --sidebar: var(--card);
   --sidebar-foreground: var(--foreground);
   --sidebar-primary: var(--primary);
@@ -314,6 +318,23 @@
     border-color: var(--destructive);
     box-shadow: 0 0 0 3px
       color-mix(in oklch, var(--destructive) 16%, transparent);
+  }
+}
+
+/* The resting card of the app: white on the page grey, small corners, the panel shadow. */
+@utility panel {
+  @apply rounded-lg bg-card shadow-panel;
+}
+/* A row of stat cards as one panel split by hairlines: put the grid classes on the one child; it reaches 1px past the end and bottom edges so the outer cells' lines are clipped (works in both directions). */
+@utility stat-grid {
+  @apply overflow-hidden panel;
+  & > * {
+    margin-inline-end: -1px;
+    margin-block-end: -1px;
+  }
+  & > * > * {
+    border-inline-end: 1px solid var(--color-border);
+    border-block-end: 1px solid var(--color-border);
   }
 }
 

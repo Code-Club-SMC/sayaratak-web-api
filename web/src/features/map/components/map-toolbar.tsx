@@ -45,7 +45,7 @@ export function MapToolbar({
     failed: "form.location_failed",
   }[place as Exclude<Place, "idle">]
   return (
-    <div className="flex flex-col gap-2 rounded-xl bg-card p-3">
+    <div className="flex flex-col gap-2 panel p-3">
       <div className="flex flex-wrap items-center gap-2">
         <ToggleGroup
           multiple

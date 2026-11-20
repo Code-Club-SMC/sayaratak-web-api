@@ -57,7 +57,7 @@ export function PagesStep() {
                 <label
                   key={p.id}
                   className={cn(
-                    "flex min-h-16 items-center gap-3 rounded-xl bg-card p-4",
+                    "flex min-h-16 items-center gap-3 panel p-4",
                     full
                       ? "opacity-60"
                       : "cursor-pointer has-checked:ring-2 has-checked:ring-primary"

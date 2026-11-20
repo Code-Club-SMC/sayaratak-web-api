@@ -1,5 +1,9 @@
 import { lazy, Suspense, useId, useState } from "react"
-import { ChartNoAxesColumnIcon, DownloadIcon } from "lucide-react"
+import {
+  ChartNoAxesColumnIcon,
+  CircleAlertIcon,
+  DownloadIcon,
+} from "lucide-react"
 
 import { downloadCsv } from "@/lib/csv"
 import { formatBucket } from "@/lib/format"
@@ -88,11 +92,8 @@ export function ChartCard({
       ]),
     ])
   return (
-    <section
-      aria-labelledby={id}
-      className="flex flex-col gap-4 rounded-xl bg-card p-5"
-    >
-      <div className="flex flex-wrap items-center justify-between gap-2">
+    <section aria-labelledby={id} className="flex flex-col panel">
+      <div className="flex min-h-14 flex-wrap items-center justify-between gap-2 border-b px-5 py-3">
         <h2 id={id} className="text-body font-semibold">
           {title}
         </h2>
@@ -126,48 +127,57 @@ export function ChartCard({
           </div>
         )}
       </div>
-      {error ? (
-        <div role="alert" className="flex h-64 flex-col items-start gap-3">
-          <p className="text-body text-muted-foreground">
-            {t("dashboard.chart_error")}
-          </p>
-          <Button type="button" variant="outline" onClick={onRetry}>
-            {t("common.retry")}
-          </Button>
-        </div>
-      ) : loading ? (
-        <Skeleton className="h-64" aria-hidden="true" />
-      ) : data?.length === 0 ? (
-        <EmptyState
-          icon={ChartNoAxesColumnIcon}
-          title={t("dashboard.chart_empty")}
-          level={3}
-          className="h-64"
-        />
-      ) : view === "table" && data ? (
-        <ChartTable
-          data={data}
-          series={series}
-          label={label}
-          compare={compare}
-        />
-      ) : (
-        // Recharts lays out left to right; the axis stays LTR in Arabic too.
-        <div dir="ltr">
-          <Suspense fallback={<Skeleton className="h-64" aria-hidden="true" />}>
-            {data && (
-              <Impl
-                kind={kind}
-                data={data}
-                series={series}
-                stacked={stacked}
-                label={label}
-                compare={compare}
-              />
-            )}
-          </Suspense>
-        </div>
-      )}
+      <div className="p-5">
+        {error ? (
+          <EmptyState
+            error
+            icon={CircleAlertIcon}
+            title={t("dashboard.chart_error")}
+            level={3}
+            className="h-64"
+            action={
+              <Button type="button" variant="outline" onClick={onRetry}>
+                {t("common.retry")}
+              </Button>
+            }
+          />
+        ) : loading ? (
+          <Skeleton className="h-64" aria-hidden="true" />
+        ) : data?.length === 0 ? (
+          <EmptyState
+            icon={ChartNoAxesColumnIcon}
+            title={t("dashboard.chart_empty")}
+            body={t("dashboard.chart_empty_body")}
+            level={3}
+            className="h-64"
+          />
+        ) : view === "table" && data ? (
+          <ChartTable
+            data={data}
+            series={series}
+            label={label}
+            compare={compare}
+          />
+        ) : (
+          // Recharts lays out left to right; the axis stays LTR in Arabic too.
+          <div dir="ltr">
+            <Suspense
+              fallback={<Skeleton className="h-64" aria-hidden="true" />}
+            >
+              {data && (
+                <Impl
+                  kind={kind}
+                  data={data}
+                  series={series}
+                  stacked={stacked}
+                  label={label}
+                  compare={compare}
+                />
+              )}
+            </Suspense>
+          </div>
+        )}
+      </div>
     </section>
   )
 }

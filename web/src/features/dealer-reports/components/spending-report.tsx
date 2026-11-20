@@ -33,30 +33,32 @@ export function SpendingReport({ query }: { query: PeriodQuery }) {
   return (
     <div className="flex flex-col gap-6">
       <PeriodNote period={data?.period} />
-      <div className="grid grid-cols-2 gap-4 xl:grid-cols-3">
-        <StatCard
-          label={t("reports.stat_paid")}
-          value={data?.approved.amount}
-          previous={data?.previous.amount}
-          compare={data?.period.compare}
-          detail={unit}
-          note={receipts(data?.approved.count)}
-          loading={isPending}
-        />
-        <StatCard
-          label={t("reports.stat_pending")}
-          value={data?.pending.amount}
-          detail={unit}
-          note={receipts(data?.pending.count)}
-          loading={isPending}
-        />
-        <StatCard
-          label={t("reports.stat_rejected")}
-          value={data?.rejected.amount}
-          detail={unit}
-          note={receipts(data?.rejected.count)}
-          loading={isPending}
-        />
+      <div className="stat-grid">
+        <div className="grid grid-cols-2 xl:grid-cols-3">
+          <StatCard
+            label={t("reports.stat_paid")}
+            value={data?.approved.amount}
+            previous={data?.previous.amount}
+            compare={data?.period.compare}
+            detail={unit}
+            note={receipts(data?.approved.count)}
+            loading={isPending}
+          />
+          <StatCard
+            label={t("reports.stat_pending")}
+            value={data?.pending.amount}
+            detail={unit}
+            note={receipts(data?.pending.count)}
+            loading={isPending}
+          />
+          <StatCard
+            label={t("reports.stat_rejected")}
+            value={data?.rejected.amount}
+            detail={unit}
+            note={receipts(data?.rejected.count)}
+            loading={isPending}
+          />
+        </div>
       </div>
       <BarChartCard
         title={t("reports.chart_spend", { unit })}

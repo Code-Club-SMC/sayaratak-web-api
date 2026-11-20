@@ -8,10 +8,7 @@ export function AvailabilityCard() {
   const { t } = useT()
   const id = useId()
   return (
-    <section
-      aria-labelledby={id}
-      className="flex flex-col gap-3 rounded-xl bg-card p-5"
-    >
+    <section aria-labelledby={id} className="flex flex-col gap-3 panel p-5">
       <h2 id={id} className="text-body font-semibold">
         {t("dashboard.availability_title")}
       </h2>

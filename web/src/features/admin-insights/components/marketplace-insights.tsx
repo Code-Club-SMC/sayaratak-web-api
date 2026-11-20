@@ -62,59 +62,61 @@ export function MarketplaceInsights({ query }: { query: PeriodQuery }) {
   return (
     <div className="flex flex-col gap-6">
       <PeriodNote period={data?.period} />
-      <div className="grid grid-cols-2 gap-4 xl:grid-cols-3">
-        <StatCard
-          label={t("reports.stat_live")}
-          value={data?.liveNow}
-          detail={t("reports.now")}
-          loading={isPending}
-        />
-        <StatCard
-          label={t("reports.insights_stat_created")}
-          value={data?.created.count}
-          previous={data?.created.previous}
-          compare={compare}
-          loading={isPending}
-        />
-        <StatCard
-          label={t("reports.insights_stat_sold")}
-          value={data?.sold.count}
-          previous={data?.sold.previous}
-          compare={compare}
-          loading={isPending}
-        />
-        <StatCard
-          label={t("reports.insights_stat_contacted")}
-          value={data?.contacted.rate}
-          previous={data?.contacted.previous ?? undefined}
-          compare={compare}
-          suffix="%"
-          empty={t("reports.insights_contacted_empty")}
-          note={
-            data?.contacted.base
-              ? t("reports.insights_contacted_base", {
-                  value: formatNumber(data.contacted.base, locale),
-                })
-              : undefined
-          }
-          loading={isPending}
-        />
-        <StatCard
-          label={t("reports.stat_days_to_sell")}
-          value={data?.daysToSell.median}
-          display={days(data?.daysToSell.median)}
-          empty={t("reports.no_sales")}
-          note={before(days(data?.daysToSell.previous))}
-          loading={isPending}
-        />
-        <StatCard
-          label={t("reports.insights_stat_review")}
-          value={data?.decisionHours.median}
-          display={hours(data?.decisionHours.median)}
-          empty={t("reports.insights_review_empty")}
-          note={before(hours(data?.decisionHours.previous))}
-          loading={isPending}
-        />
+      <div className="stat-grid">
+        <div className="grid grid-cols-2 xl:grid-cols-3">
+          <StatCard
+            label={t("reports.stat_live")}
+            value={data?.liveNow}
+            detail={t("reports.now")}
+            loading={isPending}
+          />
+          <StatCard
+            label={t("reports.insights_stat_created")}
+            value={data?.created.count}
+            previous={data?.created.previous}
+            compare={compare}
+            loading={isPending}
+          />
+          <StatCard
+            label={t("reports.insights_stat_sold")}
+            value={data?.sold.count}
+            previous={data?.sold.previous}
+            compare={compare}
+            loading={isPending}
+          />
+          <StatCard
+            label={t("reports.insights_stat_contacted")}
+            value={data?.contacted.rate}
+            previous={data?.contacted.previous ?? undefined}
+            compare={compare}
+            suffix="%"
+            empty={t("reports.insights_contacted_empty")}
+            note={
+              data?.contacted.base
+                ? t("reports.insights_contacted_base", {
+                    value: formatNumber(data.contacted.base, locale),
+                  })
+                : undefined
+            }
+            loading={isPending}
+          />
+          <StatCard
+            label={t("reports.stat_days_to_sell")}
+            value={data?.daysToSell.median}
+            display={days(data?.daysToSell.median)}
+            empty={t("reports.no_sales")}
+            note={before(days(data?.daysToSell.previous))}
+            loading={isPending}
+          />
+          <StatCard
+            label={t("reports.insights_stat_review")}
+            value={data?.decisionHours.median}
+            display={hours(data?.decisionHours.median)}
+            empty={t("reports.insights_review_empty")}
+            note={before(hours(data?.decisionHours.previous))}
+            loading={isPending}
+          />
+        </div>
       </div>
       <BarChartCard
         title={t("reports.insights_chart_flow")}

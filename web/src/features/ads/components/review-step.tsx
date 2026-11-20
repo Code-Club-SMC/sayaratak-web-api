@@ -35,7 +35,7 @@ export function ReviewStep() {
           copy={v.copy[locale]}
         />
       )}
-      <dl className="flex flex-col gap-2 rounded-xl bg-card p-5 text-ui">
+      <dl className="flex flex-col gap-2 panel p-5 text-ui">
         {chosen.map((p) => (
           <div key={p.id} className="flex justify-between gap-3">
             <dt>{t(`ads.page_${p.id}`)}</dt>

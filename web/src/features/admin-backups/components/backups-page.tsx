@@ -38,7 +38,7 @@ export function BackupsPage() {
       <ScheduleCard />
       <section
         aria-labelledby="backup-restore-note-title"
-        className="flex items-start gap-3 rounded-xl bg-card p-4"
+        className="flex items-start gap-3 panel p-4"
       >
         <InfoIcon
           aria-hidden="true"

@@ -12,7 +12,7 @@ export function PostBand() {
   const path = postPath(me?.role)
   if (!path) return null
   return (
-    <section className="relative overflow-hidden rounded-xl bg-card p-6 md:p-8">
+    <section className="relative overflow-hidden panel p-6 md:p-8">
       <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
         <div className="max-w-2xl space-y-3">
           <h2 className="text-title font-semibold tracking-tight">

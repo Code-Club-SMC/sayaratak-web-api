@@ -151,7 +151,7 @@ export function DataTable<T extends RowData>({
         </BulkActionBar>
       )}
       <div
-        className="rounded-xl bg-card"
+        className="overflow-hidden panel"
         aria-busy={loading}
         data-slot="data-table"
       >
@@ -159,7 +159,7 @@ export function DataTable<T extends RowData>({
           <>
             <div className={mobileOnly}>
               <Table aria-label={label}>
-                <TableHeader>
+                <TableHeader className="bg-muted">
                   {table.getHeaderGroups().map((group) => (
                     <TableRow key={group.id} className="hover:bg-transparent">
                       {selection && (
@@ -200,7 +200,7 @@ export function DataTable<T extends RowData>({
                             className={cn(
                               !mobileCard &&
                                 i === 0 &&
-                                "max-md:sticky max-md:start-0 max-md:bg-card",
+                                "max-md:sticky max-md:start-0 max-md:bg-muted",
                               end && "text-end"
                             )}
                           >

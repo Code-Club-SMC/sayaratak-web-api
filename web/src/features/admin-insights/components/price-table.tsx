@@ -36,10 +36,7 @@ export function PriceTable({
   const money = (n: number) => formatPrice(n, locale).amount
   const unit = formatPrice(0, locale).unit
   return (
-    <section
-      aria-labelledby={id}
-      className="flex flex-col gap-2 rounded-xl bg-card p-5"
-    >
+    <section aria-labelledby={id} className="flex flex-col gap-2 panel p-5">
       <h2 id={id} className="text-body font-semibold">
         {t("reports.insights_prices")}
       </h2>
@@ -57,7 +54,7 @@ export function PriceTable({
         />
       ) : (
         <Table>
-          <TableHeader>
+          <TableHeader className="bg-muted">
             <TableRow>
               <TableHead>{t("reports.insights_col_model")}</TableHead>
               <TableHead className="text-end">

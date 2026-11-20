@@ -38,115 +38,117 @@ export function RevenueInsights({ query }: { query: PeriodQuery }) {
       <p className="text-caption text-muted-foreground">
         {t("reports.revenue_day_note")}
       </p>
-      <div className="grid grid-cols-2 gap-4 xl:grid-cols-4">
-        <StatCard
-          label={t("reports.revenue_stat_total")}
-          value={data?.revenue.amount}
-          previous={data?.previous.amount}
-          compare={compare}
-          detail={unit}
-          note={data && t("reports.receipts", { count: data.revenue.count })}
-          loading={isPending}
-        />
-        <StatCard
-          label={t("reports.revenue_stat_business")}
-          value={data?.business.average}
-          previous={data?.business.previousAverage ?? undefined}
-          compare={compare}
-          detail={unit}
-          empty={t("reports.revenue_business_empty")}
-          note={
-            data &&
-            t("reports.revenue_business_payers", {
-              value: num(data.business.payers),
-            })
-          }
-          loading={isPending}
-        />
-        <StatCard
-          label={t("reports.revenue_stat_personal")}
-          value={data?.personal.amount}
-          detail={unit}
-          note={
-            data &&
-            t("reports.revenue_personal_payers", {
-              value: num(data.personal.payers),
-            })
-          }
-          loading={isPending}
-        />
-        <StatCard
-          label={t("reports.revenue_stat_renewal")}
-          value={data?.renewal.rate}
-          previous={data?.renewal.previous ?? undefined}
-          compare={compare}
-          suffix="%"
-          empty={t("reports.revenue_renewal_empty")}
-          note={
-            data?.renewal.due
-              ? t("reports.revenue_renewal_base", {
-                  renewed: num(data.renewal.renewed),
-                  due: num(data.renewal.due),
-                })
-              : undefined
-          }
-          loading={isPending}
-        />
-        <StatCard
-          label={t("reports.revenue_stat_active")}
-          value={subs?.activeNow}
-          detail={t("reports.now")}
-          note={
-            subs &&
-            t("reports.revenue_started", { value: num(subs.started.count) })
-          }
-          loading={isPending}
-        />
-        <StatCard
-          label={t("reports.revenue_stat_pending")}
-          value={data?.pending.amount}
-          detail={unit}
-          note={
-            data &&
-            [
-              t("reports.receipts", { count: data.pending.count }),
-              data.pending.oldestHours !== null &&
-                t("reports.revenue_oldest", {
-                  value: hours(data.pending.oldestHours),
-                }),
-            ]
-              .filter(Boolean)
-              .join(" · ")
-          }
-          loading={isPending}
-        />
-        <StatCard
-          label={t("reports.revenue_stat_rejected")}
-          value={data?.outcomes.rejected}
-          previous={data?.outcomes.previousRejected}
-          compare={compare}
-          note={
-            data &&
-            t("reports.revenue_approved_count", {
-              value: num(data.outcomes.approved),
-            })
-          }
-          loading={isPending}
-        />
-        <StatCard
-          label={t("reports.insights_stat_review")}
-          value={data?.reviewHours.median}
-          display={hours(data?.reviewHours.median)}
-          empty={t("reports.insights_review_empty")}
-          note={
-            data?.reviewHours.previous != null
-              ? t("dashboard.previous_value", {
-                  value: hours(data.reviewHours.previous),
-                })
-              : undefined
-          }
-          loading={isPending}
-        />
+      <div className="stat-grid">
+        <div className="grid grid-cols-2 xl:grid-cols-4">
+          <StatCard
+            label={t("reports.revenue_stat_total")}
+            value={data?.revenue.amount}
+            previous={data?.previous.amount}
+            compare={compare}
+            detail={unit}
+            note={data && t("reports.receipts", { count: data.revenue.count })}
+            loading={isPending}
+          />
+          <StatCard
+            label={t("reports.revenue_stat_business")}
+            value={data?.business.average}
+            previous={data?.business.previousAverage ?? undefined}
+            compare={compare}
+            detail={unit}
+            empty={t("reports.revenue_business_empty")}
+            note={
+              data &&
+              t("reports.revenue_business_payers", {
+                value: num(data.business.payers),
+              })
+            }
+            loading={isPending}
+          />
+          <StatCard
+            label={t("reports.revenue_stat_personal")}
+            value={data?.personal.amount}
+            detail={unit}
+            note={
+              data &&
+              t("reports.revenue_personal_payers", {
+                value: num(data.personal.payers),
+              })
+            }
+            loading={isPending}
+          />
+          <StatCard
+            label={t("reports.revenue_stat_renewal")}
+            value={data?.renewal.rate}
+            previous={data?.renewal.previous ?? undefined}
+            compare={compare}
+            suffix="%"
+            empty={t("reports.revenue_renewal_empty")}
+            note={
+              data?.renewal.due
+                ? t("reports.revenue_renewal_base", {
+                    renewed: num(data.renewal.renewed),
+                    due: num(data.renewal.due),
+                  })
+                : undefined
+            }
+            loading={isPending}
+          />
+          <StatCard
+            label={t("reports.revenue_stat_active")}
+            value={subs?.activeNow}
+            detail={t("reports.now")}
+            note={
+              subs &&
+              t("reports.revenue_started", { value: num(subs.started.count) })
+            }
+            loading={isPending}
+          />
+          <StatCard
+            label={t("reports.revenue_stat_pending")}
+            value={data?.pending.amount}
+            detail={unit}
+            note={
+              data &&
+              [
+                t("reports.receipts", { count: data.pending.count }),
+                data.pending.oldestHours !== null &&
+                  t("reports.revenue_oldest", {
+                    value: hours(data.pending.oldestHours),
+                  }),
+              ]
+                .filter(Boolean)
+                .join(" · ")
+            }
+            loading={isPending}
+          />
+          <StatCard
+            label={t("reports.revenue_stat_rejected")}
+            value={data?.outcomes.rejected}
+            previous={data?.outcomes.previousRejected}
+            compare={compare}
+            note={
+              data &&
+              t("reports.revenue_approved_count", {
+                value: num(data.outcomes.approved),
+              })
+            }
+            loading={isPending}
+          />
+          <StatCard
+            label={t("reports.insights_stat_review")}
+            value={data?.reviewHours.median}
+            display={hours(data?.reviewHours.median)}
+            empty={t("reports.insights_review_empty")}
+            note={
+              data?.reviewHours.previous != null
+                ? t("dashboard.previous_value", {
+                    value: hours(data.reviewHours.previous),
+                  })
+                : undefined
+            }
+            loading={isPending}
+          />
+        </div>
       </div>
       <BarChartCard
         title={t("reports.revenue_chart", { unit })}

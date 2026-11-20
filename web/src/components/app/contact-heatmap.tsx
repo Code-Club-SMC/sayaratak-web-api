@@ -47,10 +47,7 @@ export function ContactHeatmap({
   const max = Math.max(0, ...(cells ?? []))
   const busiest = cells ? cells.indexOf(max) : -1
   return (
-    <section
-      aria-labelledby={id}
-      className="flex flex-col gap-4 rounded-xl bg-card p-5"
-    >
+    <section aria-labelledby={id} className="flex flex-col gap-4 panel p-5">
       <div className="flex flex-col gap-1">
         <h2 id={id} className="text-body font-semibold">
           {t("dashboard.heatmap_title")}

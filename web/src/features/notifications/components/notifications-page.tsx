@@ -88,7 +88,7 @@ export function NotificationsPage() {
           </TabsTrigger>
         </TabsList>
         <TabsContent value={tab} className="flex flex-col gap-4">
-          <div className="rounded-xl bg-card p-2" aria-busy={list.isPending}>
+          <div className="panel p-2" aria-busy={list.isPending}>
             <NotificationList
               items={list.data?.items}
               loading={list.isPending}

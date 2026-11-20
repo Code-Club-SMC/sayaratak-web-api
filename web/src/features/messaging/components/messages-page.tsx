@@ -90,7 +90,7 @@ export function MessagesPage({
       <div className="grid h-[calc(100dvh-13rem)] min-h-120 gap-4 lg:grid-cols-[minmax(20rem,24rem)_1fr]">
         <section
           aria-label={t("messages.list_label")}
-          className={`min-h-0 flex-col rounded-xl bg-card ${search.thread ? "hidden lg:flex" : "flex"}`}
+          className={`min-h-0 flex-col panel ${search.thread ? "hidden lg:flex" : "flex"}`}
         >
           {me && (
             <ThreadList
@@ -113,7 +113,7 @@ export function MessagesPage({
           )}
         </section>
         <section
-          className={`min-h-0 flex-col rounded-xl bg-card ${search.thread ? "flex" : "hidden lg:flex"}`}
+          className={`min-h-0 flex-col panel ${search.thread ? "flex" : "hidden lg:flex"}`}
         >
           {me && active ? (
             <ThreadView

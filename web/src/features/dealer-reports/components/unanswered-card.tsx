@@ -32,10 +32,7 @@ export function UnansweredCard({
   const now = useNow()
   const id = useId()
   return (
-    <section
-      aria-labelledby={id}
-      className="flex flex-col gap-4 rounded-xl bg-card p-5"
-    >
+    <section aria-labelledby={id} className="flex flex-col gap-4 panel p-5">
       <h2 id={id} className="text-body font-semibold">
         {t("reports.unanswered_title")}
         {unanswered ? (

@@ -18,7 +18,7 @@ export function UnavailableCard({
   const title = useListingTitle()(listing)
   const first = listing.media[0]
   return (
-    <article className="flex flex-col gap-2 rounded-xl bg-card p-2">
+    <article className="flex flex-col gap-2 panel p-2">
       <div className="relative">
         <div className="opacity-60 grayscale">
           <MediaImage

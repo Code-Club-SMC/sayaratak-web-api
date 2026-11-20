@@ -15,7 +15,7 @@ export function PagePreview({
   return (
     <section
       aria-labelledby="page-preview"
-      className="flex min-w-0 flex-col gap-3 rounded-xl bg-card p-4"
+      className="flex min-w-0 flex-col gap-3 panel p-4"
     >
       <h2
         id="page-preview"

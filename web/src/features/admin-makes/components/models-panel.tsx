@@ -31,10 +31,7 @@ export function ModelsPanel({
     .filter((m) => m.makeId === search.make)
     .sort((a, b) => a.name[locale].localeCompare(b.name[locale], locale))
   return (
-    <section
-      aria-labelledby={id}
-      className="flex flex-col gap-4 rounded-xl bg-card p-4"
-    >
+    <section aria-labelledby={id} className="flex flex-col gap-4 panel p-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-2">
           <Button

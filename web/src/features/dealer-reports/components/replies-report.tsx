@@ -41,33 +41,35 @@ export function RepliesReport({
   return (
     <div className="flex flex-col gap-6">
       <PeriodNote period={data?.period} />
-      <div className="grid grid-cols-2 gap-4 xl:grid-cols-3">
-        <StatCard
-          label={t("reports.stat_reply_time")}
-          value={now ? now.medianMinutes : undefined}
-          display={wait(now?.medianMinutes)}
-          empty={t("reports.no_replies")}
-          note={previous(wait(before?.medianMinutes))}
-          loading={isPending}
-        />
-        <StatCard
-          label={t("reports.stat_reply_rate")}
-          value={now ? now.replyRate : undefined}
-          suffix="%"
-          empty={t(`reports.no_threads${who}`)}
-          note={previous(
-            before?.replyRate != null ? `${before.replyRate}%` : undefined
-          )}
-          loading={isPending}
-        />
-        <StatCard
-          label={t(`reports.stat_threads${who}`)}
-          value={now?.threads}
-          note={previous(
-            before ? formatNumber(before.threads, locale) : undefined
-          )}
-          loading={isPending}
-        />
+      <div className="stat-grid">
+        <div className="grid grid-cols-2 xl:grid-cols-3">
+          <StatCard
+            label={t("reports.stat_reply_time")}
+            value={now ? now.medianMinutes : undefined}
+            display={wait(now?.medianMinutes)}
+            empty={t("reports.no_replies")}
+            note={previous(wait(before?.medianMinutes))}
+            loading={isPending}
+          />
+          <StatCard
+            label={t("reports.stat_reply_rate")}
+            value={now ? now.replyRate : undefined}
+            suffix="%"
+            empty={t(`reports.no_threads${who}`)}
+            note={previous(
+              before?.replyRate != null ? `${before.replyRate}%` : undefined
+            )}
+            loading={isPending}
+          />
+          <StatCard
+            label={t(`reports.stat_threads${who}`)}
+            value={now?.threads}
+            note={previous(
+              before ? formatNumber(before.threads, locale) : undefined
+            )}
+            loading={isPending}
+          />
+        </div>
       </div>
       <p className="text-caption text-muted-foreground">
         {t(`reports.replies_note${who}`)}

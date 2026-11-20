@@ -25,7 +25,7 @@ export function CurrentPlanCard({
   return (
     <section
       aria-labelledby={heading}
-      className="flex flex-col gap-4 rounded-xl bg-card p-5"
+      className="flex flex-col gap-4 panel p-5"
     >
       <PlanSummary
         data={data}

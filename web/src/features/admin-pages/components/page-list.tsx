@@ -17,7 +17,7 @@ export function PageList({ current }: { current: SitePage["slug"] }) {
   })
   return (
     <nav aria-label={t("dashboard.nav_pages")}>
-      <ul className="grid grid-cols-2 gap-1 rounded-xl bg-card p-2 lg:grid-cols-1">
+      <ul className="grid grid-cols-2 gap-1 panel p-2 lg:grid-cols-1">
         {pageSlugs.map((slug, i) => {
           const updatedAt = pages[i]?.data?.updatedAt
           return (

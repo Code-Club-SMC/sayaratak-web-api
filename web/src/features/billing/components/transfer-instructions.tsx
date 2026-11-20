@@ -21,7 +21,7 @@ export function TransferInstructions({ checkout }: { checkout: Checkout }) {
           <li key={step}>{t(`billing.step_${step}`)}</li>
         ))}
       </ol>
-      <dl className="flex flex-col gap-3 rounded-xl bg-card p-4">
+      <dl className="flex flex-col gap-3 panel p-4">
         <AccountDetails
           name={checkout.bankak.name}
           number={checkout.bankak.number}

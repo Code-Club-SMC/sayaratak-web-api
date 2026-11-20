@@ -62,7 +62,7 @@ export function PageForm({ page }: { page: SitePage }) {
       <form
         noValidate
         onSubmit={form.handleSubmit(onSubmit, onInvalid)}
-        className="flex min-w-0 flex-col gap-4 rounded-xl bg-card p-4"
+        className="flex min-w-0 flex-col gap-4 panel p-4"
       >
         <Tabs value={lang} onValueChange={(v: Lang) => setLang(v)}>
           <TabsList aria-label={t("admin.pages_language")}>

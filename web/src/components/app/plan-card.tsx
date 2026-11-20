@@ -88,7 +88,7 @@ export function PlanCard(props: Props) {
     </>
   )
   const card = cn(
-    "grid grid-rows-subgrid gap-3 rounded-xl bg-card p-5",
+    "grid grid-rows-subgrid gap-3 panel p-5",
     highlight && "ring-2 ring-primary"
   )
   if (props.mode === "action")

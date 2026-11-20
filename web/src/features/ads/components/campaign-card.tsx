@@ -24,7 +24,7 @@ export function CampaignCard({
   const ctr = c.impressions ? (c.clicks / c.impressions) * 100 : 0
   const checkout = `${dashboardPath(role)}/billing/checkout?${new URLSearchParams({ item: `campaign:${c.id}` })}`
   return (
-    <article className="flex flex-col gap-4 rounded-xl bg-card p-5 md:flex-row">
+    <article className="flex flex-col gap-4 panel p-5 md:flex-row">
       <img
         src={mediaSrc(c.creative.imageUrl, 640)}
         srcSet={mediaSrcSet(c.creative.imageUrl, 1280)}

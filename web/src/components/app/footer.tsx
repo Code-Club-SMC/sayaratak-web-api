@@ -45,7 +45,7 @@ export function Footer() {
   }, [isPending])
   const contact = data?.contact
   return (
-    <footer className="mt-8 overflow-hidden rounded-xl bg-card pt-8 [view-transition-name:site-footer] md:mt-12 md:pt-12">
+    <footer className="mt-8 overflow-hidden panel pt-8 [view-transition-name:site-footer] md:mt-12 md:pt-12">
       <div className="mx-auto max-w-[1200px] px-4 md:px-6">
         <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)]">
           <div className="max-w-sm space-y-2">

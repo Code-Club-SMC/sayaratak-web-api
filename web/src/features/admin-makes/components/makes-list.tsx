@@ -49,10 +49,7 @@ export function MakesList({
       />
     )
   return (
-    <section
-      aria-labelledby={id}
-      className="flex flex-col gap-4 rounded-xl bg-card p-4"
-    >
+    <section aria-labelledby={id} className="flex flex-col gap-4 panel p-4">
       <div className="flex items-center justify-between gap-3">
         <h2 id={id} className="text-title font-semibold">
           {t("admin.makes_title")}

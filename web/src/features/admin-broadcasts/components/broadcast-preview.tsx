@@ -26,7 +26,7 @@ export function BroadcastPreview({
   return (
     <section
       aria-labelledby="broadcast-preview"
-      className="flex flex-col gap-3 rounded-xl bg-card p-4"
+      className="flex flex-col gap-3 panel p-4"
     >
       <h2 id="broadcast-preview" className="text-ui font-semibold">
         {t("admin.broadcast_preview")}

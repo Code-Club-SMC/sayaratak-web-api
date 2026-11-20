@@ -70,7 +70,7 @@ export function PortfolioPage() {
       <div
         role="status"
         aria-label={t("common.loading")}
-        className="grid grid-cols-2 gap-4 rounded-xl bg-card p-4 sm:grid-cols-3 md:p-5 lg:grid-cols-4"
+        className="grid grid-cols-2 gap-4 panel p-4 sm:grid-cols-3 md:p-5 lg:grid-cols-4"
       >
         {Array.from({ length: 4 }, (_, i) => (
           <Skeleton key={i} className="aspect-[4/3] w-full rounded-lg" />
@@ -88,7 +88,7 @@ export function PortfolioPage() {
     )
   else
     body = (
-      <section className="rounded-xl bg-card p-4 md:p-5">
+      <section className="panel p-4 md:p-5">
         <h2 className="sr-only">{t("dashboard.portfolio_list_title")}</h2>
         <ul className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
           {data.map((p, i) => (

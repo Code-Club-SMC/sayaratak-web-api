@@ -34,50 +34,52 @@ export function ReviewsReport({ query }: { query: PeriodQuery }) {
   return (
     <div className="flex flex-col gap-6">
       <PeriodNote period={data?.period} />
-      <div className="grid grid-cols-2 gap-4 xl:grid-cols-4">
-        <StatCard
-          label={t("reports.stat_rating_all")}
-          value={data ? data.allTime.average : undefined}
-          empty={t("reports.no_reviews")}
-          detail={
-            data
-              ? t("reports.review_count", { count: data.allTime.count })
-              : undefined
-          }
-          loading={isPending}
-        />
-        <StatCard
-          label={t("reports.stat_rating_period")}
-          value={now ? now.average : undefined}
-          empty={t("reports.no_reviews_period")}
-          detail={
-            now ? t("reports.review_count", { count: now.count }) : undefined
-          }
-          note={previous(
-            before?.average != null
-              ? formatNumber(before.average, locale)
-              : undefined
-          )}
-          loading={isPending}
-        />
-        <StatCard
-          label={t("reports.stat_review_reply_rate")}
-          value={now ? now.replyRate : undefined}
-          suffix="%"
-          empty={t("reports.no_reviews_period")}
-          note={previous(
-            before?.replyRate != null ? `${before.replyRate}%` : undefined
-          )}
-          loading={isPending}
-        />
-        <StatCard
-          label={t("reports.stat_review_reply_time")}
-          value={now ? now.medianReplyHours : undefined}
-          display={hours(now?.medianReplyHours)}
-          empty={t("reports.no_replies")}
-          loading={isPending}
-          note={previous(hours(before?.medianReplyHours))}
-        />
+      <div className="stat-grid">
+        <div className="grid grid-cols-2 xl:grid-cols-4">
+          <StatCard
+            label={t("reports.stat_rating_all")}
+            value={data ? data.allTime.average : undefined}
+            empty={t("reports.no_reviews")}
+            detail={
+              data
+                ? t("reports.review_count", { count: data.allTime.count })
+                : undefined
+            }
+            loading={isPending}
+          />
+          <StatCard
+            label={t("reports.stat_rating_period")}
+            value={now ? now.average : undefined}
+            empty={t("reports.no_reviews_period")}
+            detail={
+              now ? t("reports.review_count", { count: now.count }) : undefined
+            }
+            note={previous(
+              before?.average != null
+                ? formatNumber(before.average, locale)
+                : undefined
+            )}
+            loading={isPending}
+          />
+          <StatCard
+            label={t("reports.stat_review_reply_rate")}
+            value={now ? now.replyRate : undefined}
+            suffix="%"
+            empty={t("reports.no_reviews_period")}
+            note={previous(
+              before?.replyRate != null ? `${before.replyRate}%` : undefined
+            )}
+            loading={isPending}
+          />
+          <StatCard
+            label={t("reports.stat_review_reply_time")}
+            value={now ? now.medianReplyHours : undefined}
+            display={hours(now?.medianReplyHours)}
+            empty={t("reports.no_replies")}
+            loading={isPending}
+            note={previous(hours(before?.medianReplyHours))}
+          />
+        </div>
       </div>
       <BarChartCard
         title={t("reports.chart_rating")}

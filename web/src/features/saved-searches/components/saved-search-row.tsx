@@ -34,7 +34,7 @@ export function SavedSearchRow({
     locale
   )
   return (
-    <li className="flex flex-col gap-4 rounded-xl bg-card p-4 md:flex-row md:items-center md:gap-6">
+    <li className="flex flex-col gap-4 panel p-4 md:flex-row md:items-center md:gap-6">
       <div className="flex min-w-0 flex-1 flex-col gap-2">
         <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
           <h3 className="min-w-0 text-body font-semibold">

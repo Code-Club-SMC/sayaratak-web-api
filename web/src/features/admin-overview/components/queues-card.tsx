@@ -36,43 +36,48 @@ export function QueuesCard() {
     },
   ]
   return (
-    <section
-      aria-labelledby="admin-queues"
-      className="flex flex-col gap-2 rounded-xl bg-card p-5"
-    >
-      <h2 id="admin-queues" className="text-body font-semibold">
+    <section aria-labelledby="admin-queues" className="flex flex-col panel">
+      <h2
+        id="admin-queues"
+        className="flex min-h-14 items-center border-b px-5 py-3 text-body font-semibold"
+      >
         {t("admin.queues_title")}
       </h2>
-      {counts.isError ? (
-        <SectionError
-          message={t("admin.queues_error")}
-          onRetry={() => void counts.refetch()}
-        />
-      ) : (
-        <ul className="flex flex-col divide-y divide-border">
-          {rows.map((row) => (
-            <li key={row.label}>
-              <Link
-                {...row.link}
-                className="flex min-h-12 items-center gap-3 rounded-lg px-2 motion-color hover:bg-muted"
-              >
-                <span className="flex-1 text-ui">{row.label}</span>
-                {row.count === undefined ? (
-                  <Skeleton className="h-5 w-8" aria-hidden="true" />
-                ) : (
-                  <span className="text-ui font-semibold num">
-                    {formatNumber(row.count, locale)}
-                  </span>
-                )}
-                <ChevronRightIcon
-                  aria-hidden="true"
-                  className="size-4 text-muted-foreground rtl:-scale-x-100"
-                />
-              </Link>
-            </li>
-          ))}
-        </ul>
-      )}
+      <div className="p-3">
+        {counts.isError ? (
+          <SectionError
+            message={t("admin.queues_error")}
+            onRetry={() => void counts.refetch()}
+          />
+        ) : (
+          <ul className="flex flex-col divide-y divide-border">
+            {rows.map((row) => (
+              <li key={row.label}>
+                <Link
+                  {...row.link}
+                  className="flex min-h-12 items-center gap-3 rounded-lg px-2 motion-color hover:bg-muted"
+                >
+                  <span className="flex-1 text-ui">{row.label}</span>
+                  {row.count === undefined ? (
+                    <Skeleton className="h-5 w-8" aria-hidden="true" />
+                  ) : (
+                    // Work waiting gets a warning pill; an empty queue stays plain grey.
+                    <span
+                      className={`min-w-7 rounded-full px-2 text-center text-ui num ${row.count > 0 ? "bg-warning/15 font-semibold text-warning" : "text-muted-foreground"}`}
+                    >
+                      {formatNumber(row.count, locale)}
+                    </span>
+                  )}
+                  <ChevronRightIcon
+                    aria-hidden="true"
+                    className="size-4 text-muted-foreground rtl:-scale-x-100"
+                  />
+                </Link>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
     </section>
   )
 }

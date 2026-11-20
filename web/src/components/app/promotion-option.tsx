@@ -24,7 +24,7 @@ export function PromotionOption({
   const { t, locale } = useT()
   const { amount, unit } = formatPrice(price, locale)
   return (
-    <label className="flex cursor-pointer items-center gap-3 rounded-xl bg-card p-4 has-checked:ring-2 has-checked:ring-primary has-focus-visible:ring-2 has-focus-visible:ring-ring">
+    <label className="flex cursor-pointer items-center gap-3 panel p-4 has-checked:ring-2 has-checked:ring-primary has-focus-visible:ring-2 has-focus-visible:ring-ring">
       <input
         type="radio"
         name={name}

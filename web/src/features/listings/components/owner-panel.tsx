@@ -44,7 +44,7 @@ export function OwnerPanel({ listing, me }: { listing: Listing; me: User }) {
       }
     )
   return (
-    <section className="flex flex-col gap-4 rounded-xl bg-card p-4 md:p-5">
+    <section className="flex flex-col gap-4 panel p-4 md:p-5">
       <h2 className="text-title font-semibold">{t("listing.owner_title")}</h2>
       <dl className="grid grid-cols-2 gap-x-4 gap-y-3">
         {stats.map(([key, value]) => (

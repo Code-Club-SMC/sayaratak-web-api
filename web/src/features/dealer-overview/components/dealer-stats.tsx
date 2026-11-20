@@ -37,49 +37,53 @@ export function DealerStats() {
     params: { locale },
   } as const
   return (
-    <div className="grid grid-cols-2 gap-4 md:grid-cols-3 xl:grid-cols-5">
-      <StatCard
-        label={t("dashboard.dealer_stat_active")}
-        value={usage?.used}
-        detail={
-          usage?.limit != null
-            ? t("dashboard.dealer_of_limit", {
-                max: formatNumber(usage.limit, locale),
-              })
-            : undefined
-        }
-        link={{
-          to: "/$locale/dealer/inventory",
-          params: { locale },
-          search: { tab: "active" },
-        }}
-      />
-      <StatCard
-        label={t("analytics.stat_views")}
-        value={totals?.views}
-        previous={previous?.views}
-        spark={daily?.map((d) => d.views)}
-        link={toReports}
-      />
-      <StatCard
-        label={t("analytics.col_contacts")}
-        value={totals && totals.calls + totals.whatsapp}
-        previous={previous && previous.calls + previous.whatsapp}
-        spark={daily?.map((d) => d.calls + d.whatsapp)}
-        link={toReports}
-      />
-      <StatCard
-        label={t("dashboard.overview_stat_messages")}
-        value={counts.data?.unreadMessages}
-        link={{ to: "/$locale/dealer/messages", params: { locale } }}
-      />
-      <StatCard
-        label={t("dashboard.dealer_stat_rating")}
-        // One decimal, like the stars on the public profile.
-        value={rating && Math.round(rating.avg * 10) / 10}
-        detail={rating && t("directory.reviews_count", { count: rating.count })}
-        link={{ to: "/$locale/dealer/reviews", params: { locale } }}
-      />
+    <div className="stat-grid">
+      <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-5">
+        <StatCard
+          label={t("dashboard.dealer_stat_active")}
+          value={usage?.used}
+          detail={
+            usage?.limit != null
+              ? t("dashboard.dealer_of_limit", {
+                  max: formatNumber(usage.limit, locale),
+                })
+              : undefined
+          }
+          link={{
+            to: "/$locale/dealer/inventory",
+            params: { locale },
+            search: { tab: "active" },
+          }}
+        />
+        <StatCard
+          label={t("analytics.stat_views")}
+          value={totals?.views}
+          previous={previous?.views}
+          spark={daily?.map((d) => d.views)}
+          link={toReports}
+        />
+        <StatCard
+          label={t("analytics.col_contacts")}
+          value={totals && totals.calls + totals.whatsapp}
+          previous={previous && previous.calls + previous.whatsapp}
+          spark={daily?.map((d) => d.calls + d.whatsapp)}
+          link={toReports}
+        />
+        <StatCard
+          label={t("dashboard.overview_stat_messages")}
+          value={counts.data?.unreadMessages}
+          link={{ to: "/$locale/dealer/messages", params: { locale } }}
+        />
+        <StatCard
+          label={t("dashboard.dealer_stat_rating")}
+          // One decimal, like the stars on the public profile.
+          value={rating && Math.round(rating.avg * 10) / 10}
+          detail={
+            rating && t("directory.reviews_count", { count: rating.count })
+          }
+          link={{ to: "/$locale/dealer/reviews", params: { locale } }}
+        />
+      </div>
     </div>
   )
 }

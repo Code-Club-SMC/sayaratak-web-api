@@ -34,25 +34,27 @@ export function PromotionsReport({
   return (
     <div className="flex flex-col gap-6">
       <PeriodNote period={data?.period} />
-      <div className="grid grid-cols-2 gap-4 xl:grid-cols-3">
-        <StatCard
-          label={t("reports.stat_spent")}
-          value={summary?.spent}
-          detail={unit}
-          loading={isPending}
-        />
-        <StatCard
-          label={t("reports.stat_extra")}
-          value={summary?.extraContacts}
-          loading={isPending}
-        />
-        <StatCard
-          label={t("reports.stat_cost_extra")}
-          value={summary ? summary.costPerExtraContact : undefined}
-          detail={summary?.costPerExtraContact != null ? unit : undefined}
-          empty={t("reports.cost_not_enough")}
-          loading={isPending}
-        />
+      <div className="stat-grid">
+        <div className="grid grid-cols-2 xl:grid-cols-3">
+          <StatCard
+            label={t("reports.stat_spent")}
+            value={summary?.spent}
+            detail={unit}
+            loading={isPending}
+          />
+          <StatCard
+            label={t("reports.stat_extra")}
+            value={summary?.extraContacts}
+            loading={isPending}
+          />
+          <StatCard
+            label={t("reports.stat_cost_extra")}
+            value={summary ? summary.costPerExtraContact : undefined}
+            detail={summary?.costPerExtraContact != null ? unit : undefined}
+            empty={t("reports.cost_not_enough")}
+            loading={isPending}
+          />
+        </div>
       </div>
       <PromotionsTable rows={data?.promotions} loading={isPending} />
       {campaigns ? (

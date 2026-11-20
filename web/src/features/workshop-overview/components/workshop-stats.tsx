@@ -47,40 +47,44 @@ export function WorkshopStats({
   const daily = analytics.data?.daily
   const toReports = { to: paths[role].reports, params: { locale } } as const
   return (
-    <div className="grid grid-cols-2 gap-4 md:grid-cols-3 xl:grid-cols-5">
-      <StatCard
-        label={t("analytics.stat_profile_views")}
-        value={totals?.views}
-        previous={previous?.views}
-        spark={daily?.map((d) => d.views)}
-        link={toReports}
-      />
-      <StatCard
-        label={t("analytics.stat_calls")}
-        value={totals?.calls}
-        previous={previous?.calls}
-        spark={daily?.map((d) => d.calls)}
-        link={toReports}
-      />
-      <StatCard
-        label={t("analytics.stat_whatsapp")}
-        value={totals?.whatsapp}
-        previous={previous?.whatsapp}
-        spark={daily?.map((d) => d.whatsapp)}
-        link={toReports}
-      />
-      <StatCard
-        label={t("dashboard.workshop_stat_inquiries")}
-        value={counts.data?.unreadMessages}
-        link={{ to: paths[role].inquiries, params: { locale } }}
-      />
-      <StatCard
-        label={t("dashboard.dealer_stat_rating")}
-        // One decimal, like the stars on the public profile.
-        value={rating && Math.round(rating.avg * 10) / 10}
-        detail={rating && t("directory.reviews_count", { count: rating.count })}
-        link={{ to: paths[role].reviews, params: { locale } }}
-      />
+    <div className="stat-grid">
+      <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-5">
+        <StatCard
+          label={t("analytics.stat_profile_views")}
+          value={totals?.views}
+          previous={previous?.views}
+          spark={daily?.map((d) => d.views)}
+          link={toReports}
+        />
+        <StatCard
+          label={t("analytics.stat_calls")}
+          value={totals?.calls}
+          previous={previous?.calls}
+          spark={daily?.map((d) => d.calls)}
+          link={toReports}
+        />
+        <StatCard
+          label={t("analytics.stat_whatsapp")}
+          value={totals?.whatsapp}
+          previous={previous?.whatsapp}
+          spark={daily?.map((d) => d.whatsapp)}
+          link={toReports}
+        />
+        <StatCard
+          label={t("dashboard.workshop_stat_inquiries")}
+          value={counts.data?.unreadMessages}
+          link={{ to: paths[role].inquiries, params: { locale } }}
+        />
+        <StatCard
+          label={t("dashboard.dealer_stat_rating")}
+          // One decimal, like the stars on the public profile.
+          value={rating && Math.round(rating.avg * 10) / 10}
+          detail={
+            rating && t("directory.reviews_count", { count: rating.count })
+          }
+          link={{ to: paths[role].reviews, params: { locale } }}
+        />
+      </div>
     </div>
   )
 }

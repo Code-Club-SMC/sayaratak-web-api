@@ -59,29 +59,31 @@ export function AdsInsights({ query }: { query: PeriodQuery }) {
       <p className="text-caption text-muted-foreground">
         {t("reports.ads_day_note")}
       </p>
-      <div className="grid grid-cols-2 gap-4 xl:grid-cols-3">
-        {views(t("reports.ads_stat_campaign_views"), data?.campaigns)}
-        {ctr(t("reports.ads_stat_campaign_ctr"), data?.campaigns)}
-        <StatCard
-          label={t("reports.ads_stat_fill")}
-          value={data && data.fill.pct}
-          previous={data?.fill.previous ?? undefined}
-          suffix="%"
-          empty={t("reports.ads_fill_empty")}
-          {...common}
-        />
-        {views(t("reports.ads_stat_banner_views"), data?.banners)}
-        {ctr(t("reports.ads_stat_banner_ctr"), data?.banners)}
-        <StatCard
-          label={t("reports.ads_stat_running")}
-          value={campaigns}
-          note={
-            banners === undefined
-              ? undefined
-              : t("reports.ads_banners_count", { value: num(banners) })
-          }
-          loading={isPending}
-        />
+      <div className="stat-grid">
+        <div className="grid grid-cols-2 xl:grid-cols-3">
+          {views(t("reports.ads_stat_campaign_views"), data?.campaigns)}
+          {ctr(t("reports.ads_stat_campaign_ctr"), data?.campaigns)}
+          <StatCard
+            label={t("reports.ads_stat_fill")}
+            value={data && data.fill.pct}
+            previous={data?.fill.previous ?? undefined}
+            suffix="%"
+            empty={t("reports.ads_fill_empty")}
+            {...common}
+          />
+          {views(t("reports.ads_stat_banner_views"), data?.banners)}
+          {ctr(t("reports.ads_stat_banner_ctr"), data?.banners)}
+          <StatCard
+            label={t("reports.ads_stat_running")}
+            value={campaigns}
+            note={
+              banners === undefined
+                ? undefined
+                : t("reports.ads_banners_count", { value: num(banners) })
+            }
+            loading={isPending}
+          />
+        </div>
       </div>
       <div className="grid gap-4 lg:grid-cols-2">
         <BarChartCard

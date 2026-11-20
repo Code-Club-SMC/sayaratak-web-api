@@ -57,23 +57,25 @@ export function StatRow({
   const { t } = useT()
   const notCompared = data ? !data.period.eventsCompared : false
   return (
-    <div className="grid grid-cols-2 gap-4 md:grid-cols-3 xl:grid-cols-5">
-      {stats[role].map(({ key, label }) => {
-        const unavailable = notCompared && EVENT_KEYS.has(key)
-        const series = SERIES[key]
-        return (
-          <StatCard
-            key={key}
-            label={t(label)}
-            value={data?.totals[key]}
-            previous={unavailable ? undefined : data?.previous[key]}
-            compare={data?.period.compare}
-            unavailable={unavailable}
-            spark={series && data?.daily.map((d) => d[series])}
-            loading={loading}
-          />
-        )
-      })}
+    <div className="stat-grid">
+      <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-5">
+        {stats[role].map(({ key, label }) => {
+          const unavailable = notCompared && EVENT_KEYS.has(key)
+          const series = SERIES[key]
+          return (
+            <StatCard
+              key={key}
+              label={t(label)}
+              value={data?.totals[key]}
+              previous={unavailable ? undefined : data?.previous[key]}
+              compare={data?.period.compare}
+              unavailable={unavailable}
+              spark={series && data?.daily.map((d) => d[series])}
+              loading={loading}
+            />
+          )
+        })}
+      </div>
     </div>
   )
 }

@@ -45,10 +45,7 @@ export function ExpiringTable({
   const now = useNow()
   const unit = formatPrice(0, locale).unit
   return (
-    <section
-      aria-labelledby={id}
-      className="flex flex-col gap-2 rounded-xl bg-card p-5"
-    >
+    <section aria-labelledby={id} className="flex flex-col gap-2 panel p-5">
       <h2 id={id} className="text-body font-semibold">
         {t("reports.revenue_expiring")}
       </h2>
@@ -66,7 +63,7 @@ export function ExpiringTable({
         />
       ) : (
         <Table>
-          <TableHeader>
+          <TableHeader className="bg-muted">
             <TableRow>
               <TableHead>{t("reports.revenue_col_account")}</TableHead>
               <TableHead>{t("reports.revenue_col_ends")}</TableHead>

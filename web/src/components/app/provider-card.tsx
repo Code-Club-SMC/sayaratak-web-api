@@ -36,7 +36,7 @@ export function ProviderCard({
   const { locale } = useT()
   const city = useCityName(cityId)
   return (
-    <article className="group relative flex gap-3 rounded-xl bg-card p-4 md:p-5">
+    <article className="group relative flex gap-3 panel p-4 md:p-5">
       <MediaImage
         src={image}
         alt=""

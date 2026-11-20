@@ -87,10 +87,7 @@ export function DemandReport({ query }: { query: PeriodQuery }) {
   return (
     <div className="flex flex-col gap-6">
       <PeriodNote period={data?.period} />
-      <section
-        aria-labelledby={id}
-        className="flex flex-col gap-2 rounded-xl bg-card p-5"
-      >
+      <section aria-labelledby={id} className="flex flex-col gap-2 panel p-5">
         <h2 id={id} className="text-body font-semibold">
           {t("reports.demand_title")}
         </h2>

@@ -28,18 +28,20 @@ export function PriceReport({ search }: { search: ReportsSearch }) {
       <p className="max-w-prose text-ui text-muted-foreground">
         {t("reports.price_intro")}
       </p>
-      <div className="grid grid-cols-2 gap-4 xl:grid-cols-4">
-        {(["below", "around", "above", "unknown"] as const).map((key) => (
-          <StatCard
-            key={key}
-            label={t(`reports.price_filter_${key}`)}
-            value={summary?.[key]}
-            detail={t("reports.price_of_live", {
-              value: formatNumber(summary?.live ?? 0, locale),
-            })}
-            loading={isPending}
-          />
-        ))}
+      <div className="stat-grid">
+        <div className="grid grid-cols-2 xl:grid-cols-4">
+          {(["below", "around", "above", "unknown"] as const).map((key) => (
+            <StatCard
+              key={key}
+              label={t(`reports.price_filter_${key}`)}
+              value={summary?.[key]}
+              detail={t("reports.price_of_live", {
+                value: formatNumber(summary?.live ?? 0, locale),
+              })}
+              loading={isPending}
+            />
+          ))}
+        </div>
       </div>
       <PriceReportTable search={search} report={report} />
     </div>

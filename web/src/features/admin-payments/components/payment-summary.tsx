@@ -12,24 +12,23 @@ export function PaymentSummary({
   const { t, locale } = useT()
   const { unit } = formatPrice(0, locale)
   return (
-    <section
-      aria-label={t("admin.payments_summary")}
-      className="grid gap-3 sm:grid-cols-3"
-    >
-      <StatCard
-        label={t("admin.payments_approved_month")}
-        value={summary?.approvedThisMonth}
-        detail={unit}
-      />
-      <StatCard
-        label={t("admin.payments_pending_count")}
-        value={summary?.pendingCount}
-      />
-      <StatCard
-        label={t("admin.payments_pending_amount")}
-        value={summary?.pendingAmount}
-        detail={unit}
-      />
+    <section aria-label={t("admin.payments_summary")} className="stat-grid">
+      <div className="grid sm:grid-cols-3">
+        <StatCard
+          label={t("admin.payments_approved_month")}
+          value={summary?.approvedThisMonth}
+          detail={unit}
+        />
+        <StatCard
+          label={t("admin.payments_pending_count")}
+          value={summary?.pendingCount}
+        />
+        <StatCard
+          label={t("admin.payments_pending_amount")}
+          value={summary?.pendingAmount}
+          detail={unit}
+        />
+      </div>
     </section>
   )
 }

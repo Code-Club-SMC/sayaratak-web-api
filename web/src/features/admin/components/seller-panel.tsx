@@ -38,7 +38,7 @@ export function SellerPanel({
   return (
     <section
       aria-label={t("admin.seller")}
-      className={cn("flex flex-col gap-3 rounded-xl bg-card p-4", className)}
+      className={cn("flex flex-col gap-3 panel p-4", className)}
     >
       <div className="flex flex-col gap-0.5">
         <p className="text-body font-semibold">

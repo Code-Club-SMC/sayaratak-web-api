@@ -34,7 +34,7 @@ export function SetupChecklist() {
   return (
     <section
       aria-labelledby="setup-title"
-      className="flex flex-col gap-4 rounded-xl bg-card p-5"
+      className="flex flex-col gap-4 panel p-5"
     >
       <div className="flex items-start justify-between gap-3">
         <h2 id="setup-title" className="text-title font-semibold">

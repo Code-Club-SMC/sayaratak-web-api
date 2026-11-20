@@ -109,7 +109,7 @@ export function MechanicProfilePage({
           />
         </TabsContent>
         <TabsContent value="reviews" className="pt-4">
-          <div className="rounded-xl bg-card p-4 md:p-5">
+          <div className="panel p-4 md:p-5">
             <ReviewsSection
               targetType="mechanic"
               targetId={m.id}

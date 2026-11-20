@@ -129,7 +129,7 @@ export function ReviewsManagerPage({ targetType }: { targetType: TargetType }) {
           )}
         />
       ) : (
-        <ul className="divide-y divide-border rounded-xl bg-card px-4">
+        <ul className="divide-y divide-border panel px-4">
           {list.data.items.map((review) => (
             <ManagerReviewItem key={review.id} review={review} />
           ))}

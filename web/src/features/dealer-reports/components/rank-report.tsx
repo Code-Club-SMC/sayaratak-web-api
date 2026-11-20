@@ -59,35 +59,37 @@ export function RankReport({
             : t("reports.rank_scope_country", { peers, kind, city })}
         </p>
       )}
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        {(data?.metrics ?? []).map((row) => (
-          <StatCard
-            key={row.key}
-            label={t(`reports.rank_${keyOf(row.key)}`)}
-            value={row.percentile}
-            display={
-              row.percentile === null
-                ? undefined
-                : t("reports.rank_better", {
-                    value: formatNumber(row.percentile, locale),
-                  })
-            }
-            empty={emptyOf(row)}
-            note={
-              row.value === null
-                ? undefined
-                : t("reports.rank_yours", { value: value(row) })
-            }
-          />
-        ))}
-        {isPending &&
-          RANK_METRICS.map((key) => (
+      <div className="stat-grid">
+        <div className="grid sm:grid-cols-2 xl:grid-cols-4">
+          {(data?.metrics ?? []).map((row) => (
             <StatCard
-              key={key}
-              label={t(`reports.rank_${keyOf(key)}`)}
-              loading
+              key={row.key}
+              label={t(`reports.rank_${keyOf(row.key)}`)}
+              value={row.percentile}
+              display={
+                row.percentile === null
+                  ? undefined
+                  : t("reports.rank_better", {
+                      value: formatNumber(row.percentile, locale),
+                    })
+              }
+              empty={emptyOf(row)}
+              note={
+                row.value === null
+                  ? undefined
+                  : t("reports.rank_yours", { value: value(row) })
+              }
             />
           ))}
+          {isPending &&
+            RANK_METRICS.map((key) => (
+              <StatCard
+                key={key}
+                label={t(`reports.rank_${keyOf(key)}`)}
+                loading
+              />
+            ))}
+        </div>
       </div>
       <p className="text-caption text-muted-foreground">
         {t("reports.rank_note")}

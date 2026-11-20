@@ -63,7 +63,7 @@ export function BroadcastForm() {
       <form
         noValidate
         onSubmit={form.handleSubmit(setConfirm)}
-        className="flex flex-col gap-6 rounded-xl bg-card p-4"
+        className="flex flex-col gap-6 panel p-4"
       >
         <BroadcastTextFields form={form} />
         <FormField

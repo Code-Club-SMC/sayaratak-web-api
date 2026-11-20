@@ -31,10 +31,7 @@ export function PromotionPriceCards() {
             </li>
           ))
         : prices.data.map((p) => (
-            <li
-              key={p.id}
-              className="flex flex-col gap-2 rounded-xl bg-card p-4"
-            >
+            <li key={p.id} className="flex flex-col gap-2 panel p-4">
               <div className="flex flex-wrap items-center gap-2">
                 <h2 className="text-ui font-semibold">
                   {t(`promotion.name_${p.type}`)}

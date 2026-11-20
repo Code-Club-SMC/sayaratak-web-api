@@ -21,7 +21,7 @@ export function SiteSettingsPage() {
     <div className="flex flex-col gap-6">
       <PageHeader title={title} hint={t("admin.settings_hint")} />
       {settings.data ? (
-        <div className="rounded-xl bg-card px-4">
+        <div className="panel px-4">
           <ListingSettings settings={settings.data} />
           <PaymentSettings settings={settings.data} />
           <ContactSettings settings={settings.data} />

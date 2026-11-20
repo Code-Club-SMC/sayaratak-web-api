@@ -17,7 +17,7 @@ export function OrderSummary({
   return (
     <section
       aria-labelledby={heading}
-      className="flex flex-col gap-3 rounded-xl bg-card p-5"
+      className="flex flex-col gap-3 panel p-5"
     >
       <h2 id={heading} className="text-title font-semibold">
         {t("billing.order_title")}

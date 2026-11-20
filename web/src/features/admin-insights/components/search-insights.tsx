@@ -58,21 +58,23 @@ export function SearchInsights({ query }: { query: PeriodQuery }) {
       <p className="text-caption text-muted-foreground">
         {t("reports.search_day_note")}
       </p>
-      <div className="grid grid-cols-2 gap-4 xl:grid-cols-4">
-        <StatCard
-          label={t("reports.search_stat_searches")}
-          value={data?.searches.count}
-          previous={data?.searches.previous}
-          {...common}
-        />
-        <StatCard
-          label={t("reports.search_stat_misses")}
-          value={data?.misses.count}
-          previous={data?.misses.previous}
-          {...common}
-        />
-        {rate(t("reports.search_stat_miss_rate"), data?.missRate)}
-        {rate(t("reports.search_stat_text_rate"), data?.textRate)}
+      <div className="stat-grid">
+        <div className="grid grid-cols-2 xl:grid-cols-4">
+          <StatCard
+            label={t("reports.search_stat_searches")}
+            value={data?.searches.count}
+            previous={data?.searches.previous}
+            {...common}
+          />
+          <StatCard
+            label={t("reports.search_stat_misses")}
+            value={data?.misses.count}
+            previous={data?.misses.previous}
+            {...common}
+          />
+          {rate(t("reports.search_stat_miss_rate"), data?.missRate)}
+          {rate(t("reports.search_stat_text_rate"), data?.textRate)}
+        </div>
       </div>
       <BarChartCard
         title={t("reports.search_chart")}

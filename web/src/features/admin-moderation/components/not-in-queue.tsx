@@ -14,7 +14,7 @@ export function NotInQueue({ id }: { id: string }) {
       icon={SearchXIcon}
       title={t("admin.not_in_queue")}
       body={t("admin.not_in_queue_body")}
-      className="rounded-xl bg-card"
+      className="panel"
       action={
         <a
           href={localeHref(`/admin/listings?id=${id}`, locale)}

@@ -10,6 +10,8 @@ import { countsQuery } from "../counts-query"
 import { notificationQueries, useMarkNotificationsRead } from "../queries"
 import { useOpenNotification } from "../use-open-notification"
 import { NotificationList } from "./notification-list"
+import { BellIcon } from "lucide-react"
+import { EmptyState } from "@/components/app/empty-state"
 
 // The bell's popover: the latest 8, "Mark all as read", and a link to the page. Clicking a row closes the panel.
 export function NotificationPanel({
@@ -49,9 +51,13 @@ export function NotificationPanel({
           onRetry={() => void list.refetch()}
           onOpen={open}
           empty={
-            <p className="px-3 py-6 text-center text-ui text-muted-foreground">
-              {t("notifications.empty_title")}
-            </p>
+            <EmptyState
+              icon={BellIcon}
+              title={t("notifications.empty_title")}
+              body={t("notifications.empty_body")}
+              level={3}
+              className="py-6"
+            />
           }
         />
       </div>

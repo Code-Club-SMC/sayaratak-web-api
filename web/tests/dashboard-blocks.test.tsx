@@ -185,12 +185,15 @@ describe("charts", () => {
     const empty = await renderShell(
       <AreaChartCard title="Views" data={[]} series={series} />
     )
-    expect(screen.getByText("No data for this period yet.")).toBeTruthy()
+    expect(screen.getByText("No data for this period")).toBeTruthy()
     empty.unmount()
     const failed = await renderShell(
       <BarChartCard title="Views" series={series} error onRetry={onRetry} />
     )
     fireEvent.click(screen.getByRole("button", { name: "Try again" }))
+    expect(screen.getByRole("alert").textContent).toContain(
+      "Could not load this chart"
+    )
     expect(onRetry).toHaveBeenCalled()
     failed.unmount()
     const { container } = await renderShell(

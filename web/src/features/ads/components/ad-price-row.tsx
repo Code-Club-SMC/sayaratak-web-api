@@ -27,7 +27,7 @@ export function AdPriceRow({ page }: { page: AdPage }) {
   return (
     <form
       noValidate
-      className="flex flex-col gap-4 rounded-xl bg-card p-5"
+      className="flex flex-col gap-4 panel p-5"
       onSubmit={(e) => {
         e.preventDefault()
         if (invalid) return

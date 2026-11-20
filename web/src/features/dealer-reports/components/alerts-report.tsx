@@ -25,24 +25,26 @@ export function AlertsReport({ query }: { query: PeriodQuery }) {
   return (
     <div className="flex flex-col gap-6">
       <PeriodNote period={data?.period} />
-      <div className="grid grid-cols-2 gap-4">
-        <StatCard
-          label={t("reports.stat_saved_searches")}
-          value={data?.searches}
-          note={
-            data
-              ? t("reports.alerts_on_count", { count: data.alertsOn })
-              : undefined
-          }
-          loading={isPending}
-        />
-        <StatCard
-          label={t("reports.stat_matches")}
-          value={data?.matches}
-          previous={data?.previous}
-          compare={data?.period.compare}
-          loading={isPending}
-        />
+      <div className="stat-grid">
+        <div className="grid grid-cols-2">
+          <StatCard
+            label={t("reports.stat_saved_searches")}
+            value={data?.searches}
+            note={
+              data
+                ? t("reports.alerts_on_count", { count: data.alertsOn })
+                : undefined
+            }
+            loading={isPending}
+          />
+          <StatCard
+            label={t("reports.stat_matches")}
+            value={data?.matches}
+            previous={data?.previous}
+            compare={data?.period.compare}
+            loading={isPending}
+          />
+        </div>
       </div>
       <BarChartCard
         title={t("reports.chart_matches")}

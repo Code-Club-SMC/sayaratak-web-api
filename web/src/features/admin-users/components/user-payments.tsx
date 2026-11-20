@@ -7,6 +7,8 @@ import { PaymentStatusBadge } from "@/features/billing/components/payment-status
 import { PriceText } from "@/components/app/price-text"
 import { SectionError } from "@/components/app/section-error"
 import { Skeleton } from "@/components/ui/skeleton"
+import { CreditCardIcon } from "lucide-react"
+import { EmptyState } from "@/components/app/empty-state"
 
 // The person's five latest payments, with how many there are in all.
 export function UserPayments({ userId }: { userId: string }) {
@@ -32,9 +34,13 @@ export function UserPayments({ userId }: { userId: string }) {
       ) : !data ? (
         <Skeleton className="h-28" aria-hidden="true" />
       ) : data.items.length === 0 ? (
-        <p className="text-ui text-muted-foreground">
-          {t("admin.user_no_payments")}
-        </p>
+        <EmptyState
+          icon={CreditCardIcon}
+          title={t("admin.user_no_payments")}
+          body={t("admin.user_no_payments_body")}
+          level={3}
+          className="rounded-lg bg-muted py-6"
+        />
       ) : (
         <ul className="flex flex-col gap-3">
           {data.items.map((p) => (

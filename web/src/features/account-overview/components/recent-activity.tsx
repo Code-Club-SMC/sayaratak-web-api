@@ -6,6 +6,8 @@ import { NotificationList } from "@/features/notifications/components/notificati
 import { notificationQueries } from "@/features/notifications/queries"
 import { useOpenNotification } from "@/features/notifications/use-open-notification"
 import { useT } from "@/lib/i18n/use-t"
+import { BellIcon } from "lucide-react"
+import { EmptyState } from "@/components/app/empty-state"
 
 // The five latest notifications. A click marks one read and opens its page.
 export function RecentActivity() {
@@ -15,7 +17,7 @@ export function RecentActivity() {
   return (
     <section
       aria-labelledby="overview-activity"
-      className="flex flex-col gap-2 rounded-xl bg-card p-5"
+      className="flex flex-col gap-2 panel p-5"
     >
       <div className="flex items-center justify-between gap-2">
         <h2 id="overview-activity" className="text-body font-semibold">
@@ -36,9 +38,13 @@ export function RecentActivity() {
         onRetry={() => void list.refetch()}
         onOpen={open}
         empty={
-          <p className="py-6 text-center text-ui text-muted-foreground">
-            {t("notifications.empty_title")}
-          </p>
+          <EmptyState
+            icon={BellIcon}
+            title={t("notifications.empty_title")}
+            body={t("notifications.empty_body")}
+            level={3}
+            className="py-6"
+          />
         }
       />
     </section>

@@ -84,7 +84,7 @@ export function ServicesPage() {
       <div
         role="status"
         aria-label={t("common.loading")}
-        className="flex flex-col gap-3 rounded-xl bg-card p-4 md:p-5"
+        className="flex flex-col gap-3 panel p-4 md:p-5"
       >
         {Array.from({ length: 4 }, (_, i) => (
           <Skeleton key={i} className="h-14 w-full" />
@@ -107,7 +107,7 @@ export function ServicesPage() {
     )
   else
     body = (
-      <section className="rounded-xl bg-card p-4 md:p-5">
+      <section className="panel p-4 md:p-5">
         <h2 className="sr-only">{t("dashboard.services_list_title")}</h2>
         <ul className="flex flex-col divide-y divide-border">
           {data.map((s, i) => (

@@ -1,4 +1,5 @@
 import { Link, type LinkProps } from "@tanstack/react-router"
+import { ArrowDownIcon, ArrowUpIcon, ChevronRightIcon } from "lucide-react"
 
 import { useT } from "@/lib/i18n/use-t"
 import { formatNumber } from "@/lib/format"
@@ -6,6 +7,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 import type { Compare } from "@sayaratak/shared/schemas/period"
 import { Sparkline } from "./sparkline"
 
+// One cell of a `stat-grid` panel (the grid draws the hairlines, so the cell has no corners or fill of its own).
 // `previous` is the same measure for the compare window (`compare`: the period before, default, or a year earlier); the card shows the change, and report cards (with `spark`) the previous value too. Without it no change is shown, and when it is 0 only the value. `unavailable` says the change cannot be worked out (old counters kept per month only). `spark` draws the trend under the number. `detail` sits beside the number ("of 20", "12 reviews"); `link` turns the whole card into a link to the page that explains the number.
 export function StatCard({
   label,
@@ -47,12 +49,23 @@ export function StatCard({
       : undefined
   const body = (
     <>
-      <p className="text-caption text-muted-foreground">{label}</p>
+      <p className="flex items-center justify-between gap-2 text-ui font-medium text-muted-foreground">
+        {label}
+        {link && (
+          <ChevronRightIcon
+            aria-hidden="true"
+            className="size-4 shrink-0 opacity-0 motion-fade group-hover:opacity-100 rtl:-scale-x-100"
+          />
+        )}
+      </p>
       {loading || value === undefined ? (
-        <Skeleton className="h-8 w-24" aria-hidden="true" />
+        <Skeleton className="h-9 w-24" aria-hidden="true" />
       ) : value === null ? (
         <>
-          <p className="text-title font-semibold" aria-hidden="true">
+          <p
+            className="text-page font-semibold text-muted-foreground"
+            aria-hidden="true"
+          >
             —
           </p>
           {empty && (
@@ -61,7 +74,10 @@ export function StatCard({
         </>
       ) : (
         <p className="flex flex-wrap items-baseline gap-x-2">
-          <span className="text-title font-semibold num">
+          {/* A zero goes grey so the real numbers in the row stand out. */}
+          <span
+            className={`text-page font-semibold num ${value === 0 && !display ? "text-muted-foreground" : ""}`}
+          >
             {display ??
               (suffix ? (
                 <bdi dir="ltr">
@@ -88,14 +104,23 @@ export function StatCard({
       ) : (
         change !== undefined &&
         !loading && (
-          <p
-            className={`text-caption num ${change < 0 ? "text-destructive" : "text-success"}`}
-          >
-            <bdi dir="ltr">
-              {change > 0 ? "+" : ""}
-              {formatNumber(change, locale)}%
-            </bdi>{" "}
-            <span className="text-muted-foreground">
+          <p className="flex flex-wrap items-center gap-x-2 gap-y-1 text-caption text-muted-foreground">
+            {/* Arrow and tint together, so the direction reads without colour. */}
+            <span
+              className={`inline-flex items-center gap-0.5 rounded-sm px-1.5 font-semibold num ${change > 0 ? "bg-success/10 text-success" : change < 0 ? "bg-destructive/10 text-destructive" : "bg-muted"}`}
+            >
+              {change > 0 && (
+                <ArrowUpIcon aria-hidden="true" className="size-3" />
+              )}
+              {change < 0 && (
+                <ArrowDownIcon aria-hidden="true" className="size-3" />
+              )}
+              <bdi dir="ltr">
+                {change > 0 ? "+" : ""}
+                {formatNumber(change, locale)}%
+              </bdi>
+            </span>
+            <span>
               {t(
                 compare === "year"
                   ? "dashboard.vs_year"
@@ -105,7 +130,7 @@ export function StatCard({
           </p>
         )
       )}
-      {spark && previous !== undefined && !unavailable && !loading && (
+      {spark && !!previous && !unavailable && !loading && (
         <p className="text-caption text-muted-foreground num">
           {t("dashboard.previous_value", {
             value: formatNumber(previous, locale),
@@ -114,9 +139,9 @@ export function StatCard({
       )}
     </>
   )
-  const card = "flex flex-col gap-1 rounded-xl bg-card p-5"
+  const card = "flex min-w-0 flex-col gap-1.5 px-5 py-4"
   return link ? (
-    <Link {...link} className={`${card} motion-color hover:bg-muted`}>
+    <Link {...link} className={`group ${card} motion-color hover:bg-muted`}>
       {body}
     </Link>
   ) : (

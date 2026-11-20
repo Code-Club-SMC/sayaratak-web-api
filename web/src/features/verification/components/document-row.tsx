@@ -28,7 +28,7 @@ export function DocumentRow({
       role="group"
       data-slot="document-row"
       aria-label={t("verification.doc_n", { n })}
-      className="flex flex-col gap-3 rounded-xl bg-card p-4"
+      className="flex flex-col gap-3 panel p-4"
     >
       <div className="flex items-end gap-2">
         <FormField

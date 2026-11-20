@@ -13,12 +13,12 @@ import { env } from "~/env"
 import { db } from "~/shared/db/client"
 import { ALL_PREFS } from "~/shared/db/defaults"
 import * as schema from "~/shared/db/schema"
-import { send } from "~/shared/mail/send"
 
 import {
   ADMIN_CODE_PATH,
   adminCodeAfter,
   adminCodeBefore,
+  adminOtpOptions,
 } from "./auth.admin.service"
 import { authAfter, authBefore, CLIENT_IP_HEADER } from "./auth.guard.service"
 import { mailCode } from "./auth.mail.service"
@@ -195,11 +195,7 @@ export const auth = betterAuth({
     }),
     twoFactor({
       totpOptions: { disable: true },
-      otpOptions: {
-        sendOTP: async ({ user, otp }) => {
-          send.adminCode(user, otp)
-        },
-      },
+      otpOptions: adminOtpOptions,
     }),
     admin({ defaultRole: "user", adminRoles: ["admin"] }),
     bearer(),

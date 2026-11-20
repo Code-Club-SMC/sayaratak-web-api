@@ -1,7 +1,10 @@
 import type { HookEndpointContext } from "better-auth"
 import { APIError, isAPIError } from "better-auth/api"
 
+import { env } from "~/env"
 import { db } from "~/shared/db/client"
+import { log } from "~/shared/log/logger"
+import { send } from "~/shared/mail/send"
 
 import {
   CLIENT_IP_HEADER,
@@ -71,4 +74,31 @@ async function challengeEmail(ctx: HookEndpointContext) {
 
 function ipOf(ctx: HookEndpointContext) {
   return ctx.headers?.get(CLIENT_IP_HEADER) ?? ""
+}
+
+/**
+ * Admin sign-in code on a developer's machine (owner, 2026-11-20): always 000000 and never emailed
+ * (demo admins have no real inbox). Both flags must say development, so a server with one of them
+ * left on development keeps real, emailed codes.
+ */
+const DEV_ADMIN_CODE =
+  env.APP_ENV === "development" && env.NODE_ENV === "development"
+    ? "000000"
+    : undefined
+
+export const adminOtpOptions = {
+  ...(DEV_ADMIN_CODE && {
+    storeOTP: {
+      encrypt: async () => DEV_ADMIN_CODE,
+      decrypt: async (stored: string) => stored,
+    },
+  }),
+  sendOTP: async ({ user, otp }: { user: { email: string }; otp: string }) => {
+    if (DEV_ADMIN_CODE)
+      return log.info("admin_code_dev", {
+        to: user.email,
+        code: DEV_ADMIN_CODE,
+      })
+    send.adminCode(user, otp)
+  },
 }

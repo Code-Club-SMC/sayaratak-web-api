@@ -58,6 +58,14 @@ export async function authBefore(input: HookInput) {
     (await existingSignUp(email)) === "exists"
   )
     throw new APIError("CONFLICT", { code: "exists" })
+  // Owner, 2026-11-20: Better-Auth answers success and sends nothing for a
+  // taken address, so the user waits for a code that never comes. Sign-up
+  // above already tells a taken email apart, so this leaks nothing new.
+  if (
+    input.path === "/email-otp/request-email-change" &&
+    (await q.getUserByEmail(db, newEmailOf(input)))
+  )
+    throw new APIError("CONFLICT", { code: "exists" })
   if (input.path === "/sign-in/email")
     await refuseWhileThrottled(attemptOf(input))
 }
@@ -157,6 +165,11 @@ export async function refuseWhileThrottled(attempt: Attempt) {
 
 function emailOf(input: HookInput) {
   const email = input.body?.email
+  return typeof email === "string" ? email.trim().toLowerCase() : ""
+}
+
+function newEmailOf(input: HookInput) {
+  const email = input.body?.newEmail
   return typeof email === "string" ? email.trim().toLowerCase() : ""
 }
 

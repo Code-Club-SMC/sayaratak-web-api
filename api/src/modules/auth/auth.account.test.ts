@@ -134,6 +134,18 @@ describe("PATCH /me", () => {
     })
   })
 
+  it("refuses a code for an email another account uses, with 409 exists", async () => {
+    const omar = await signIn("user")
+    const res = await call(omar, "/auth/email-otp/request-email-change", {
+      method: "POST",
+      body: { newEmail: "Dealer@demo.sy" },
+    })
+    expect(res.status).toBe(409)
+    expect(await res.json()).toMatchObject({ code: "exists" })
+    await flushMail()
+    expect(testInbox.some((sent) => sent.to === "Dealer@demo.sy")).toBe(false)
+  })
+
   it("changes the email with the code sent to the new address", async () => {
     const omar = await signIn("user")
     const code = await emailCodeFor(omar, "omar@mail.sd")

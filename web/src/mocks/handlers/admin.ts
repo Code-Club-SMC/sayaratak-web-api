@@ -74,6 +74,13 @@ route("GET", "/admin/stats", (c) => {
   const now = read(current)
   const before = read(compare)
   const live = db.listings.filter((l) => l.moderation === "approved")
+  // What joined each total card per day in the current window (the api's growth series).
+  const joined = <T>(rows: T[], at: (row: T) => string) =>
+    points(
+      current.timed(rows, at, () => 1),
+      current.starts
+    )
+  const activeSubs = db.subscriptions.filter((s) => s.status === "active")
   return adminStatsSchema.parse({
     period,
     totals: {
@@ -83,14 +90,22 @@ route("GET", "/admin/stats", (c) => {
       dealerships: db.dealerships.length,
       workshops: db.workshops.length,
       mechanics: db.mechanics.length,
-      activeSubscriptions: db.subscriptions.filter((s) => s.status === "active")
-        .length,
+      activeSubscriptions: activeSubs.length,
       revenue: total(now.revenue),
     },
     series: {
       newListings: points(now.newListings, current.starts),
       newUsers: points(now.newUsers, current.starts),
       revenue: points(now.revenue, current.starts),
+      newLiveListings: joined(live, (l) => l.createdAt),
+      newVehicles: joined(
+        live.filter((l) => l.kind === "vehicle"),
+        (l) => l.createdAt
+      ),
+      newDealerships: joined(db.dealerships, (d) => d.createdAt),
+      newWorkshops: joined(db.workshops, (w) => w.createdAt),
+      newMechanics: joined(db.mechanics, (m) => m.createdAt),
+      newSubscriptions: joined(activeSubs, (sub) => sub.startsAt),
     },
     previousSeries: {
       newListings: points(align(before.newListings), compareStarts),

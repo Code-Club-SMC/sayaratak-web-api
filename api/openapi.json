@@ -43303,12 +43303,126 @@
                               "value"
                             ]
                           }
+                        },
+                        "newLiveListings": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "date": {
+                                "type": "string"
+                              },
+                              "value": {
+                                "type": "number"
+                              }
+                            },
+                            "required": [
+                              "date",
+                              "value"
+                            ]
+                          }
+                        },
+                        "newVehicles": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "date": {
+                                "type": "string"
+                              },
+                              "value": {
+                                "type": "number"
+                              }
+                            },
+                            "required": [
+                              "date",
+                              "value"
+                            ]
+                          }
+                        },
+                        "newDealerships": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "date": {
+                                "type": "string"
+                              },
+                              "value": {
+                                "type": "number"
+                              }
+                            },
+                            "required": [
+                              "date",
+                              "value"
+                            ]
+                          }
+                        },
+                        "newWorkshops": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "date": {
+                                "type": "string"
+                              },
+                              "value": {
+                                "type": "number"
+                              }
+                            },
+                            "required": [
+                              "date",
+                              "value"
+                            ]
+                          }
+                        },
+                        "newMechanics": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "date": {
+                                "type": "string"
+                              },
+                              "value": {
+                                "type": "number"
+                              }
+                            },
+                            "required": [
+                              "date",
+                              "value"
+                            ]
+                          }
+                        },
+                        "newSubscriptions": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "date": {
+                                "type": "string"
+                              },
+                              "value": {
+                                "type": "number"
+                              }
+                            },
+                            "required": [
+                              "date",
+                              "value"
+                            ]
+                          }
                         }
                       },
                       "required": [
                         "newListings",
                         "newUsers",
-                        "revenue"
+                        "revenue",
+                        "newLiveListings",
+                        "newVehicles",
+                        "newDealerships",
+                        "newWorkshops",
+                        "newMechanics",
+                        "newSubscriptions"
                       ]
                     },
                     "previousSeries": {

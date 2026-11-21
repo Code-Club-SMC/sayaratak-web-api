@@ -1,7 +1,8 @@
 import type { Plan } from "@sayaratak/shared/schemas/billing"
-import { and, asc, desc, eq, gt, gte, inArray, ne } from "drizzle-orm"
+import { and, asc, count, desc, eq, gt, gte, inArray, ne } from "drizzle-orm"
 
 import type { Executor } from "~/shared/db/tx"
+import { bucketColumn, type DayRange, withinDays } from "~/shared/time/khartoum"
 
 import { type NewSubscriptionRow, plans, subscriptions } from "./plans.tables"
 
@@ -93,6 +94,21 @@ export function listCurrent(ex: Executor, userId: string) {
       )
     )
     .orderBy(desc(subscriptions.startsAt))
+}
+
+/** Subscriptions active now, per Khartoum day they started inside `days`. */
+export function listActiveStartedPerDay(ex: Executor, days: DayRange) {
+  const day = bucketColumn(subscriptions.startsAt, days)
+  return ex
+    .select({ day, count: count() })
+    .from(subscriptions)
+    .where(
+      and(
+        withinDays(subscriptions.startsAt, days),
+        eq(subscriptions.status, "active")
+      )
+    )
+    .groupBy(day)
 }
 
 export function countActive(ex: Executor) {

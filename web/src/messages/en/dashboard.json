@@ -835,5 +835,6 @@
   "dashboard.nav_group_catalog_hint": "Categories, places and car makes",
   "dashboard.nav_group_communication_hint": "What users hear from Sayaratak",
   "dashboard.nav_group_site_hint": "Pages, settings and backups",
-  "dashboard.overview_new_listings": "New listings per day"
+  "dashboard.overview_new_listings": "New listings per day",
+  "dashboard.in_30_days": "in 30 days"
 }

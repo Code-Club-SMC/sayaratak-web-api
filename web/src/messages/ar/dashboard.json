@@ -875,5 +875,6 @@
   "dashboard.nav_group_catalog_hint": "الفئات والأماكن وماركات السيارات",
   "dashboard.nav_group_communication_hint": "ما يصل المستخدمين من سيارتك",
   "dashboard.nav_group_site_hint": "الصفحات والإعدادات والنسخ الاحتياطية",
-  "dashboard.overview_new_listings": "الإعلانات الجديدة يوميًا"
+  "dashboard.overview_new_listings": "الإعلانات الجديدة يوميًا",
+  "dashboard.in_30_days": "خلال 30 يومًا"
 }

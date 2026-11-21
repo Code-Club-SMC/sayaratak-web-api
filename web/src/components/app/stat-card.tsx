@@ -1,5 +1,5 @@
 import { Link, type LinkProps } from "@tanstack/react-router"
-import { ArrowDownIcon, ArrowUpIcon, ChevronRightIcon } from "lucide-react"
+import { ChevronRightIcon } from "lucide-react"
 
 import { useT } from "@/lib/i18n/use-t"
 import { formatNumber } from "@/lib/format"
@@ -23,6 +23,7 @@ export function StatCard({
   suffix,
   note,
   display,
+  added,
 }: {
   label: string
   // `null`: nothing to measure yet; the card shows a dash and `empty`.
@@ -41,6 +42,8 @@ export function StatCard({
   note?: string
   // Text shown instead of the formatted number, such as a duration ("5 hours").
   display?: string
+  // How many joined a total over the overview's 30 days: shown as "+295 in 30 days" instead of a percentage change.
+  added?: number
 }) {
   const { t, locale } = useT()
   const change =
@@ -96,7 +99,18 @@ export function StatCard({
       {note && !loading && (
         <p className="text-caption text-muted-foreground">{note}</p>
       )}
-      {spark && !loading && <Sparkline values={spark} />}
+      {added !== undefined && !loading && (
+        <p className="flex flex-wrap items-baseline gap-x-1.5 text-caption text-muted-foreground">
+          <bdi
+            dir="ltr"
+            className={`font-mono font-medium ${added > 0 ? "text-success" : ""}`}
+          >
+            {added > 0 ? "+" : ""}
+            {formatNumber(added, locale)}
+          </bdi>
+          <span>{t("dashboard.in_30_days")}</span>
+        </p>
+      )}
       {unavailable && !loading ? (
         <p className="text-caption text-muted-foreground">
           {t("dashboard.change_unavailable")}
@@ -104,22 +118,15 @@ export function StatCard({
       ) : (
         change !== undefined &&
         !loading && (
-          <p className="flex flex-wrap items-center gap-x-2 gap-y-1 text-caption text-muted-foreground">
-            {/* Arrow and tint together, so the direction reads without colour. */}
-            <span
-              className={`inline-flex items-center gap-0.5 rounded-sm px-1.5 font-semibold num ${change > 0 ? "bg-success/10 text-success" : change < 0 ? "bg-destructive/10 text-destructive" : "bg-muted"}`}
+          <p className="flex flex-wrap items-baseline gap-x-1.5 text-caption text-muted-foreground">
+            {/* The sign says the direction; the colour repeats it. */}
+            <bdi
+              dir="ltr"
+              className={`font-mono font-medium ${change > 0 ? "text-success" : change < 0 ? "text-destructive" : ""}`}
             >
-              {change > 0 && (
-                <ArrowUpIcon aria-hidden="true" className="size-3" />
-              )}
-              {change < 0 && (
-                <ArrowDownIcon aria-hidden="true" className="size-3" />
-              )}
-              <bdi dir="ltr">
-                {change > 0 ? "+" : ""}
-                {formatNumber(change, locale)}%
-              </bdi>
-            </span>
+              {change > 0 ? "+" : ""}
+              {formatNumber(change, locale)}%
+            </bdi>
             <span>
               {t(
                 compare === "year"
@@ -130,12 +137,11 @@ export function StatCard({
           </p>
         )
       )}
-      {spark && !!previous && !unavailable && !loading && (
-        <p className="text-caption text-muted-foreground num">
-          {t("dashboard.previous_value", {
-            value: formatNumber(previous, locale),
-          })}
-        </p>
+      {/* The trend closes the card at the bottom, so cells in a row line up. */}
+      {spark && !loading && (
+        <div className="mt-auto pt-2">
+          <Sparkline values={spark} />
+        </div>
       )}
     </>
   )

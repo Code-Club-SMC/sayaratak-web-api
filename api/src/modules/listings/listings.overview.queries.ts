@@ -41,6 +41,25 @@ export function listCreatedPerDay(ex: Executor, days: DayRange) {
     .groupBy(day)
 }
 
+/** Approved listings (of one kind when given) per Khartoum day of creation: the history behind the live-listings and vehicles cards. */
+export function listApprovedCreatedPerDay(
+  ex: Executor,
+  find: { days: DayRange; kind?: "vehicle" }
+) {
+  const day = bucketColumn(listings.createdAt, find.days)
+  return ex
+    .select({ day, count: count() })
+    .from(listings)
+    .where(
+      and(
+        withinDays(listings.createdAt, find.days),
+        eq(listings.moderation, "approved"),
+        find.kind ? eq(listings.kind, find.kind) : undefined
+      )
+    )
+    .groupBy(day)
+}
+
 /** The newest listings that were sent in (not drafts), ties in id order. */
 export function listNewestSubmitted(ex: Executor, limit: number) {
   return ex

@@ -72,10 +72,16 @@ export function ChartImpl({
           tickLine={false}
           axisLine={false}
           tickFormatter={(v: number) => formatNumber(v, locale)}
+          // Counts are whole: no 0.25 or 0.75 ticks on a chart of sign-ups.
+          allowDecimals={false}
         />
         <ChartTooltip
           content={
-            <ChartTooltipContent labelFormatter={(v) => label(String(v))} />
+            <ChartTooltipContent
+              // Room between a series name and its number ("Previous period   0"), set from here since ui/chart stays as shipped.
+              className="min-w-44 [&_.justify-between]:gap-6"
+              labelFormatter={(v) => label(String(v))}
+            />
           }
         />
         <ChartLegend content={<ChartLegendContent />} />
@@ -84,7 +90,9 @@ export function ChartImpl({
             <Area
               key={s.key}
               dataKey={s.key}
-              type="monotone"
+              // Straight segments: a smoothed curve invents humps between whole-number days.
+              type="linear"
+              strokeWidth={2}
               stroke={`var(--color-${s.key})`}
               fill={`var(--color-${s.key})`}
               fillOpacity={0.12}
@@ -104,8 +112,10 @@ export function ChartImpl({
         {compare && (
           <Line
             dataKey="compare"
-            type="monotone"
+            type="linear"
             stroke="var(--color-compare)"
+            strokeWidth={1.25}
+            strokeOpacity={0.6}
             strokeDasharray="4 4"
             dot={false}
             connectNulls

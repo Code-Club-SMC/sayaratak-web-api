@@ -18,7 +18,10 @@ import * as plans from "~/modules/plans/plans.service"
  * `GET /admin/stats`: the dashboard totals and three series over the period
  * (a 7, 30 or 90 Khartoum-day preset or custom minutes), plus the compare
  * window bucketed the same way. Revenue counts approved payments at the time
- * they were decided, so its total is the sum of its series.
+ * they were decided, so its total is the sum of its series. The `new*` growth
+ * series (current window only) count what joined each total card per day:
+ * approved listings and vehicles by creation, profiles by creation, active
+ * subscriptions by start.
  */
 export async function getStats(query: PeriodQuery): Promise<AdminStats> {
   const { period, current, compare, align, compareStarts } = windowsOf(query)
@@ -34,10 +37,11 @@ export async function getStats(query: PeriodQuery): Promise<AdminStats> {
       revenue: bucket(w, revenue),
     }
   }
-  const [count, now, before] = await Promise.all([
+  const [count, now, before, growth] = await Promise.all([
     readCounts(),
     read(current),
     read(compare),
+    readGrowth(current),
   ])
   const points = (values: number[], starts: string[]) =>
     starts.map((date, i) => ({ date, value: values[i] ?? 0 }))
@@ -48,6 +52,7 @@ export async function getStats(query: PeriodQuery): Promise<AdminStats> {
       newListings: points(now.newListings, current.starts),
       newUsers: points(now.newUsers, current.starts),
       revenue: points(now.revenue, current.starts),
+      ...growth,
     },
     previousSeries: {
       newListings: points(align(before.newListings), compareStarts),
@@ -55,6 +60,26 @@ export async function getStats(query: PeriodQuery): Promise<AdminStats> {
       revenue: points(align(before.revenue), compareStarts),
     },
     previousRevenue: total(before.revenue),
+  }
+}
+
+/** The history under each total card: what joined that total per day in the window. */
+async function readGrowth(w: Window) {
+  const [live, vehicles, profiles, subscriptions] = await Promise.all([
+    listings.countApprovedCreatedPerDay(db, w),
+    listings.countApprovedCreatedPerDay(db, w, "vehicle"),
+    businesses.countCreatedPerDay(db, w),
+    plans.countActiveStartedPerDay(db, w),
+  ])
+  const points = (byDay: Map<string, number>) =>
+    bucket(w, byDay).map((value, i) => ({ date: w.starts[i] ?? "", value }))
+  return {
+    newLiveListings: points(live),
+    newVehicles: points(vehicles),
+    newDealerships: points(profiles.dealerships),
+    newWorkshops: points(profiles.workshops),
+    newMechanics: points(profiles.mechanics),
+    newSubscriptions: points(subscriptions),
   }
 }
 

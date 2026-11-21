@@ -1,6 +1,16 @@
-import { asc, desc, eq, ilike, inArray, or, sql } from "drizzle-orm"
+import {
+  asc,
+  count as countRows,
+  desc,
+  eq,
+  ilike,
+  inArray,
+  or,
+  sql,
+} from "drizzle-orm"
 
 import type { Executor } from "~/shared/db/tx"
+import { bucketColumn, type DayRange, withinDays } from "~/shared/time/khartoum"
 
 import { byIdNumber } from "./businesses.queries"
 import {
@@ -20,6 +30,20 @@ type Kind = keyof typeof TABLES
 
 export function count(ex: Executor, kind: Kind) {
   return ex.$count(TABLES[kind])
+}
+
+/** Profiles of one kind created per Khartoum day inside `days`. */
+export function listCreatedPerDay(
+  ex: Executor,
+  find: { kind: Kind; days: DayRange }
+) {
+  const table = TABLES[find.kind]
+  const day = bucketColumn(table.createdAt, find.days)
+  return ex
+    .select({ day, count: countRows() })
+    .from(table)
+    .where(withinDays(table.createdAt, find.days))
+    .groupBy(day)
 }
 
 /** The newest profiles of one kind, ties in the mock's id order. */

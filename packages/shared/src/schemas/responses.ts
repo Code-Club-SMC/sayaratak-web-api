@@ -73,6 +73,13 @@ export const adminStatsSchema = z.object({
     newListings: z.array(dayPoint),
     newUsers: z.array(dayPoint),
     revenue: z.array(dayPoint),
+    // What joined each total card per day (current window only): approved listings and vehicles by creation, profiles by creation, active subscriptions by start.
+    newLiveListings: z.array(dayPoint),
+    newVehicles: z.array(dayPoint),
+    newDealerships: z.array(dayPoint),
+    newWorkshops: z.array(dayPoint),
+    newMechanics: z.array(dayPoint),
+    newSubscriptions: z.array(dayPoint),
   }),
   // The compare window, bucketed and aligned like `series`; `previousRevenue` is its total.
   previousSeries: z.object({

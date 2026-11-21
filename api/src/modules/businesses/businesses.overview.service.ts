@@ -1,6 +1,7 @@
 import type { Bilingual } from "@sayaratak/shared/schemas/fields"
 
 import type { Executor } from "~/shared/db/tx"
+import type { DayRange } from "~/shared/time/khartoum"
 import { containing } from "~/shared/text/like"
 
 import * as q from "./businesses.overview.queries"
@@ -22,6 +23,21 @@ export async function countBusinesses(ex: Executor) {
     q.count(ex, "dealership"),
     q.count(ex, "workshop"),
     q.count(ex, "mechanic"),
+  ])
+  return { dealerships, workshops, mechanics }
+}
+
+/** New profiles per Khartoum day for each kind, as day to count maps. */
+export async function countCreatedPerDay(ex: Executor, days: DayRange) {
+  const perDay = async (kind: BusinessKind) => {
+    const rows = await q.listCreatedPerDay(ex, { kind, days })
+    return new Map(rows.map((row) => [row.day, row.count]))
+  }
+  // Three independent reads.
+  const [dealerships, workshops, mechanics] = await Promise.all([
+    perDay("dealership"),
+    perDay("workshop"),
+    perDay("mechanic"),
   ])
   return { dealerships, workshops, mechanics }
 }

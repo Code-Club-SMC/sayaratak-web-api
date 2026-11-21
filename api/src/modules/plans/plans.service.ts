@@ -3,6 +3,7 @@ import type { Plan } from "@sayaratak/shared/schemas/billing"
 import type { Executor } from "~/shared/db/tx"
 import { newId } from "~/shared/text/ids"
 import { clock } from "~/shared/time/clock"
+import type { DayRange } from "~/shared/time/khartoum"
 import { listIdsOf } from "~/modules/listings/listings.stats.service"
 import * as promotions from "~/modules/promotions/promotions.service"
 
@@ -132,6 +133,12 @@ export async function getCreditsOf(ex: Executor, userId: string) {
     sub: standing?.subscription,
     total: standing?.plan.featuredCredits,
   })
+}
+
+/** Active subscriptions per Khartoum day they started, as a day to count map. */
+export async function countActiveStartedPerDay(ex: Executor, days: DayRange) {
+  const rows = await q.listActiveStartedPerDay(ex, days)
+  return new Map(rows.map((row) => [row.day, row.count]))
 }
 
 /** Accounts on an active plan, the free one included. */

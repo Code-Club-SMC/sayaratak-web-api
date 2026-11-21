@@ -21,6 +21,16 @@ export async function countCreatedPerDay(ex: Executor, days: DayRange) {
   return new Map(rows.map((row) => [row.day, row.count]))
 }
 
+/** Approved listings (vehicles only when asked) created per Khartoum day, as a day to count map. */
+export async function countApprovedCreatedPerDay(
+  ex: Executor,
+  days: DayRange,
+  kind?: "vehicle"
+) {
+  const rows = await q.listApprovedCreatedPerDay(ex, { days, kind })
+  return new Map(rows.map((row) => [row.day, row.count]))
+}
+
 /** Live listings (the ones counted against a plan limit) per owner; an owner with none is missing. */
 export async function countLivePerOwner(ex: Executor, ownerUserIds: string[]) {
   const rows = await q.countLivePerOwner(ex, {

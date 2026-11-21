@@ -78,7 +78,8 @@ export function SidebarUser({ me }: { me: User }) {
                   aria-label={
                     setup ? `${title}, ${t("nav.finish_setup")}` : undefined
                   }
-                  className="relative gap-3 group-data-[collapsible=icon]:mx-auto group-data-[collapsible=icon]:size-10!"
+                  // A white card on the grey chrome, like the open page in the menu, so the account reads as its own object.
+                  className="relative gap-3 bg-card shadow-panel group-data-[collapsible=icon]:mx-auto group-data-[collapsible=icon]:size-10! hover:bg-card hover:shadow-floating data-popup-open:bg-card"
                 />
               }
             >
